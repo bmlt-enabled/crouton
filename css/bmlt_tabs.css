@@ -1,0 +1,528 @@
+#please-wait {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 100px;
+	height: 100px;
+	margin-top: -50px;
+/* Half the height */
+	margin-left: -50px;
+/* Half the width */
+}
+
+.glyphicon-refresh-animate {
+	-animation: spin .7s infinite linear;
+	-webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+
+	to {
+		-webkit-transform: rotate(360deg);
+	}
+}
+
+@keyframes spin {
+	from {
+		transform: scale(1) rotate(0deg);
+	}
+
+	to {
+		transform: scale(1) rotate(360deg);
+	}
+}
+
+span.bmlt_tabs_meeting_count {
+	font-size: 18px;
+	padding: 0 10px 15px 0;
+	display: inline-block;
+}
+
+span.bmlt_tabs_group_count {
+	font-size: 18px;
+	padding: 0 10px 15px;
+	display: inline-block;
+}
+
+#bmlt-tabs #days {
+	padding: 4px;
+}
+
+#bmlt-tabs #nav-days {
+	padding: 4px 4px 0;
+}
+
+#bmlt-tabs #tabs-content {
+	padding: 1px 4px 4px;
+}
+
+#bmlt-tabs #cities {
+	padding: 4px;
+}
+
+#bmlt-tabs .glyphicon {
+	top: 2px;
+}
+
+#bmlt-tabs .glyphicon-map-marker:before {
+	content: "\e062";
+	margin-right: 3px;
+}
+
+#bmlt-tabs .glyphicon-search:before {
+	margin-right: 5px;
+}
+
+#bmlt-tabs .select2-container .select2-choice,#bmlt-tabs .select2-result-label {
+	height: 20px;
+}
+
+#bmlt-tabs {
+	font-size: 14px;
+	color: #5b5b5b;
+	font-family: "Arial","Helvetica",sans-serif;
+	text-align: left;
+	font-style: normal;
+}
+
+#bmlt-tabs span.select2.select2-container.select2-container--default {
+	height: 30px;
+}
+
+#bmlt-tabs .bmlt-dropdown-container {
+	display: inline;
+	position: relative;
+	margin-left: 4px;
+	top: 1px !important;
+}
+
+.bmlt-drop-format {
+	width: 250px !important;
+}
+
+.bmlt-drop-zip {
+	width: 100px !important;
+}
+
+.bmlt-drop {
+	width: 300px !important;
+}
+
+#bmlt-tabs tr:nth-child(even) {
+	background: #F2F2F2;
+}
+
+#bmlt-tabs tr:nth-child(odd) {
+	background: #FFF;
+}
+
+#bmlt-tabs td {
+/* border-top: 0; */
+	padding: .8em;
+}
+
+#bmlt-tabs ul {
+	padding: 0;
+	margin: 0;
+	line-height: 26px;
+	list-style-type: none;
+}
+
+.bootstrap-bmlt .nav-tabs>li {
+	padding: 0;
+	margin: 0;
+}
+
+#bmlt-tabs .bmlt-column1 {
+	text-align: left;
+	width: 30%;
+	word-break: break-all;
+	vertical-align: top;
+}
+
+#bmlt-tabs .bmlt-column2 {
+	text-align: left;
+	width: 55%;
+	vertical-align: top;
+}
+
+#bmlt-tabs .bmlt-column3 {
+	text-align: center !important;
+	vertical-align: middle !important;
+	width: 15%;
+}
+
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+	color: #fff;
+	background-color: #DB4865;
+	border: 1px solid #DDD;
+	border-bottom-color: rgba(0,0,0,0);
+	cursor: default;
+}
+
+#bmlt-tabs .nav-tabs > li > a {
+	color: #000;
+	background-color: #93c3cd;
+	margin-right: 2px;
+	line-height: 1.42857143;
+	border: 1px solid rgba(0,0,0,0);
+	border-radius: 4px 4px 0 0;
+}
+
+#bmlt-tabs .nav-tabs > li > a:hover {
+	color: #FFF;
+}
+
+#bmlt-tabs a#map-button {
+	margin-bottom: 4px;
+}
+
+#bmlt-tabs a#bmlt-formats {
+	margin: 4px 0;
+}
+
+#bmlt-formats.btn-xs,#map-button.btn-xs {
+	padding: 3px 5px;
+	font-size: 10px;
+	background-color: #93C3CD;
+	color: #35414F;
+	border-color: #C5C5C5;
+}
+
+#bmlt-formats.btn-xs:hover,#map-button.btn-xs:hover {
+	background-color: #F1F1F1;
+}
+
+#bmlt-tabs #city.btn.btn-primary.btn-sm:hover {
+	border-color: #fff;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm:hover {
+	border-color: #fff;
+}
+
+#bmlt-tabs .bmlt-comments {
+	word-wrap: normal;
+	word-break: break-word;
+}
+
+#bmlt-tabs .nav > li > a {
+	padding: 4px 10px;
+	font-style: normal;
+}
+
+#bmlt-tabs .bmlt-day,#bmlt-tabs .meeting-name,#bmlt-tabs .bmlt-time-2 {
+	font-weight: 700;
+	font-size: 14px;
+	color: rgba(0,0,0,0.67);
+}
+
+#bmlt-tabs .bmlt-button-container {
+	display: inline;
+	position: relative;
+}
+
+#bmlt-tabs #day {
+	color: #FFF;
+	background-color: #DB4865;
+}
+
+#bmlt-tabs #city {
+	color: #000;
+	background-color: #93c3cd;
+	margin-left: 2px;
+}
+
+#bmlt-tabs .bmlt-header {
+	padding: 4px 0 0 4px;
+	background-color: #35414F;
+}
+
+#bmlt-tabs .bmlt-page {
+	background-color: #35414F;
+	padding: 4px;
+}
+
+#bmlt-tabs .tab-content {
+	background-color: #35414F;
+}
+
+#bmlt-tabs .nav-tabs {
+	border-bottom: 0;
+}
+
+#bmlt-tabs .popover {
+	max-width: 800px;
+}
+
+#bmlt-tabs #day.btn-sm,#bmlt-tabs #city.btn-sm {
+	padding: 2px 10px;
+	font-size: inherit;
+	line-height: 1.6;
+}
+
+#bmlt-tabs #day {
+	margin-right: 2px;
+}
+
+#bmlt-tabs .bmlt_tabs_title {
+	font-size: 24px;
+	margin-bottom: 10px;
+	font-weight: 400;
+	color: #000;
+}
+
+#bmlt-tabs .bmlt_tabs_sub_title {
+	font-size: 22px;
+	margin-bottom: 15px;
+	font-weight: 400;
+	color: #666;
+}
+
+#bmlt-tabs table {
+	margin: 0;
+	border: 0;
+	table-layout: auto;
+	width: 100%;
+}
+
+#bmlt-tabs #cities table.bmlt-table {
+	background-color: #fff;
+	margin: 0;
+	border: 0;
+}
+
+#bmlt-tabs tr.meeting-header td {
+	padding: .5em .8em !important;
+	color: rgba(0,0,0,0.67);
+	background-color: #93C3CD;
+	font-size: 15px;
+	text-transform: uppercase;
+	font-weight: 600;
+	border-top: 0;
+/* border-color: #93C3CD; */
+}
+
+@media (max-width: 39.9375em) {
+	#bmlt-tabs .bmlt-header {
+		display: none !important;
+	}
+
+	#bmlt-tabs #day.btn-sm,#bmlt-tabs #city.btn-sm {
+		margin-bottom: 4px;
+	}
+
+	#bmlt-tabs .bmlt-dropdown-container {
+		display: block;
+		margin-left: 0;
+		margin-right: 4px;
+	}
+
+	#bmlt-tabs span.select2.select2-container {
+		width: 100% !important;
+	}
+
+	#bmlt-tabs .meeting-name,#bmlt-tabs .bmlt-time-2 {
+	/* font-weight: 100; */
+	}
+
+	#bmlt-tabs .bmlt-time-2 {
+		color: #DB4865;
+	}
+
+	#bmlt-tabs a#bmlt-formats,#bmlt-tabs a#map-button {
+		background-color: #fff !important;
+		color: #000;
+		border-radius: 0;
+	}
+
+	#bmlt-tabs .nav-tabs > li > a {
+		border-radius: 0 !important;
+		margin-right: 0 !important;
+	}
+
+	#bmlt-tabs .nav-tabs > li {
+		float: none;
+		border: 1px solid #ddd;
+	}
+
+	#bmlt-tabs .nav-tabs > li.active > a {
+		border: none;
+	}
+
+	#bmlt-tabs .nav > li > a:hover,#bmlt-tabs .nav > li > a:focus,#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+		background: none;
+		border: none;
+	}
+
+	#bmlt-tabs .bmlt-column1 {
+		text-align: left;
+		width: 100%;
+		vertical-align: top;
+		border: 0;
+		padding-bottom: 0;
+	}
+
+	#bmlt-tabs .bmlt-column2 {
+		text-align: left;
+		width: 100%;
+		vertical-align: top;
+		border: 0;
+		padding-bottom: 0;
+	}
+
+	#bmlt-tabs .bmlt-column3 {
+		text-align: left !important;
+		vertical-align: top !important;
+		width: 100%;
+		border: 0;
+	}
+
+	#bmlt-formats.btn-xs,#map-button.btn-xs {
+		padding: 2px 7px !important;
+		font-size: 12px !important;
+	}
+
+	#map-button.btn-xs {
+		display: -webkit-inline-box;
+	}
+
+	#bmlt-tabs a#bmlt-formats {
+		margin-top: 10px;
+	}
+
+	#bmlt-tabs .geo.show {
+		display: -webkit-inline-box !important;
+		margin-left: 10px;
+	}
+
+	#bmlt-tabs td.formats_description {
+		display: none !important;
+	}
+}
+
+/*! Tablesaw - v2.0.2 - 2015-10-28* https://github.com/filamentgroup/tablesaw* Copyright (c) 2015 Filament Group; Licensed  */
+table.tablesaw {
+	empty-cells: show;
+	max-width: 100%;
+	width: 100%;
+}
+
+.tablesaw {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+/* Structure */
+.tablesaw {
+	border: 0;
+	padding: 0;
+}
+
+.tablesaw th,.tablesaw td {
+	box-sizing: border-box;
+	padding: .5em .7em;
+}
+
+.tablesaw thead tr:first-child th {
+	padding-top: .9em;
+	padding-bottom: .7em;
+}
+
+/* Table rows have a gray bottom stroke by default */
+.tablesaw-stack tbody tr {
+	border-bottom: 1px solid #dfdfdf;
+}
+
+.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
+	display: none;
+}
+
+/* Mobile first styles: Begin with the stacked presentation at narrow widths */
+@media only all {
+	/* Show the table cells as a block level element */
+	.tablesaw-stack td,.tablesaw-stack th {
+		text-align: left;
+		display: block;
+	}
+
+	.tablesaw-stack tr {
+		clear: both;
+		display: table-row;
+	}
+
+	/* Make the label elements a percentage width */
+	.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
+		display: block;
+		padding: 0 .6em 0 0;
+		width: 30%;
+		display: inline-block;
+	}
+
+	/* For grouped headers, have a different style to visually separate the levels by classing the first label in each col group */
+	.tablesaw-stack th .tablesaw-cell-label-top,.tablesaw-stack td .tablesaw-cell-label-top {
+		display: block;
+		padding: .4em 0;
+		margin: .4em 0;
+	}
+
+	.tablesaw-cell-label {
+		display: block;
+	}
+
+	/* Avoid double strokes when stacked */
+	.tablesaw-stack tbody th.group {
+		margin-top: -1px;
+	}
+
+	/* Avoid double strokes when stacked */
+	.tablesaw-stack th.group b.tablesaw-cell-label {
+		display: none !important;
+	}
+}
+
+@media (max-width: 39.9375em) {
+	.tablesaw-stack thead td,.tablesaw-stack thead th {
+		display: none;
+	}
+
+	.tablesaw-stack tbody td,.tablesaw-stack tbody th {
+		clear: left;
+		float: left;
+		width: 100%;
+	}
+
+	.tablesaw-cell-label {
+		vertical-align: top;
+	}
+
+	.tablesaw-cell-content {
+		max-width: 67%;
+		display: inline-block;
+	}
+
+	.tablesaw-stack td:empty,.tablesaw-stack th:empty {
+		display: none;
+	}
+}
+
+/* Media query to show as a standard table at 560px (35em x 16px) or wider */
+@media (min-width: 40em) {
+	.tablesaw-stack tr {
+		display: table-row;
+	}
+
+	/* Show the table header rows */
+	.tablesaw-stack td,.tablesaw-stack th,.tablesaw-stack thead td,.tablesaw-stack thead th {
+		display: table-cell;
+		margin: 0;
+	}
+
+	/* Hide the labels in each cell */
+	.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
+		display: none !important;
+	}
+}
