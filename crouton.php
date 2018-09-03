@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: BMLT Tabbed UI 
+Plugin Name: crouton
 Plugin URI: http://wordpress.org/extend/plugins/bmlt-tabbed-ui/
 Description: Adds a jQuery Tabbed UI for BMLT.
-Author: Jack S Florida Region
-Version: 6.0.14
+Author: radius314
+Version: 1.0.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
 	// die('Sorry, but you cannot access this page directly.');
 }
-if (!class_exists("BMLTTabs")) {
-	class BMLTTabs {
+if (!class_exists("Crouton")) {
+	class Crouton {
 		var $optionsName = 'bmlt_tabs_options';
 		var $options = array();
 		var $exclude_zip_codes = Null;
@@ -68,7 +68,7 @@ if (!class_exists("BMLTTabs")) {
 		function is_root_server_missing() {
 			$root_server = $this->options['root_server'];
 			if ($root_server == '') {
-				echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for BMLT Tabs.</p>';
+				echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for crouton.</p>';
 				$url = admin_url('options-general.php?page=bmlt-tabbed-ui.php');
 				echo "<p><a href='$url'>BMLT_Tabs Settings</a></p>";
 				echo '</div>';
@@ -87,7 +87,7 @@ if (!class_exists("BMLTTabs")) {
 		function clear_admin_message2() {
 			echo '<div id="message" class="error"><p>what</p></div>';
 		}
-		function BMLTTabs() {
+		function Crouton() {
 			$this->__construct();
 		}
 		function filter_content($content) {
@@ -249,18 +249,18 @@ if (!class_exists("BMLTTabs")) {
 			$time_format          	= ($time_format == '' ? 'g:i a' : $time_format);
 
 			if ($root_server == '') {
-				Return '<p><strong>BMLT Tabs Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
+				Return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
 			}
 
 			// $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
 			if ($view_by != 'city' && $view_by != 'weekday') {
-				Return '<p>BMLT Tabs Error: view_by must = "city" or "weekday".</p>';
+				Return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
 			}
 			if ($include_city_button != '0' && $include_city_button != '1') {
-				Return '<p>BMLT Tabs Error: include_city_button must = "0" or "1".</p>';
+				Return '<p>crouton Error: include_city_button must = "0" or "1".</p>';
 			}
 			if ($include_weekday_button != '0' && $include_weekday_button != '1') {
-				Return '<p>BMLT Tabs Error: include_weekday_button must = "0" or "1".</p>';
+				Return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
 			}
 			if ($service_body_parent == Null && $service_body == Null) {
 				$area_data       = explode(',', $this->options['service_body_1']);
@@ -275,10 +275,10 @@ if (!class_exists("BMLTTabs")) {
 			}
 			$services = '';
 			if ($service_body_parent != Null && $service_body != Null) {
-				Return '<p>BMLT Tabs Error: Cannot use service_body_parent and service_body at the same time.</p>';
+				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			if ($service_body == '' && $service_body_parent == '') {
-				Return '<p>BMLT Tabs Error: Service body missing from shortcode.</p>';
+				Return '<p>crouton Error: Service body missing from shortcode.</p>';
 			}
 			if ($service_body != Null) {
 				$service_body = array_map('trim', explode(",", $service_body));
@@ -885,7 +885,7 @@ if (!class_exists("BMLTTabs")) {
 			$services = '';
 			$subtract = intval($subtract);
 			if ($service_body_parent != Null && $service_body != Null) {
-				Return '<p>BMLT Tabs Error: Cannot use service_body_parent and service_body at the same time.</p>';
+				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			$t_services = '';
 			if ($service_body != Null && $service_body != 'btw') {
@@ -972,7 +972,7 @@ if (!class_exists("BMLTTabs")) {
 			$services = '';
 			$subtract = intval($subtract);
 			if ($service_body_parent != Null && $service_body != Null) {
-				Return '<p>BMLT Tabs Error: Cannot use service_body_parent and service_body at the same time.</p>';
+				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			if ($service_body != Null && $service_body != 'btw') {
 				$service_body = array_map('trim', explode(",", $service_body));
@@ -1073,7 +1073,7 @@ if (!class_exists("BMLTTabs")) {
 		function admin_menu_link() {
 			// If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
 			// reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
-			add_options_page('BMLT Tabs', 'BMLT Tabs', 'activate_plugins', basename(__FILE__), array(
+			add_options_page('crouton', 'crouton', 'activate_plugins', basename(__FILE__), array(
 				&$this,
 				'admin_options_page'
 			));
@@ -1123,7 +1123,7 @@ if (!class_exists("BMLTTabs")) {
 			}
 ?>
 			<div class="wrap">
-				<h2>BMLT Tabs</h2>
+				<h2>crouton</h2>
 				<form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
 					<?php wp_nonce_field('bmlttabsupdate-options'); ?>
 					<?php $this_connected = $this->testRootServer($this->options['root_server']); ?>
@@ -1179,7 +1179,7 @@ if (!class_exists("BMLTTabs")) {
 						<?php if ($_wp_using_ext_object_cache) { ?>
 							<p>This site is using an external object cache.</p>
 						<?php } ?>
-						<p>Meeting data is cached (as database transient) to load BMLT Tabs faster.</p>
+						<p>Meeting data is cached (as database transient) to load crouton faster.</p>
 						<ul>
 							<li>
 								<label for="cache_time">Cache Time: </label>
@@ -1203,7 +1203,7 @@ if (!class_exists("BMLTTabs")) {
 				</form>
 				<br/><br/>
 				<h2>Instructions</h2>
-				<p> Please contact <a href="mailto:webmaster@nameetinglist.org?Subject=BMLT%20Tabs" target="_top">webmaster@nameetinglist.org</a> with problems, questions or comments.</p>
+				<p> Please open a ticket <a href="https://github.com/radius314/crouton/issues" target="_top">https://github.com/radius314/crouton/issues</a> with problems, questions or comments.</p>
 				<div id="accordion">
 					<h3 class="help-accordian"><strong>URL Parameters (New)</strong></h3>
 					<div>
@@ -1242,7 +1242,7 @@ if (!class_exists("BMLTTabs")) {
 
 					</div>
 
-					<h3 class="help-accordian"><strong>BMLT Tabs Shortcode Usage</strong></h3>
+					<h3 class="help-accordian"><strong>crouton Shortcode Usage</strong></h3>
 
 					<div>
 
@@ -1266,7 +1266,7 @@ if (!class_exists("BMLTTabs")) {
 						<p>When no service_body is specified the default service body will be used.</p>
 						<p><strong>[bmlt_tabs service_body="2,3,4"]</strong></p>
 						<p>service_body = one or more BMLT service body IDs.</p>
-						<p>Using multiple IDs will combine meetings from each service body into the BMLT Tabs interface.</p>
+						<p>Using multiple IDs will combine meetings from each service body into the crouton interface.</p>
 						<p><strong>[bmlt_tabs service_body_parent="1,2,3"]</strong></p>
 						<p>service_body_parent = one or more BMLT parent service body IDs.</p>
 						<p>An example parent service body is a Region.  This would be useful to get all meetings from a specific Region.</p>
@@ -1442,11 +1442,11 @@ if (!class_exists("BMLTTabs")) {
 			return;
 		}
 	}
-	//End Class BMLTTabs
+	//End Class Crouton
 }
 // end if
 // instantiate the class
-if (class_exists("BMLTTabs")) {
-	$BMLTTabs_instance = new BMLTTabs();
+if (class_exists("Crouton")) {
+	$BMLTTabs_instance = new Crouton();
 }
 ?>
