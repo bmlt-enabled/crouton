@@ -1,6 +1,6 @@
 === crouton ===  
 
-Contributors: odathp, radius314
+Contributors: Jack S Florida Region, odathp, radius314, pjaudiomv
 
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 
@@ -14,7 +14,7 @@ crouton implements a Tabbed UI for BMLT.
 
 == Description ==
 
-This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BMLT).  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own tabbed interface to BMLT.  Not into a tabbed interface?  There is a shortcode parameter to display meetings without tabs.  This would be useful for Areas that have fewer meetings.  This plugin also provides various shortcodes to return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
+Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BMLT).  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own tabbed interface to BMLT.  Not into a tabbed interface?  There is a shortcode parameter to display meetings without tabs.  This would be useful for Areas that have fewer meetings.  This plugin also provides various shortcodes to return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
 
 == Installation ==
 
@@ -34,7 +34,7 @@ This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BM
 
 == Screenshots ==
 
-<a href="http://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
+<a href="https://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
 
 == Changelog ==
 
