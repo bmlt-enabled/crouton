@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: crouton
-Plugin URI: http://wordpress.org/extend/plugins/bmlt-tabbed-ui/
+Plugin URI: https://wordpress.org/extend/plugins/bmlt-tabbed-ui/
 Description: Adds a jQuery Tabbed UI for BMLT.
-Author: radius314
+Author: Jack S Florida Region, radius314, pjaudiomv
 Version: 1.0.0
 */
 /* Disallow direct access to the plugin file */
@@ -128,29 +128,21 @@ if (!class_exists("Crouton")) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
 			}
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time");
-			curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_VERBOSE, false);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-			$results  = curl_exec($ch);
-			// echo curl_error($ch);
-			$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			$c_error  = curl_error($ch);
-			$c_errno  = curl_errno($ch);
-			curl_close($ch);
-			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304) {
+			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time");
+   $httpcode       = wp_remote_retrieve_response_code( $results );
+   $response_message = wp_remote_retrieve_response_message( $results );
+   
+   if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
 				return 0;
 			}
-			$result = json_decode($results, true);
+			$result = json_decode(wp_remote_retrieve_body($results), true);
 			If (count($result) == 0 || $result == null) {
 				echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
 				return 0;
 			}
 			return $result;
-		}
+		}  
 		function getday($day) {
 			if ($day == 1) {
 				Return "Sunday";
@@ -170,33 +162,29 @@ if (!class_exists("Crouton")) {
 			}
 		}
 		function getTheFormats($root_server) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "$root_server/client_interface/json/?switcher=GetFormats");
-			curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-			$formats = curl_exec($ch);
-			curl_close($ch);
-			$format = json_decode($formats, true);
+			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats");
+   $format = json_decode(wp_remote_retrieve_body($formats), true);
 			return $format;
 		}
 		function testRootServer($root_server) {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "$root_server/client_interface/serverInfo.xml");
-			curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_VERBOSE, false);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-			$results  = curl_exec($ch);
-			$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			$c_error  = curl_error($ch);
-			$c_errno  = curl_errno($ch);
-			curl_close($ch);
-			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304) {
+   $args = array(
+				'timeout' => '10',
+				'headers' => array(
+					'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
+				)
+			);
+   $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
+   $httpcode       = wp_remote_retrieve_response_code( $results );
+   $response_message = wp_remote_retrieve_response_message( $results );
+   
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 				//echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
 				return false;
-			}
-			;
+			};
+   $results = simplexml_load_string(wp_remote_retrieve_body($results));
+   $results = json_encode($results);
+			$results = json_decode($results,TRUE);
+			$results = $results["serverVersion"]["readableString"];
 			return $results;
 		}
 		function doQuit($message = '') {
@@ -909,19 +897,13 @@ if (!class_exists("Crouton")) {
 			// print_r($the_query);return;
 			$transient_key = 'bmlt_tabs_mc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, $the_query);
-				curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ch, CURLOPT_VERBOSE, false);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-				$results  = curl_exec($ch);
-				$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304) {
+				$results = wp_remote_get($the_query);
+				$httpcode       = wp_remote_retrieve_response_code( $results );
+				$response_message = wp_remote_retrieve_response_message( $results );
+				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 					return '[connect error]';
 				}
-				$result = json_decode($results, true);
+				$result = json_decode(wp_remote_retrieve_body($results), true);
 				if ($exclude_zip_codes !== Null) {
 					foreach ($result as $value) {
 						if ($value['location_postal_code_1']) {
@@ -997,19 +979,13 @@ if (!class_exists("Crouton")) {
 			$transient_key = 'bmlt_tabs_gc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
 				// It wasn't there, so regenerate the data and save the transient
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, $the_query);
-				curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ch, CURLOPT_VERBOSE, false);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-				$results  = curl_exec($ch);
-				$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-				curl_close($ch);
-				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304) {
+    $results = wp_remote_get($the_query);
+				$httpcode       = wp_remote_retrieve_response_code( $results );
+				$response_message = wp_remote_retrieve_response_message( $results );
+				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 					return '[connect error]';
 				}
-				$result = json_decode($results, true);
+				$result = json_decode(wp_remote_retrieve_body($results), true);
 				$unique_group = array();
 				foreach ($result as $value) {
 					if ($exclude_zip_codes !== Null && $value['location_postal_code_1']) {
@@ -1032,19 +1008,10 @@ if (!class_exists("Crouton")) {
 		function get_areas($root_server, $source) {
 			$transient_key = 'bmlt_tabs_' . md5("$root_server/client_interface/json/?switcher=GetServiceBodies");
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-				$resource = curl_init();
-				curl_setopt($resource, CURLOPT_URL, "$root_server/client_interface/json/?switcher=GetServiceBodies");
-				curl_setopt($resource, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($resource, CURLOPT_CONNECTTIMEOUT, 10);
-				curl_setopt($resource, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)");
-				$results  = curl_exec($resource);
-				$result   = json_decode($results, true);
-				$httpcode = curl_getinfo($resource, CURLINFO_HTTP_CODE);
-				$c_error  = curl_error($resource);
-				$c_errno  = curl_errno($resource);
-				curl_close($resource);
-				if ($results == False) {
-					echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $c_errno . ', ' . $c_error . '</p><p>Please try again later</p></div>';
+    $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
+    $result = json_decode(wp_remote_retrieve_body($results), true);
+				if (is_wp_error($results) ) {
+					echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
 					return 0;
 				}
 				if (intval($this->options['cache_time']) > 0) {
@@ -1134,7 +1101,7 @@ if (!class_exists("Crouton")) {
 					<?php } ?>
 					<div style="margin-top: 20px; padding: 0 15px;" class="postbox">
 						<h3>BMLT Root Server URL</h3>
-						<p>Example: http://naflorida.org/bmlt_server</p>
+						<p>Example: https://naflorida.org/bmlt_server</p>
 						<ul>
 							<li>
 								<label for="root_server">Default Root Server: </label>
@@ -1217,11 +1184,11 @@ if (!class_exists("Crouton")) {
 						<p><em>"service_body_parent" parameter for regional meetings</em></p>
 						<p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
 						<p><strong>Meetings for One Area.</strong></p>
-						<p><a target="_blank" href="http://nameetinglist.org/bmlt-tabs/?root_server=http://naflorida.org/bmlt_server&service_body=2&this_title=Greater%20Orlando%20Area%20Meetings&meeting_count=1&group_count=1">http://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=http://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+						<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body=2&this_title=Greater%20Orlando%20Area%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 						<p><strong>Meetings for Two (or more) Areas.</strong></p>
-						<p><a target="_blank" href="http://nameetinglist.org/bmlt-tabs/?root_server=http://naflorida.org/bmlt_server&service_body=2,18&this_title=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area&meeting_count=1&group_count=1">http://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=http://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2,18&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+						<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body=2,18&this_title=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2,18&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 						<p><strong>Meetings for One Region.</strong></p>
-						<p><a target="_blank" href="http://nameetinglist.org/bmlt-tabs/?root_server=http://naflorida.org/bmlt_server&service_body_parent=1&this_title=Florida%20Region%20Meetings&meeting_count=1&group_count=1">http://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=http://naflorida.org/bmlt_server&<span style="color:red;">service_body_parent</span>=1&<span style="color:red;">this_title</span>=Florida%20Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+						<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body_parent=1&this_title=Florida%20Region%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body_parent</span>=1&<span style="color:red;">this_title</span>=Florida%20Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 						<p><em>Title, meeting and group count have unique CSS classes that can be used for custom styling.</em></p>
 					</div>
 					<h3 class="help-accordian"><strong>Time Format (New)</strong></h3>
@@ -1238,7 +1205,7 @@ if (!class_exists("Crouton")) {
 
 						<p><em>Default is 12 Hour Time Fomat</em></p>
 						
-						<p>Refer to the <a style='color:#0073aa;' target='_blank' href='http://php.net/manual/en/function.date.php'>PHP Date</a> function for other ways to configure the time.
+						<p>Refer to the <a style='color:#0073aa;' target='_blank' href='https://php.net/manual/en/function.date.php'>PHP Date</a> function for other ways to configure the time.
 
 					</div>
 
@@ -1276,7 +1243,7 @@ if (!class_exists("Crouton")) {
 					<h3 class="help-accordian"><strong>Root Server</strong></h3>
 					<div>
 						<p>Use a different Root Server.</p>
-						<p><strong>[bmlt_tabs service_body="2" root_server="http://naflorida.org/bmlt_server"]</strong></p>
+						<p><strong>[bmlt_tabs service_body="2" root_server="https://naflorida.org/bmlt_server"]</strong></p>
 						<p>Useful for displaying meetings from a different root server.</p>
 						<em><p>Hint: To find service body IDs enter the different root server into the "BMLT Root Server URL" box and save.</p>
 						<p>Remember to enter your current Root Server back into the "BMLT Root Server URL".</p></em>
