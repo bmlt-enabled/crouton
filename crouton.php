@@ -97,7 +97,7 @@ if (!class_exists("Crouton")) {
          * @param $hook
          */
 		function enqueue_backend_files($hook) {
-			if( $hook == 'settings_page_bmlt-tabbed-ui' ) {
+			if( $hook == 'settings_page_crouton' ) {
 				wp_enqueue_style('bmlt-tabs-admin-ui-css','https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',false,'1.11.4', false);
 				wp_register_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'),'6.0', false);
 				wp_enqueue_script('bmlt-tabs-admin');
@@ -129,19 +129,20 @@ if (!class_exists("Crouton")) {
 				$format_id = "&formats[]=$format_id";
 			}
 			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time");
-   $httpcode       = wp_remote_retrieve_response_code( $results );
-   $response_message = wp_remote_retrieve_response_message( $results );
+            $httpcode       = wp_remote_retrieve_response_code( $results );
+            $response_message = wp_remote_retrieve_response_message( $results );
    
-   if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
-				return 0;
-			}
-			$result = json_decode(wp_remote_retrieve_body($results), true);
-			If (count($result) == 0 || $result == null) {
-				echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
-				return 0;
-			}
-			return $result;
+            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+                echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
+                return 0;
+            }
+
+            $result = json_decode(wp_remote_retrieve_body($results), true);
+            if (count($result) == 0 || $result == null) {
+                echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
+                return 0;
+            }
+            return $result;
 		}  
 		function getday($day) {
 			if ($day == 1) {
@@ -163,26 +164,27 @@ if (!class_exists("Crouton")) {
 		}
 		function getTheFormats($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats");
-   $format = json_decode(wp_remote_retrieve_body($formats), true);
+            $format = json_decode(wp_remote_retrieve_body($formats), true);
 			return $format;
 		}
+
 		function testRootServer($root_server) {
-   $args = array(
+            $args = array(
 				'timeout' => '10',
 				'headers' => array(
 					'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
 				)
 			);
-   $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
-   $httpcode       = wp_remote_retrieve_response_code( $results );
-   $response_message = wp_remote_retrieve_response_message( $results );
+            $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
+            $httpcode       = wp_remote_retrieve_response_code( $results );
+            $response_message = wp_remote_retrieve_response_message( $results );
    
-			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-				//echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
-				return false;
-			};
-   $results = simplexml_load_string(wp_remote_retrieve_body($results));
-   $results = json_encode($results);
+            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+                //echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
+                return false;
+            };
+            $results = simplexml_load_string(wp_remote_retrieve_body($results));
+            $results = json_encode($results);
 			$results = json_decode($results,TRUE);
 			$results = $results["serverVersion"]["readableString"];
 			return $results;
@@ -979,7 +981,7 @@ if (!class_exists("Crouton")) {
 			$transient_key = 'bmlt_tabs_gc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
 				// It wasn't there, so regenerate the data and save the transient
-    $results = wp_remote_get($the_query);
+                $results = wp_remote_get($the_query);
 				$httpcode       = wp_remote_retrieve_response_code( $results );
 				$response_message = wp_remote_retrieve_response_message( $results );
 				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
@@ -1008,8 +1010,8 @@ if (!class_exists("Crouton")) {
 		function get_areas($root_server, $source) {
 			$transient_key = 'bmlt_tabs_' . md5("$root_server/client_interface/json/?switcher=GetServiceBodies");
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-    $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
-    $result = json_decode(wp_remote_retrieve_body($results), true);
+            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
+            $result = json_decode(wp_remote_retrieve_body($results), true);
 				if (is_wp_error($results) ) {
 					echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
 					return 0;
@@ -1333,9 +1335,7 @@ if (!class_exists("Crouton")) {
 					</div>
 				</div>
 			</div>
-			<script>
-			getValueSelected();
-			</script>
+			<script type="text/javascript">getValueSelected();</script>
 			<?php
 		}
 		/**
