@@ -625,7 +625,7 @@ if (!class_exists("Crouton")) {
 				$sunday_init = $monday_init = $tuesday_init = $wednesday_init = $thursday_init  = $friday_init = $saturday_init  = 0;
 				foreach ($result_data as $value) {
 					if ($unique_value == 'name_string') {
-						$good = False;
+						$good = false;
 						foreach ($formats as $value1) {
 							$key_string  = $value1['key_string'];
 							$name_string = $value1['name_string'];
@@ -638,7 +638,7 @@ if (!class_exists("Crouton")) {
 								}
 							}
 						}
-						if ($good == False) {
+						if ($good == false) {
 							continue;
 						}
 						if ($format_key != '' && !in_array($format_key, $tvalue)) {
@@ -799,7 +799,7 @@ if (!class_exists("Crouton")) {
 				$address .= $value['location_street'];
 			} else {
 				$value['location_street'] = '';
-				$isaddress                = False;
+				$isaddress                = false;
 			}
 			if (isset($value['location_municipality'])) {
 				if ($address != '' && $value['location_municipality'] != '') {
@@ -809,7 +809,7 @@ if (!class_exists("Crouton")) {
 				}
 			} else {
 				$value['location_municipality'] = '';
-				$isaddress                      = False;
+				$isaddress                      = false;
 			}
 			if (isset($value['location_province'])) {
 				if ($address != '' && $value['location_province'] != '') {
@@ -819,7 +819,7 @@ if (!class_exists("Crouton")) {
 				}
 			} else {
 				$value['location_province'] = '';
-				$isaddress                  = False;
+				$isaddress                  = false;
 			}
 			if (isset($value['location_postal_code_1'])) {
 				if ($address != '' && $value['location_postal_code_1'] != '') {
@@ -1097,7 +1097,7 @@ if (!class_exists("Crouton")) {
 					<?php wp_nonce_field('bmlttabsupdate-options'); ?>
 					<?php $this_connected = $this->testRootServer($this->options['root_server']); ?>
 					<?php $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>"; ?>
-					<?php if ( $this_connected != False) { ?>
+					<?php if ( $this_connected != false) { ?>
 						<?php $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>"?>
 						<?php $this_connected = true; ?>
 					<?php } ?>
