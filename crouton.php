@@ -1380,7 +1380,7 @@ if (!class_exists("Crouton")) {
 			// Don't forget to set up the default options
 			if (!$theOptions = get_option($this->optionsName)) {
 				$theOptions = array(
-					'cache_time' => '360',
+					'cache_time' => '3600',
 					'root_server' => '',
 					'service_body_1' => ''
 				);
