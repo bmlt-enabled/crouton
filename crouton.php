@@ -14,7 +14,7 @@ if (!class_exists("Crouton")) {
 	class Crouton {
 		var $optionsName = 'bmlt_tabs_options';
 		var $options = array();
-		var $exclude_zip_codes = Null;
+		var $exclude_zip_codes = null;
 		function __construct() {
 			$this->getOptions();		
 			if (is_admin()) {
@@ -146,7 +146,7 @@ if (!class_exists("Crouton")) {
 		}  
 		function getday($day) {
 			if ($day == 1) {
-				Return "Sunday";
+				return "Sunday";
 			}
 			elseif ($day == 2) {
 				return "Monday";
@@ -221,13 +221,13 @@ if (!class_exists("Crouton")) {
 
 				"time_format" => '',
 
-				"exclude_zip_codes" => Null
+				"exclude_zip_codes" => null
 			), $atts));
 
 			$root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
-			$root_server            = ($_GET['root_server'] == Null ? $root_server : $_GET['root_server']);
-			$service_body			= ($_GET['service_body'] == Null ? $service_body : $_GET['service_body']);
-			$service_body_parent	= ($_GET['service_body_parent'] == Null ? $service_body_parent : $_GET['service_body_parent']);
+			$root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
+			$service_body			= ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
+			$service_body_parent	= ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
 			$has_tabs               = ($has_meetings == '0' ? '0' : $has_tabs);
 			// $has_tabs = ($include_weekday_button == '0' ? '1' : $has_tabs);
 			$include_city_button    = ($view_by == 'city' ? '1' : $include_city_button);
@@ -239,20 +239,20 @@ if (!class_exists("Crouton")) {
 			$time_format          	= ($time_format == '' ? 'g:i a' : $time_format);
 
 			if ($root_server == '') {
-				Return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
+				return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
 			}
 
 			// $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
 			if ($view_by != 'city' && $view_by != 'weekday') {
-				Return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
+				return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
 			}
 			if ($include_city_button != '0' && $include_city_button != '1') {
-				Return '<p>crouton Error: include_city_button must = "0" or "1".</p>';
+				return '<p>crouton Error: include_city_button must = "0" or "1".</p>';
 			}
 			if ($include_weekday_button != '0' && $include_weekday_button != '1') {
-				Return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
+				return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
 			}
-			if ($service_body_parent == Null && $service_body == Null) {
+			if ($service_body_parent == null && $service_body == null) {
 				$area_data       = explode(',', $this->options['service_body_1']);
 				$area            = $area_data[0];
 				$service_body_id = $area_data[1];
@@ -264,26 +264,26 @@ if (!class_exists("Crouton")) {
 				}
 			}
 			$services = '';
-			if ($service_body_parent != Null && $service_body != Null) {
-				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
+			if ($service_body_parent != null && $service_body != null) {
+				return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			if ($service_body == '' && $service_body_parent == '') {
-				Return '<p>crouton Error: Service body missing from shortcode.</p>';
+				return '<p>crouton Error: Service body missing from shortcode.</p>';
 			}
-			if ($service_body != Null) {
+			if ($service_body != null) {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($service_body_parent != Null) {
+			if ($service_body_parent != null) {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				foreach ($service_body as $key) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
 			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_cities . $has_meetings . $has_formats . $has_locations . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
-			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != Null) {
+			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
 				//$output = gzuncompress($output);
@@ -316,7 +316,7 @@ if (!class_exists("Crouton")) {
 			}
 			$unique_zip = $unique_city = $unique_group = $unique_location = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
-				if ($exclude_zip_codes !== Null && $value['location_postal_code_1']) {
+				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 					if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
 						continue;
 					}
@@ -372,7 +372,7 @@ if (!class_exists("Crouton")) {
 				foreach ($unique_values as $this_value) {
 					$this_meeting = $meeting_header = $meeting_tab_header = "";							
 					foreach ($the_meetings as $value) {
-						if ($exclude_zip_codes !== Null && $value['location_postal_code_1']) {
+						if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 							if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
 								continue;
 							}
@@ -593,17 +593,17 @@ if (!class_exists("Crouton")) {
 				$output .= $this->get_the_meetings($the_meetings, $unique_format_name_string, "name_string", $formats, $format_key, "Format");
 			}
 			$this_title = $sub_title = $meeting_count = $group_count= '';
-			if ( $_GET['this_title'] != Null ) {
+			if ( $_GET['this_title'] != null ) {
 				$this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
 			}
-			if ( $_GET['sub_title'] != Null ) {
+			if ( $_GET['sub_title'] != null ) {
 				$sub_title = '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
 			}
-			if ( $_GET['meeting_count'] != Null ) {
-				$meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meeting_count('', Null) . '</span>';
+			if ( $_GET['meeting_count'] != null ) {
+				$meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meeting_count('', null) . '</span>';
 			}
-			if ( $_GET['group_count'] != Null ) {
-				$group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmlt_group_count('', Null) . '</span>';
+			if ( $_GET['group_count'] != null ) {
+				$group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmlt_group_count('', null) . '</span>';
 			}
 			$output = $this_title . $sub_title . $meeting_count. $group_count . $output;
 			$output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
@@ -612,7 +612,7 @@ if (!class_exists("Crouton")) {
 				document.getElementById("please-wait").style.display = "none";
 			</script>';
 			//$output .= '<div id="divId" class="bmlt-tabs" title="Dialog Title"></div>';
-			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != Null) {
+			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				set_transient($transient_key, $output, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
 			}
 			return $output;
@@ -854,14 +854,14 @@ if (!class_exists("Crouton")) {
 				"service_body" => '',
 				"root_server" => '',
 				"subtract" => '',
-				"exclude_zip_codes" => Null,
+				"exclude_zip_codes" => null,
 				"service_body_parent" => ''
 			), $atts));
 			$root_server = ($root_server != '' ? $root_server : $this->options['root_server']);
-			$root_server = ($_GET['root_server'] == Null ? $root_server : $_GET['root_server']);
-			$service_body = ($_GET['service_body'] == Null ? $service_body : $_GET['service_body']);
-			$service_body_parent	= ($_GET['service_body_parent'] == Null ? $service_body_parent : $_GET['service_body_parent']);
-			if ($service_body_parent == Null && $service_body == Null) {
+			$root_server = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
+			$service_body = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
+			$service_body_parent	= ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
+			if ($service_body_parent == null && $service_body == null) {
 				$area_data       = explode(',', $this->options['service_body_1']);
 				$area            = $area_data[0];
 				$service_body_id = $area_data[1];
@@ -874,17 +874,17 @@ if (!class_exists("Crouton")) {
 			}
 			$services = '';
 			$subtract = intval($subtract);
-			if ($service_body_parent != Null && $service_body != Null) {
-				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
+			if ($service_body_parent != null && $service_body != null) {
+				return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			$t_services = '';
-			if ($service_body != Null && $service_body != 'btw') {
+			if ($service_body != null && $service_body != 'btw') {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			elseif ($service_body_parent != Null && $service_body != 'btw') {
+			elseif ($service_body_parent != null && $service_body != 'btw') {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				$services .= '&recursive=1';
 				foreach ($service_body as $key) {
@@ -906,7 +906,7 @@ if (!class_exists("Crouton")) {
 					return '[connect error]';
 				}
 				$result = json_decode(wp_remote_retrieve_body($results), true);
-				if ($exclude_zip_codes !== Null) {
+				if ($exclude_zip_codes !== null) {
 					foreach ($result as $value) {
 						if ($value['location_postal_code_1']) {
 							if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
@@ -932,17 +932,17 @@ if (!class_exists("Crouton")) {
 				"service_body" => '',
 				"subtract" => '',
 				"root_server" => '',
-				"exclude_zip_codes" => Null,
+				"exclude_zip_codes" => null,
 				"service_body_parent" => ''
 			), $atts));
 			if ($atts == "") {
 				// return;
 			}
 			$root_server = ($root_server != '' ? $root_server : $this->options['root_server']);
-			$root_server = ($_GET['root_server'] == Null ? $root_server : $_GET['root_server']);
-			$service_body = ($_GET['service_body'] == Null ? $service_body : $_GET['service_body']);
-			$service_body_parent	= ($_GET['service_body_parent'] == Null ? $service_body_parent : $_GET['service_body_parent']);
-			if ($service_body_parent == Null && $service_body == Null) {
+			$root_server = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
+			$service_body = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
+			$service_body_parent	= ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
+			if ($service_body_parent == null && $service_body == null) {
 				$area_data       = explode(',', $this->options['service_body_1']);
 				$area            = $area_data[0];
 				$service_body_id = $area_data[1];
@@ -955,23 +955,23 @@ if (!class_exists("Crouton")) {
 			}
 			$services = '';
 			$subtract = intval($subtract);
-			if ($service_body_parent != Null && $service_body != Null) {
+			if ($service_body_parent != null && $service_body != null) {
 				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
-			if ($service_body != Null && $service_body != 'btw') {
+			if ($service_body != null && $service_body != 'btw') {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($service_body_parent != Null && $service_body != 'btw') {
+			if ($service_body_parent != null && $service_body != 'btw') {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				$services .= '&recursive=1';
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($exclude_zip_codes != Null) {
+			if ($exclude_zip_codes != null) {
 				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults,location_postal_code_1&formats[]=-47" . $services;				
 			} elseif ($service_body == 'btw') {
 				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults&formats[]=46" . $services;
@@ -990,7 +990,7 @@ if (!class_exists("Crouton")) {
 				$result = json_decode(wp_remote_retrieve_body($results), true);
 				$unique_group = array();
 				foreach ($result as $value) {
-					if ($exclude_zip_codes !== Null && $value['location_postal_code_1']) {
+					if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 						if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
 							continue;
 						}
@@ -1380,7 +1380,7 @@ if (!class_exists("Crouton")) {
 			// Don't forget to set up the default options
 			if (!$theOptions = get_option($this->optionsName)) {
 				$theOptions = array(
-					'cache_time' => '3600',
+					'cache_time' => '360',
 					'root_server' => '',
 					'service_body_1' => ''
 				);
