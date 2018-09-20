@@ -225,7 +225,7 @@ jQuery(document).ready(function($) {
 	$(".bmlt-header").removeClass("hide").addClass("show");
     $(".bmlt-tabs").removeClass("hide").addClass("show");			
 
-	if(navigator.geolocation){
+	/*if(navigator.geolocation){
 	   // timeout at 60000 milliseconds (60 seconds)
 	   //var options = {timeout:60000};
 	   navigator.geolocation.getCurrentPosition(showLocation, errorHandler);
@@ -233,7 +233,7 @@ jQuery(document).ready(function($) {
 	
 	else{
 		$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
-	}
+	}*/
 
 	function showLocation(position) {
 
@@ -417,7 +417,7 @@ if( Tablesaw.mustard ) {
 	};
 
 	Table.prototype.destroy = function() {
-		// Don’t remove the toolbar. Some of the table features are not yet destroy-friendly.
+		// Donï¿½t remove the toolbar. Some of the table features are not yet destroy-friendly.
 		this.$table.prev().filter( '.' + classes.toolbar ).each(function() {
 			this.className = this.className.replace( /\bmode\-\w*\b/gi, '' );
 		});

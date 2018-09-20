@@ -36,6 +36,11 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
+= 1.0.1 =
+
+* Some code cleanups.
+* Disabled broken geolocation lookups until it can be reimplemented.
+
 = 1.0.0 = 
 
 * Forked from "bmlt-tabbed-ui" plugin.
