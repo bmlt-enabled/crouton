@@ -93,12 +93,20 @@ jQuery(document).ready(function($) {
 		width: "resolve",
 		minimumResultsForSearch: 1
 	});
+	$("#e8").select2({
+		placeholder: "Areas",
+		dropdownAutoWidth: true,
+		allowClear: false,
+		width: "resolve",
+		minimumResultsForSearch: 1
+	});
 	$("#e2").select2({dropdownCssClass : 'bmlt-drop'}); 
 	$("#e3").select2({dropdownCssClass : 'bmlt-drop'}); 
 	$("#e4").select2({dropdownCssClass : 'bmlt-drop'}); 
 	$("#e5").select2({dropdownCssClass : 'bmlt-drop-zip'}); 
 	$("#e6").select2({dropdownCssClass : 'bmlt-drop-format'}); 
-	$("#e7").select2({dropdownCssClass : 'bmlt-drop'}); 
+	$("#e7").select2({dropdownCssClass : 'bmlt-drop'});
+	$("#e8").select2({dropdownCssClass : 'bmlt-drop'}); 
 	if(jQuery.browser.mobile)
 	{
 		$("#e2").prop("readonly",true);
@@ -110,6 +118,7 @@ jQuery(document).ready(function($) {
 		$("#s2id_e5").css({"width":"99%","margin-bottom":"3px"});
 		$("#s2id_e6").css({"width":"99%","margin-bottom":"3px"});
 		$("#s2id_e7").css({"width":"99%","margin-bottom":"3px"});
+		$("#s2id_e8").css({"width":"99%","margin-bottom":"3px"});
 		$(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
 		$(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
 	}
@@ -119,6 +128,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
 		if(jQuery.browser.mobile)
 		{
 			$("#e2").prop("readonly",true);
@@ -140,6 +150,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
         var val = $("#e3").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
@@ -155,6 +166,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
         var val = $("#e4").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
@@ -170,6 +182,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
         var val = $("#e5").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
@@ -185,6 +198,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
         var val = $("#e6").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
@@ -200,7 +214,23 @@ jQuery(document).ready(function($) {
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
         var val = $("#e7").val();
+        $('.bmlt-page').each(function(index) {
+			$("#" + this.id).removeClass("show").addClass("hide");
+			$("#city").css({"background-color":"#93c3cd","color":"#000"});
+			$("#day").css({"background-color":"#93c3cd","color":"#000"});
+			showPage(val);
+			return;
+        });
+    });
+    $("#e8").on('select2:select', function() {
+		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
+		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
+		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
+		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
+		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
+        var val = $("#e8").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
 			$("#city").css({"background-color":"#93c3cd","color":"#000"});
@@ -216,6 +246,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
 		$("#day").css({"background-color":"#DB4865","color":"#fff"});
 		$("#city").css({"background-color":"#93c3cd","color":"#000"});
         $('.bmlt-page').each(function(index) {
@@ -233,6 +264,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
 		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
+		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
 		$("#city").css({"background-color":"#DB4865","color":"#fff"});
 		$("#day").css({"background-color":"#93c3cd","color":"#000"});
         $('.bmlt-page').each(function(index) {
