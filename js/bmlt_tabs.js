@@ -98,7 +98,7 @@ jQuery(document).ready(function($) {
 	$("#e4").select2({dropdownCssClass : 'bmlt-drop'}); 
 	$("#e5").select2({dropdownCssClass : 'bmlt-drop-zip'}); 
 	$("#e6").select2({dropdownCssClass : 'bmlt-drop-format'}); 
-	$("#e7").select2({dropdownCssClass : 'bmlt'}); 
+	$("#e7").select2({dropdownCssClass : 'bmlt-drop'}); 
 	if(jQuery.browser.mobile)
 	{
 		$("#e2").prop("readonly",true);
@@ -118,6 +118,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
+		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
 		if(jQuery.browser.mobile)
 		{
 			$("#e2").prop("readonly",true);
