@@ -36,6 +36,10 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
+= UNRELEASED =
+
+* Added sub province (county) dropdown option.
+
 = 1.0.1 =
 
 * Some code cleanups.
