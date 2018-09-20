@@ -198,7 +198,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e5").select2("val", null); }
+		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
         var val = $("#e7").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
