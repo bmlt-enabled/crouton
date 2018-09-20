@@ -211,6 +211,7 @@ if (!class_exists("Crouton")) {
 				"has_meetings" => '1',
 				"has_formats" => '1',
 				"has_locations" => '1',
+				"has_sub_province" => '0',
 				"include_city_button" => '1',
 				"include_weekday_button" => '1',
 				"view_by" => 'weekday',
@@ -282,7 +283,7 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_cities . $has_meetings . $has_formats . $has_locations . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
+			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -314,7 +315,7 @@ if (!class_exists("Crouton")) {
 			if ($format_key == 'BTW') {
 				$unique_areas = $this->get_areas($root_server, 'BTW');
 			}
-			$unique_zip = $unique_city = $unique_group = $unique_location = $unique_format = $unique_weekday = $unique_format_name_string = array();
+			$unique_zip = $unique_city = $unique_group = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 					if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
@@ -345,17 +346,22 @@ if (!class_exists("Crouton")) {
 				if ($value['location_postal_code_1']) {
 					$unique_zip[] = $value['location_postal_code_1'];
 				}
+				if ($value['location_sub_province']) {
+					$unique_sub_province[] = $value['location_sub_province'];
+				}
 			}
 			if (count($unique_group) == 0) {
 				return $this->doQuit('No Meetings Found');
 			}
 			$unique_zip                = array_unique($unique_zip);
+			$unique_sub_province       = array_unique($unique_sub_province);
 			$unique_city               = array_unique($unique_city);
 			$unique_group              = array_unique($unique_group);
 			$unique_location           = array_unique($unique_location);
 			$unique_format             = array_unique($unique_format);
 			$unique_format_name_string = array_unique($unique_format_name_string);
 			asort($unique_zip);
+			asort($unique_sub_province);
 			asort($unique_city);
 			asort($unique_group);
 			asort($unique_location);
@@ -509,6 +515,16 @@ if (!class_exists("Crouton")) {
 					$output .= '</select>';
 					$output .= '</div>';
 				}
+				if ($has_sub_province == '1') {
+					$output .= '<div class="bmlt-dropdown-container">';
+					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Counties" id="e7">';
+					$output .= '<option></option>';
+					foreach ($unique_sub_province as $sub_province_value) {
+						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $sub_province_value)) . ">$sub_province_value</option>";
+					}
+					$output .= '</select>';
+					$output .= '</div>';
+				}
 				if ($has_zip_codes == '1') {
 					$output .= '<div class="bmlt-dropdown-container">';
 					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Zips" id="e5">';
@@ -585,6 +601,9 @@ if (!class_exists("Crouton")) {
 			}
 			if ($has_locations == '1') {
 				$output .= $this->get_the_meetings($the_meetings, $unique_location, "location_text", $formats, $format_key, "Location");
+			}
+			if ($has_sub_province == '1') {
+				$output .= $this->get_the_meetings($the_meetings, $unique_sub_province, "location_sub_province", $formats, $format_key, "Counties");
 			}
 			if ($has_zip_codes == '1') {
 				$output .= $this->get_the_meetings($the_meetings, $unique_zip, "location_postal_code_1", $formats, $format_key, "Zip Code");
@@ -1295,7 +1314,7 @@ if (!class_exists("Crouton")) {
 					<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 					<div>
 						<p>With this parameter you can show or hide the dropdowns.</p>
-						<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_locations='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
+						<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_locations='0|1' has_sub_province='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
 						<p>0 = hide dropdown<p>
 						<p>1 = show dropdown (default)<p>
 					</div>
