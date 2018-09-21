@@ -229,12 +229,13 @@ if (!class_exists("Crouton")) {
 				"has_zip_codes" => '1',
 				"header" => '1',
 				"format_key" => '',
-
 				"time_format" => '',
-
-				"exclude_zip_codes" => null
+				"exclude_zip_codes" => null,
+				"show_distance" => '0'
 			), $atts));
-
+			if ( $show_distance == '1' ) {
+				wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
+			}
 			$root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
 			$root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
 			$service_body			= ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
@@ -293,7 +294,7 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
+			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $show_distance . $header . $format_key);
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -440,8 +441,12 @@ if (!class_exists("Crouton")) {
 						$this_meeting .= "<tr>";
 						$this_meeting .= "<td class='bmlt-column1'>".$column1."</td>";
 						$this_meeting .= "<td class='bmlt-column2'>".$location."</td>";
-						//$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
-						$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
+						if ( $show_distance == '1' ) {
+							$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
+						}
+						else {
+							$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
+						}
 						$this_meeting .= "</tr>";
 					}
 					if ( $this_meeting != "" ) {
@@ -720,9 +725,12 @@ if (!class_exists("Crouton")) {
 					}
 					$this_meeting = "<tr>";
 					$this_meeting .= "<td class='bmlt-column1'>$column1</td>";
-					$this_meeting .= "<td class='bmlt-column2'>$location</td>";
-					//$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
-					$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
+					if ( $show_distance == '1' ) {
+						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
+					}
+					else {
+						$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
+					}
 					$this_meeting .= "</tr>";
 					
 					if ($value['weekday_tinyint'] == 1) {
@@ -1379,6 +1387,14 @@ if (!class_exists("Crouton")) {
 						<p><strong>[group_count service_body="2,3,4"]</strong></p>
 						<p><strong>[group_count service_body_parent="1,2,3"]</strong></p>
 						<p>Will return the number of Groups in one or more BMLT parent service bodies.</p>
+					</div>
+					<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
+					<div>
+						<p>With this parameter you can display the users distance to meetings under the map link button.</p>
+						<p><strong>[bmlt_tabs show_distance="0|1"]</strong></p>
+						<p>0 = don't display distance to meeting (default)</p>
+						<p>1 = display distance to meeting</p>
+						<p><em>User has to have geolocation permissions turned on.</em></p>
 					</div>
 				</div>
 			</div>
