@@ -125,8 +125,8 @@ if (!class_exists("Crouton")) {
 			array_multisort($keys, $sortType, $array);
 		}
 		function getNameFromServiceBodyID($serviceBodyID) {
-			$bmlt_search_endpoint = $this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies";
-			$serviceBodies = json_decode(file_get_contents($bmlt_search_endpoint));	
+			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies");
+			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
 			foreach ($serviceBodies as $serviceBody) {
 				if ( $serviceBody->id == $serviceBodyID) {
 				return $serviceBody->name;
