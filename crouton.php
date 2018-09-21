@@ -124,6 +124,15 @@ if (!class_exists("Crouton")) {
 			}
 			array_multisort($keys, $sortType, $array);
 		}
+		function getNameFromServiceBodyID($serviceBodyID) {
+			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies");
+			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
+			foreach ($serviceBodies as $serviceBody) {
+				if ( $serviceBody->id == $serviceBodyID) {
+				return $serviceBody->name;
+				}
+			}	
+		}
 		function getAllMeetings($root_server, $services, $format_id) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -207,6 +216,7 @@ if (!class_exists("Crouton")) {
 				"service_body_parent" => '',
 				"has_tabs" => '1',
 				"has_groups" => '1',
+				"has_areas" => '0',
 				"has_cities" => '1',
 				"has_meetings" => '1',
 				"has_formats" => '1',
@@ -283,7 +293,7 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
+			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $header . $format_key);
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -315,7 +325,7 @@ if (!class_exists("Crouton")) {
 			if ($format_key == 'BTW') {
 				$unique_areas = $this->get_areas($root_server, 'BTW');
 			}
-			$unique_zip = $unique_city = $unique_group = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
+			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 					if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
@@ -340,6 +350,9 @@ if (!class_exists("Crouton")) {
 				if ($value['meeting_name']) {
 					$unique_group[] = $value['meeting_name'];
 				}
+				if ($value['service_body_bigint']) {
+					$unique_area[] = $value['service_body_bigint'];
+				}
 				if ($value['location_text']) {
 					$unique_location[] = $value['location_text'];
 				}
@@ -357,6 +370,7 @@ if (!class_exists("Crouton")) {
 			$unique_sub_province       = array_unique($unique_sub_province);
 			$unique_city               = array_unique($unique_city);
 			$unique_group              = array_unique($unique_group);
+			$unique_area               = array_unique($unique_area);
 			$unique_location           = array_unique($unique_location);
 			$unique_format             = array_unique($unique_format);
 			$unique_format_name_string = array_unique($unique_format_name_string);
@@ -364,6 +378,7 @@ if (!class_exists("Crouton")) {
 			asort($unique_sub_province);
 			asort($unique_city);
 			asort($unique_group);
+			asort($unique_area);
 			asort($unique_location);
 			asort($unique_format);
 			asort($unique_format_name_string);
@@ -505,6 +520,16 @@ if (!class_exists("Crouton")) {
 					$output .= '</select>';
 					$output .= '</div>';
 				}
+				if ($has_areas == '1') {
+					$output .= '<div class="bmlt-dropdown-container">';
+					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Areas" id="e8">';
+					$output .= '<option></option>';
+					foreach ($unique_area as $area_value) {
+						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $area_value)) . ">" . $this->getNameFromServiceBodyID($area_value) . "</option>";
+					}
+					$output .= '</select>';
+					$output .= '</div>';
+				}
 				if ($has_locations == '1') {
 					$output .= '<div class="bmlt-dropdown-container">';
 					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Locations" id="e4">';
@@ -598,6 +623,9 @@ if (!class_exists("Crouton")) {
 			}
 			if ($has_groups == '1') {
 				$output .= $this->get_the_meetings($the_meetings, $unique_group, "meeting_name", $formats, $format_key, "Group");
+			}
+			if ($has_areas == '1') {
+				$output .= $this->get_the_meetings($the_meetings, $unique_area, "service_body_bigint", $formats, $format_key, "Area");
 			}
 			if ($has_locations == '1') {
 				$output .= $this->get_the_meetings($the_meetings, $unique_location, "location_text", $formats, $format_key, "Location");
@@ -1314,7 +1342,7 @@ if (!class_exists("Crouton")) {
 					<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 					<div>
 						<p>With this parameter you can show or hide the dropdowns.</p>
-						<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_locations='0|1' has_sub_province='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
+						<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_areas='0|1' has_locations='0|1' has_sub_province='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
 						<p>0 = hide dropdown<p>
 						<p>1 = show dropdown (default)<p>
 					</div>
