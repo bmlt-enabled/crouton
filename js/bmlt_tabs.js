@@ -230,6 +230,7 @@ jQuery(document).ready(function($) {
 		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
 		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
 		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
+		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
         var val = $("#e8").val();
         $('.bmlt-page').each(function(index) {
 			$("#" + this.id).removeClass("show").addClass("hide");
