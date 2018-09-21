@@ -93,9 +93,9 @@ if (!class_exists("Crouton")) {
 		function filter_content($content) {
 			return $content;
 		}
-        /**
-         * @param $hook
-         */
+		/**
+		* @param $hook
+		*/
 		function enqueue_backend_files($hook) {
 			if( $hook == 'settings_page_crouton' ) {
 				wp_enqueue_style('bmlt-tabs-admin-ui-css','https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',false,'1.11.4', false);
@@ -138,20 +138,18 @@ if (!class_exists("Crouton")) {
 				$format_id = "&formats[]=$format_id";
 			}
 			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time");
-            $httpcode       = wp_remote_retrieve_response_code( $results );
-            $response_message = wp_remote_retrieve_response_message( $results );
-   
-            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-                echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
-                return 0;
-            }
-
-            $result = json_decode(wp_remote_retrieve_body($results), true);
-            if (count($result) == 0 || $result == null) {
-                echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
-                return 0;
-            }
-            return $result;
+			$httpcode = wp_remote_retrieve_response_code( $results );
+			$response_message = wp_remote_retrieve_response_message( $results );
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
+				return 0;
+			}
+			$result = json_decode(wp_remote_retrieve_body($results), true);
+			if (count($result) == 0 || $result == null) {
+				echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
+				return 0;
+			}
+			return $result;
 		}  
 		function getday($day) {
 			if ($day == 1) {
@@ -173,28 +171,27 @@ if (!class_exists("Crouton")) {
 		}
 		function getTheFormats($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats");
-            $format = json_decode(wp_remote_retrieve_body($formats), true);
+			$format = json_decode(wp_remote_retrieve_body($formats), true);
 			return $format;
 		}
 
 		function testRootServer($root_server) {
-            $args = array(
+			$args = array(
 				'timeout' => '10',
 				'headers' => array(
 					'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
 				)
 			);
-            $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
-            $httpcode       = wp_remote_retrieve_response_code( $results );
-            $response_message = wp_remote_retrieve_response_message( $results );
-   
-            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-                //echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
-                return false;
-            };
-            $results = simplexml_load_string(wp_remote_retrieve_body($results));
-            $results = json_encode($results);
-			$results = json_decode($results,TRUE);
+			$results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
+			$httpcode = wp_remote_retrieve_response_code( $results );
+			$response_message = wp_remote_retrieve_response_message( $results );
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+				//echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
+				return false;
+			};
+			$results = simplexml_load_string(wp_remote_retrieve_body($results));
+			$results = json_encode($results);
+			$results = json_decode($results,true);
 			$results = $results["serverVersion"]["readableString"];
 			return $results;
 		}
@@ -238,17 +235,16 @@ if (!class_exists("Crouton")) {
 			}
 			$root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
 			$root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
-			$service_body			= ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
-			$service_body_parent	= ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
+			$service_body           = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
+			$service_body_parent    = ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
 			$has_tabs               = ($has_meetings == '0' ? '0' : $has_tabs);
 			// $has_tabs = ($include_weekday_button == '0' ? '1' : $has_tabs);
 			$include_city_button    = ($view_by == 'city' ? '1' : $include_city_button);
 			$include_weekday_button = ($view_by == 'weekday' ? '1' : $include_weekday_button);
 			$include_city_button    = ($has_meetings == '0' ? '0' : $include_city_button);
 			$include_weekday_button = ($has_meetings == '0' ? '0' : $include_weekday_button);
-			$format_key          	= ($format_key != '' ? strtoupper($format_key) : '');
-
-			$time_format          	= ($time_format == '' ? 'g:i a' : $time_format);
+			$format_key             = ($format_key != '' ? strtoupper($format_key) : '');
+			$time_format            = ($time_format == '' ? 'g:i a' : $time_format);
 
 			if ($root_server == '') {
 				return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
@@ -488,7 +484,7 @@ if (!class_exists("Crouton")) {
 			$output.= 'jQuery( "body" ).addClass( "bmlt-tabs");';
 			$output.= '</script>';
 			*/
-			If ($header == '1') {
+			if ($header == '1') {
 				$output .= '<div class="hide bmlt-header">';
 				if ($view_by == 'weekday') {
 					if ($include_weekday_button == '1') {
@@ -685,7 +681,7 @@ if (!class_exists("Crouton")) {
 								$tvalue = explode(',', $value['formats']);
 								foreach ($tvalue as $t_value) {
 									if ($t_value == $key_string) {
-										$good = True;
+										$good = true;
 									}
 								}
 							}
@@ -849,12 +845,12 @@ if (!class_exists("Crouton")) {
 			} else {
 				$value['location_text'] = '';
 			}
-			$isaddress = True;
+			$isaddress = true;
 			if (isset($value['location_street'])) {
 				$address .= $value['location_street'];
 			} else {
 				$value['location_street'] = '';
-				$isaddress                = false;
+				$isaddress = false;
 			}
 			if (isset($value['location_municipality'])) {
 				if ($address != '' && $value['location_municipality'] != '') {
@@ -864,7 +860,7 @@ if (!class_exists("Crouton")) {
 				}
 			} else {
 				$value['location_municipality'] = '';
-				$isaddress                      = false;
+				$isaddress = false;
 			}
 			if (isset($value['location_province'])) {
 				if ($address != '' && $value['location_province'] != '') {
@@ -874,7 +870,7 @@ if (!class_exists("Crouton")) {
 				}
 			} else {
 				$value['location_province'] = '';
-				$isaddress                  = false;
+				$isaddress = false;
 			}
 			if (isset($value['location_postal_code_1'])) {
 				if ($address != '' && $value['location_postal_code_1'] != '') {
@@ -955,7 +951,7 @@ if (!class_exists("Crouton")) {
 			$transient_key = 'bmlt_tabs_mc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
 				$results = wp_remote_get($the_query);
-				$httpcode       = wp_remote_retrieve_response_code( $results );
+				$httpcode = wp_remote_retrieve_response_code( $results );
 				$response_message = wp_remote_retrieve_response_message( $results );
 				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 					return '[connect error]';
@@ -1036,7 +1032,7 @@ if (!class_exists("Crouton")) {
 			$transient_key = 'bmlt_tabs_gc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
 				// It wasn't there, so regenerate the data and save the transient
-                $results = wp_remote_get($the_query);
+				$results = wp_remote_get($the_query);
 				$httpcode       = wp_remote_retrieve_response_code( $results );
 				$response_message = wp_remote_retrieve_response_message( $results );
 				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
@@ -1065,8 +1061,8 @@ if (!class_exists("Crouton")) {
 		function get_areas($root_server, $source) {
 			$transient_key = 'bmlt_tabs_' . md5("$root_server/client_interface/json/?switcher=GetServiceBodies");
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
-            $result = json_decode(wp_remote_retrieve_body($results), true);
+				$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
+				$result = json_decode(wp_remote_retrieve_body($results), true);
 				if (is_wp_error($results) ) {
 					echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
 					return 0;
