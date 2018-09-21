@@ -120,7 +120,7 @@ if (!class_exists("Crouton")) {
 		}
 		function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC) {
 			foreach ($array as $subarray) {
-				$keys[] = $subarray['$subkey'];
+				$keys[] = $subarray[$subkey];
 			}
 			array_multisort($keys, $sortType, $array);
 		}
@@ -693,9 +693,9 @@ if (!class_exists("Crouton")) {
 							continue;
 						}
 					}
-					elseif (!isset($value['$unique_value'])) {
+					elseif (!isset($value[$unique_value])) {
 						continue;
-					} elseif ($this_value != $value['$unique_value']) {
+					} elseif ($this_value != $value[$unique_value]) {
 						continue;
 					}
 					$duration            = explode(':', $value['duration_time']);
