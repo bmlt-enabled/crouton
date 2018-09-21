@@ -124,6 +124,15 @@ if (!class_exists("Crouton")) {
 			}
 			array_multisort($keys, $sortType, $array);
 		}
+		function getNameFromServiceBodyID($serviceBodyID) {
+			$bmlt_search_endpoint = $this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies";
+			$serviceBodies = json_decode(file_get_contents($bmlt_search_endpoint));	
+			foreach ($serviceBodies as $serviceBody) {
+				if ( $serviceBody->id == $serviceBodyID) {
+				return $serviceBody->name;
+				}
+			}	
+		}
 		function getAllMeetings($root_server, $services, $format_id) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -516,7 +525,7 @@ if (!class_exists("Crouton")) {
 					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Areas" id="e8">';
 					$output .= '<option></option>';
 					foreach ($unique_area as $area_value) {
-						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $area_value)) . ">$area_value</option>";
+						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $area_value)) . ">" . $this->getNameFromServiceBodyID($area_value) . "</option>";
 					}
 					$output .= '</select>';
 					$output .= '</div>';
