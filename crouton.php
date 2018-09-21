@@ -120,7 +120,7 @@ if (!class_exists("Crouton")) {
 		}
 		function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC) {
 			foreach ($array as $subarray) {
-				$keys[] = $subarray[$subkey];
+				$keys[] = $subarray['$subkey'];
 			}
 			array_multisort($keys, $sortType, $array);
 		}
@@ -192,7 +192,7 @@ if (!class_exists("Crouton")) {
 			$results = simplexml_load_string(wp_remote_retrieve_body($results));
 			$results = json_encode($results);
 			$results = json_decode($results,true);
-			$results = $results["serverVersion"]["readableString"];
+			$results = $results['serverVersion']['readableString'];
 			return $results;
 		}
 		function doQuit($message = '') {
@@ -438,7 +438,7 @@ if (!class_exists("Crouton")) {
 						$this_meeting .= "<td class='bmlt-column1'>".$column1."</td>";
 						$this_meeting .= "<td class='bmlt-column2'>".$location."</td>";
 						if ( $show_distance == '1' ) {
-							$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
+							$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
 						}
 						else {
 							$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
@@ -693,9 +693,9 @@ if (!class_exists("Crouton")) {
 							continue;
 						}
 					}
-					elseif (!isset($value[$unique_value])) {
+					elseif (!isset($value['$unique_value'])) {
 						continue;
-					} elseif ($this_value != $value[$unique_value]) {
+					} elseif ($this_value != $value['$unique_value']) {
 						continue;
 					}
 					$duration            = explode(':', $value['duration_time']);
@@ -722,7 +722,7 @@ if (!class_exists("Crouton")) {
 					$this_meeting = "<tr>";
 					$this_meeting .= "<td class='bmlt-column1'>$column1</td>";
 					if ( $show_distance == '1' ) {
-						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value[latitude] . "," . $value[longitude] . "</div></td>";
+						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
 					}
 					else {
 						$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
@@ -807,14 +807,7 @@ if (!class_exists("Crouton")) {
 			return $this_output;
 		}
 		function getMap($value) {
-			//$map = '<table class="bmlt_a_format table-bordered">';
-			//$map .= '<tr><td><a onclick="getDirections(' . $value[latitude] . ',' . $value[longitude] . ')" href="#">Directions</a></td></tr>';
-			//$map .= '<tr><td><a target="_blank" href="https://maps.google.com/maps/place/' . $value[latitude] . ',' . $value[longitude] . '/@' . $value[latitude] . ',' . $value[longitude] . ',1436m/data=!3m1!4b1!4m2!3m1!1s0x0:0x0">Street Map</a></td></tr>';
-			//$map .= '<tr><td><a target="_blank" href="https://maps.google.com/maps/place/' . $value[latitude] . ',' . $value[longitude] . '/@' . $value[latitude] . ',' . $value[longitude] . ',1436m/data=!3m1!1e3!4m2!3m1!1s0x0:0x0">Earth</a></td></tr>';
-			//$map .= '<tr><td>GPS: ' . $value[latitude] . ',' . $value[longitude] . '</td></tr>';
-			//$map .= '</table>';
-			//$map = "<a id='map-button' class='btn btn-primary btn-xs' title='' data-html='true' tabindex='1' placement='left' data-trigger='click' role='button' data-content='".$map."' data-toggle='popover'><span class='glyphicon glyphicon-map-marker' aria-hidden='true'></span>MAP</a>";
-			$map = "<a target='_blank' href='https://maps.google.com/maps?q=" . $value[latitude] . "," . $value[longitude] . "' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span>MAP</a>"; 
+			$map = "<a target='_blank' href='https://maps.google.com/maps?q=" . $value['latitude'] . "," . $value['longitude'] . "' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span>MAP</a>"; 
 			return $map;
 		}
 		function getMeetingFormats($value, $formats) {
