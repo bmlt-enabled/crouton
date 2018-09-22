@@ -16,6 +16,13 @@ if (!class_exists("Crouton")) {
 		var $options = array();
 		var $exclude_zip_codes = null;
 		const days_of_the_week = [1 => "Saturday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		const count_types = array(
+			['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => 'meeting_name'],
+			['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => 'id_bigint']
+		);
+		const http_retrieve_args = array('headers' => array(
+			'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
+		));
 		function __construct() {
 			$this->getOptions();		
 			if (is_admin()) {
@@ -136,7 +143,7 @@ if (!class_exists("Crouton")) {
 			array_multisort($keys, $sortType, $array);
 		}
 		function getNameFromServiceBodyID($serviceBodyID) {
-			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies");
+			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::http_retrieve_args);
 			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
 			foreach ($serviceBodies as $serviceBody) {
 				if ( $serviceBody->id == $serviceBodyID) {
@@ -148,7 +155,7 @@ if (!class_exists("Crouton")) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
 			}
-			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time");
+			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time", Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
 			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
@@ -167,7 +174,7 @@ if (!class_exists("Crouton")) {
 		}
 
 		function getTheFormats($root_server) {
-			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats");
+			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
 			$format = json_decode(wp_remote_retrieve_body($formats), true);
 			return $format;
 		}
@@ -298,7 +305,7 @@ if (!class_exists("Crouton")) {
 			}
 ?>
 			<div class="bootstrap-bmlt" id="please-wait">
-				<button class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</button>
+				<button class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>Fetching...</button>
 			</div>
 <?php
 			ob_flush();
@@ -648,10 +655,10 @@ if (!class_exists("Crouton")) {
 				$sub_title = '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
 			}
 			if ( $_GET['meeting_count'] != null ) {
-				$meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meeting_count('', null) . '</span>';
+				$meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->get_count('', null, 'meeting') . '</span>';
 			}
 			if ( $_GET['group_count'] != null ) {
-				$group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmlt_group_count('', null) . '</span>';
+				$group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->get_count('', null, 'group') . '</span>';
 			}
 			$output = $this_title . $sub_title . $meeting_count. $group_count . $output;
 			$output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
@@ -883,10 +890,23 @@ if (!class_exists("Crouton")) {
 			}
 			return $location;
 		}
-		/**
-		 * @desc BMLT Meeting Count
-		 */
+
 		function meeting_count($atts, $content = null) {
+			return $this->get_count($atts, $content, 'meeting');
+		}
+
+		function bmlt_group_count($atts, $content = null) {
+			return $this->get_count($atts, $content, 'group');
+		}
+
+		function get_count($atts, $content = null, $count_type) {
+			$count_type_obj = null;
+			foreach (Crouton::count_types as $count_type_item) {
+				if ($count_type_item['name'] == $count_type) {
+					$count_type_obj = $count_type_item;
+				}
+			}
+
 			extract(shortcode_atts(array(
 				"service_body" => '',
 				"root_server" => '',
@@ -914,89 +934,12 @@ if (!class_exists("Crouton")) {
 			if ($service_body_parent != null && $service_body != null) {
 				return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
-			$t_services = '';
 			if ($service_body != null) {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
-			}
-			elseif ($service_body_parent != null) {
-				$service_body = array_map('trim', explode(",", $service_body_parent));
-				$services .= '&recursive=1';
-				foreach ($service_body as $key) {
-					$services .= '&services[]=' . $key;
-				}
-			}
-			$the_query = $root_server . "/client_interface/json/index.php?switcher=GetSearchResults" . $services;
-			$transient_key = 'bmlt_tabs_mc_' . md5($the_query);
-			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-				$results = wp_remote_get($the_query);
-				$httpcode = wp_remote_retrieve_response_code( $results );
-				$response_message = wp_remote_retrieve_response_message( $results );
-				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-					return '[connect error]';
-				}
-				$result = json_decode(wp_remote_retrieve_body($results), true);
-				if ($exclude_zip_codes !== null) {
-					foreach ($result as $value) {
-						if ($value['location_postal_code_1']) {
-							if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
-								continue;
-							}
-						}
-						$unique_group[] = $value['id_bigint'];
-					}
-					$result = array_unique($unique_group);
-				}
-				if (intval($this->options['cache_time']) > 0) {
-					set_transient($transient_key, $result, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
-				}
-			}
-			$results = count($result) - $subtract;
-			return $results;
-		}
-		/**
-		 * @desc BMLT Group Count
-		 */
-		function bmlt_group_count($atts, $content = null) {
-			extract(shortcode_atts(array(
-				"service_body" => '',
-				"subtract" => '',
-				"root_server" => '',
-				"exclude_zip_codes" => null,
-				"service_body_parent" => ''
-			), $atts));
-			if ($atts == "") {
-				// return;
-			}
-			$root_server = ($root_server != '' ? $root_server : $this->options['root_server']);
-			$root_server = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
-			$service_body = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
-			$service_body_parent	= ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
-			if ($service_body_parent == null && $service_body == null) {
-				$area_data       = explode(',', $this->options['service_body_1']);
-				$area            = $area_data[0];
-				$service_body_id = $area_data[1];
-				$parent_body_id  = $area_data[2];
-				if ($parent_body_id == '0') {
-					$service_body_parent = $service_body_id;
-				} else {
-					$service_body = $service_body_id;
-				}
-			}
-			$services = '';
-			$subtract = intval($subtract);
-			if ($service_body_parent != null && $service_body != null) {
-				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
-			}
-			if ($service_body != null) {
-				$service_body = array_map('trim', explode(",", $service_body));
-				foreach ($service_body as $key) {
-					$services .= '&services[]=' . $key;
-				}
-			}
-			if ($service_body_parent != null) {
+			} elseif ($service_body_parent != null) {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				$services .= '&recursive=1';
 				foreach ($service_body as $key) {
@@ -1004,43 +947,44 @@ if (!class_exists("Crouton")) {
 				}
 			}
 			if ($exclude_zip_codes != null) {
-				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults,location_postal_code_1" . $services;
+				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults,location_postal_code_1" . $services;
 			} else {
-				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults" . $services;
+				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults" . $services;
 			}
-			$transient_key = 'bmlt_tabs_gc_' . md5($the_query);
+			$transient_key = $count_type_obj['cache_key_prefix'] . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-				// It wasn't there, so regenerate the data and save the transient
-				$results = wp_remote_get($the_query);
-				$httpcode       = wp_remote_retrieve_response_code( $results );
+				$results = wp_remote_get($the_query, Crouton::http_retrieve_args);
+				$httpcode = wp_remote_retrieve_response_code( $results );
 				$response_message = wp_remote_retrieve_response_message( $results );
 				if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 					return '[connect error]';
 				}
 				$result = json_decode(wp_remote_retrieve_body($results), true);
-				$unique_group = array();
+				$unique_group[] = null;
 				foreach ($result as $value) {
 					if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 						if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
 							continue;
 						}
 					}
-					$unique_group[] = $value['meeting_name'];
+					$unique_group[] = $value[$count_type_obj['field']];
 				}
 				$result = array_unique($unique_group);
 				if (intval($this->options['cache_time']) > 0) {
 					set_transient($transient_key, $result, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
 				}
 			}
-			return count($result);
+			$results = count($result) - $subtract;
+			return $results;
 		}
+
 		/**
 		 * @desc Adds the options sub-panel
 		 */
 		function get_areas($root_server, $source) {
 			$transient_key = 'bmlt_tabs_' . md5("$root_server/client_interface/json/?switcher=GetServiceBodies");
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-				$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies");
+				$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", Crouton::http_retrieve_args);
 				$result = json_decode(wp_remote_retrieve_body($results), true);
 				if (is_wp_error($results) ) {
 					echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
