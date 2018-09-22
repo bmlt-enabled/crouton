@@ -721,6 +721,7 @@ if (!class_exists("Crouton")) {
 					}
 					$this_meeting = "<tr>";
 					$this_meeting .= "<td class='bmlt-column1'>$column1</td>";
+					$this_meeting .= "<td class='bmlt-column2'>$location</td>";
 					if ( $show_distance == '1' ) {
 						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
 					}
