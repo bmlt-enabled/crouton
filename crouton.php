@@ -97,10 +97,9 @@ if (!class_exists("Crouton")) {
 		* @param $hook
 		*/
 		function enqueue_backend_files($hook) {
-			if( $hook == 'settings_page_crouton' ) {
+			if ($hook == 'settings_page_crouton') {
 				wp_enqueue_style('bmlt-tabs-admin-ui-css','https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css',false,'1.11.4', false);
-				wp_register_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'),'6.0', false);
-				wp_enqueue_script('bmlt-tabs-admin');
+				wp_enqueue_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_admin.js"), false);
 				wp_enqueue_script('common');
 				wp_enqueue_script('jquery-ui-accordion');
 			}
