@@ -14,4 +14,4 @@ Get your wordpress installation going.  Remember your admin password.  Once it's
 
 Now you can make edits to the crouton.php file and it will instantly take effect.
 
-Please make note of the .editorconfig file and adhere to it as this will minimise the amount of formatting errors.
+Please make note of the .editorconfig file and adhere to it as this will minimise the amount of formatting errors.  If you are using PHPStorm you will need to install the EditorConfig plugin.
