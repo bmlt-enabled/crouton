@@ -109,12 +109,23 @@ if (!class_exists("Crouton")) {
 		 */
 		function enqueue_frontend_files() {
 			if ( $this->has_shortcode() ) {
-				wp_enqueue_style("bmlt-tabs-select2", plugin_dir_url(__FILE__) . "css/select2.min.css", false, filemtime( plugin_dir_path(__FILE__) . "css/select2.min.css"), false);
-				wp_enqueue_style("bmlt-tabs-bootstrap", plugin_dir_url(__FILE__) . "css/bootstrap.min.css", false, filemtime( plugin_dir_path(__FILE__) . "css/bootstrap.min.css"), false);
-				wp_enqueue_style("bmlt-tabs", plugin_dir_url(__FILE__) . "css/bmlt_tabs.css", false, filemtime( plugin_dir_path(__FILE__) . "css/bmlt_tabs.css"), false);
-				wp_enqueue_script("bmlt-tabs-bootstrap", plugin_dir_url(__FILE__) . "js/bootstrap.min.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bootstrap.min.js"), true);
-				wp_enqueue_script("bmlt-tabs-select2", plugin_dir_url(__FILE__) . "js/select2.full.min.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/select2.full.min.js"), true);
-				wp_enqueue_script("bmlt-tabs", plugin_dir_url(__FILE__) . "js/bmlt_tabs.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs.js"), true);
+				$frontend_styles = array(
+					['title' => 'bmlt-tabs-select2', 'path' => 'select2.min.css'],
+					['title' => 'bmlt-tabs-bootstrap', 'path' => 'bootstrap.min.css'],
+					['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.css'],
+				);
+				foreach ($frontend_styles as $frontend_style) {
+					wp_enqueue_style($frontend_style['title'], plugin_dir_url(__FILE__) . "css/" . $frontend_style['path'], false, filemtime( plugin_dir_path(__FILE__) . "css/" . $frontend_style['path']), false);
+				}
+				$frontend_scripts = array(
+					['title' => 'bmlt-tabs-bootstrap', 'path' => 'bootstrap.min.js'],
+					['title' => 'bmlt-tabs-select2', 'path' => 'select2.full.min.js'],
+					['title' => 'tablesaw', 'path' => 'tablesaw.jquery.3.0.9.js'],
+					['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js']
+				);
+				foreach ($frontend_scripts as $frontend_script) {
+					wp_enqueue_script($frontend_script['title'], plugin_dir_url(__FILE__) . "js/" . $frontend_script['path'], array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/" . $frontend_script['path']), true);
+				}
 			}
 		}
 		function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC) {
