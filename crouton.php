@@ -375,7 +375,6 @@ if (!class_exists("Crouton")) {
 			asort($unique_sub_province);
 			asort($unique_city);
 			asort($unique_group);
-			asort($unique_area);
 			asort($unique_location);
 			asort($unique_format);
 			asort($unique_format_name_string);
@@ -525,8 +524,15 @@ if (!class_exists("Crouton")) {
 					$output .= '<div class="bmlt-dropdown-container">';
 					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Areas" id="e8">';
 					$output .= '<option></option>';
+					$area_names = array();
 					foreach ($unique_area as $area_value) {
-						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $area_value)) . ">" . $this->getNameFromServiceBodyID($area_value) . "</option>";
+						$areas = $this->getNameFromServiceBodyID($area_value);
+						array_push($area_names, $areas);
+					}
+					$area_names_ids = array_combine($unique_area, $area_names);
+					asort($area_names_ids);
+					foreach($area_names_ids as $key => $value) {
+						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $key)) . ">" . $value . "</option>";
 					}
 					$output .= '</select>';
 					$output .= '</div>';
