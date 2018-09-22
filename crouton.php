@@ -15,6 +15,7 @@ if (!class_exists("Crouton")) {
 		var $optionsName = 'bmlt_tabs_options';
 		var $options = array();
 		var $exclude_zip_codes = null;
+		const days_of_the_week = [1 => "Saturday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		function __construct() {
 			$this->getOptions();		
 			if (is_admin()) {
@@ -161,24 +162,10 @@ if (!class_exists("Crouton")) {
 			}
 			return $result;
 		}  
-		function getday($day) {
-			if ($day == 1) {
-				return "Sunday";
-			}
-			elseif ($day == 2) {
-				return "Monday";
-			} elseif ($day == 3) {
-				return "Tuesday";
-			} elseif ($day == 4) {
-				return "Wednesday";
-			} elseif ($day == 5) {
-				return "Thursday";
-			} elseif ($day == 6) {
-				return "Friday";
-			} elseif ($day == 7) {
-				return "Saturday";
-			}
+		function getDay($day) {
+			return Crouton::days_of_the_week[$day];
 		}
+
 		function getTheFormats($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats");
 			$format = json_decode(wp_remote_retrieve_body($formats), true);
@@ -596,7 +583,7 @@ if (!class_exists("Crouton")) {
 					$output .= '<div class="bmlt-page hide" id="nav-days">';
 				}
 				$output .= '
-				<ul class="nav nav-tabs">
+				<ul class="nav nav-tabs">					
 					<li><a href="#tab1" data-toggle="tab">Sunday</a></li>
 					<li><a href="#tab2" data-toggle="tab">Monday</a></li>
 					<li><a href="#tab3" data-toggle="tab">Tuesday</a></li>
