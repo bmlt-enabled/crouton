@@ -316,9 +316,6 @@ if (!class_exists("Crouton")) {
 			if ($the_meetings == 0) {
 				return $this->doQuit('');
 			}
-			if ($format_key == 'BTW') {
-				$unique_areas = $this->get_areas($root_server, 'BTW');
-			}
 			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
@@ -884,14 +881,6 @@ if (!class_exists("Crouton")) {
 			} else {
 				$value['location_info'] = '';
 			}
-			if ($format_key == 'BTW') {
-				$area = '';
-				$area = $unique_areas[$value['service_body_bigint']];
-				if ($area == '') {
-					$area = '<br/>(Florida Region)';
-				}
-				$location .= "<div class='meeting-area'>(" . $area . ")</div>";
-			}
 			return $location;
 		}
 		/**
@@ -926,25 +915,20 @@ if (!class_exists("Crouton")) {
 				return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
 			$t_services = '';
-			if ($service_body != null && $service_body != 'btw') {
+			if ($service_body != null) {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			elseif ($service_body_parent != null && $service_body != 'btw') {
+			elseif ($service_body_parent != null) {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				$services .= '&recursive=1';
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($service_body == 'btw') {
-				$the_query = $root_server . "/client_interface/json/index.php?switcher=GetSearchResults&formats[]=46";
-			} else {
-				$the_query = $root_server . "/client_interface/json/index.php?switcher=GetSearchResults&formats[]=-47" . $services;
-			}
-			// print_r($the_query);return;
+			$the_query = $root_server . "/client_interface/json/index.php?switcher=GetSearchResults" . $services;
 			$transient_key = 'bmlt_tabs_mc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
 				$results = wp_remote_get($the_query);
@@ -1006,13 +990,13 @@ if (!class_exists("Crouton")) {
 			if ($service_body_parent != null && $service_body != null) {
 				Return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
 			}
-			if ($service_body != null && $service_body != 'btw') {
+			if ($service_body != null) {
 				$service_body = array_map('trim', explode(",", $service_body));
 				foreach ($service_body as $key) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($service_body_parent != null && $service_body != 'btw') {
+			if ($service_body_parent != null) {
 				$service_body = array_map('trim', explode(",", $service_body_parent));
 				$services .= '&recursive=1';
 				foreach ($service_body as $key) {
@@ -1020,11 +1004,9 @@ if (!class_exists("Crouton")) {
 				}
 			}
 			if ($exclude_zip_codes != null) {
-				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults,location_postal_code_1&formats[]=-47" . $services;				
-			} elseif ($service_body == 'btw') {
-				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults&formats[]=46" . $services;
+				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults,location_postal_code_1" . $services;
 			} else {
-				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults&formats[]=-47" . $services;
+				$the_query = "$root_server/client_interface/json/index.php?switcher=GetSearchResults" . $services;
 			}
 			$transient_key = 'bmlt_tabs_gc_' . md5($the_query);
 			if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
