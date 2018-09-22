@@ -1,4 +1,67 @@
 jQuery(document).ready(function($) {
+	var dropdownConfiguration = [
+		{
+			placeholder: "Cities",
+			dropdownAutoWidth: true,
+			dropdownMaxWidth: '100px',
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
+		},
+		{
+			placeholder: "Groups",
+			dropdownAutoWidth: true,
+			dropdownMaxWidth: '100px',
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
+		},
+		{
+			placeholder: "Locations",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
+		},
+		{
+			placeholder: "Zips",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop-zip'
+		},
+		{
+			placeholder: "Formats",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop-format'
+		},
+		{
+			placeholder: "Counties",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
+		},
+		{
+			placeholder: "Areas",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
+		}
+	];
+	for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
+		-$("#e" + a).select2(dropdownConfiguration[a - 2]);
+	}
 	$('[data-toggle="popover"]').popover();
 	$('html').on('click', function (e) {
 		if ($(e.target).data('toggle') !== 'popover') { 
@@ -14,205 +77,44 @@ jQuery(document).ready(function($) {
 	n = n + 1;
 	$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
 	$('#tab' + n).show();
-	$("#e2").select2({
-		placeholder: "Cities",
-		dropdownAutoWidth: true,
-		dropdownMaxWidth: '100px',
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e3").select2({
-		placeholder: "Groups",
-		dropdownAutoWidth: true,
-		dropdownMaxWidth: '100px',
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e4").select2({
-		placeholder: "Locations",
-		dropdownAutoWidth: true,
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e5").select2({
-		placeholder: "Zips",
-		dropdownAutoWidth: true,
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e6").select2({
-		placeholder: "Formats",
-		dropdownAutoWidth: true,
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e7").select2({
-		placeholder: "Counties",
-		dropdownAutoWidth: true,
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e8").select2({
-		placeholder: "Areas",
-		dropdownAutoWidth: true,
-		allowClear: false,
-		width: "resolve",
-		minimumResultsForSearch: 1
-	});
-	$("#e2").select2({dropdownCssClass : 'bmlt-drop'}); 
-	$("#e3").select2({dropdownCssClass : 'bmlt-drop'}); 
-	$("#e4").select2({dropdownCssClass : 'bmlt-drop'}); 
-	$("#e5").select2({dropdownCssClass : 'bmlt-drop-zip'}); 
-	$("#e6").select2({dropdownCssClass : 'bmlt-drop-format'}); 
-	$("#e7").select2({dropdownCssClass : 'bmlt-drop'});
-	$("#e8").select2({dropdownCssClass : 'bmlt-drop'}); 
-	if(jQuery.browser.mobile)
-	{
-		$("#e2").prop("readonly",true);
+	if(jQuery.browser.mobile) {
+		$("#e2").prop("readonly", true);
 		$(".select2-search").css({"display":"none"});
 		$(".select2-search").remove();
-		$("#s2id_e2").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e3").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e4").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e5").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e6").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e7").css({"width":"99%","margin-bottom":"3px"});
-		$("#s2id_e8").css({"width":"99%","margin-bottom":"3px"});
+		for (var j = 2; j <= dropdownConfiguration.length + 1; j++) {
+			$("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+		}
 		$(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
 		$(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
 	}
-    $("#e2").on('select2:select', function(e) {
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-		if(jQuery.browser.mobile)
-		{
-			$("#e2").prop("readonly",true);
-			$(".select2-search").css({"display":"none"});
-			$(".select2-search").remove();
-		}
-        var val = $("#e2").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e3").on('select2:select', function(e) {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-        var val = $("#e3").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e4").on('select2:select', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-        var val = $("#e4").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e5").on('select2:select', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-        var val = $("#e5").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e6").on('select2:select', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-        var val = $("#e6").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e7").on('select2:select', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
-        var val = $("#e7").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
-    $("#e8").on('select2:select', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-        var val = $("#e8").val();
-        $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			$("#city").css({"background-color":"#93c3cd","color":"#000"});
-			$("#day").css({"background-color":"#93c3cd","color":"#000"});
-			showPage(val);
-			return;
-        });
-    });
+	for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
+		$("#e" + a).on('select2:select', function (e) {
+			for (var j = 2; j <= dropdownConfiguration.length + 1; j++) {
+				if (this.id !== "e" + j) {
+					if ($("#e" + j).length) {
+						$("#e" + j).select2("val", null);
+					}
+				}
+			}
+			if (jQuery.browser.mobile) {
+				$("#" + this.id).prop("readonly", true);
+				$(".select2-search").css({"display": "none"});
+				$(".select2-search").remove();
+			}
+			var val = $("#" + this.id).val();
+			$('.bmlt-page').each(function (index) {
+				$("#" + this.id).removeClass("show").addClass("hide");
+				$("#city").css({"backgroaund-color": "#93c3cd", "color": "#000"});
+				$("#day").css({"background-color": "#93c3cd", "color": "#000"});
+				showPage(val);
+				return;
+			});
+		});
+	}
     $("#day").on('click', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
+		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
+			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
+		}
 		$("#day").css({"background-color":"#DB4865","color":"#fff"});
 		$("#city").css({"background-color":"#93c3cd","color":"#000"});
         $('.bmlt-page').each(function(index) {
@@ -224,13 +126,9 @@ jQuery(document).ready(function($) {
         });
     });
     $("#city").on('click', function() {
-		if ( $( "#e2" ).length ) { $("#e2").select2("val", null); }
-		if ( $( "#e3" ).length ) { $("#e3").select2("val", null); }
-		if ( $( "#e4" ).length ) { $("#e4").select2("val", null); }
-		if ( $( "#e5" ).length ) { $("#e5").select2("val", null); }
-		if ( $( "#e6" ).length ) { $("#e6").select2("val", null); }
-		if ( $( "#e7" ).length ) { $("#e7").select2("val", null); }
-		if ( $( "#e8" ).length ) { $("#e8").select2("val", null); }
+		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
+			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
+		}
 		$("#city").css({"background-color":"#DB4865","color":"#fff"});
 		$("#day").css({"background-color":"#93c3cd","color":"#000"});
         $('.bmlt-page').each(function(index) {
