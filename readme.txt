@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 4.9.8
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -36,11 +36,14 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
-= UNRELEASED =
+= 1.1.0 =
 
-* Added sub province (county) dropdown option.
-* Added area dropdown option.
+* Added the ability to do custom queries at a default, shortcode and url level.
+* Added sub-province (county) dropdown option.
+* Added area-dropdown option.
 * Added option to show distance to meeting. This feature is available only in secure contexts (HTTPS), in some or all supporting browsers. A list of supported browsers can be found here https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition#Browser_compatibility.
+* Compatability fixes for PHP 7.2.9
+* Removed hardcodings
 
 = 1.0.1 =
 

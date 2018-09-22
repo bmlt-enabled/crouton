@@ -4,12 +4,13 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/extend/plugins/bmlt-tabbed-ui/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 1.0.1
+Version: 1.1.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
 	// die('Sorry, but you cannot access this page directly.');
 }
+ini_set('max_execution_time', 120);
 if (!class_exists("Crouton")) {
 	class Crouton {
 		var $optionsName = 'bmlt_tabs_options';
@@ -20,9 +21,12 @@ if (!class_exists("Crouton")) {
 			['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => 'meeting_name'],
 			['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => 'id_bigint']
 		);
-		const http_retrieve_args = array('headers' => array(
-			'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
-		));
+		const http_retrieve_args = array(
+			'headers' => array(
+				'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
+			),
+			'timeout' => 60
+		);
 		function __construct() {
 			$this->getOptions();		
 			if (is_admin()) {
@@ -151,11 +155,16 @@ if (!class_exists("Crouton")) {
 				}
 			}	
 		}
-		function getAllMeetings($root_server, $services, $format_id) {
+		function getAllMeetings($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
 			}
-			$results = wp_remote_get("$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time", Crouton::http_retrieve_args);
+			if ($custom_query_postfix != null) {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
+			} else {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time";
+			}
+			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
 			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
@@ -164,7 +173,7 @@ if (!class_exists("Crouton")) {
 			}
 			$result = json_decode(wp_remote_retrieve_body($results), true);
 			if (count($result) == 0 || $result == null) {
-				echo "<p style='color: #FF0000;'>No Meetings were Found: $root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time</p>";
+				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
 				return 0;
 			}
 			return $result;
@@ -172,7 +181,17 @@ if (!class_exists("Crouton")) {
 		function getDay($day) {
 			return Crouton::days_of_the_week[$day];
 		}
-
+		function getCustomQuery($custom_query) {
+			if (isset($_GET['custom_query'])) {
+				return $_GET['custom_query'];
+			} elseif (isset($this->options['custom_query'])) {
+				return$this->options['custom_query'];
+			} elseif (isset($custom_query)) {
+				return html_entity_decode($custom_query);
+			} else {
+				return null;
+			}
+		}
 		function getTheFormats($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
 			$format = json_decode(wp_remote_retrieve_body($formats), true);
@@ -232,7 +251,8 @@ if (!class_exists("Crouton")) {
 				"format_key" => '',
 				"time_format" => '',
 				"exclude_zip_codes" => null,
-				"show_distance" => '0'
+				"show_distance" => '0',
+				"custom_query" => null
 			), $atts));
 			if ( $show_distance == '1' ) {
 				wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
@@ -250,6 +270,7 @@ if (!class_exists("Crouton")) {
 			$format_key             = ($format_key != '' ? strtoupper($format_key) : '');
 			$time_format            = ($time_format == '' ? 'g:i a' : $time_format);
 
+			$custom_query_postfix = $this->getCustomQuery($custom_query);
 			if ($root_server == '') {
 				return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
 			}
@@ -294,7 +315,7 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $show_distance . $header . $format_key);
+			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $show_distance . $header . $format_key . $custom_query_postfix);
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -319,7 +340,7 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
-			$the_meetings = $this->getAllMeetings($root_server, $services, $format_id);
+			$the_meetings = $this->getAllMeetings($root_server, $services, $format_id, $custom_query_postfix);
 			if ($the_meetings == 0) {
 				return $this->doQuit('');
 			}
@@ -388,7 +409,7 @@ if (!class_exists("Crouton")) {
 					$unique_values = $unique_weekday;
 				}
 				foreach ($unique_values as $this_value) {
-					$this_meeting = $meeting_header = $meeting_tab_header = "";							
+					$this_meeting = $meeting_header = $meeting_tab_header = "";
 					foreach ($the_meetings as $value) {
 						if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 							if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
@@ -913,8 +934,10 @@ if (!class_exists("Crouton")) {
 				"root_server" => '',
 				"subtract" => '',
 				"exclude_zip_codes" => null,
-				"service_body_parent" => ''
+				"service_body_parent" => '',
+				"custom_query" => null
 			), $atts));
+			$custom_query_postfix = $this->getCustomQuery($custom_query);
 			$root_server = ($root_server != '' ? $root_server : $this->options['root_server']);
 			$root_server = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
 			$service_body = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
@@ -947,7 +970,9 @@ if (!class_exists("Crouton")) {
 					$services .= '&services[]=' . $key;
 				}
 			}
-			if ($exclude_zip_codes != null) {
+			if ($custom_query_postfix != null) {
+				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix";
+			} else if ($exclude_zip_codes != null) {
 				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults,location_postal_code_1" . $services;
 			} else {
 				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults" . $services;
@@ -1041,6 +1066,7 @@ if (!class_exists("Crouton")) {
 				$this->options['cache_time']     = $_POST['cache_time'];
 				$this->options['root_server']    = $_POST['root_server'];
 				$this->options['service_body_1'] = $_POST['service_body_1'];
+				$this->options['custom_query']   = $_POST['custom_query'];
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -1081,7 +1107,7 @@ if (!class_exists("Crouton")) {
 						<ul>
 							<li>
 								<label for="root_server">Default Root Server: </label>
-								<input id="root_server" type="text" size="40" name="root_server" value="<?php echo $this->options['root_server']; ?>" /> <?php echo $connect; ?>
+								<input id="root_server" type="text" size="50" name="root_server" value="<?php echo $this->options['root_server']; ?>" /> <?php echo $connect; ?>
 							</li>
 						</ul>
 					</div>
@@ -1114,6 +1140,16 @@ if (!class_exists("Crouton")) {
 								<div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
 								<p id="txtSelectedValues2"></p>
 							</li> 
+						</ul>
+					</div>
+					<div style="padding: 0 15px;" class="postbox">
+						<h3>Custom Query</h3>
+						<p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
+						<ul>
+							<li>
+								<label for="custom_query">Custom Query: </label>
+								<input id="custom_query" name="custom_query" size="50" value="<?php echo $this->options['custom_query']; ?>" />
+							</li>
 						</ul>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">

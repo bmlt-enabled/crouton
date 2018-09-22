@@ -23,37 +23,21 @@
 	<h3 class="help-accordian"><strong>Time Format (New)</strong></h3>
 
 	<div>
-
 		<p>With this parameter you can configure the time format.</p>
-
 		<p><strong>[bmlt_tabs time_format="G:i"]</strong></p>
-
 		<p>"G:i" = 24 Hour Time Format (14:00)</p>
-
 		<p>"g:i A" = 12 Hour Time Format (2:00 PM) (Default)</p>
-
 		<p><em>Default is 12 Hour Time Fomat</em></p>
-
 		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='https://php.net/manual/en/function.date.php'>PHP Date</a> function for other ways to configure the time.
-
 	</div>
-
 	<h3 class="help-accordian"><strong>crouton Shortcode Usage</strong></h3>
-
 	<div>
-
 		<p>Insert the following shortcodes into a page.</p>
-
 		<p><strong>[bmlt_tabs]</strong></p>
-
 		<p><strong>[meeting_count]</strong></p>
-
 		<p><strong>[group_count]</strong></p>
-
 		<p><strong>Example: We now have [group_count] groups with [meeting_count] per week.</strong></p>
-
 		<p><em>Detailed instructions for each shortcode are provided as follows.</em></p>
-
 	</div>
 
 	<h3 class="help-accordian"><strong>Service Body Parameter</strong></h3>
@@ -168,5 +152,11 @@
 		<p>1 = display distance to meeting</p>
 		<p><em>User has to have geolocation permissions turned on.</em></p>
 	</div>
+	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
+	<div>
+		<p>With this parameter you can use a custom root server query.  This will take precedence over any other kind filtering parameters.</p>
+		<p><strong>[bmlt_tabs custom_query=""]</strong></p>
+		<p>Example: [bmlt_tabs custom_query="&meeting_key=location_sub_province&meeting_key_value=Sampson"]</p>
+		<p><em>This can be overridden using a querystring parameter as well, but use must URL encode the query.  Example: <a target="_blank" href="about:blank">http://localhost:8080/?page_id=5&custom_query=%26meeting_key%3Dlocation_sub_province%26meeting_key_value%3DSampson</a></em></p>
+	</div>
 </div>
-
