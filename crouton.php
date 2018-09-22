@@ -904,6 +904,7 @@ if (!class_exists("Crouton")) {
 			foreach (Crouton::count_types as $count_type_item) {
 				if ($count_type_item['name'] == $count_type) {
 					$count_type_obj = $count_type_item;
+					break;
 				}
 			}
 
@@ -960,7 +961,6 @@ if (!class_exists("Crouton")) {
 					return '[connect error]';
 				}
 				$result = json_decode(wp_remote_retrieve_body($results), true);
-				$unique_group[] = null;
 				foreach ($result as $value) {
 					if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 						if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
