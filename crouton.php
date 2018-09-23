@@ -254,7 +254,7 @@ if (!class_exists("Crouton")) {
 				"show_distance" => '0',
 				"custom_query" => null
 			), $atts));
-			if ( $show_distance == '1' ) {
+			if ($show_distance == '1') {
 				wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
 			}
 			$root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
@@ -458,7 +458,7 @@ if (!class_exists("Crouton")) {
 						$this_meeting .= "<tr>";
 						$this_meeting .= "<td class='bmlt-column1'>".$column1."</td>";
 						$this_meeting .= "<td class='bmlt-column2'>".$location."</td>";
-						if ( $show_distance == '1' ) {
+						if ($show_distance == '1') {
 							$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
 						}
 						else {
@@ -648,25 +648,25 @@ if (!class_exists("Crouton")) {
 				// }
 			}
 			if ($has_cities == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_city, "location_municipality", $formats, $format_key, "City");
+				$output .= $this->get_the_meetings($the_meetings, $unique_city, "location_municipality", $formats, $format_key, "City", $show_distance);
 			}
 			if ($has_groups == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_group, "meeting_name", $formats, $format_key, "Group");
+				$output .= $this->get_the_meetings($the_meetings, $unique_group, "meeting_name", $formats, $format_key, "Group", $show_distance);
 			}
 			if ($has_areas == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_area, "service_body_bigint", $formats, $format_key, "Area");
+				$output .= $this->get_the_meetings($the_meetings, $unique_area, "service_body_bigint", $formats, $format_key, "Area", $show_distance);
 			}
 			if ($has_locations == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_location, "location_text", $formats, $format_key, "Location");
+				$output .= $this->get_the_meetings($the_meetings, $unique_location, "location_text", $formats, $format_key, "Location", $show_distance);
 			}
 			if ($has_sub_province == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_sub_province, "location_sub_province", $formats, $format_key, "Counties");
+				$output .= $this->get_the_meetings($the_meetings, $unique_sub_province, "location_sub_province", $formats, $format_key, "Counties", $show_distance);
 			}
 			if ($has_zip_codes == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_zip, "location_postal_code_1", $formats, $format_key, "Zip Code");
+				$output .= $this->get_the_meetings($the_meetings, $unique_zip, "location_postal_code_1", $formats, $format_key, "Zip Code", $show_distance);
 			}
 			if ($has_formats == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_format_name_string, "name_string", $formats, $format_key, "Format");
+				$output .= $this->get_the_meetings($the_meetings, $unique_format_name_string, "name_string", $formats, $format_key, "Format", $show_distance);
 			}
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
@@ -693,7 +693,7 @@ if (!class_exists("Crouton")) {
 			}
 			return $output;
 		}
-		function get_the_meetings($result_data, $unique_data, $unique_value, $formats, $format_key, $where) {
+		function get_the_meetings($result_data, $unique_data, $unique_value, $formats, $format_key, $where, $show_distance) {
 			global $unique_areas;
 			$this_output = '';
 			foreach ($unique_data as $this_value) {
@@ -750,7 +750,7 @@ if (!class_exists("Crouton")) {
 					$this_meeting = "<tr>";
 					$this_meeting .= "<td class='bmlt-column1'>$column1</td>";
 					$this_meeting .= "<td class='bmlt-column2'>$location</td>";
-					if ( $show_distance == '1' ) {
+					if ($show_distance == '1') {
 						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
 					}
 					else {
