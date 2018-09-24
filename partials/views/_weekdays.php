@@ -27,8 +27,8 @@
 										<td class='formats_description'>{{description}}</td>
 									</tr>
 									{{/each}}
-								</table>"
-								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>{{ this.formats }}</a>
+								</table>">
+								<span class="glyphicon glyphicon-search" aria-hidden="true"></span>{{ this.formats }}
 							</a>
 							<div class="bmlt-comments">{{this.formatted_comments}}</div>
 						</td>

@@ -1,3 +1,4 @@
+var dayOfTheWeek = {1:"Sunday",2:"Monday",3:"Tuesday",4:"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"};
 jQuery(document).ready(function($) {
 	var dropdownConfiguration = [
 		{
@@ -157,6 +158,10 @@ function getUniqueValuesOfKey(array, key){
 		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
 		return carry;
 	}, []);
+}
+
+function getDay(day_id) {
+	return dayOfTheWeek[day_id];
 }
 
 // http://spin.js.org/#v2.3.2

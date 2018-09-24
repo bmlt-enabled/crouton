@@ -9,6 +9,7 @@
 				{{#each meetings}}
 				<tr>
 					<td class="bmlt-column1">
+						<div class="bmlt-day">{{this.formatted_day}}</div>
 						<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
 						<a id="bmlt-formats"
 						   class="btn btn-primary btn-xs"
@@ -28,8 +29,8 @@
 									<td class='formats_description'>{{description}}</td>
 								</tr>
 								{{/each}}
-							</table>"
-						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>{{ this.formats }}</a>
+							</table>">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>{{ this.formats }}
 						</a>
 						<div class="bmlt-comments">{{this.formatted_comments}}</div>
 					</td>
@@ -62,6 +63,7 @@
 			var meetings = [];
 			for (var m = 0; m < meetingData.length; m++) {
 				if (meetingData[m]['location_municipality'] === city) {
+					meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
 					meetingData[m]['formatted_comments'] =
 						meetingData[m]['comments'] != null
 							? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
