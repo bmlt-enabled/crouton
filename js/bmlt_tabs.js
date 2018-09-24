@@ -149,8 +149,7 @@ jQuery(document).ready(function($) {
         $("#" + thisTarget).removeClass("hide").addClass("show");
     }
 	$(".bmlt-header").removeClass("hide").addClass("show");
-    $(".bmlt-tabs").removeClass("hide").addClass("show");			
-
+    $(".bmlt-tabs").removeClass("hide").addClass("show");
 });
 
 // http://spin.js.org/#v2.3.2
