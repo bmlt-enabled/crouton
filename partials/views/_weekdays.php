@@ -42,6 +42,7 @@
 							<a target="_blank" href="https://maps.google.com/maps?q={{this.latitude}},{{this.longitude}}" id="map-button" class="btn btn-primary btn-xs">
 								<span class="glyphicon glyphicon-map-marker"></span> MAP
 							</a>
+							<div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>
 						</td>
 					</tr>
 					{{/each}}
