@@ -60,55 +60,12 @@
 		var cities = getUniqueValuesOfKey(meetingData, 'location_municipality').sort();
 		var context = [];
 		for (var city of cities) {
-			var meetings = [];
-			for (var m = 0; m < meetingData.length; m++) {
-				if (meetingData[m]['location_municipality'] === city) {
-					meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
-					meetingData[m]['formatted_comments'] =
-						meetingData[m]['comments'] != null
-							? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-							: "";
-					var duration = meetingData[m]['duration_time'].split(":");
-					meetingData[m]['start_time_formatted'] =
-						moment(meetingData[m]['start_time'], "HH:mm:ss")
-							.format("h:mm a");
-					meetingData[m]['end_time_formatted']
-						= moment(meetingData[m]['start_time'], "HH:mm:ss")
-						.add(duration[0], 'hours')
-						.add(duration[1], 'minutes')
-						.format("h:mm a");
-
-					var formats = meetingData[m]['formats'];
-					var formats_expanded = [];
-					for (var f = 0; f < formats.length; f++) {
-						for (var g = 0; g < formatsData.length; g++) {
-							if (formats[f] === formatsData[g]['key_string']) {
-								formats_expanded.push(
-									{
-										"key": formats[f],
-										"name": formatsData[g]['name_string'],
-										"description": formatsData[g]['description_string']
-									}
-								)
-							}
-						}
-					}
-					meetingData[m]['formats_expanded'] = formats_expanded;
-					var addressParts = [
-						meetingData[m]['location_street'],
-						meetingData[m]['location_municipality'].trim(),
-						meetingData[m]['location_province'].trim(),
-						meetingData[m]['location_postal_code_1'].trim()
-					];
-					meetingData[m]['formatted_address'] = addressParts.join(", ");
-					meetingData[m]['formatted_location_info'] =
-						meetingData[m]['location_info'] != null
-							? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-							: "";
-					meetings.push(meetingData[m])
-				}
-			}
-			context.push({"city": city, "meetings": meetings});
+			context.push({
+				"city": city,
+				"meetings": getMeetings(meetingData, function(item) {
+					return item['location_municipality'] === city;
+				})
+			});
 		}
 		var html = template(context);
 		jQuery("#cities").append(html);
