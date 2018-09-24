@@ -600,9 +600,14 @@ if (!class_exists("Crouton")) {
 					<li><a href="#tab7" data-toggle="tab">Saturday</a></li>
 				</ul>
 				</div>
-				' . $this->includeToString("partials/views/_weekdays.php");
+				' . $this->includeToString("partials/views/_weekdays.php")
+				. $this->includeToString("partials/views/_cities.php");
 			}
-			$output .= "<script type='text/javascript'>var meetingData=" . $meetingsJson . ";var formatsData=" . $formatsJson . ";</script>";
+			$output .= "
+			<script type='text/javascript'>
+				var meetingData=$meetingsJson;
+				var formatsData=$formatsJson;
+			</script>";
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
 				$this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';

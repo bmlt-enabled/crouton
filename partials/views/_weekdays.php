@@ -1,4 +1,4 @@
-<script id="entry-template" type="text/x-handlebars-template">
+<script id="weekdays-template" type="text/x-handlebars-template">
 <div class="tab-content">
 	{{#each this}}
 	<div id='tab{{ day }}' class='tab-pane'>
@@ -55,8 +55,9 @@
 <div class="bmlt-page" id="tabs-content"></div>
 <script type="text/javascript">
 	jQuery(function() {
-		var source   = document.getElementById("entry-template").innerHTML;
+		var source   = document.getElementById("weekdays-template").innerHTML;
 		var template = Handlebars.compile(source);
+
 		var context = [];
 		for (var day = 1; day <= 7; day++) {
 			var meetings = [];
