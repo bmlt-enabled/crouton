@@ -15,8 +15,6 @@
 <div class="bmlt-page hide" id="cities"></div>
 <script type="text/javascript">
 	jQuery(function() {
-		var source   = document.getElementById("cities-template").innerHTML;
-		var template = Handlebars.compile(source);
 		var cities = getUniqueValuesOfKey(meetingData, 'location_municipality').sort();
 		var context = [];
 		for (var city of cities) {
@@ -27,8 +25,7 @@
 				})
 			});
 		}
-		var html = template(context);
-		jQuery("#cities").append(html);
-		jQuery(".bmlt-day").removeClass("hide");
+
+		renderView("cities-template", "#cities", context);
 	});
 </script>

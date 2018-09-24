@@ -1,7 +1,7 @@
 {{#each meetings}}
 <tr>
 	<td class="bmlt-column1">
-		<div class="bmlt-day hide">{{this.formatted_day}}</div>
+		<div class="bmlt-day">{{this.formatted_day}}</div>
 		<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
 		<a id="bmlt-formats"
 		   class="btn btn-primary btn-xs"
