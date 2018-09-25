@@ -510,7 +510,7 @@ if (!class_exists("Crouton")) {
 					$output .= '<option></option>';
 					foreach ($unique_city as $city_value) {
 						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $city_value)) . ">".$city_value."</option>";
-					}				
+					}
 					$output .= '</select>';
 					$output .= '</div>';
 				}
@@ -601,7 +601,8 @@ if (!class_exists("Crouton")) {
 				</ul>
 				</div>
 				' . $this->includeToString("partials/views/_weekdays.php")
-				. $this->includeToString("partials/views/_cities.php");
+				. $this->includeToString("partials/views/_cities.php")
+				. $this->includeToString("partials/views/_byday.php");
 			}
 			$output .= "
 			<script type='text/javascript'>
