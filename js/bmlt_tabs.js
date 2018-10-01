@@ -173,12 +173,19 @@ jQuery(document).ready(function($) {
 	}
 
 	function filteredPage(id, dataType, dataValue) {
+		resetFilter();
 		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
 		$(".bmlt-data-row[data-" + dataType + "!='" + dataValue + "']").addClass("hide");
+		$(".bmlt-data-rows").each(function(index, value) {
+			if ($(value).find(".bmlt-data-row.hide").length === $(value).find(".bmlt-data-row").length) {
+				$(value).find(".meeting-header").addClass("hide");
+			}
+		})
 	}
 
 	function resetFilter() {
+		$(".meeting-header").removeClass("hide");
 		$(".bmlt-data-row").removeClass("hide");
 	}
 
