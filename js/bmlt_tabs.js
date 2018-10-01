@@ -73,11 +73,13 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		$(this).tab('show');
 	});
-    var d = new Date();
-    var n = d.getDay();
-	n = n + 1;
+
+	var d = new Date();
+	var n = d.getDay();
+	n++;
 	$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
 	$('#tab' + n).show();
+
 	if(jQuery.browser.mobile) {
 		$("#e2").prop("readonly", true);
 		$(".select2-search").css({"display":"none"});
@@ -88,6 +90,7 @@ jQuery(document).ready(function($) {
 		$(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
 		$(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
 	}
+
 	for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 		$("#e" + a).on('select2:select', function (e) {
 			for (var j = 2; j <= dropdownConfiguration.length + 1; j++) {
@@ -97,11 +100,13 @@ jQuery(document).ready(function($) {
 					}
 				}
 			}
+
 			if (jQuery.browser.mobile) {
 				$("#" + this.id).prop("readonly", true);
 				$(".select2-search").css({"display": "none"});
 				$(".select2-search").remove();
 			}
+
 			var val = $("#" + this.id).val();
 			$('.bmlt-page').each(function (index) {
 				hidePage("#" + this.id);
@@ -112,65 +117,73 @@ jQuery(document).ready(function($) {
 			});
 		});
 	}
-    $("#day").on('click', function() {
+	$("#day").on('click', function() {
+		resetFilter();
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
 		}
 		highlightButton("#day");
 		lowlightButton("#city");
-        $('.bmlt-page').each(function(index) {
+		$('.bmlt-page').each(function(index) {
 			hidePage("#" + this.id);
 			showPage("#days");
 			showPage("#nav-days");
 			showPage("#tabs-content");
 			return;
-        });
-    });
-    $("#city").on('click', function() {
+		});
+	});
+
+	$("#city").on('click', function() {
+		resetFilter();
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
 		}
 
 		highlightButton("#city");
 		lowlightButton("#day");
-        $('.bmlt-page').each(function(index) {
+		$('.bmlt-page').each(function(index) {
 			hidePage("#" + this.id);
 			showPage("#cities");
-            return;
-        });
-    });
-    $('.custom-ul').on('click', 'a', function(event) {
-        $('.bmlt-page').each(function(index) {
-        	hidePage("#" + this.id);
-			showPage("#" + event.target.id);
-            return;
-        });
-    });
+			return;
+		});
+	});
 
-    function lowlightButton(id) {
+	$('.custom-ul').on('click', 'a', function(event) {
+		$('.bmlt-page').each(function(index) {
+			hidePage("#" + this.id);
+			showPage("#" + event.target.id);
+			return;
+		});
+	});
+
+	function lowlightButton(id) {
 		$(id).css({"background-color":"#93C3CD","color":"#000"});
 	}
 
-    function highlightButton(id) {
+	function highlightButton(id) {
 		$(id).css({"background-color":"#DB4865","color":"#FFF"});
 	}
 
-    function showPage(id) {
-        $(id).removeClass("hide").addClass("show");
-    }
+	function showPage(id) {
+		$(id).removeClass("hide").addClass("show");
+	}
 
-    function hidePage(id) {
+	function hidePage(id) {
 		$(id).removeClass("show").addClass("hide");
 	}
 
-    function filteredPage(id, dataType, dataValue) {
+	function filteredPage(id, dataType, dataValue) {
 		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
 		$(".bmlt-data-row[data-" + dataType + "!='" + dataValue + "']").addClass("hide");
 	}
 
+	function resetFilter() {
+		$(".bmlt-data-row").removeClass("hide");
+	}
+
 	showPage(".bmlt-header");
-    showPage(".bmlt-tabs");
+	showPage(".bmlt-tabs");
 });
 
 function getUniqueValuesOfKey(array, key){
