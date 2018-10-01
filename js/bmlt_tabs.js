@@ -231,7 +231,7 @@ function renderView(templateElement, selector, context) {
 }
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
-	return str.toLowerCase().replace(" ", "-");
+	return str.toLowerCase().replace(/\W|_/g, "-");
 });
 
 // http://spin.js.org/#v2.3.2
