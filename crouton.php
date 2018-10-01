@@ -253,6 +253,7 @@ if (!class_exists("Crouton")) {
 			$message .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
 			return $message;
 		}
+
 		function tabbed_ui($atts, $content = null) {
 			ini_set('memory_limit', '-1');
 			global $unique_areas;
@@ -604,10 +605,17 @@ if (!class_exists("Crouton")) {
 				. $this->includeToString("partials/views/_cities.php")
 				. $this->includeToString("partials/views/_byday.php");
 			}
+
+			$config = json_encode(array([
+				"include_city_button" => $include_city_button,
+				"include_weekday_button" => $include_weekday_button
+			]));
+
 			$output .= "
 			<script type='text/javascript'>
 				var meetingData=$meetingsJson;
 				var formatsData=$formatsJson;
+				var config=$config;
 			</script>";
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
@@ -760,6 +768,7 @@ if (!class_exists("Crouton")) {
 			}
 			return $unique_areas;
 		}
+
 		function admin_menu_link() {
 			// If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
 			// reflect the page file name (i.e. - options-general.php) of the page your plugin is under!

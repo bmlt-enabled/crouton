@@ -176,7 +176,7 @@ jQuery(document).ready(function($) {
 		resetFilter();
 		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
-		$(".bmlt-data-row[data-" + dataType + "!='" + dataValue + "']").addClass("hide");
+		$(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
 		$(".bmlt-data-rows").each(function(index, value) {
 			if ($(value).find(".bmlt-data-row.hide").length === $(value).find(".bmlt-data-row").length) {
 				$(value).find(".meeting-header").addClass("hide");
@@ -223,7 +223,7 @@ function getMeetings(meetingData, filter) {
 				.add(duration[1], 'minutes')
 				.format("h:mm a");
 
-			var formats = meetingData[m]['formats'];
+			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
 			for (var f = 0; f < formats.length; f++) {
 				for (var g = 0; g < formatsData.length; g++) {
@@ -265,6 +265,14 @@ function renderView(templateElement, selector, context) {
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
 	return str.toLowerCase().replace(/\W|_/g, "-");
+});
+
+Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
+	var finalFormats = [];
+	for (var fmt of formatsExpanded) {
+		finalFormats.push(fmt['name'].toLowerCase().replace(/\W|_/g, "-"));
+	}
+	return finalFormats.join(" ");
 });
 
 // http://spin.js.org/#v2.3.2

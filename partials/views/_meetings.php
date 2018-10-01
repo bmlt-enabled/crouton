@@ -4,8 +4,7 @@
 	data-groups="{{formatDataPointer this.meeting_name}}"
 	data-locations="{{formatDataPointer this.location_text}}"
 	data-zips="{{formatDataPointer this.location_postal_code_1}}"
-	data-formats="{{formatDataPointer this.formats}}"
->
+	data-formats="{{formatDataPointerFormats this.formats_expanded}}">
 	<td class="bmlt-column1">
 		<div class="bmlt-day">{{this.formatted_day}}</div>
 		<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
