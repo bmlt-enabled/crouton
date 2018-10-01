@@ -104,10 +104,10 @@ jQuery(document).ready(function($) {
 			}
 			var val = $("#" + this.id).val();
 			$('.bmlt-page').each(function (index) {
-				$("#" + this.id).removeClass("show").addClass("hide");
-				$("#city").css({"background-color": "#93c3cd", "color": "#000"});
-				$("#day").css({"background-color": "#93c3cd", "color": "#000"});
-				filteredPage("byday", e.target.getAttribute("data-placeholder").toLowerCase(), val.replace("a-", ""));
+				hidePage("#" + this.id);
+				lowlightButton("#city");
+				lowlightButton("#day");
+				filteredPage("#byday", e.target.getAttribute("data-placeholder").toLowerCase(), val.replace("a-", ""));
 				return;
 			});
 		});
@@ -116,13 +116,13 @@ jQuery(document).ready(function($) {
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
 		}
-		$("#day").css({"background-color":"#DB4865","color":"#fff"});
-		$("#city").css({"background-color":"#93c3cd","color":"#000"});
+		highlightButton("#day");
+		lowlightButton("#city");
         $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			showPage("days");
-			showPage("nav-days");
-			showPage("tabs-content");
+			hidePage("#" + this.id);
+			showPage("#days");
+			showPage("#nav-days");
+			showPage("#tabs-content");
 			return;
         });
     });
@@ -130,34 +130,47 @@ jQuery(document).ready(function($) {
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
 		}
-		$("#city").css({"background-color":"#DB4865","color":"#fff"});
-		$("#day").css({"background-color":"#93c3cd","color":"#000"});
+
+		highlightButton("#city");
+		lowlightButton("#day");
         $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			showPage("cities");
+			hidePage("#" + this.id);
+			showPage("#cities");
             return;
         });
     });
     $('.custom-ul').on('click', 'a', function(event) {
         $('.bmlt-page').each(function(index) {
-			$("#" + this.id).removeClass("show").addClass("hide");
-			showPage(event.target.id);
+        	hidePage("#" + this.id);
+			showPage("#" + event.target.id);
             return;
         });
     });
-    // show the selected page
-    function showPage(thisTarget) {
-        $("#" + thisTarget).removeClass("hide").addClass("show");
+
+    function lowlightButton(id) {
+		$(id).css({"background-color":"#93C3CD","color":"#000"});
+	}
+
+    function highlightButton(id) {
+		$(id).css({"background-color":"#DB4865","color":"#FFF"});
+	}
+
+    function showPage(id) {
+        $(id).removeClass("hide").addClass("show");
     }
 
-    function filteredPage(thisTarget, dataType, dataValue) {
-		$("#" + thisTarget).removeClass("hide").addClass("show");
+    function hidePage(id) {
+		$(id).removeClass("show").addClass("hide");
+	}
+
+    function filteredPage(id, dataType, dataValue) {
+		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
 		$(".bmlt-data-row[data-" + dataType + "!='" + dataValue + "']").addClass("hide");
 	}
 
-	$(".bmlt-header").removeClass("hide").addClass("show");
-    $(".bmlt-tabs").removeClass("hide").addClass("show");
+	showPage(".bmlt-header");
+    showPage(".bmlt-tabs");
 });
 
 function getUniqueValuesOfKey(array, key){
