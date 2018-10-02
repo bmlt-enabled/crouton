@@ -60,6 +60,7 @@ if (!class_exists("Crouton")) {
 				'filter_content'
 			), 0);
 		}
+
 		function has_shortcode() {
 			$post_to_check = get_post(get_the_ID());
 			// check the post content for the short code
@@ -77,6 +78,7 @@ if (!class_exists("Crouton")) {
 			}
 			return false;
 		}
+
 		function is_root_server_missing() {
 			$root_server = $this->options['root_server'];
 			if ($root_server == '') {
@@ -90,26 +92,32 @@ if (!class_exists("Crouton")) {
 				"clear_admin_message"
 			));
 		}
+
 		function clear_admin_message() {
 			remove_action("admin_notices", array(
 				&$this,
 				"is_root_server_missing"
 			));
 		}
+
 		function clear_admin_message2() {
 			echo '<div id="message" class="error"><p>what</p></div>';
 		}
+
 		function Crouton() {
 			$this->__construct();
 		}
+
 		function filter_content($content) {
 			return $content;
 		}
+
 		function includeToString($file) {
 			ob_start();
 			include($file);
 			return ob_get_clean();
 		}
+
 		/**
 		* @param $hook
 		*/
@@ -121,6 +129,7 @@ if (!class_exists("Crouton")) {
 				wp_enqueue_script('jquery-ui-accordion');
 			}
 		}
+
 		/**
 		 * @desc Adds JS/CSS to the header
 		 */
@@ -147,12 +156,14 @@ if (!class_exists("Crouton")) {
 				}
 			}
 		}
+
 		function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC) {
 			foreach ($array as $subarray) {
 				$keys[] = $subarray[$subkey];
 			}
 			array_multisort($keys, $sortType, $array);
 		}
+
 		function getNameFromServiceBodyID($serviceBodyID) {
 			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::http_retrieve_args);
 			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
@@ -162,6 +173,7 @@ if (!class_exists("Crouton")) {
 				}
 			}	
 		}
+
 		function getAllMeetings($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -185,6 +197,8 @@ if (!class_exists("Crouton")) {
 			}
 			return $result;
 		}
+
+		// TODO: have this respond correctly now that this gets JSON.
 		function getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -208,9 +222,11 @@ if (!class_exists("Crouton")) {
 			}*/
 			return $result;
 		}
+
 		function getDay($day) {
 			return Crouton::days_of_the_week[$day];
 		}
+
 		function getCustomQuery($custom_query) {
 			if (isset($_GET['custom_query'])) {
 				return $_GET['custom_query'];
@@ -222,6 +238,7 @@ if (!class_exists("Crouton")) {
 				return null;
 			}
 		}
+
 		function getTheFormatsJson($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
 			return wp_remote_retrieve_body($formats);
@@ -247,6 +264,7 @@ if (!class_exists("Crouton")) {
 			$results = $results['serverVersion']['readableString'];
 			return $results;
 		}
+
 		function doQuit($message = '') {
 			ob_flush();
 			flush();
@@ -342,7 +360,28 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $show_distance . $header . $format_key . $custom_query_postfix);
+			$key_items = [
+				$root_server,
+				$services,
+				$has_tabs,
+				$has_groups,
+				$has_areas,
+				$has_cities,
+				$has_meetings,
+				$has_formats,
+				$has_locations,
+				$has_sub_province,
+				$include_city_button,
+				$include_weekday_button,
+				$view_by,
+				$dropdown_width,
+				$has_zip_codes,
+				$show_distance,
+				$header,
+				$format_key,
+				$custom_query_postfix
+			];
+			$transient_key = 'bmlt_tabs_' . md5(join("", $key_items));
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -368,11 +407,13 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
+
 			$meetingsJson = $this->getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix);
 			$the_meetings = json_decode($meetingsJson, true);
 			if ($the_meetings == 0) {
 				return $this->doQuit('');
 			}
+
 			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
@@ -490,20 +531,11 @@ if (!class_exists("Crouton")) {
 
 			if ($header == '1') {
 				$output .= '<div class="hide bmlt-header">';
-				if ($view_by == 'weekday') {
-					if ($include_weekday_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
-					}
-					if ($include_city_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
-					}
-				} else {
-					if ($include_weekday_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
-					}
-					if ($include_city_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
-					}
+				if ($include_weekday_button == '1') {
+					$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
+				}
+				if ($include_city_button == '1') {
+					$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
 				}
 				if ($has_cities == '1') {
 					$output .= '<div class="bmlt-dropdown-container">';
@@ -606,10 +638,11 @@ if (!class_exists("Crouton")) {
 				. $this->includeToString("partials/views/_byday.php");
 			}
 
-			$config = json_encode(array([
+			$config = json_encode([
 				"include_city_button" => $include_city_button,
-				"include_weekday_button" => $include_weekday_button
-			]));
+				"include_weekday_button" => $include_weekday_button,
+				"view_by" => $view_by
+			]);
 
 			$css = $this->options['custom_css'];
 

@@ -191,6 +191,8 @@ jQuery(document).ready(function($) {
 
 	showPage(".bmlt-header");
 	showPage(".bmlt-tabs");
+
+	$("#" + config['view_by']).click();
 });
 
 function getUniqueValuesOfKey(array, key){
