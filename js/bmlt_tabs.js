@@ -117,7 +117,26 @@ jQuery(document).ready(function($) {
 			});
 		});
 	}
-	$("#day").on('click', function() {
+	$("#day").on('click', function() { showView('day'); });
+	$("#city").on('click', function() { showView('city'); });
+
+	$('.custom-ul').on('click', 'a', function(event) {
+		$('.bmlt-page').each(function(index) {
+			hidePage("#" + this.id);
+			showPage("#" + event.target.id);
+			return;
+		});
+	});
+
+	function showView(viewName) {
+		if (viewName === "city") {
+			cityView();
+		} else {
+			dayView();
+		}
+	}
+
+	function dayView() {
 		resetFilter();
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
@@ -131,9 +150,9 @@ jQuery(document).ready(function($) {
 			showPage("#tabs-content");
 			return;
 		});
-	});
+	}
 
-	$("#city").on('click', function() {
+	function cityView() {
 		resetFilter();
 		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
 			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
@@ -146,15 +165,7 @@ jQuery(document).ready(function($) {
 			showPage("#cities");
 			return;
 		});
-	});
-
-	$('.custom-ul').on('click', 'a', function(event) {
-		$('.bmlt-page').each(function(index) {
-			hidePage("#" + this.id);
-			showPage("#" + event.target.id);
-			return;
-		});
-	});
+	}
 
 	function lowlightButton(id) {
 		$(id).css({"background-color":"#93C3CD","color":"#000"});
@@ -192,7 +203,7 @@ jQuery(document).ready(function($) {
 	showPage(".bmlt-header");
 	showPage(".bmlt-tabs");
 
-	$("#" + config['view_by']).click();
+	showView(config['view_by']);
 });
 
 function getUniqueValuesOfKey(array, key){
