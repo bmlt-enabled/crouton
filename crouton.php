@@ -611,12 +611,14 @@ if (!class_exists("Crouton")) {
 				"include_weekday_button" => $include_weekday_button
 			]));
 
+			$css = $this->options['custom_css'];
+
 			$output .= "
 			<script type='text/javascript'>
 				var meetingData=$meetingsJson;
 				var formatsData=$formatsJson;
 				var config=$config;
-			</script>";
+			</script><style type='text/css'>$css</style>";
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
 				$this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -798,6 +800,7 @@ if (!class_exists("Crouton")) {
 				$this->options['root_server']    = $_POST['root_server'];
 				$this->options['service_body_1'] = $_POST['service_body_1'];
 				$this->options['custom_query']   = $_POST['custom_query'];
+				$this->options['custom_css']	 = $_POST['custom_css'];
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -880,6 +883,15 @@ if (!class_exists("Crouton")) {
 							<li>
 								<label for="custom_query">Custom Query: </label>
 								<input id="custom_query" name="custom_query" size="50" value="<?php echo $this->options['custom_query']; ?>" />
+							</li>
+						</ul>
+					</div>
+					<div style="padding: 0 15px;" class="postbox">
+						<h3>Custom CSS</h3>
+						<p>Allows for custom styling of your crouton.</p>
+						<ul>
+							<li>
+								<textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo $this->options['custom_css']; ?></textarea>
 							</li>
 						</ul>
 					</div>
