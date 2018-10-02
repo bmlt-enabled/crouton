@@ -150,6 +150,7 @@ if (!class_exists("Crouton")) {
 					['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
 					['title' => 'momentjs', 'path' => 'moment.js'],
 					['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
+					['title' => 'spinjs', 'path' => 'spin.2.3.2.js']
 				);
 				foreach ($frontend_scripts as $frontend_script) {
 					wp_enqueue_script($frontend_script['title'], plugin_dir_url(__FILE__) . "js/" . $frontend_script['path'], array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/" . $frontend_script['path']), true);
@@ -198,7 +199,6 @@ if (!class_exists("Crouton")) {
 			return $result;
 		}
 
-		// TODO: have this respond correctly now that this gets JSON.
 		function getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -211,15 +211,15 @@ if (!class_exists("Crouton")) {
 			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
-			/*f ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
 				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
 				return 0;
-			}*/
+			}
 			$result = wp_remote_retrieve_body($results);
-			/*if (count($result) == 0 || $result == null) {
+			if (count($result) == 0 || $result == null) {
 				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
 				return 0;
-			}*/
+			}
 			return $result;
 		}
 
@@ -392,7 +392,7 @@ if (!class_exists("Crouton")) {
 			}
 ?>
 			<div class="bootstrap-bmlt" id="please-wait">
-				<button class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>Fetching...</button>
+				<button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button>
 			</div>
 <?php
 			ob_flush();

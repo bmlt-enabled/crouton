@@ -2,15 +2,15 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 100px;
-	height: 100px;
+	width: auto;
+	height: auto;
 	margin-top: -50px;
 /* Half the height */
 	margin-left: -50px;
 /* Half the width */
 }
 
-.glyphicon-refresh-animate {
+.glyphicon-repeat-animate {
 	-animation: spin .7s infinite linear;
 	-webkit-animation: spin2 .7s infinite linear;
 }
