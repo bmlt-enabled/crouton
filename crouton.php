@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/extend/plugins/bmlt-tabbed-ui/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 1.1.0
+Version: 2.0.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -60,6 +60,7 @@ if (!class_exists("Crouton")) {
 				'filter_content'
 			), 0);
 		}
+
 		function has_shortcode() {
 			$post_to_check = get_post(get_the_ID());
 			// check the post content for the short code
@@ -77,6 +78,7 @@ if (!class_exists("Crouton")) {
 			}
 			return false;
 		}
+
 		function is_root_server_missing() {
 			$root_server = $this->options['root_server'];
 			if ($root_server == '') {
@@ -90,21 +92,32 @@ if (!class_exists("Crouton")) {
 				"clear_admin_message"
 			));
 		}
+
 		function clear_admin_message() {
 			remove_action("admin_notices", array(
 				&$this,
 				"is_root_server_missing"
 			));
 		}
+
 		function clear_admin_message2() {
 			echo '<div id="message" class="error"><p>what</p></div>';
 		}
+
 		function Crouton() {
 			$this->__construct();
 		}
+
 		function filter_content($content) {
 			return $content;
 		}
+
+		function includeToString($file) {
+			ob_start();
+			include($file);
+			return ob_get_clean();
+		}
+
 		/**
 		* @param $hook
 		*/
@@ -116,6 +129,7 @@ if (!class_exists("Crouton")) {
 				wp_enqueue_script('jquery-ui-accordion');
 			}
 		}
+
 		/**
 		 * @desc Adds JS/CSS to the header
 		 */
@@ -133,19 +147,24 @@ if (!class_exists("Crouton")) {
 					['title' => 'bmlt-tabs-bootstrap', 'path' => 'bootstrap.min.js'],
 					['title' => 'bmlt-tabs-select2', 'path' => 'select2.full.min.js'],
 					['title' => 'tablesaw', 'path' => 'tablesaw.jquery.3.0.9.js'],
-					['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js']
+					['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
+					['title' => 'momentjs', 'path' => 'moment.js'],
+					['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
+					['title' => 'spinjs', 'path' => 'spin.2.3.2.js']
 				);
 				foreach ($frontend_scripts as $frontend_script) {
 					wp_enqueue_script($frontend_script['title'], plugin_dir_url(__FILE__) . "js/" . $frontend_script['path'], array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/" . $frontend_script['path']), true);
 				}
 			}
 		}
+
 		function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC) {
 			foreach ($array as $subarray) {
 				$keys[] = $subarray[$subkey];
 			}
 			array_multisort($keys, $sortType, $array);
 		}
+
 		function getNameFromServiceBodyID($serviceBodyID) {
 			$bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::http_retrieve_args);
 			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
@@ -155,6 +174,7 @@ if (!class_exists("Crouton")) {
 				}
 			}	
 		}
+
 		function getAllMeetings($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -177,10 +197,36 @@ if (!class_exists("Crouton")) {
 				return 0;
 			}
 			return $result;
-		}  
+		}
+
+		function getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix) {
+			if ( $format_id != '' ) {
+				$format_id = "&formats[]=$format_id";
+			}
+			if ($custom_query_postfix != null) {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
+			} else {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time";
+			}
+			$results = wp_remote_get($url, Crouton::http_retrieve_args);
+			$httpcode = wp_remote_retrieve_response_code( $results );
+			$response_message = wp_remote_retrieve_response_message( $results );
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
+				return 0;
+			}
+			$result = wp_remote_retrieve_body($results);
+			if (count($result) == 0 || $result == null) {
+				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
+				return 0;
+			}
+			return $result;
+		}
+
 		function getDay($day) {
 			return Crouton::days_of_the_week[$day];
 		}
+
 		function getCustomQuery($custom_query) {
 			if (isset($_GET['custom_query'])) {
 				return $_GET['custom_query'];
@@ -192,10 +238,10 @@ if (!class_exists("Crouton")) {
 				return null;
 			}
 		}
-		function getTheFormats($root_server) {
+
+		function getTheFormatsJson($root_server) {
 			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
-			$format = json_decode(wp_remote_retrieve_body($formats), true);
-			return $format;
+			return wp_remote_retrieve_body($formats);
 		}
 
 		function testRootServer($root_server) {
@@ -218,15 +264,14 @@ if (!class_exists("Crouton")) {
 			$results = $results['serverVersion']['readableString'];
 			return $results;
 		}
+
 		function doQuit($message = '') {
 			ob_flush();
 			flush();
-			$message .= '
-			<script>
-				document.getElementById("please-wait").style.display = "none";
-			</script>';
+			$message .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
 			return $message;
 		}
+
 		function tabbed_ui($atts, $content = null) {
 			ini_set('memory_limit', '-1');
 			global $unique_areas;
@@ -269,8 +314,8 @@ if (!class_exists("Crouton")) {
 			$include_weekday_button = ($has_meetings == '0' ? '0' : $include_weekday_button);
 			$format_key             = ($format_key != '' ? strtoupper($format_key) : '');
 			$time_format            = ($time_format == '' ? 'g:i a' : $time_format);
-
 			$custom_query_postfix = $this->getCustomQuery($custom_query);
+
 			if ($root_server == '') {
 				return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
 			}
@@ -315,7 +360,28 @@ if (!class_exists("Crouton")) {
 					$services .= '&recursive=1&services[]=' . $key;
 				}
 			}
-			$transient_key = 'bmlt_tabs_' . md5($root_server . $services . $has_tabs . $has_groups . $has_areas . $has_cities . $has_meetings . $has_formats . $has_locations . $has_sub_province . $include_city_button . $include_weekday_button . $view_by . $dropdown_width . $has_zip_codes . $show_distance . $header . $format_key . $custom_query_postfix);
+			$key_items = [
+				$root_server,
+				$services,
+				$has_tabs,
+				$has_groups,
+				$has_areas,
+				$has_cities,
+				$has_meetings,
+				$has_formats,
+				$has_locations,
+				$has_sub_province,
+				$include_city_button,
+				$include_weekday_button,
+				$view_by,
+				$dropdown_width,
+				$has_zip_codes,
+				$show_distance,
+				$header,
+				$format_key,
+				$custom_query_postfix
+			];
+			$transient_key = 'bmlt_tabs_' . md5(join("", $key_items));
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				//$output = get_transient('_transient_'.$transient_key);
 				$output = get_transient($transient_key);
@@ -326,12 +392,13 @@ if (!class_exists("Crouton")) {
 			}
 ?>
 			<div class="bootstrap-bmlt" id="please-wait">
-				<button class="btn btn-lg btn-warning"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>Fetching...</button>
+				<button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button>
 			</div>
 <?php
 			ob_flush();
 			flush();
-			$formats = $this->getTheFormats($root_server);
+			$formatsJson = $this->getTheFormatsJson($root_server);
+			$formats = json_decode($formatsJson, true);
 			$format_id = '';
 			if ( $format_key != '' ) {
 				foreach ($formats as $value) {
@@ -340,10 +407,13 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
-			$the_meetings = $this->getAllMeetings($root_server, $services, $format_id, $custom_query_postfix);
+
+			$meetingsJson = $this->getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix);
+			$the_meetings = json_decode($meetingsJson, true);
 			if ($the_meetings == 0) {
 				return $this->doQuit('');
 			}
+
 			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
@@ -425,46 +495,6 @@ if (!class_exists("Crouton")) {
 								continue;
 							}
 						}
-						$duration            = explode(':', $value['duration_time']);
-						$minutes             = intval($duration[0]) * 60 + intval((isset($duration[1]) ? $duration[1] : '0'));
-						$addtime             = '+ ' . $minutes . ' minutes';
-						$end_time            = date($time_format, strtotime($value['start_time'] . ' ' . $addtime));
-						$value['start_time'] = date($time_format, strtotime($value['start_time']));
-						$value['start_time'] = $value['start_time'] . " - " . $end_time;
-						$location = $this->getLocation($value, $format_key);
-						if (isset($value['comments'])) {
-							$value['comments'] = $value['comments'];
-							$value['comments'] = preg_replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>', $value['comments']);
-							$value['comments'] = "<div class='bmlt-comments'>" . $value['comments'] . "</div>";
-						} else {
-							$value['comments'] = '';
-						}
-						$map = $this->getMap($value);
-						$today = '';
-						if ($x == 0) {
-							$today = "<div class='bmlt-day'>" . $this->getDay($value['weekday_tinyint']) . "</div>";
-						}
-						$meeting_formats = $this->getMeetingFormats($value, $formats);
-						if ($x == 0) {
-							$class = 'bmlt-time';
-						} else {
-							$class = 'bmlt-time-2';
-						}
-						if ($value['formats']) {
-							$column1 = $today."<div class=".$class.">" . $value['start_time'] . "</div><a id='bmlt-formats' class='btn btn-primary btn-xs' title='' data-html='true' tabindex='0' data-trigger='focus' role='button' data-content='".$meeting_formats."' data-toggle='popover'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>" . $value['formats'] . "</a>" . $value['comments'];
-						} else {
-							$column1 = $today."<div class=".$class.">" . $value['start_time'] . "</div>" . $value['comments'];
-						}
-						$this_meeting .= "<tr>";
-						$this_meeting .= "<td class='bmlt-column1'>".$column1."</td>";
-						$this_meeting .= "<td class='bmlt-column2'>".$location."</td>";
-						if ( $show_distance == '1' ) {
-							$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
-						}
-						else {
-							$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
-						}
-						$this_meeting .= "</tr>";
 					}
 					if ( $this_meeting != "" ) {
 						$meeting_header = '<div id="bmlt-table-div">';
@@ -498,29 +528,14 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
-			$this_meeting = "";
-			/*
-			$output = '';
-			$output.= '<script type="text/javascript">';
-			$output.= 'jQuery( "body" ).addClass( "bmlt-tabs");';
-			$output.= '</script>';
-			*/
+
 			if ($header == '1') {
 				$output .= '<div class="hide bmlt-header">';
-				if ($view_by == 'weekday') {
-					if ($include_weekday_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
-					}
-					if ($include_city_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
-					}
-				} else {
-					if ($include_weekday_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
-					}
-					if ($include_city_button == '1') {
-						$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
-					}
+				if ($include_weekday_button == '1') {
+					$output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
+				}
+				if ($include_city_button == '1') {
+					$output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
 				}
 				if ($has_cities == '1') {
 					$output .= '<div class="bmlt-dropdown-container">';
@@ -528,7 +543,7 @@ if (!class_exists("Crouton")) {
 					$output .= '<option></option>';
 					foreach ($unique_city as $city_value) {
 						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $city_value)) . ">".$city_value."</option>";
-					}				
+					}
 					$output .= '</select>';
 					$output .= '</div>';
 				}
@@ -618,56 +633,25 @@ if (!class_exists("Crouton")) {
 					<li><a href="#tab7" data-toggle="tab">Saturday</a></li>
 				</ul>
 				</div>
-				<div class="bmlt-page" id="tabs-content">
-				<div class="tab-content">
-				' . $meetings_tab . '
-				</div>
-				</div>';
+				' . $this->includeToString("partials/views/_weekdays.php")
+				. $this->includeToString("partials/views/_cities.php")
+				. $this->includeToString("partials/views/_byday.php");
 			}
-			if ($has_tabs == '0' && $has_meetings == '1') {
-				// if ( $include_weekday_button == '1' ) {
-				if ($view_by == 'weekday') {
-					$output .= '<div class="bmlt-page show" id="days">';
-				} else {
-					$output .= '<div class="bmlt-page hide" id="days">';
-				}
-				$output .= $meetings_days;
-				$output .= '</div>';
-				// }
-			}
-			if ($has_meetings == '1') {
-				// if ( $include_city_button == '1' ) {
-				if ($view_by == 'weekday') {
-					$output .= '<div class="bmlt-page hide" id="cities">';
-				} else {
-					$output .= '<div class="bmlt-page show" id="cities">';
-				}
-				$output .= $meetings_cities;
-				$output .= '</div>';
-				$meetings_cities = '';
-				// }
-			}
-			if ($has_cities == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_city, "location_municipality", $formats, $format_key, "City");
-			}
-			if ($has_groups == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_group, "meeting_name", $formats, $format_key, "Group");
-			}
-			if ($has_areas == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_area, "service_body_bigint", $formats, $format_key, "Area");
-			}
-			if ($has_locations == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_location, "location_text", $formats, $format_key, "Location");
-			}
-			if ($has_sub_province == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_sub_province, "location_sub_province", $formats, $format_key, "Counties");
-			}
-			if ($has_zip_codes == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_zip, "location_postal_code_1", $formats, $format_key, "Zip Code");
-			}
-			if ($has_formats == '1') {
-				$output .= $this->get_the_meetings($the_meetings, $unique_format_name_string, "name_string", $formats, $format_key, "Format");
-			}
+
+			$config = json_encode([
+				"include_city_button" => $include_city_button,
+				"include_weekday_button" => $include_weekday_button,
+				"view_by" => $view_by
+			]);
+
+			$css = $this->options['custom_css'];
+
+			$output .= "
+			<script type='text/javascript'>
+				var meetingData=$meetingsJson;
+				var formatsData=$formatsJson;
+				var config=$config;
+			</script><style type='text/css'>$css</style>";
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
 				$this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -687,229 +671,10 @@ if (!class_exists("Crouton")) {
 			<script>
 				document.getElementById("please-wait").style.display = "none";
 			</script>';
-			//$output .= '<div id="divId" class="bmlt-tabs" title="Dialog Title"></div>';
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
 				set_transient($transient_key, $output, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
 			}
 			return $output;
-		}
-		function get_the_meetings($result_data, $unique_data, $unique_value, $formats, $format_key, $where) {
-			global $unique_areas;
-			$this_output = '';
-			foreach ($unique_data as $this_value) {
-				$this_output .= "<div class='hide bmlt-page' id='a-" . strtolower(preg_replace("/\W|_/", '-', $this_value)) . "'>";
-				$sunday_init = $monday_init = $tuesday_init = $wednesday_init = $thursday_init  = $friday_init = $saturday_init  = 0;
-				foreach ($result_data as $value) {
-					if ($unique_value == 'name_string') {
-						$good = false;
-						foreach ($formats as $value1) {
-							$key_string  = $value1['key_string'];
-							$name_string = $value1['name_string'];
-							if ($name_string == $this_value) {
-								$tvalue = explode(',', $value['formats']);
-								foreach ($tvalue as $t_value) {
-									if ($t_value == $key_string) {
-										$good = true;
-									}
-								}
-							}
-						}
-						if ($good == false) {
-							continue;
-						}
-						if ($format_key != '' && !in_array($format_key, $tvalue)) {
-							continue;
-						}
-					}
-					elseif (!isset($value[$unique_value])) {
-						continue;
-					} elseif ($this_value != $value[$unique_value]) {
-						continue;
-					}
-					$duration            = explode(':', $value['duration_time']);
-					$minutes             = intval($duration[0]) * 60 + intval((isset($duration[1]) ? $duration[1] : '0'));
-					$addtime             = '+ ' . $minutes . ' minutes';
-					$end_time            = date('g:i A', strtotime($value['start_time'] . ' ' . $addtime));
-					$value['start_time'] = date('g:i A', strtotime($value['start_time']));
-					$value['start_time'] = $value['start_time'] . " - " . $end_time;
-					$location = $this->getLocation($value, $format_key);
-					if (isset($value['comments'])) {
-						$value['comments'] = $value['comments'];
-						$value['comments'] = preg_replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>', $value['comments']);
-						$value['comments'] = "<div class='bmlt-comments'>" . $value['comments'] . "</div>";
-					} else {
-						$value['comments'] = '';
-					}
-					$map = $this->getMap($value);
-					$meeting_formats = $this->getMeetingFormats($value, $formats);
-					if ($value['formats']) {
-						$column1 = "<div class='bmlt-time-2'>" . $value['start_time'] . "</div><a id='bmlt-formats' class='btn btn-primary btn-xs' title='' data-html='true' tabindex='0' data-trigger='focus' role='button' data-content='".$meeting_formats."' data-toggle='popover'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>" . $value['formats'] . "</a>" . $value['comments'];
-					} else {
-						$column1 = "<div class='bmlt-time-2'>" . $value['start_time'] . "</div>" . $value['comments'];
-					}
-					$this_meeting = "<tr>";
-					$this_meeting .= "<td class='bmlt-column1'>$column1</td>";
-					$this_meeting .= "<td class='bmlt-column2'>$location</td>";
-					if ( $show_distance == '1' ) {
-						$this_meeting .= "<td class='bmlt-column3'>".$map."<div class='geo hide'>" . $value['latitude'] . "," . $value['longitude'] . "</div></td>";
-					}
-					else {
-						$this_meeting .= "<td class='bmlt-column3'>".$map."</td>";
-					}
-					$this_meeting .= "</tr>";
-					
-					if ($value['weekday_tinyint'] == 1) {
-						if ($sunday_init == 0) {
-							$sunday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$sunday_data .= "<tr class='meeting-header'><td colspan='3'>SUNDAY</td></tr>";
-							$sunday_init = 1;
-						}
-						$sunday_data .= $this_meeting;
-					}
-					elseif ($value['weekday_tinyint'] == 2) {
-						if ($monday_init == 0) {
-							$monday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$monday_data .= "<tr class='meeting-header'><td colspan='3'>MONDAY</td></tr>";
-							$monday_init = 1;
-						}
-						$monday_data .= $this_meeting;
-					} elseif ($value['weekday_tinyint'] == 3) {
-						if ($tuesday_init == 0) {
-							$tuesday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$tuesday_data .= "<tr class='meeting-header'><td colspan='3'>TUESDAY</td></tr>";
-							$tuesday_init = 1;
-						}
-						$tuesday_data .= $this_meeting;
-					} elseif ($value['weekday_tinyint'] == 4) {
-						if ($wednesday_init == 0) {
-							$wednesday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$wednesday_data .= "<tr class='meeting-header'><td colspan='3'>WEDNESDAY</td></tr>";
-							$wednesday_init = 1;
-						}
-						$wednesday_data .= $this_meeting;
-					} elseif ($value['weekday_tinyint'] == 5) {
-						if ($thursday_init == 0) {
-							$thursday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$thursday_data .= "<tr class='meeting-header'><td colspan='3'>THURSDAY</td></tr>";
-							$thursday_init = 1;
-						}
-						$thursday_data .= $this_meeting;
-					} elseif ($value['weekday_tinyint'] == 6) {
-						if ($friday_init == 0) {
-							$friday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$friday_data .= "<tr class='meeting-header'><td colspan='3'>FRIDAY</td></tr>";
-							$friday_init = 1;
-						}
-						$friday_data .= $this_meeting;
-					} elseif ($value['weekday_tinyint'] == 7) {
-						if ($saturday_init == 0) {
-							$saturday_data = "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-							$saturday_data .= "<tr class='meeting-header'><td colspan='3'>SATURDAY</td></tr>";
-							$saturday_init = 1;
-						}
-						$saturday_data .= $this_meeting;
-					}
-				}
-				if ($sunday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$sunday_data</table></div>";
-				}
-				if ($monday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$monday_data</table></div>";
-				}
-				if ($tuesday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$tuesday_data</table></div>";
-				}
-				if ($wednesday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$wednesday_data</table></div>";
-				}
-				if ($thursday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$thursday_data</table></div>";
-				}
-				if ($friday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$friday_data</table></div>";
-				}
-				if ($saturday_init == 1) {
-					$this_output .= "<div id='bmlt-table-dropdown-div'>$saturday_data</table></div>";
-				}
-				$this_output .= '</div>';
-			}
-			return $this_output;
-		}
-		function getMap($value) {
-			$map = "<a target='_blank' href='https://maps.google.com/maps?q=" . $value['latitude'] . "," . $value['longitude'] . "' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span>MAP</a>"; 
-			return $map;
-		}
-		function getMeetingFormats($value, $formats) {
-			$meeting_formats = '<table class="bmlt_a_format table-bordered">';
-			$tvalue          = explode(',', $value['formats']);
-			foreach ($tvalue as $t_value) {
-				foreach ($formats as $fkey => $fvalue) {
-					$key_string  = $fvalue['key_string'];
-					$name_string = $fvalue['name_string'];
-					if ($t_value == $key_string) {
-						$meeting_formats .= '<tr><td class="formats_key">' . $t_value . '</td><td class="formats_name">' . htmlentities($fvalue['name_string'], ENT_QUOTES) . '</td><td class="formats_description">' . htmlentities($fvalue['description_string'], ENT_QUOTES) . '</td></tr>';
-					}
-				}
-			}
-			$meeting_formats .= '</table>';
-			return $meeting_formats;
-		}
-		function getLocation($value, $format_key) {
-			global $unique_areas;
-			$location = $address = '';
-			if (isset($value['meeting_name'])) {
-				$location .= "<div class='meeting-name'>" . $value['meeting_name'] . "</div>";
-			} else {
-				$value['meeting_name'] = '';
-			}
-			if (isset($value['location_text']) && $value['location_text'] != '') {
-				$location .= "<div class='location-text'>" . $value['location_text'] . '</div>';
-			} else {
-				$value['location_text'] = '';
-			}
-			$isaddress = true;
-			if (isset($value['location_street'])) {
-				$address .= $value['location_street'];
-			} else {
-				$value['location_street'] = '';
-				$isaddress = false;
-			}
-			if (isset($value['location_municipality'])) {
-				if ($address != '' && $value['location_municipality'] != '') {
-					$address .= ', ' . $value['location_municipality'];
-				} else {
-					$address .= $value['location_municipality'];
-				}
-			} else {
-				$value['location_municipality'] = '';
-				$isaddress = false;
-			}
-			if (isset($value['location_province'])) {
-				if ($address != '' && $value['location_province'] != '') {
-					$address .= ', ' . $value['location_province'];
-				} else {
-					$address .= $value['location_province'];
-				}
-			} else {
-				$value['location_province'] = '';
-				$isaddress = false;
-			}
-			if (isset($value['location_postal_code_1'])) {
-				if ($address != '' && $value['location_postal_code_1'] != '') {
-					$address .= ', ' . $value['location_postal_code_1'];
-				} else {
-					$address .= $value['location_postal_code_1'];
-				}
-			} else {
-				$value['location_postal_code_1'] = '';
-			}
-			$location .= "<div class='meeting-address'>" . $address . '</div>';
-			if (isset($value['location_info'])) {
-				$location .= "<div class='location-information'>" . preg_replace('/(https?):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a href="$1://$2" target="_blank">$1://$2</a>', $value['location_info']) . '</i/></div>';
-			} else {
-				$value['location_info'] = '';
-			}
-			return $location;
 		}
 
 		function meeting_count($atts, $content = null) {
@@ -1038,6 +803,7 @@ if (!class_exists("Crouton")) {
 			}
 			return $unique_areas;
 		}
+
 		function admin_menu_link() {
 			// If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
 			// reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
@@ -1067,6 +833,7 @@ if (!class_exists("Crouton")) {
 				$this->options['root_server']    = $_POST['root_server'];
 				$this->options['service_body_1'] = $_POST['service_body_1'];
 				$this->options['custom_query']   = $_POST['custom_query'];
+				$this->options['custom_css']	 = $_POST['custom_css'];
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -1149,6 +916,15 @@ if (!class_exists("Crouton")) {
 							<li>
 								<label for="custom_query">Custom Query: </label>
 								<input id="custom_query" name="custom_query" size="50" value="<?php echo $this->options['custom_query']; ?>" />
+							</li>
+						</ul>
+					</div>
+					<div style="padding: 0 15px;" class="postbox">
+						<h3>Custom CSS</h3>
+						<p>Allows for custom styling of your crouton.</p>
+						<ul>
+							<li>
+								<textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo $this->options['custom_css']; ?></textarea>
 							</li>
 						</ul>
 					</div>
