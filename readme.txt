@@ -39,8 +39,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 = 2.0.0 =
 
 * Major rewrite to render the plugin on the client side.
+* Time formatting has been reimplemented using moment.js (this is a breaking change, use these format codes http://momentjs.com/docs/#/displaying/, "HH:mm" for 24hr formatting)
 * Added the ability to do custom queries at a default, shortcode and url level.
-* ADded the ability to set and save custom CSS from the admininstration section.
+* Added the ability to set and save custom CSS from the admininstration section.
 * Added sub-province (county) dropdown option.
 * Added area-dropdown option.
 * Added option to show distance to meeting. This feature is available only in secure contexts (HTTPS), in some or all supporting browsers. A list of supported browsers can be found here https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/getCurrentPosition#Browser_compatibility.
