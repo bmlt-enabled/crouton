@@ -152,7 +152,6 @@ jQuery(document).ready(function($) {
 			hidePage("#" + this.id);
 			showPage("#byday");
 			showPage("#nav-days");
-			showPage("#tabs-content");
 			return;
 		});
 	}

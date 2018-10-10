@@ -175,30 +175,6 @@ if (!class_exists("Crouton")) {
 			}	
 		}
 
-		function getAllMeetings($root_server, $services, $format_id, $custom_query_postfix) {
-			if ( $format_id != '' ) {
-				$format_id = "&formats[]=$format_id";
-			}
-			if ($custom_query_postfix != null) {
-				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
-			} else {
-				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time";
-			}
-			$results = wp_remote_get($url, Crouton::http_retrieve_args);
-			$httpcode = wp_remote_retrieve_response_code( $results );
-			$response_message = wp_remote_retrieve_response_message( $results );
-			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
-				return 0;
-			}
-			$result = json_decode(wp_remote_retrieve_body($results), true);
-			if (count($result) == 0 || $result == null) {
-				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
-				return 0;
-			}
-			return $result;
-		}
-
 		function getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix) {
 			if ( $format_id != '' ) {
 				$format_id = "&formats[]=$format_id";
@@ -216,10 +192,10 @@ if (!class_exists("Crouton")) {
 				return 0;
 			}
 			$result = wp_remote_retrieve_body($results);
-			/*if ($result == null || count($result) == 0) {
+			if ($result == null || count(json_decode($result)) == 0) {
 				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
 				return 0;
-			}*/
+			}
 			return $result;
 		}
 
