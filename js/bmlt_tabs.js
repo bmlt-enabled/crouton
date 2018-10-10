@@ -258,6 +258,7 @@ function getMeetings(meetingData, filter) {
 				meetingData[m]['location_province'].trim(),
 				meetingData[m]['location_postal_code_1'].trim()
 			];
+			addressParts.clean();
 			meetingData[m]['formatted_address'] = addressParts.join(", ");
 			meetingData[m]['formatted_location_info'] =
 				meetingData[m]['location_info'] != null
@@ -287,4 +288,14 @@ Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) 
 	}
 	return finalFormats.join(" ");
 });
+
+Array.prototype.clean = function() {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] == "") {
+			this.splice(i, 1);
+			i--;
+		}
+	}
+	return this;
+};
 
