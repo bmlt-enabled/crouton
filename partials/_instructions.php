@@ -20,15 +20,15 @@
 		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body_parent=1&this_title=Florida%20Region%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body_parent</span>=1&<span style="color:red;">this_title</span>=Florida%20Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 		<p><em>Title, meeting and group count have unique CSS classes that can be used for custom styling.</em></p>
 	</div>
-	<h3 class="help-accordian"><strong>Time Format (New)</strong></h3>
+	<h3 class="help-accordian"><strong>Time Format</strong></h3>
 
 	<div>
 		<p>With this parameter you can configure the time format.</p>
-		<p><strong>[bmlt_tabs time_format="G:i"]</strong></p>
-		<p>"G:i" = 24 Hour Time Format (14:00)</p>
-		<p>"g:i A" = 12 Hour Time Format (2:00 PM) (Default)</p>
+		<p><strong>[bmlt_tabs time_format="HH:mm"]</strong></p>
+		<p>"HH:mm" = 24 Hour Time Format (14:00)</p>
+		<p>"h:mm a" = 12 Hour Time Format (2:00 PM) (Default)</p>
 		<p><em>Default is 12 Hour Time Fomat</em></p>
-		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='https://php.net/manual/en/function.date.php'>PHP Date</a> function for other ways to configure the time.
+		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='http://momentjs.com/docs/#/displaying/'>Moment.JS Date</a> function for other ways to configure the time.
 	</div>
 	<h3 class="help-accordian"><strong>crouton Shortcode Usage</strong></h3>
 	<div>

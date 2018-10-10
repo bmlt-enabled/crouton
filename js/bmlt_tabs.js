@@ -229,12 +229,12 @@ function getMeetings(meetingData, filter) {
 			var duration = meetingData[m]['duration_time'].split(":");
 			meetingData[m]['start_time_formatted'] =
 				moment(meetingData[m]['start_time'], "HH:mm:ss")
-					.format("h:mm a");
+					.format(config['time_format']);
 			meetingData[m]['end_time_formatted']
 				= moment(meetingData[m]['start_time'], "HH:mm:ss")
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
-				.format("h:mm a");
+				.format(config['time_format']);
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];

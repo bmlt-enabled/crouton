@@ -313,7 +313,7 @@ if (!class_exists("Crouton")) {
 			$include_city_button    = ($has_meetings == '0' ? '0' : $include_city_button);
 			$include_weekday_button = ($has_meetings == '0' ? '0' : $include_weekday_button);
 			$format_key             = ($format_key != '' ? strtoupper($format_key) : '');
-			$time_format            = ($time_format == '' ? 'g:i a' : $time_format);
+			$time_format            = ($time_format == '' ? 'h:mm a' : $time_format);
 			$custom_query_postfix = $this->getCustomQuery($custom_query);
 
 			if ($root_server == '') {
@@ -641,7 +641,8 @@ if (!class_exists("Crouton")) {
 				"include_city_button" => $include_city_button,
 				"include_weekday_button" => $include_weekday_button,
 				"view_by" => $view_by,
-				"has_tabs" => $has_tabs
+				"has_tabs" => $has_tabs,
+				"time_format" => $time_format
 			]);
 
 			$css = $this->options['custom_css'];
