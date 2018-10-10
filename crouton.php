@@ -216,10 +216,10 @@ if (!class_exists("Crouton")) {
 				return 0;
 			}
 			$result = wp_remote_retrieve_body($results);
-			if (count($result) == 0 || $result == null) {
+			/*if ($result == null || count($result) == 0) {
 				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
 				return 0;
-			}
+			}*/
 			return $result;
 		}
 
@@ -632,16 +632,16 @@ if (!class_exists("Crouton")) {
 					<li><a href="#tab6" data-toggle="tab">Friday</a></li>
 					<li><a href="#tab7" data-toggle="tab">Saturday</a></li>
 				</ul>
-				</div>
-				' . $this->includeToString("partials/views/_weekdays.php")
-				. $this->includeToString("partials/views/_cities.php")
-				. $this->includeToString("partials/views/_byday.php");
+				</div>';
 			}
+
+			$output .= $this->includeToString("partials/views/_weekdays.php") . $this->includeToString("partials/views/_cities.php") . $this->includeToString("partials/views/_byday.php");
 
 			$config = json_encode([
 				"include_city_button" => $include_city_button,
 				"include_weekday_button" => $include_weekday_button,
-				"view_by" => $view_by
+				"view_by" => $view_by,
+				"has_tabs" => $has_tabs
 			]);
 
 			$css = $this->options['custom_css'];
