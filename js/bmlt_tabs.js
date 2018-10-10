@@ -61,7 +61,7 @@ jQuery(document).ready(function($) {
 		}
 	];
 	for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
-		-$("#e" + a).select2(dropdownConfiguration[a - 2]);
+		$("#e" + a).select2(dropdownConfiguration[a - 2]);
 	}
 	$('[data-toggle="popover"]').popover();
 	$('html').on('click', function (e) {
@@ -69,16 +69,18 @@ jQuery(document).ready(function($) {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
-	$('.nav-tabs a').on('click', function (e) {
-		e.preventDefault();
-		$(this).tab('show');
-	});
+	if (config['has_tabs'] !== "0") {
+		$('.nav-tabs a').on('click', function (e) {
+			e.preventDefault();
+			$(this).tab('show');
+		});
 
-	var d = new Date();
-	var n = d.getDay();
-	n++;
-	$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-	$('#tab' + n).show();
+		var d = new Date();
+		var n = d.getDay();
+		n++;
+		$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+		$('#tab' + n).show();
+	}
 
 	if(jQuery.browser.mobile) {
 		$("#e2").prop("readonly", true);
@@ -117,7 +119,8 @@ jQuery(document).ready(function($) {
 			});
 		});
 	}
-	$("#day").on('click', function() { showView('day'); });
+
+	$("#day").on('click', function() { showView(config['view_by'] === 'byday' ? 'byday' : 'day'); });
 	$("#city").on('click', function() { showView('city'); });
 
 	$('.custom-ul').on('click', 'a', function(event) {
@@ -131,9 +134,27 @@ jQuery(document).ready(function($) {
 	function showView(viewName) {
 		if (viewName === "city") {
 			cityView();
+		} else if (viewName === "byday") {
+			byDayView();
 		} else {
 			dayView();
 		}
+	}
+
+	function byDayView() {
+		resetFilter();
+		for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
+			if ( $("#e" + a).length ) { $("#e" + a).select2("val", null); }
+		}
+		highlightButton("#day");
+		lowlightButton("#city");
+		$('.bmlt-page').each(function(index) {
+			hidePage("#" + this.id);
+			showPage("#byday");
+			showPage("#nav-days");
+			showPage("#tabs-content");
+			return;
+		});
 	}
 
 	function dayView() {
@@ -202,7 +223,6 @@ jQuery(document).ready(function($) {
 
 	showPage(".bmlt-header");
 	showPage(".bmlt-tabs");
-
 	showView(config['view_by']);
 });
 
@@ -291,7 +311,7 @@ Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) 
 
 Array.prototype.clean = function() {
 	for (var i = 0; i < this.length; i++) {
-		if (this[i] == "") {
+		if (this[i] === "") {
 			this.splice(i, 1);
 			i--;
 		}

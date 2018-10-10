@@ -314,14 +314,15 @@ if (!class_exists("Crouton")) {
 			$include_weekday_button = ($has_meetings == '0' ? '0' : $include_weekday_button);
 			$format_key             = ($format_key != '' ? strtoupper($format_key) : '');
 			$time_format            = ($time_format == '' ? 'h:mm a' : $time_format);
-			$custom_query_postfix = $this->getCustomQuery($custom_query);
+			$custom_query_postfix   = $this->getCustomQuery($custom_query);
+			$view_by                = ($has_tabs == '0' ? 'byday' : $view_by);
 
 			if ($root_server == '') {
 				return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
 			}
 
 			// $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
-			if ($view_by != 'city' && $view_by != 'weekday') {
+			if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
 				return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
 			}
 			if ($include_city_button != '0' && $include_city_button != '1') {
