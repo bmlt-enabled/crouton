@@ -30,7 +30,12 @@
 					</tr>
 					{{/each}}
 				</table>">
-				<span class="glyphicon glyphicon-search" aria-hidden="true"></span>{{ this.formats }}
+				<span class="glyphicon glyphicon-search"
+					  aria-hidden="true"
+					  data-toggle="popover"
+					  data-trigger="focus"
+					  data-html="true"
+					  role="button"></span>{{ this.formats }}
 			</a>
 		{{/if}}
 		<div class="bmlt-comments">{{this.formatted_comments}}</div>
