@@ -238,6 +238,7 @@ function getDay(day_id) {
 
 function getMeetings(meetingData, filter) {
 	var meetings = [];
+	meetingData.exclude(config['exclude_zip_codes'], "location_postal_code_1");
 	for (var m = 0; m < meetingData.length; m++) {
 		if (filter(meetingData[m])) {
 			meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
@@ -318,3 +319,14 @@ Array.prototype.clean = function() {
 	return this;
 };
 
+Array.prototype.exclude = function(csv, mappedField) {
+	var excludedValues = csv.split(",");
+	for (var i = 0; i < this.length; i++) {
+		for (var excludedValue of excludedValues) {
+			if (excludedValue == this[i][mappedField]) {
+				this.splice(i, 1);
+				i--;
+			}
+		}
+	}
+};

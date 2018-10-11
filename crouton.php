@@ -620,7 +620,8 @@ if (!class_exists("Crouton")) {
 				"include_weekday_button" => $include_weekday_button,
 				"view_by" => $view_by,
 				"has_tabs" => $has_tabs,
-				"time_format" => $time_format
+				"time_format" => $time_format,
+				"exclude_zip_codes" => $exclude_zip_codes
 			]);
 
 			$css = $this->options['custom_css'];
