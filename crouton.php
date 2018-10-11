@@ -255,7 +255,7 @@ if (!class_exists("Crouton")) {
 				"has_formats" => '1',
 				"has_locations" => '1',
 				"has_sub_province" => '0',
-				"has_states" => '1',
+				"has_states" => '0',
 				"include_city_button" => '1',
 				"include_weekday_button" => '1',
 				"view_by" => 'weekday',
