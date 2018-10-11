@@ -264,6 +264,7 @@ if (!class_exists("Crouton")) {
 				"has_formats" => '1',
 				"has_locations" => '1',
 				"has_sub_province" => '0',
+				"has_states" => '1',
 				"include_city_button" => '1',
 				"include_weekday_button" => '1',
 				"view_by" => 'weekday',
@@ -349,6 +350,7 @@ if (!class_exists("Crouton")) {
 				$has_formats,
 				$has_locations,
 				$has_sub_province,
+				$has_states,
 				$include_city_button,
 				$include_weekday_button,
 				$view_by,
@@ -392,7 +394,7 @@ if (!class_exists("Crouton")) {
 				return $this->doQuit('');
 			}
 
-			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_format = $unique_weekday = $unique_format_name_string = array();
+			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
 					if ( strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false ) {
@@ -429,12 +431,16 @@ if (!class_exists("Crouton")) {
 				if ($value['location_sub_province']) {
 					$unique_sub_province[] = $value['location_sub_province'];
 				}
+				if ($value['location_province']) {
+					$unique_state[] = $value['location_province'];
+				}
 			}
 			if (count($unique_group) == 0) {
 				return $this->doQuit('No Meetings Found');
 			}
 			$unique_zip                = array_unique($unique_zip);
 			$unique_sub_province       = array_unique($unique_sub_province);
+			$unique_state              = array_unique($unique_state);
 			$unique_city               = array_unique($unique_city);
 			$unique_group              = array_unique($unique_group);
 			$unique_area               = array_unique($unique_area);
@@ -443,6 +449,7 @@ if (!class_exists("Crouton")) {
 			$unique_format_name_string = array_unique($unique_format_name_string);
 			asort($unique_zip);
 			asort($unique_sub_province);
+			asort($unique_state);
 			asort($unique_city);
 			asort($unique_group);
 			asort($unique_location);
@@ -568,6 +575,16 @@ if (!class_exists("Crouton")) {
 					$output .= '<option></option>';
 					foreach ($unique_sub_province as $sub_province_value) {
 						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $sub_province_value)) . ">$sub_province_value</option>";
+					}
+					$output .= '</select>';
+					$output .= '</div>';
+				}
+				if ($has_states == '1') {
+					$output .= '<div class="bmlt-dropdown-container">';
+					$output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="States" id="e9">';
+					$output .= '<option></option>';
+					foreach ($unique_state as $state_value) {
+						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $state_value)) . ">$state_value</option>";
 					}
 					$output .= '</select>';
 					$output .= '</div>';

@@ -106,7 +106,7 @@
 	<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 	<div>
 		<p>With this parameter you can show or hide the dropdowns.</p>
-		<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_areas='0|1' has_locations='0|1' has_sub_province='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
+		<p><strong>[bmlt_tabs has_cities='0|1' has_groups='0|1' has_areas='0|1' has_locations='0|1' has_sub_province='0|1' has_states='0|1' has_zip_codes='0|1' has_formats='0|1']</strong></p>
 		<p>0 = hide dropdown<p>
 		<p>1 = show dropdown (default)<p>
 	</div>
