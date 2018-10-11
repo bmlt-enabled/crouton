@@ -182,7 +182,8 @@ if (!class_exists("Crouton")) {
 			if ($custom_query_postfix != null) {
 				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
 			} else {
-				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time";
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
+					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
 			}
 			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
@@ -713,6 +714,10 @@ if (!class_exists("Crouton")) {
 					$services .= '&services[]=' . $key;
 				}
 			}
+			if ($this->options['recurse_service_bodies'] == "1" && !strpos($services, "&recursive=1")) {
+				$services .= '&recursive=1';
+			}
+
 			if ($custom_query_postfix != null) {
 				$the_query = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix";
 			} else if ($exclude_zip_codes != null) {
@@ -811,7 +816,8 @@ if (!class_exists("Crouton")) {
 				$this->options['root_server']    = $_POST['root_server'];
 				$this->options['service_body_1'] = $_POST['service_body_1'];
 				$this->options['custom_query']   = $_POST['custom_query'];
-				$this->options['custom_css']	 = $_POST['custom_css'];
+				$this->options['custom_css']     = $_POST['custom_css'];
+				$this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -884,6 +890,9 @@ if (!class_exists("Crouton")) {
 								</select>							
 								<div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
 								<p id="txtSelectedValues2"></p>
+
+								<input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo ($this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
+								<label for="recurse_service_bodies">Recurse Service Bodies</label>
 							</li> 
 						</ul>
 					</div>

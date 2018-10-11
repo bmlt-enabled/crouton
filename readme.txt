@@ -40,6 +40,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 * Major rewrite to render the plugin on the client side.
 * Time formatting has been reimplemented using moment.js (this is a breaking change, use these format codes http://momentjs.com/docs/#/displaying/, "HH:mm" for 24hr formatting)
+* Added the ability to recurse service bodies.
 * Added the ability to do custom queries at a default, shortcode and url level.
 * Added the ability to set and save custom CSS from the admininstration section.
 * Added sub-province (county) dropdown option.
