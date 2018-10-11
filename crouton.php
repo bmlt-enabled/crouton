@@ -175,21 +175,13 @@ if (!class_exists("Crouton")) {
 			}	
 		}
 
-		function getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix) {
-			if ( $format_id != '' ) {
-				$format_id = "&formats[]=$format_id";
-			}
-			if ($custom_query_postfix != null) {
-				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
-			} else {
-				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
-					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
-			}
+		function getMeetingsJson($url) {
+
 			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
 			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $root_server</p>";
+				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $url</p>";
 				return 0;
 			}
 			$result = wp_remote_retrieve_body($results);
@@ -207,9 +199,9 @@ if (!class_exists("Crouton")) {
 		function getCustomQuery($custom_query) {
 			if (isset($_GET['custom_query'])) {
 				return $_GET['custom_query'];
-			} elseif (isset($this->options['custom_query'])) {
-				return$this->options['custom_query'];
-			} elseif (isset($custom_query)) {
+			} elseif (isset($this->options['custom_query']) && strlen($this->options['custom_query']) > 0) {
+				return $this->options['custom_query'];
+			} elseif (isset($custom_query) && $custom_query != null) {
 				return html_entity_decode($custom_query);
 			} else {
 				return null;
@@ -388,7 +380,8 @@ if (!class_exists("Crouton")) {
 				}
 			}
 
-			$meetingsJson = $this->getMeetingsJson($root_server, $services, $format_id, $custom_query_postfix);
+			$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
+			$meetingsJson = $this->getMeetingsJson($getMeetingsUrl);
 			$the_meetings = json_decode($meetingsJson, true);
 			if ($the_meetings == 0) {
 				return $this->doQuit('');
@@ -638,7 +631,8 @@ if (!class_exists("Crouton")) {
 				"view_by" => $view_by,
 				"has_tabs" => $has_tabs,
 				"time_format" => $time_format,
-				"exclude_zip_codes" => $exclude_zip_codes
+				"exclude_zip_codes" => $exclude_zip_codes,
+				"root_server_query" => $getMeetingsUrl
 			]);
 
 			$css = $this->options['custom_css'];
@@ -1036,6 +1030,27 @@ if (!class_exists("Crouton")) {
 			$this->options['root_server'] = untrailingslashit( $this->options['root_server'] );
 			update_option($this->optionsName, $this->options);
 			return;
+		}
+
+		/**
+		 * @param $root_server
+		 * @param $services
+		 * @param $format_id
+		 * @param $custom_query_postfix
+		 * @return string
+		 */
+		public function generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix)
+		{
+			if ($format_id != '') {
+				$format_id = "&formats[]=$format_id";
+			}
+			if ($custom_query_postfix != null) {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
+			} else {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
+					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
+			}
+			return $url;
 		}
 	}
 	//End Class Crouton
