@@ -320,13 +320,15 @@ Array.prototype.clean = function() {
 };
 
 Array.prototype.exclude = function(csv, mappedField) {
+	if (csv == null) return;
 	var excludedValues = csv.split(",");
 	for (var i = 0; i < this.length; i++) {
 		for (var excludedValue of excludedValues) {
-			if (excludedValue == this[i][mappedField]) {
+			if (excludedValue === this[i][mappedField]) {
 				this.splice(i, 1);
 				i--;
 			}
 		}
 	}
+	return this;
 };
