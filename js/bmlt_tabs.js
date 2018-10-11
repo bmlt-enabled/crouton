@@ -58,6 +58,14 @@ jQuery(document).ready(function($) {
 			width: "resolve",
 			minimumResultsForSearch: 1,
 			dropdownCssClass : 'bmlt-drop'
+		},
+		{
+			placeholder: "States",
+			dropdownAutoWidth: true,
+			allowClear: false,
+			width: "resolve",
+			minimumResultsForSearch: 1,
+			dropdownCssClass : 'bmlt-drop'
 		}
 	];
 	for (var a = 2; a <= dropdownConfiguration.length + 1; a++) {
