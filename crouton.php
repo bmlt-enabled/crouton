@@ -176,7 +176,6 @@ if (!class_exists("Crouton")) {
 		}
 
 		function getMeetingsJson($url) {
-
 			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
