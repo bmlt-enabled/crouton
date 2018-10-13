@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
-	if (config['has_tabs'] !== "0") {
+	if (typeof variable !== 'undefined' && config['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
 			e.preventDefault();
 			$(this).tab('show');
@@ -230,7 +230,9 @@ jQuery(document).ready(function($) {
 
 	showPage(".bmlt-header");
 	showPage(".bmlt-tabs");
-	showView(config['view_by']);
+	if (typeof variable !== 'undefined') {
+		showView(config['view_by']);
+	}
 });
 
 function getUniqueValuesOfKey(array, key){
