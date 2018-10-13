@@ -196,11 +196,13 @@ jQuery(document).ready(function($) {
 	}
 
 	function lowlightButton(id) {
-		$(id).css({"background-color":"#93C3CD","color":"#000"});
+		$(id).removeClass("buttonHighlight");
+		$(id).addClass("buttonLowlight");
 	}
 
 	function highlightButton(id) {
-		$(id).css({"background-color":"#DB4865","color":"#FFF"});
+		$(id).removeClass("buttonLowlight");
+		$(id).addClass("buttonHighlight");
 	}
 
 	function showPage(id) {

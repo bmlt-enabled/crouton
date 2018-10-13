@@ -526,3 +526,13 @@ table.tablesaw {
 		display: none !important;
 	}
 }
+
+.buttonHighlight {
+	background-color: #DB4865;
+	color: #FFF;
+}
+
+.buttonLowlight {
+	background-color: #93C3CD;
+	color: #000;
+}
