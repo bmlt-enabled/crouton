@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
-	if (typeof variable !== 'undefined' && config['has_tabs'] !== "0") {
+	if (croutonConfig['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
 			e.preventDefault();
 			$(this).tab('show');
@@ -128,7 +128,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	$("#day").on('click', function() { showView(config['view_by'] === 'byday' ? 'byday' : 'day'); });
+	$("#day").on('click', function() { showView(croutonConfig['view_by'] === 'byday' ? 'byday' : 'day'); });
 	$("#city").on('click', function() { showView('city'); });
 
 	$('.custom-ul').on('click', 'a', function(event) {
@@ -230,9 +230,7 @@ jQuery(document).ready(function($) {
 
 	showPage(".bmlt-header");
 	showPage(".bmlt-tabs");
-	if (typeof variable !== 'undefined') {
-		showView(config['view_by']);
-	}
+	showView(croutonConfig['view_by']);
 });
 
 function getUniqueValuesOfKey(array, key){
@@ -248,7 +246,7 @@ function getDay(day_id) {
 
 function getMeetings(meetingData, filter) {
 	var meetings = [];
-	meetingData.exclude(config['exclude_zip_codes'], "location_postal_code_1");
+	meetingData.exclude(croutonConfig['exclude_zip_codes'], "location_postal_code_1");
 	for (var m = 0; m < meetingData.length; m++) {
 		if (filter(meetingData[m])) {
 			meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
@@ -259,12 +257,12 @@ function getMeetings(meetingData, filter) {
 			var duration = meetingData[m]['duration_time'].split(":");
 			meetingData[m]['start_time_formatted'] =
 				moment(meetingData[m]['start_time'], "HH:mm:ss")
-					.format(config['time_format']);
+					.format(croutonConfig['time_format']);
 			meetingData[m]['end_time_formatted']
 				= moment(meetingData[m]['start_time'], "HH:mm:ss")
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
-				.format(config['time_format']);
+				.format(croutonConfig['time_format']);
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];

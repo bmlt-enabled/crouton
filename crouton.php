@@ -640,8 +640,8 @@ if (!class_exists("Crouton")) {
 			<script type='text/javascript'>
 				var meetingData=$meetingsJson;
 				var formatsData=$formatsJson;
-				var config=$config;
 			</script><style type='text/css'>$css</style>";
+			$output .= $this->getConfigJavascriptBlock($config);
 			$this_title = $sub_title = $meeting_count = $group_count= '';
 			if ( $_GET['this_title'] != null ) {
 				$this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -667,12 +667,16 @@ if (!class_exists("Crouton")) {
 			return $output;
 		}
 
+		function getConfigJavascriptBlock($config = array()) {
+			return "<script type='text/javascript'>var croutonConfig=$config;</script>";
+		}
+
 		function meeting_count($atts, $content = null) {
-			return $this->get_count($atts, $content, 'meeting');
+			return $this->get_count($atts, $content, 'meeting') . $this->getConfigJavascriptBlock();
 		}
 
 		function bmlt_group_count($atts, $content = null) {
-			return $this->get_count($atts, $content, 'group');
+			return $this->get_count($atts, $content, 'group') . $this->getConfigJavascriptBlock();
 		}
 
 		function get_count($atts, $content = null, $count_type) {
