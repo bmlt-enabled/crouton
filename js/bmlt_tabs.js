@@ -196,13 +196,11 @@ jQuery(document).ready(function($) {
 	}
 
 	function lowlightButton(id) {
-		$(id).removeClass("buttonHighlight");
-		$(id).addClass("buttonLowlight");
+		$(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	}
 
 	function highlightButton(id) {
-		$(id).removeClass("buttonLowlight");
-		$(id).addClass("buttonHighlight");
+		$(id).removeClass("buttonLowlight").addClass("buttonHighlight");
 	}
 
 	function showPage(id) {

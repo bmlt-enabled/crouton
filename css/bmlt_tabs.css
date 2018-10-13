@@ -225,6 +225,26 @@ span.bmlt_tabs_group_count {
 	position: relative;
 }
 
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
+	background-color: #DB4865;
+	color: #FFF;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
+	background-color: #93C3CD;
+	color: #000;
+}
+
+#bmlt-tabs #city.btn.btn-primary.btn-sm.buttonHighlight {
+	background-color: #DB4865;
+	color: #FFF;
+}
+
+#bmlt-tabs #city.btn.btn-primary.btn-sm.buttonLowlight {
+	background-color: #93C3CD;
+	color: #000;
+}
+
 #bmlt-tabs #day {
 	color: #FFF;
 	background-color: #DB4865;
@@ -525,14 +545,4 @@ table.tablesaw {
 	.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
 		display: none !important;
 	}
-}
-
-.buttonHighlight {
-	background-color: #DB4865;
-	color: #FFF;
-}
-
-.buttonLowlight {
-	background-color: #93C3CD;
-	color: #000;
 }
