@@ -39,6 +39,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 = 2.1.0 =
 
 * Added state-dropdown option.
+* Fixed some issues with how CSS was applied to the buttons with Javascript, instead applying classes.
 * Bug fix javascript error for when [meeting_count] or [group_count] is used alone. [#54]
 * Bug fix for custom query in shortcode which wasn't working at all [#50]
 
