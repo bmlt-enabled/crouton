@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/extend/plugins/bmlt-tabbed-ui/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.1.2
+Version: 2.1.3
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -1024,13 +1024,7 @@ if (!class_exists("Crouton")) {
 		 * Saves the admin options to the database.
 		 */
 		function save_admin_options() {
-			$path_parts = pathinfo($this->options['root_server']);
-			if ( $path_parts['extension'] ) {
-				$this->options['root_server'] = $path_parts['dirname'];
-			}
-			$parts = parse_url($this->options['root_server']);
-			$this->options['root_server'] = $parts['scheme'].'://'.$parts['host'].$parts['path'];
-			$this->options['root_server'] = untrailingslashit( $this->options['root_server'] );
+			$this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
 			update_option($this->optionsName, $this->options);
 			return;
 		}
