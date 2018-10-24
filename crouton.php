@@ -1013,12 +1013,7 @@ if (!class_exists("Crouton")) {
 				update_option($this->optionsName, $theOptions);
 			}
 			$this->options = $theOptions;
-			$path_parts = pathinfo($this->options['root_server']);
-			if ( $path_parts['extension'] ) {
-				$this->options['root_server'] = $path_parts['dirname'];
-			}
-			$parts = parse_url($this->options['root_server']);
-			$this->options['root_server'] = $parts['scheme'].'://'.$parts['host'].$parts['path'];
+			$this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
 		}
 		/**
 		 * Saves the admin options to the database.
