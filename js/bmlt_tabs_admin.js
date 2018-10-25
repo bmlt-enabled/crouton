@@ -41,4 +41,8 @@ jQuery(document).ready(function($) {
 		active: false,
 		collapsible: true
 	});
+	$(".service_body_select").chosen({
+		inherit_select_classes: true,
+		width: "40%"
+	});
 });
