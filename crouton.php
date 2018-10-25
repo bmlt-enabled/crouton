@@ -124,6 +124,8 @@ if (!class_exists("Crouton")) {
 		function enqueue_backend_files($hook) {
 			if ($hook == 'settings_page_crouton') {
 				wp_enqueue_style('bmlt-tabs-admin-ui-css',  plugins_url('css/south-street/jquery-ui.css', __FILE__), false, '1.11.4', false);
+				wp_enqueue_style("chosen", plugin_dir_url(__FILE__) . "css/chosen.min.css", false, "1.2", 'all');
+				wp_enqueue_script("chosen", plugin_dir_url(__FILE__) . "js/chosen.jquery.min.js", array('jquery'), "1.2", true);
 				wp_enqueue_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_admin.js"), false);
 				wp_enqueue_script('common');
 				wp_enqueue_script('jquery-ui-accordion');
@@ -883,7 +885,7 @@ if (!class_exists("Crouton")) {
 						<ul>
 							<li>
 								<label for="service_body_1">Default Service Body: </label>
-								<select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1">
+								<select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
 								<?php if ($this_connected) { ?>
 									<?php $unique_areas = $this->get_areas($this->options['root_server'], 'dropdown'); ?>
 									<?php asort($unique_areas); ?>
@@ -893,10 +895,11 @@ if (!class_exists("Crouton")) {
 										<?php $area_id = $area_data[1]; ?>
 										<?php $area_parent = $area_data[2]; ?>
 										<?php $area_parent_name = $area_data[3]; ?>
+										<?php $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")" ?></option>
 										<?php if ($unique_area == $this->options['service_body_1']) { ?>
-											<option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $area_name; ?></option>
+											<option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
 										<?php } else { ?>
-											<option value="<?php echo $unique_area; ?>"><?php echo $area_name; ?></option>
+											<option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
 										<?php } ?>
 									<?php } ?>
 								<?php } else { ?>

@@ -36,6 +36,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
+= UNRELEASED =
+* Add chosen for searchable dropdown service body config.
+
 = 2.1.4 =
 * Another fix for greedy url handling. [#57]
 
