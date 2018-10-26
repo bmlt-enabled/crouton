@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: crouton
-Plugin URI: https://wordpress.org/extend/plugins/bmlt-tabbed-ui/
+Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
 Version: 2.1.4
@@ -83,7 +83,7 @@ if (!class_exists("Crouton")) {
 			$root_server = $this->options['root_server'];
 			if ($root_server == '') {
 				echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for crouton.</p>';
-				$url = admin_url('options-general.php?page=bmlt-tabbed-ui.php');
+				$url = admin_url('options-general.php?page=crouton.php');
 				echo "<p><a href='$url'>BMLT_Tabs Settings</a></p>";
 				echo '</div>';
 			}
