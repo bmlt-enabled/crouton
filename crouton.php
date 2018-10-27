@@ -896,7 +896,8 @@ if (!class_exists("Crouton")) {
 										<?php $area_parent = $area_data[2]; ?>
 										<?php $area_parent_name = $area_data[3]; ?>
 										<?php $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")" ?></option>
-										<?php if ($unique_area == $this->options['service_body_1']) { ?>
+										<?php $is_data = explode(',',esc_html($this->options['service_body_1'])); ?>
+										<?php if ( $area_id == $is_data[1] ) { ?>
 											<option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
 										<?php } else { ?>
 											<option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
