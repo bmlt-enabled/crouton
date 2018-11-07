@@ -11,15 +11,15 @@ select.service_body_select {
 }
 .exactCenter { width:800px; height:800px; position: fixed; top: 50%; left: 50%; margin-top: -100px; margin-left: -100px; }
 #extra_meetings * {
-	font-family: 'Courier New', Courier, monospace !important;
+	font-family: "Open Sans",sans-serif;
 }
 
 .chosen-container-multi .chosen-choices li.search-field input[type=text] {
 	width: 100% !important;
 }
 .chosen-container-multi * {
-	font-family: 'Courier New', Courier, monospace;
+	font-family: "Open Sans",sans-serif;
 }
 .chosen-container-multi .chosen-choices li.search-field input[type=text] {
-	font-family: "Open Sans",sans-serif !important;
+	font-family: "Open Sans",sans-serif;
 }

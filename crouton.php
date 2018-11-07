@@ -16,7 +16,7 @@ if (!class_exists("Crouton")) {
 		var $optionsName = 'bmlt_tabs_options';
 		var $options = array();
 		var $exclude_zip_codes = null;
-		const days_of_the_week = [1 => "Saturday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		const days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		const count_types = array(
 			['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => 'meeting_name'],
 			['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => 'id_bigint']
@@ -125,6 +125,7 @@ if (!class_exists("Crouton")) {
 			if ($hook == 'settings_page_crouton') {
 				wp_enqueue_style('bmlt-tabs-admin-ui-css',  plugins_url('css/south-street/jquery-ui.css', __FILE__), false, '1.11.4', false);
 				wp_enqueue_style("chosen", plugin_dir_url(__FILE__) . "css/chosen.min.css", false, "1.2", 'all');
+				wp_enqueue_style("crouton-admin", plugin_dir_url(__FILE__) . "css/crouton-admin.css", false, "1.1", 'all');
 				wp_enqueue_script("chosen", plugin_dir_url(__FILE__) . "js/chosen.jquery.min.js", array('jquery'), "1.2", true);
 				wp_enqueue_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_admin.js"), false);
 				wp_enqueue_script('common');
@@ -178,6 +179,22 @@ if (!class_exists("Crouton")) {
 		}
 
 		function getMeetingsJson($url) {
+			$results = wp_remote_get($url, Crouton::http_retrieve_args);
+			$httpcode = wp_remote_retrieve_response_code( $results );
+			$response_message = wp_remote_retrieve_response_message( $results );
+			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
+				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $url</p>";
+				return 0;
+			}
+			$result = wp_remote_retrieve_body($results);
+			if ($result == null || count(json_decode($result)) == 0) {
+				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
+				return 0;
+			}
+			return $result;
+		}
+
+		function getExtraMeetingsJson($url) {
 			$results = wp_remote_get($url, Crouton::http_retrieve_args);
 			$httpcode = wp_remote_retrieve_response_code( $results );
 			$response_message = wp_remote_retrieve_response_message( $results );
@@ -380,12 +397,40 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
-
+			// Patrick working stuff
 			$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
-			$meetingsJson = $this->getMeetingsJson($getMeetingsUrl);
-			$the_meetings = json_decode($meetingsJson, true);
-			if ($the_meetings == 0) {
-				return $this->doQuit('');
+			if ( $this->options['extra_meetings'] ) {
+				$meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
+				$the_meetings_array = json_decode($meetingsWithoutExtrasJson, true);
+				$extras = "";
+				foreach ($this->options['extra_meetings'] as $value) {
+					$data = array(" [", "]");
+					$value = str_replace($data, "", $value);
+					$extras .= "&meeting_ids[]=" . $value;
+				}
+
+				$all_meetings_url = $root_server . '/client_interface/json/?switcher=GetSearchResults' . $extras . '&sort_key=time';
+				$extraMeetingsJson = $this->getExtraMeetingsJson($all_meetings_url);
+				$extra_result = json_decode($extraMeetingsJson, true);
+				if ($extra_result != null) {
+					$the_meetings = array_merge($the_meetings_array, $extra_result);
+					foreach ($the_meetings as $key => $row) {
+						$start_time[$key] = $row['start_time'];
+					}
+					array_multisort($start_time, SORT_ASC, $the_meetings);
+					$meetingsJson = json_encode($the_meetings);
+				}
+				if ($the_meetings == 0) {
+					return $this->doQuit('');
+				}
+
+			}
+			else {
+				$meetingsJson = $this->getMeetingsJson($getMeetingsUrl);
+				$the_meetings = json_decode($meetingsJson, true);
+				if ($the_meetings == 0) {
+					return $this->doQuit('');
+				}
 			}
 
 			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
@@ -804,6 +849,9 @@ if (!class_exists("Crouton")) {
 			return $unique_areas;
 		}
 
+
+
+
 		function admin_menu_link() {
 			// If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
 			// reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
@@ -915,6 +963,31 @@ if (!class_exists("Crouton")) {
 								<label for="recurse_service_bodies">Recurse Service Bodies</label>
 							</li> 
 						</ul>
+					</div>
+
+
+
+					<div style="padding: 0 15px;" class="postbox">
+						<h3>Include Extra Meetings<span title='<p>Include Extra Meetings from Another Service Body.</p><p>All Meetings from your BMLT Server are shown in the list.</p><p>The Meetings you select will be merged into your meeting list.</p><p><em>Note: Be sure to select all meetings for each group.</em>' class="tooltip"></span></h3>
+						<div class="inside">
+							<?php if ($this_connected) {
+								$extra_meetings_array = $this->get_all_meetings($this->options['root_server']); ?>
+							<?php } ?>
+							<p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
+							<select class="chosen-select" style="width: 100%;" data-placeholder="Select Extra Meetings" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
+								<?php if ($this_connected) { ?>
+									<?php foreach($extra_meetings_array as $extra_meeting){ ?>
+										<?php $extra_meeting_x = explode('|||',$extra_meeting); ?>
+										<?php $extra_meeting_id = $extra_meeting_x[3]; ?>
+										<?php $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
+										<option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
+									<?php } ?>
+								<?php } else { ?>
+									<option selected="selected" value="none"><?php echo 'Not Connected - Can not get Extra Meetings'; ?></option>
+								<?php } ?>
+							</select>
+							<p>Hint: Type a group name, weekday or area to narrow down your choices.</p>
+						</div>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">
 						<h3>Custom Query</h3>
@@ -1043,12 +1116,35 @@ if (!class_exists("Crouton")) {
 			}
 			if ($custom_query_postfix != null) {
 				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
+			} else if ($services == '') {
+				$url = "$root_server/client_interface/json/?switcher=GetSearchResults&sort_key=time"
+					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
 			} else {
 				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
-					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
-			}
+				. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
+		}
 			return $url;
 		}
+
+		public function get_all_meetings($root_server) {
+			$results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
+			$result = json_decode(wp_remote_retrieve_body($results),true);
+			$unique_areas = $this->get_areas($root_server, 'dropdown');
+			$all_meetings = array();
+			foreach ($result as $value) {
+				foreach($unique_areas as $unique_area){
+					$area_data = explode(',',$unique_area);
+					$area_id = $area_data[1];
+					if ( $area_id === $value['service_body_bigint'] ) {
+						$area_name = $area_data[0];
+					}
+				}
+				$value['start_time'] = date("g:iA",strtotime($value['start_time']));
+				$all_meetings[] = $value['meeting_name'].'||| ['.$this->getDay($value['weekday_tinyint']).'] ['.$value['start_time'].']||| ['.$area_name.']||| ['.$value['id_bigint'].']';
+			}
+			return $all_meetings;
+		}
+
 	}
 	//End Class Crouton
 }
