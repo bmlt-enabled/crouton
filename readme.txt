@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.0.0
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -37,8 +37,10 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 == Changelog ==
 
 = UNRELEASED =
-* Selected dropdown option not always being respected for new searchable dropdown, however selected option was.
 * Added ability to add extra meetings. [#66]
+
+= 2.2.1 =
+* Selected dropdown option not always being respected for new searchable dropdown, however selected option was. [#64]
 
 = 2.2.0 =
 * Add chosen for searchable dropdown service body config. [#60]
