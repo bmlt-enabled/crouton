@@ -194,22 +194,6 @@ if (!class_exists("Crouton")) {
 			return $result;
 		}
 
-		function getExtraMeetingsJson($url) {
-			$results = wp_remote_get($url, Crouton::http_retrieve_args);
-			$httpcode = wp_remote_retrieve_response_code( $results );
-			$response_message = wp_remote_retrieve_response_message( $results );
-			if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty( $response_message )) {
-				echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $url</p>";
-				return 0;
-			}
-			$result = wp_remote_retrieve_body($results);
-			if ($result == null || count(json_decode($result)) == 0) {
-				echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
-				return 0;
-			}
-			return $result;
-		}
-
 		function getDay($day) {
 			return Crouton::days_of_the_week[$day];
 		}
@@ -410,7 +394,7 @@ if (!class_exists("Crouton")) {
 				}
 
 				$all_meetings_url = $root_server . '/client_interface/json/?switcher=GetSearchResults' . $extras . '&sort_key=time';
-				$extraMeetingsJson = $this->getExtraMeetingsJson($all_meetings_url);
+				$extraMeetingsJson = $this->getMeetingsJson($all_meetings_url);
 				$extra_result = json_decode($extraMeetingsJson, true);
 				if ($extra_result != null) {
 					$the_meetings = array_merge($the_meetings_array, $extra_result);

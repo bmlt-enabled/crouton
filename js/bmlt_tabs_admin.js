@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
 	});
 	$("#extra_meetings").chosen({
 		no_results_text: "Oops, nothing found!",
-		width: "65%",
+		width: "60%",
 		placeholder_text_multiple: "Select Extra Meetings",
 		search_contains: true
 	});
