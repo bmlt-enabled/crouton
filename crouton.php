@@ -381,7 +381,7 @@ if (!class_exists("Crouton")) {
 					}
 				}
 			}
-			// Patrick working stuff
+
 			$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
 			if ( $this->options['extra_meetings'] ) {
 				$meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
@@ -392,7 +392,6 @@ if (!class_exists("Crouton")) {
 					$value = str_replace($data, "", $value);
 					$extras .= "&meeting_ids[]=" . $value;
 				}
-
 				$all_meetings_url = $root_server . '/client_interface/json/?switcher=GetSearchResults' . $extras . '&sort_key=time';
 				$extraMeetingsJson = $this->getMeetingsJson($all_meetings_url);
 				$extra_result = json_decode($extraMeetingsJson, true);
@@ -407,9 +406,7 @@ if (!class_exists("Crouton")) {
 				if ($the_meetings == 0) {
 					return $this->doQuit('');
 				}
-
-			}
-			else {
+			} else {
 				$meetingsJson = $this->getMeetingsJson($getMeetingsUrl);
 				$the_meetings = json_decode($meetingsJson, true);
 				if ($the_meetings == 0) {
