@@ -45,4 +45,16 @@ jQuery(document).ready(function($) {
 		inherit_select_classes: true,
 		width: "40%"
 	});
+	$("#extra_meetings").chosen({
+		no_results_text: "Oops, nothing found!",
+		width: "100%",
+		placeholder_text_multiple: "Select Extra Meetings",
+		search_contains: true
+	});
+	$('#extra_meetings').on('chosen:showing_dropdown', function(evt, params) {
+		$(".ctrl_key").show();
+	});
+	$('#extra_meetings').on('chosen:hiding_dropdown', function(evt, params) {
+		$(".ctrl_key").hide();
+	});
 });

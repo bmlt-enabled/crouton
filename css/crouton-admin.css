@@ -1,0 +1,25 @@
+select.service_body_select {
+	width: 40%;
+	max-width: 40%;
+}
+
+.extra_meetings_label label {
+	vertical-align: top;
+}
+.extra_meetings_label {
+	margin-top: 10px;
+}
+.exactCenter { width:800px; height:800px; position: fixed; top: 50%; left: 50%; margin-top: -100px; margin-left: -100px; }
+#extra_meetings * {
+	font-family: 'Courier New', Courier, monospace !important;
+}
+
+.chosen-container-multi .chosen-choices li.search-field input[type=text] {
+	width: 100% !important;
+}
+.chosen-container-multi * {
+	font-family: 'Courier New', Courier, monospace;
+}
+.chosen-container-multi .chosen-choices li.search-field input[type=text] {
+	font-family: "Open Sans",sans-serif !important;
+}

@@ -835,6 +835,7 @@ if (!class_exists("Crouton")) {
 				$this->options['custom_query']   = $_POST['custom_query'];
 				$this->options['custom_css']     = $_POST['custom_css'];
 				$this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
+				$this->options['extra_meetings'] = $_POST['extra_meetings'];
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
