@@ -849,9 +849,6 @@ if (!class_exists("Crouton")) {
 			return $unique_areas;
 		}
 
-
-
-
 		function admin_menu_link() {
 			// If you change this from add_options_page, MAKE SURE you change the filter_plugin_actions function (below) to
 			// reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
@@ -964,9 +961,6 @@ if (!class_exists("Crouton")) {
 							</li> 
 						</ul>
 					</div>
-
-
-
 					<div style="padding: 0 15px;" class="postbox">
 						<h3>Include Extra Meetings<span title='<p>Include Extra Meetings from Another Service Body.</p><p>All Meetings from your BMLT Server are shown in the list.</p><p>The Meetings you select will be merged into your meeting list.</p><p><em>Note: Be sure to select all meetings for each group.</em>' class="tooltip"></span></h3>
 						<div class="inside">
@@ -1121,8 +1115,8 @@ if (!class_exists("Crouton")) {
 					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
 			} else {
 				$url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
-				. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
-		}
+					. ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
+			}
 			return $url;
 		}
 
