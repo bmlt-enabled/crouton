@@ -36,6 +36,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
+= UNRELEASED =
+* Added ability to add extra meetings. [#66]
+
 = 2.2.1 =
 * Selected dropdown option not always being respected for new searchable dropdown, however selected option was. [#64]
 
