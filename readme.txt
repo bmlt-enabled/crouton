@@ -38,7 +38,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 = UNRELEASED =
 * Selected dropdown option not always being respected for new searchable dropdown, however selected option was.
-* Added ability to add extra meetings.
+* Added ability to add extra meetings. [#66]
 
 = 2.2.0 =
 * Add chosen for searchable dropdown service body config. [#60]
