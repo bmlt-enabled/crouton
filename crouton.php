@@ -943,7 +943,7 @@ if (!class_exists("Crouton")) {
 						</ul>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">
-						<h3>Include Extra Meetings<span title='<p>Include Extra Meetings from Another Service Body.</p><p>All Meetings from your BMLT Server are shown in the list.</p><p>The Meetings you select will be merged into your meeting list.</p><p><em>Note: Be sure to select all meetings for each group.</em>' class="tooltip"></span></h3>
+						<h3>Include Extra Meetings</h3>
 						<div class="inside">
 							<?php if ($this_connected) { ?>
 								<?php $extra_meetings_array = $this->get_all_meetings($this->options['root_server']); ?>
@@ -961,7 +961,7 @@ if (!class_exists("Crouton")) {
 									<option selected="selected" value="none"><?php echo 'Not Connected - Can not get Extra Meetings'; ?></option>
 								<?php } ?>
 							</select>
-							<p>Hint: Type a group name, weekday or area to narrow down your choices.</p>
+							<p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
 						</div>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">
