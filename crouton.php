@@ -877,7 +877,7 @@ if (!class_exists("Crouton")) {
 			}
 
 			if ( !isset($this->options['extra_meetings_enabled']) || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
-				$this->options['extra_meetings_enabled'] = 1;
+				$this->options['extra_meetings_enabled'] = 0;
 			}
 			if ( !isset($this->options['extra_meetings']) || $this->options['extra_meetings'] == '' ) {
 				$this->options['extra_meetings'] = '';
