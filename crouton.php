@@ -862,6 +862,7 @@ if (!class_exists("Crouton")) {
 				$this->options['custom_css']     = $_POST['custom_css'];
 				$this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
 				$this->options['extra_meetings'] = $_POST['extra_meetings'];
+				$this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
 				$this->save_admin_options();
 				set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
 				echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -874,6 +875,16 @@ if (!class_exists("Crouton")) {
 					echo "<div class='updated'><p>Note: consider Deleting Cache (unless you know what you're doing)</p></div>";
 				}
 			}
+
+			if ( !isset($this->options['extra_meetings_enabled']) || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
+				$this->options['extra_meetings_enabled'] = 1;
+			}
+			if ( !isset($this->options['extra_meetings']) || $this->options['extra_meetings'] == '' ) {
+				$this->options['extra_meetings'] = '';
+			} else {
+				$this->options['extra_meetings_enabled'] = 1;
+			}
+
 			if ($_POST['delete_cache_action']) {
 				if (!wp_verify_nonce($_POST['_wpnonce'], 'delete_cache_nonce'))
 					die('Whoops! There was a problem with the data you posted. Please go back and try again.');
@@ -936,7 +947,6 @@ if (!class_exists("Crouton")) {
 								</select>							
 								<div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
 								<p id="txtSelectedValues2"></p>
-
 								<input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo ($this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
 								<label for="recurse_service_bodies">Recurse Service Bodies</label>
 							</li> 
@@ -945,23 +955,24 @@ if (!class_exists("Crouton")) {
 					<div style="padding: 0 15px;" class="postbox">
 						<h3>Include Extra Meetings</h3>
 						<div class="inside">
-							<?php if ($this_connected) { ?>
-								<?php $extra_meetings_array = $this->get_all_meetings($this->options['root_server']); ?>
-							<?php } ?>
 							<p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
-							<select class="chosen-select" style="width: 100%;" data-placeholder="Select Extra Meetings" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
-								<?php if ($this_connected) { ?>
-									<?php foreach($extra_meetings_array as $extra_meeting){ ?>
-										<?php $extra_meeting_x = explode('|||',$extra_meeting); ?>
-										<?php $extra_meeting_id = $extra_meeting_x[3]; ?>
-										<?php $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
+							<select class="chosen-select" style="width: 100%;" data-placeholder="<?php echo ($this->options['extra_meetings_enabled'] == 0 ? 'Not Enabled' : 'Select Extra Meetings') ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
+								<?php if ($this_connected && $this->options['extra_meetings_enabled'] == 1) {
+										$extra_meetings_array = $this->get_all_meetings($this->options['root_server']);
+										foreach($extra_meetings_array as $extra_meeting){
+											$extra_meeting_x = explode('|||',$extra_meeting);
+											$extra_meeting_id = $extra_meeting_x[3];
+											$extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
 										<option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
 									<?php } ?>
-								<?php } else { ?>
+								<?php } elseif (!$this_connected ) { ?>
 									<option selected="selected" value="none"><?php echo 'Not Connected - Can not get Extra Meetings'; ?></option>
 								<?php } ?>
 							</select>
 							<p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
+							<div>
+								<input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($this->options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> Extra Meetings Enabled
+							</div>
 						</div>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">
