@@ -16,6 +16,7 @@ if (!class_exists("Crouton")) {
 		var $optionsName = 'bmlt_tabs_options';
 		var $options = array();
 		var $exclude_zip_codes = null;
+		static $HOUR_IN_SECONDS = 3600;
 		const days_of_the_week = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 		const count_types = array(
 			['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => 'meeting_name'],
@@ -690,7 +691,7 @@ if (!class_exists("Crouton")) {
 				document.getElementById("please-wait").style.display = "none";
 			</script>';
 			if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
-				set_transient($transient_key, $output, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
+				set_transient($transient_key, $output, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
 			}
 			return $output;
 		}
@@ -787,7 +788,7 @@ if (!class_exists("Crouton")) {
 				}
 				$result = array_unique($unique_group);
 				if (intval($this->options['cache_time']) > 0) {
-					set_transient($transient_key, $result, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
+					set_transient($transient_key, $result, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
 				}
 			}
 			$results = count($result) - $subtract;
@@ -807,7 +808,7 @@ if (!class_exists("Crouton")) {
 					return 0;
 				}
 				if (intval($this->options['cache_time']) > 0) {
-					set_transient($transient_key, $result, intval($this->options['cache_time']) * HOUR_IN_SECONDS);
+					set_transient($transient_key, $result, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
 				}
 			}
 			if ($source == 'dropdown') {
