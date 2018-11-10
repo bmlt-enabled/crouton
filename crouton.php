@@ -28,15 +28,15 @@ if (!class_exists("Crouton")) {
 			'timeout' => 60
 		);
 		function __construct() {
-			$this->getOptions();		
+			$this->getOptions();
 			if (is_admin()) {
 				// Back end
 				add_action("admin_notices", array(&$this, "is_root_server_missing"));
 				add_action("admin_enqueue_scripts", array(&$this, "enqueue_backend_files"),500);
 				add_action("admin_menu", array(&$this, "admin_menu_link"));
 			} else {
-				// Front end				
-				add_action("wp_enqueue_scripts", array(&$this, "enqueue_frontend_files"));			
+				// Front end
+				add_action("wp_enqueue_scripts", array(&$this, "enqueue_frontend_files"));
 				add_shortcode('bmlt_tabs', array(
 					&$this,
 					"tabbed_ui"
@@ -134,8 +134,8 @@ if (!class_exists("Crouton")) {
 		}
 
 		/**
-		 * @desc Adds JS/CSS to the header
-		 */
+		* @desc Adds JS/CSS to the header
+		*/
 		function enqueue_frontend_files() {
 			if ( $this->has_shortcode() ) {
 				$frontend_styles = array(
@@ -173,9 +173,9 @@ if (!class_exists("Crouton")) {
 			$serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
 			foreach ($serviceBodies as $serviceBody) {
 				if ( $serviceBody->id == $serviceBodyID) {
-				return $serviceBody->name;
+					return $serviceBody->name;
 				}
-			}	
+			}
 		}
 
 		function getMeetingsJson($url) {
@@ -615,7 +615,7 @@ if (!class_exists("Crouton")) {
 					$output .= '<option></option>';
 					foreach ($unique_zip as $zip_value) {
 						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $zip_value)) . ">$zip_value</option>";
-					}		
+					}
 					$output .= '</select>';
 					$output .= '</div>';
 				}
@@ -944,30 +944,36 @@ if (!class_exists("Crouton")) {
 								<?php } else { ?>
 									<option selected="selected" value="<?php echo $this->options['service_body_1']; ?>"><?php echo 'Not Connected - Can not get Service Bodies'; ?></option>
 								<?php } ?>
-								</select>							
+								</select>
 								<div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
 								<p id="txtSelectedValues2"></p>
 								<input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo ($this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
 								<label for="recurse_service_bodies">Recurse Service Bodies</label>
-							</li> 
+							</li>
 						</ul>
 					</div>
 					<div style="padding: 0 15px;" class="postbox">
 						<h3>Include Extra Meetings</h3>
 						<div class="inside">
 							<p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
-							<select class="chosen-select" style="width: 100%;" data-placeholder="<?php echo ($this->options['extra_meetings_enabled'] == 0 ? 'Not Enabled' : 'Select Extra Meetings') ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
+							<select class="chosen-select" style="width: 100%;" data-placeholder="<?php
+							if ($this->options['extra_meetings_enabled'] == 0) {
+								echo 'Not Enabled';
+							} elseif (!$this_connected) {
+								echo 'Not Connected';
+							} else {
+								echo 'Select Extra Meetings';
+							} ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
 								<?php if ($this_connected && $this->options['extra_meetings_enabled'] == 1) {
-										$extra_meetings_array = $this->get_all_meetings($this->options['root_server']);
-										foreach($extra_meetings_array as $extra_meeting){
-											$extra_meeting_x = explode('|||',$extra_meeting);
-											$extra_meeting_id = $extra_meeting_x[3];
-											$extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
+									$extra_meetings_array = $this->get_all_meetings($this->options['root_server']);
+									foreach($extra_meetings_array as $extra_meeting){
+										$extra_meeting_x = explode('|||',$extra_meeting);
+										$extra_meeting_id = $extra_meeting_x[3];
+										$extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
 										<option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
-									<?php } ?>
-								<?php } elseif (!$this_connected ) { ?>
-									<option selected="selected" value="none"><?php echo 'Not Connected - Can not get Extra Meetings'; ?></option>
-								<?php } ?>
+										<?php
+									}
+								} ?>
 							</select>
 							<p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
 							<div>
@@ -1004,23 +1010,24 @@ if (!class_exists("Crouton")) {
 						<ul>
 							<li>
 								<label for="cache_time">Cache Time: </label>
-								<input id="cache_time" onKeyPress="return numbersonly(this, event)" type="number" min="0" max="999" size="3" maxlength="3" name="cache_time" value="<?php echo $this->options['cache_time']; ?>" />&nbsp;&nbsp;<em>0 - 999 Hours (0 = disable and delete cache)</em>&nbsp;&nbsp;
+								<input id="cache_time" onKeyPress="return numbersonly(this, event)" type="number" min="0" max="999" size="3" maxlength="3" name="cache_time" value="<?php echo $this->options['cache_time']; ?>" />&nbsp;&nbsp;<em>0 - 999 Hours (0 = disable and delete cache)</em>
 							</li>
 						</ul>
-						<p><em>The DELETE CACHE button is useful for the following:
-						<ol>
-						<li>After updating meetings in BMLT.</li>
-						<li>Meeting information is not correct on the website.</li>
-						<li>Changing the Cache Time value.</li>
-						</ol>
-						</em>
+						<p>
+							<em>The DELETE CACHE button is useful for the following:
+								<ol>
+									<li>After updating meetings in BMLT.</li>
+									<li>Meeting information is not correct on the website.</li>
+									<li>Changing the Cache Time value.</li>
+								</ol>
+							</em>
 						</p>
 					</div>
-					<input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />					
+					<input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
 				</form>
 				<form style="display:inline!important;" method="post">
 					<?php wp_nonce_field('delete_cache_nonce'); ?>
-					<input style="color: #000;" type="submit" value="DELETE CACHE" name="delete_cache_action" class="button-primary" />					
+					<input style="color: #000;" type="submit" value="DELETE CACHE" name="delete_cache_action" class="button-primary" />
 				</form>
 				<br/><br/>
 				<?php include 'partials/_instructions.php'; ?>
