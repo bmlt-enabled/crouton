@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.0
+Version: 2.3.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -211,21 +211,25 @@ if (!class_exists("Crouton")) {
 			}
 		}
 
-		function getTheFormatsJson($meetings, $root_server) {
-			$get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
-			$join_ids = implode(',', $get_all_ids);
-			$ids_array = explode(',', $join_ids);
-			$unique_ids = array_unique($ids_array);
-			$formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args));
-			$formats_all_json = json_decode($formats_all, true);
-			$formats = array();
-			foreach ($formats_all_json as $format) {
-				if (in_array($format['id'], $unique_ids)) {
-					$formats[] = $format;
+		function getTheFormatsJson($meetings, $root_server, $used_formats = null) {
+			if ($used_formats == '1') {
+				$get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
+				$join_ids = implode(',', $get_all_ids);
+				$ids_array = explode(',', $join_ids);
+				$unique_ids = array_unique($ids_array);
+				$formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args));
+				$formats_all_json = json_decode($formats_all, true);
+				$formats = array();
+				foreach ($formats_all_json as $format) {
+					if (in_array($format['id'], $unique_ids)) {
+						$formats[] = $format;
+					}
 				}
+				$results = json_encode($formats);
+			} else {
+				$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
+				$results = wp_remote_retrieve_body($formats);
 			}
-			sort($formats);
-			$results = json_encode($formats);
 			return $results;
 		}
 
@@ -283,7 +287,8 @@ if (!class_exists("Crouton")) {
 				"time_format" => '',
 				"exclude_zip_codes" => null,
 				"show_distance" => '0',
-				"custom_query" => null
+				"custom_query" => null,
+				"used_formats" => '0',
 			), $atts));
 			if ( $show_distance == '1' ) {
 				wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
@@ -416,7 +421,11 @@ if (!class_exists("Crouton")) {
 					return $this->doQuit('');
 				}
 			}
-			$formatsJson = $this->getTheFormatsJson($meetingsJson, $root_server);
+			if ($used_formats == '1') {
+				$formatsJson = $this->getTheFormatsJson($meetingsJson, $root_server, $used_formats);
+			} else {
+				$formatsJson = $this->getTheFormatsJson($meetingsJson, $root_server);
+			}
 			$formats = json_decode($formatsJson, true);
 			$format_id = '';
 			if ( $format_key != '' ) {
