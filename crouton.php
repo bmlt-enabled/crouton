@@ -211,9 +211,22 @@ if (!class_exists("Crouton")) {
 			}
 		}
 
-		function getTheFormatsJson($root_server) {
-			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
-			return wp_remote_retrieve_body($formats);
+		function getTheFormatsJson($meetings, $root_server) {
+			$get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
+			$join_ids = implode(',', $get_all_ids);
+			$ids_array = explode(',', $join_ids);
+			$unique_ids = array_unique($ids_array);
+			$formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args));
+			$formats_all_json = json_decode($formats_all, true);
+			$formats = array();
+			foreach ($formats_all_json as $format) {
+				if (in_array($format['id'], $unique_ids)) {
+					$formats[] = $format;
+				}
+			}
+			sort($formats);
+			$results = json_encode($formats);
+			return $results;
 		}
 
 		function testRootServer($root_server) {
@@ -372,17 +385,6 @@ if (!class_exists("Crouton")) {
 <?php
 			ob_flush();
 			flush();
-			$formatsJson = $this->getTheFormatsJson($root_server);
-			$formats = json_decode($formatsJson, true);
-			$format_id = '';
-			if ( $format_key != '' ) {
-				foreach ($formats as $value) {
-					if ($value['key_string'] == $format_key) {
-						$format_id = $value['id'];
-					}
-				}
-			}
-
 			$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
 			if ( $this->options['extra_meetings'] ) {
 				$meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
@@ -414,7 +416,16 @@ if (!class_exists("Crouton")) {
 					return $this->doQuit('');
 				}
 			}
-
+			$formatsJson = $this->getTheFormatsJson($meetingsJson, $root_server);
+			$formats = json_decode($formatsJson, true);
+			$format_id = '';
+			if ( $format_key != '' ) {
+				foreach ($formats as $value) {
+					if ($value['key_string'] == $format_key) {
+						$format_id = $value['id'];
+					}
+				}
+			}
 			$unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
 			foreach ($the_meetings as $value) {
 				if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
@@ -925,26 +936,26 @@ if (!class_exists("Crouton")) {
 							<li>
 								<label for="service_body_1">Default Service Body: </label>
 								<select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
-								<?php if ($this_connected) { ?>
-									<?php $unique_areas = $this->get_areas($this->options['root_server'], 'dropdown'); ?>
-									<?php asort($unique_areas); ?>
-									<?php foreach ($unique_areas as $key => $unique_area) { ?>
-										<?php $area_data = explode(',', $unique_area); ?>
-										<?php $area_name = $area_data[0]; ?>
-										<?php $area_id = $area_data[1]; ?>
-										<?php $area_parent = $area_data[2]; ?>
-										<?php $area_parent_name = $area_data[3]; ?>
-										<?php $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")" ?></option>
-										<?php $is_data = explode(',',esc_html($this->options['service_body_1'])); ?>
-										<?php if ( $area_id == $is_data[1] ) { ?>
-											<option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
-										<?php } else { ?>
-											<option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
+									<?php if ($this_connected) { ?>
+										<?php $unique_areas = $this->get_areas($this->options['root_server'], 'dropdown'); ?>
+										<?php asort($unique_areas); ?>
+										<?php foreach ($unique_areas as $key => $unique_area) { ?>
+											<?php $area_data = explode(',', $unique_area); ?>
+											<?php $area_name = $area_data[0]; ?>
+											<?php $area_id = $area_data[1]; ?>
+											<?php $area_parent = $area_data[2]; ?>
+											<?php $area_parent_name = $area_data[3]; ?>
+											<?php $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")" ?></option>
+											<?php $is_data = explode(',',esc_html($this->options['service_body_1'])); ?>
+											<?php if ( $area_id == $is_data[1] ) { ?>
+												<option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
+											<?php } else { ?>
+												<option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
+											<?php } ?>
 										<?php } ?>
+									<?php } else { ?>
+										<option selected="selected" value="<?php echo $this->options['service_body_1']; ?>"><?php echo 'Not Connected - Can not get Service Bodies'; ?></option>
 									<?php } ?>
-								<?php } else { ?>
-									<option selected="selected" value="<?php echo $this->options['service_body_1']; ?>"><?php echo 'Not Connected - Can not get Service Bodies'; ?></option>
-								<?php } ?>
 								</select>
 								<div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
 								<p id="txtSelectedValues2"></p>
