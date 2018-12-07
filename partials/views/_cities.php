@@ -17,11 +17,11 @@
 	jQuery(function() {
 		var cities = getUniqueValuesOfKey(meetingData, 'location_municipality').sort();
 		var context = [];
-		for (var city of cities) {
+		for (var i = 0; i < cities.length; i++) {
 			context.push({
-				"city": city,
+				"city": cities[i],
 				"meetings": getMeetings(meetingData, function(item) {
-					return item['location_municipality'] === city;
+					return item['location_municipality'] === cities[i];
 				})
 			});
 		}
