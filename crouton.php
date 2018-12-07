@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.0
+Version: 2.3.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -211,9 +211,26 @@ if (!class_exists("Crouton")) {
 			}
 		}
 
-		function getTheFormatsJson($root_server) {
-			$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
-			return wp_remote_retrieve_body($formats);
+		function getTheFormatsJson($root_server, $meetings = null, $used_formats = null) {
+			if ($used_formats == '1') {
+				$get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
+				$join_ids = implode(',', $get_all_ids);
+				$ids_array = explode(',', $join_ids);
+				$unique_ids = array_unique($ids_array);
+				$formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args));
+				$formats_all_json = json_decode($formats_all, true);
+				$formats = array();
+				foreach ($formats_all_json as $format) {
+					if (in_array($format['id'], $unique_ids)) {
+						$formats[] = $format;
+					}
+				}
+				$results = json_encode($formats);
+			} else {
+				$formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::http_retrieve_args);
+				$results = wp_remote_retrieve_body($formats);
+			}
+			return $results;
 		}
 
 		function testRootServer($root_server) {
@@ -270,7 +287,8 @@ if (!class_exists("Crouton")) {
 				"time_format" => '',
 				"exclude_zip_codes" => null,
 				"show_distance" => '0',
-				"custom_query" => null
+				"custom_query" => null,
+				"used_formats" => '0'
 			), $atts));
 			if ( $show_distance == '1' ) {
 				wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime( plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
@@ -372,16 +390,6 @@ if (!class_exists("Crouton")) {
 <?php
 			ob_flush();
 			flush();
-			$formatsJson = $this->getTheFormatsJson($root_server);
-			$formats = json_decode($formatsJson, true);
-			$format_id = '';
-			if ( $format_key != '' ) {
-				foreach ($formats as $value) {
-					if ($value['key_string'] == $format_key) {
-						$format_id = $value['id'];
-					}
-				}
-			}
 
 			$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
 			if ( $this->options['extra_meetings'] ) {
@@ -412,6 +420,21 @@ if (!class_exists("Crouton")) {
 				$the_meetings = json_decode($meetingsJson, true);
 				if ($the_meetings == 0) {
 					return $this->doQuit('');
+				}
+			}
+
+			if ($used_formats == '1') {
+				$formatsJson = $this->getTheFormatsJson($root_server, $meetingsJson, $used_formats);
+			} else {
+				$formatsJson = $this->getTheFormatsJson($root_server);
+			}
+			$formats = json_decode($formatsJson, true);
+			$format_id = '';
+			if ( $format_key != '' ) {
+				foreach ($formats as $value) {
+					if ($value['key_string'] == $format_key) {
+						$format_id = $value['id'];
+					}
 				}
 			}
 

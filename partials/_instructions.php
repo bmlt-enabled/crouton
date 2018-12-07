@@ -159,4 +159,12 @@
 		<p>Example: [bmlt_tabs custom_query="&meeting_key=location_sub_province&meeting_key_value=Sampson"]</p>
 		<p><em>This can be overridden using a querystring parameter as well, but use must URL encode the query.  Example: <a target="_blank" href="about:blank">http://localhost:8080/?page_id=5&custom_query=%26meeting_key%3Dlocation_sub_province%26meeting_key_value%3DSampson</a></em></p>
 	</div>
+	<h3 class="help-accordian"><strong>Only Show Used Formats</strong></h3>
+	<div>
+		<p>With this parameter you can have crouton only display the formats that are being used.</p>
+		<p><strong>[bmlt_tabs used_formats="0|1"]</strong></p>
+		<p>0 = display all formats in server (default)</p>
+		<p>1 = display only used formats</p>
+		<p><em>This will only work with root server versions 2.10.3 or greater, as it makes use of the format_shared_id_list.</em></p>
+	</div>
 </div>
