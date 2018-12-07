@@ -36,6 +36,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
+= 2.3.1 = **UNRELEASED**
+* Fixed support for Internet Explorer.
+
 = 2.3.0 =
 * Added ability to add extra meetings. [#66]
 * Fixed default caching to be disabled and generally broken caching mechanism.

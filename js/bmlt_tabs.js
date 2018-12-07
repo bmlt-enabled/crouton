@@ -311,8 +311,8 @@ Handlebars.registerHelper('formatDataPointer', function(str) {
 
 Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
-	for (var fmt of formatsExpanded) {
-		finalFormats.push(fmt['name'].toLowerCase().replace(/\W|_/g, "-"));
+	for (var i = 0; i < formatsExpanded.length; i++) {
+		finalFormats.push(formatsExpanded[i]['name'].toLowerCase().replace(/\W|_/g, "-"));
 	}
 	return finalFormats.join(" ");
 });
@@ -331,8 +331,8 @@ Array.prototype.exclude = function(csv, mappedField) {
 	if (csv == null) return;
 	var excludedValues = csv.split(",");
 	for (var i = 0; i < this.length; i++) {
-		for (var excludedValue of excludedValues) {
-			if (excludedValue === this[i][mappedField]) {
+		for (var i = 0; i < excludedValues.length; i++) {
+			if (excludedValues[i] === this[i][mappedField]) {
 				this.splice(i, 1);
 				i--;
 			}
