@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.1
+Version: 2.3.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
