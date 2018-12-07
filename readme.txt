@@ -36,7 +36,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
-= 2.3.1 = **UNRELEASED**
+= 2.3.1 =
 * Added ability to only display used formats. [#73]
 * Fixed support for Internet Explorer. [#72]
 
