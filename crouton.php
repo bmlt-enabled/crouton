@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.2
+Version: 2.3.3
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -491,14 +491,14 @@ if (!class_exists("Crouton")) {
 			$unique_location           = array_unique($unique_location);
 			$unique_format             = array_unique($unique_format);
 			$unique_format_name_string = array_unique($unique_format_name_string);
-			asort($unique_zip);
-			asort($unique_sub_province);
-			asort($unique_state);
-			asort($unique_city);
-			asort($unique_group);
-			asort($unique_location);
-			asort($unique_format);
-			asort($unique_format_name_string);
+			asort($unique_zip, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_sub_province, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_state, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_city, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_group, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_location, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_format, SORT_NATURAL | SORT_FLAG_CASE);
+			asort($unique_format_name_string, SORT_NATURAL | SORT_FLAG_CASE);
 			array_push($unique_weekday, "1", "2", "3", "4", "5", "6", "7");
 			$meetings_cities = $meetings_days = $meeting_header = $meetings_tab = "";
 			for ($x = 0; $x <= 1; $x++) {
@@ -596,7 +596,7 @@ if (!class_exists("Crouton")) {
 						array_push($area_names, $areas);
 					}
 					$area_names_ids = array_combine($unique_area, $area_names);
-					asort($area_names_ids);
+					asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
 					foreach($area_names_ids as $key => $value) {
 						$output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $key)) . ">" . $value . "</option>";
 					}
@@ -950,7 +950,7 @@ if (!class_exists("Crouton")) {
 								<select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
 								<?php if ($this_connected) { ?>
 									<?php $unique_areas = $this->get_areas($this->options['root_server'], 'dropdown'); ?>
-									<?php asort($unique_areas); ?>
+									<?php asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE); ?>
 									<?php foreach ($unique_areas as $key => $unique_area) { ?>
 										<?php $area_data = explode(',', $unique_area); ?>
 										<?php $area_name = $area_data[0]; ?>

@@ -4,8 +4,8 @@ Contributors: Jack S Florida Region, odathp, radius314, pjaudiomv
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.0.0
-Stable tag: 2.3.2
+Tested up to: 5.0.2
+Stable tag: 2.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 <a href="https://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
 
 == Changelog ==
+
+= 2.3.3 = *UNRELEASED*
+* added case-insensitive sorting.
 
 = 2.3.2 =
 * Version bump, IE fix for city view.
