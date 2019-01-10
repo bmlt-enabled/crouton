@@ -1,6 +1,6 @@
 [*.php]
 end_of_line = lf
-indent_style = tab
+indent_style = space
 indent_size = 4
 insert_final_newline = true
 
