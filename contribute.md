@@ -4,7 +4,7 @@ Take a look at the issues for bugs that you might be able to help fix.
 
 Once your pull request is merged it will be released in the next version.
 
-We are using [https://github.com/bmlt-enabled/bmlt-wordpress-deploy](https://github.com/bmlt-enabled/bmlt-wordpress-deploy) to deploy the plugin to SVN. This is done automatically upon tagging a release. If you wish to tag a release for testing or a beta release make sure the tag name contains the word beta in it as the deployment to wordpress will be cancelled. For ex. `3.9.6-beta`
+We are using [bmlt-wordpress-deploy](https://github.com/bmlt-enabled/bmlt-wordpress-deploy/blob/master/README.md) to deploy the plugin to SVN.
 
 To get things going in your local environment.
 
