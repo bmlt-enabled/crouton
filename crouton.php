@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.4
+Version: 2.3.3
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -316,7 +316,7 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
                 wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
                 wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
-                wp_enqueue_script('cr-google-maps-script', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDh1mqZLb26kDpyN9eJE3_3IgzWwO0nVVg&callback=initMap', '', '');
+                wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->options['google_api_key'] . '&callback=initMap', '', '');
             }
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
@@ -346,6 +346,9 @@ if (!class_exists("Crouton")) {
             }
             if ($include_weekday_button != '0' && $include_weekday_button != '1') {
                 return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
+            }
+            if ($show_map == '1' && $this->options['google_api_key'] == '') {
+                return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
             }
             if ($service_body_parent == null && $service_body == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
@@ -922,6 +925,7 @@ if (!class_exists("Crouton")) {
                 $this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
                 $this->options['extra_meetings'] = $_POST['extra_meetings'];
                 $this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
+                $this->options['google_api_key']   = $_POST['google_api_key'];
                 $this->saveAdminOptions();
                 set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -1057,6 +1061,16 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo $this->options['custom_css']; ?></textarea>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Google Api Key</h3>
+                        <p>This is only needed when using the companion map feature show_map.</p>
+                        <ul>
+                            <li>
+                                <label for="google_api_key">API Key: </label>
+                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo $this->options['google_api_key']; ?>" />
                             </li>
                         </ul>
                     </div>
