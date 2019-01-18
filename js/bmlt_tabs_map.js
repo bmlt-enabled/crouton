@@ -68,6 +68,23 @@
 			minute = (minute > 9) ? minute.toString() : ('0' + minute.toString());
 			marker_html += ' ' + hour + ':' + minute + ' ' + pm;
 			marker_html += '</em><br>';
+			marker_html += location.location_text;
+			marker_html += '<br>';
+
+			if(typeof location.location_street !== "undefined") {
+				marker_html += location.location_street + '<br>';
+			}
+			if(typeof location.location_municipality !== "undefined") {
+				marker_html += location.location_municipality + ' ';
+			}
+			if(typeof location.location_province !== "undefined") {
+				marker_html += location.location_province + ' ';
+			}
+			if(typeof location.location_postal_code_1 !== "undefined") {
+				marker_html += location.location_postal_code_1;
+			}
+
+			marker_html += '<br>';
 			var url = 'http://maps.google.com/maps?q=' + location.latitude + ',' + location.longitude;
 			marker_html += '<a href="' + url + '">';
 			marker_html += 'Map to Meeting';
