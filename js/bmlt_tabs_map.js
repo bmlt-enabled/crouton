@@ -96,3 +96,4 @@
 		new MarkerClusterer(map, clusterMarker, {imagePath: bmltTabsMap.pluginUrl + '/images/m', maxZoom: 15});
 		
 	}
+	google.maps.event.addDomListener(window, 'load', initMap);
