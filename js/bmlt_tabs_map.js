@@ -49,7 +49,7 @@
 		// The map() method here has nothing to do with the Google Maps API.
 		var markers = meetingData.map(function(location, i) {
 			var weekdays = ['ERROR', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-			var marker_html = '<dt><strong>';
+			var marker_html = '<dl><dt><strong>';
 			marker_html += location.meeting_name;
 			marker_html += '</strong></dt>';
 			marker_html += '<dd><em>';
@@ -67,11 +67,12 @@
 			hour = hour.toString();
 			minute = (minute > 9) ? minute.toString() : ('0' + minute.toString());
 			marker_html += ' ' + hour + ':' + minute + ' ' + pm;
-			marker_html += '</em></dd>';
-			var url = location.root_server_uri + 'semantic';
-			marker_html += '<dd><em><a href="' + url + '">';
-			marker_html += location.sbname;
-			marker_html += '</a></em></dd>';
+			marker_html += '</em><br>';
+			var url = 'http://maps.google.com/maps?q=' + location.latitude + ',' + location.longitude;
+			marker_html += '<a href="' + url + '">';
+			marker_html += 'Map to Meeting';
+			marker_html += '</a>';
+			marker_html += '</dd></dl>';
 
 			var latLng = { "lat" : parseFloat(location.latitude) , "lng" : parseFloat(location.longitude) };
 
