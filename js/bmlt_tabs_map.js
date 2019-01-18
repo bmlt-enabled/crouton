@@ -2,31 +2,19 @@
 	var map;
 	 function initMap() {
 		var map = new google.maps.Map(document.getElementById('bmlt-map'), {
-			zoom: 3,
-			center: {
-				lat: 33.0600308,
-				lng: -80.102879
-			}
+			zoom: 3
 		});
 		
-		function fit_markers()
-        {
-            var bounds = new google.maps.LatLngBounds();
-
-            // We go through all the results, and get the "spread" from them.
-            for ( var c = 0; c < meetingData.length; c++ )
-            {
-                var	lat = meetingData[c].latitude;
-                var	lng = meetingData[c].longitude;
-                // We will set our minimum and maximum bounds.
-                bounds.extend ( new google.maps.LatLng ( lat, lng ) );
-            };
-
-            // We now have the full rectangle of our meeting search results. Scale the map to fit them.
-            map.fitBounds ( bounds );
-        };
-
-		fit_markers();
+		var bounds = new google.maps.LatLngBounds();
+		// We go through all the results, and get the "spread" from them.
+		for ( var c = 0; c < meetingData.length; c++ ) {
+			var	lat = meetingData[c].latitude;
+			var	lng = meetingData[c].longitude;
+			// We will set our minimum and maximum bounds.
+			bounds.extend ( new google.maps.LatLng ( lat, lng ) );
+		};
+		// We now have the full rectangle of our meeting search results. Scale the map to fit them.
+		map.fitBounds ( bounds );
 
 		var clusterMarker = [];
 
@@ -36,10 +24,10 @@
 		var oms = new OverlappingMarkerSpiderfier(map, { markersWontMove: true, markersWontHide: true });
 
 		oms.addListener('format', function(marker, status) {
-			var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? '/wp-content/plugins/crouton/images/NAMarkerR.png' :
-				status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? '/wp-content/plugins/crouton/images/NAMarkerB.png' :
-				status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED ? '/wp-content/plugins/crouton/images/NAMarkerB.png' :
-					status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? '/wp-content/plugins/crouton/images/NAMarkerR.png' :
+			var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? bmltTabsMap.pluginUrl + '/images/NAMarkerR.png' :
+				status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? bmltTabsMap.pluginUrl + '/images/NAMarkerB.png' :
+				status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED ? bmltTabsMap.pluginUrl + '/images/NAMarkerB.png' :
+					status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? bmltTabsMap.pluginUrl + '/images/NAMarkerR.png' :
 						null;
 			var iconSize = new google.maps.Size(22, 32);
 			marker.setIcon({
@@ -105,10 +93,6 @@
 		});
 
 		// Add a marker clusterer to manage the markers.
-		new MarkerClusterer(map, clusterMarker, {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m', maxZoom: 15});
-
+		new MarkerClusterer(map, clusterMarker, {imagePath: bmltTabsMap.pluginUrl + '/images/m', maxZoom: 15});
 		
 	}
-
-//google.maps.event.addDomListener(window, 'load', initMap);
-

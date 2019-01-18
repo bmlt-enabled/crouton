@@ -314,6 +314,9 @@ if (!class_exists("Crouton")) {
             }
             if ($show_map == '1') {
                 wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
+                wp_localize_script('bmlt-tabs-map', 'bmltTabsMap', array(
+                    'pluginUrl' => plugin_dir_url(__FILE__),
+                ));
                 wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
                 wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
                 wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->options['google_api_key'] . '&callback=initMap', '', '');
