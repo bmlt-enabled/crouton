@@ -37,8 +37,8 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 == Changelog ==
 
 = 2.3.3 = *UNRELEASED*
-* added case-insensitive sorting.
-* added companion map feature. [#52]
+* Added case-insensitive sorting.
+* Added companion map feature. [#52]
 
 = 2.3.2 =
 * Version bump, IE fix for city view.

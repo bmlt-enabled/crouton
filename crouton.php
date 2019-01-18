@@ -312,7 +312,7 @@ if (!class_exists("Crouton")) {
             if ($show_distance == '1') {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
             }
-            if ($show_map == '1') {
+            if ($show_map == '1' && $this->options['google_api_key'] != '') {
                 wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
                 wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
                 wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->options['google_api_key'], '', '');
@@ -928,7 +928,7 @@ if (!class_exists("Crouton")) {
                 $this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
                 $this->options['extra_meetings'] = $_POST['extra_meetings'];
                 $this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
-                $this->options['google_api_key']   = $_POST['google_api_key'];
+                $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
                 set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -1068,7 +1068,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Google Api Key</h3>
+                        <h3>Google API Key</h3>
                         <p>This is only needed when using the companion map feature show_map.</p>
                         <ul>
                             <li>

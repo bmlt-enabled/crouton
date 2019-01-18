@@ -1,6 +1,5 @@
 
-	var map;
-	 function initMap() {
+	function initMap() {
 		var map = new google.maps.Map(document.getElementById('bmlt-map'), {
 			zoom: 3
 		});
@@ -48,7 +47,7 @@
 		// create an array of markers based on a given "locations" array.
 		// The map() method here has nothing to do with the Google Maps API.
 		var markers = meetingData.map(function(location, i) {
-			var weekdays = ['ERROR', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			var weekdays = [null, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 			var marker_html = '<dl><dt><strong>';
 			marker_html += location.meeting_name;
 			marker_html += '</strong></dt>';
