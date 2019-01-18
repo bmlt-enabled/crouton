@@ -1076,6 +1076,7 @@ if (!class_exists("Crouton")) {
                                 <input id="google_api_key" name="google_api_key" size="50" value="<?php echo $this->options['google_api_key']; ?>" />
                             </li>
                         </ul>
+                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></p>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3>Meeting Cache (<?php echo $this->countTransientCache(); ?> Cached Entries)</h3>
