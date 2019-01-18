@@ -313,11 +313,10 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
             }
             if ($show_map == '1') {
-            	wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
+                wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
                 wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
                 wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
-                wp_enqueue_script( 'cr-google-maps-script', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDh1mqZLb26kDpyN9eJE3_3IgzWwO0nVVg&callback=initMap', '', '');
-                
+                wp_enqueue_script('cr-google-maps-script', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDh1mqZLb26kDpyN9eJE3_3IgzWwO0nVVg&callback=initMap', '', '');
             }
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
@@ -735,7 +734,7 @@ if (!class_exists("Crouton")) {
                 $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->getCount('', 'group', null) . '</span>';
             }
 
-			$output = $this_title . $sub_title . $meeting_count. $group_count . $output;
+            $output = $this_title . $sub_title . $meeting_count. $group_count . $output;
             $output = '<div id="bmlt-map" style="height: 400px;"></div><div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
             $output .= '
             <script>
