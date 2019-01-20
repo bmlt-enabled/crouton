@@ -307,7 +307,8 @@ if (!class_exists("Crouton")) {
                 "show_distance" => '0',
                 "custom_query" => null,
                 "used_formats" => '0',
-                "show_map" => '0'
+                "show_map" => '0',
+                "max_zoom_level" => 15
             ), $atts));
             if ($show_distance == '1') {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
@@ -319,6 +320,7 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
                 wp_localize_script('bmlt-tabs-map', 'bmltTabsMap', array(
                     'pluginUrl' => plugin_dir_url(__FILE__),
+                    'maxZoomLevel' => $max_zoom_level,
                 ));
             }
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);

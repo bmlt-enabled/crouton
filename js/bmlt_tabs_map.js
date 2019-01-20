@@ -110,7 +110,7 @@
 		});
 
 		// Add a marker clusterer to manage the markers.
-		new MarkerClusterer(map, clusterMarker, {imagePath: bmltTabsMap.pluginUrl + '/images/m', maxZoom: 15});
+		new MarkerClusterer(map, clusterMarker, {imagePath: bmltTabsMap.pluginUrl + '/images/m', maxZoom: bmltTabsMap.maxZoomLevel});
 		
 	}
 	google.maps.event.addDomListener(window, 'load', initMap);
