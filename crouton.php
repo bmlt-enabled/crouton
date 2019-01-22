@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.3
+Version: 2.4.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -323,6 +323,9 @@ if (!class_exists("Crouton")) {
                     'maxZoomLevel' => $max_zoom_level,
                 ));
             }
+            if ($show_map == '1' && $this->options['google_api_key'] == '') {
+                return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
+            }
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
             $service_body           = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
@@ -351,9 +354,6 @@ if (!class_exists("Crouton")) {
             }
             if ($include_weekday_button != '0' && $include_weekday_button != '1') {
                 return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
-            }
-            if ($show_map == '1' && $this->options['google_api_key'] == '') {
-                return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
             }
             if ($service_body_parent == null && $service_body == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
