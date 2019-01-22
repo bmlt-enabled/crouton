@@ -4,7 +4,7 @@ Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: Jack S Florida Region, radius314, pjaudiomv
-Version: 2.3.3
+Version: 2.4.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -306,10 +306,26 @@ if (!class_exists("Crouton")) {
                 "exclude_zip_codes" => null,
                 "show_distance" => '0',
                 "custom_query" => null,
-                "used_formats" => '0'
+                "used_formats" => '0',
+                "show_map" => '0',
+                "max_zoom_level" => 15
             ), $atts));
             if ($show_distance == '1') {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
+            }
+            if ($show_map == '1') {
+                if ($this->options['google_api_key'] != '') {
+                    wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
+                    wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
+                    wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->options['google_api_key'], '', '');
+                    wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
+                    wp_localize_script('bmlt-tabs-map', 'bmltTabsMap', array(
+                        'pluginUrl' => plugin_dir_url(__FILE__),
+                        'maxZoomLevel' => $max_zoom_level,
+                    ));
+                } else {
+                    return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
+                }
             }
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
@@ -402,6 +418,7 @@ if (!class_exists("Crouton")) {
                 }
             }
             ?>
+            
             <div class="bootstrap-bmlt" id="please-wait">
                 <button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button>
             </div>
@@ -680,16 +697,16 @@ if (!class_exists("Crouton")) {
                     $output .= '<div class="bmlt-page hide" id="nav-days">';
                 }
                 $output .= '
-				<ul class="nav nav-tabs">					
-					<li><a href="#tab1" data-toggle="tab">Sunday</a></li>
-					<li><a href="#tab2" data-toggle="tab">Monday</a></li>
-					<li><a href="#tab3" data-toggle="tab">Tuesday</a></li>
-					<li><a href="#tab4" data-toggle="tab">Wednesday</a></li>
-					<li><a href="#tab5" data-toggle="tab">Thursday</a></li>
-					<li><a href="#tab6" data-toggle="tab">Friday</a></li>
-					<li><a href="#tab7" data-toggle="tab">Saturday</a></li>
-				</ul>
-				</div>';
+                <ul class="nav nav-tabs">					
+                    <li><a href="#tab1" data-toggle="tab">Sunday</a></li>
+                    <li><a href="#tab2" data-toggle="tab">Monday</a></li>
+                    <li><a href="#tab3" data-toggle="tab">Tuesday</a></li>
+                    <li><a href="#tab4" data-toggle="tab">Wednesday</a></li>
+                    <li><a href="#tab5" data-toggle="tab">Thursday</a></li>
+                    <li><a href="#tab6" data-toggle="tab">Friday</a></li>
+                    <li><a href="#tab7" data-toggle="tab">Saturday</a></li>
+                </ul>
+                </div>';
             }
 
             $output .= $this->includeToString("partials/views/_weekdays.php") . $this->includeToString("partials/views/_cities.php") . $this->includeToString("partials/views/_byday.php");
@@ -707,10 +724,10 @@ if (!class_exists("Crouton")) {
             $css = $this->options['custom_css'];
 
             $output .= "
-			<script type='text/javascript'>
-				var meetingData=$meetingsJson;
-				var formatsData=$formatsJson;
-			</script><style type='text/css'>$css</style>";
+            <script type='text/javascript'>
+                var meetingData=$meetingsJson;
+                var formatsData=$formatsJson;
+            </script><style type='text/css'>$css</style>";
             $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
@@ -725,12 +742,13 @@ if (!class_exists("Crouton")) {
             if ($_GET['group_count'] != null) {
                 $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->getCount('', 'group', null) . '</span>';
             }
+
             $output = $this_title . $sub_title . $meeting_count. $group_count . $output;
-            $output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
+            $output = '<div id="bmlt-map" style="height: 400px;"></div><div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
             $output .= '
-			<script>
-				document.getElementById("please-wait").style.display = "none";
-			</script>';
+            <script>
+                document.getElementById("please-wait").style.display = "none";
+            </script>';
             if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
                 set_transient($transient_key, $output, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
             }
@@ -913,6 +931,7 @@ if (!class_exists("Crouton")) {
                 $this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
                 $this->options['extra_meetings'] = $_POST['extra_meetings'];
                 $this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
+                $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
                 set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
@@ -1050,6 +1069,17 @@ if (!class_exists("Crouton")) {
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo $this->options['custom_css']; ?></textarea>
                             </li>
                         </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Google API Key</h3>
+                        <p>This is only needed when using the companion map feature show_map.</p>
+                        <ul>
+                            <li>
+                                <label for="google_api_key">API Key: </label>
+                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo $this->options['google_api_key']; ?>" />
+                            </li>
+                        </ul>
+                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></p>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3>Meeting Cache (<?php echo $this->countTransientCache(); ?> Cached Entries)</h3>
