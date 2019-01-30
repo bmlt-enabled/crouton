@@ -1,6 +1,6 @@
 === crouton ===  
 
-Contributors: Jack S Florida Region, odathp, radius314, pjaudiomv
+Contributors: odathp, radius314, pjaudiomv
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6

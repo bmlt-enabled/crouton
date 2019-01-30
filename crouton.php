@@ -3,7 +3,8 @@
 Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
-Author: Jack S Florida Region, radius314, pjaudiomv
+Author: bmlt-enabled
+Author URI: https://bmlt.app
 Version: 2.4.0
 */
 /* Disallow direct access to the plugin file */
@@ -22,8 +23,8 @@ if (!class_exists("Crouton")) {
         public static $HOUR_IN_SECONDS = 3600;
         const DAYS_OF_THE_WEEK = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const COUNT_TYPES = array(
-            ['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => 'meeting_name'],
-            ['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => 'id_bigint']
+            ['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => array('worldid_mixed','meeting_name')],
+            ['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => array('id_bigint')]
         );
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
@@ -790,9 +791,9 @@ if (!class_exists("Crouton")) {
             ), $atts));
             $custom_query_postfix = $this->getCustomQuery($custom_query);
             $root_server = ($root_server != '' ? $root_server : $this->options['root_server']);
-            $root_server = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
-            $service_body = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
-            $service_body_parent    = ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
+            $root_server = isset($_GET['root_server']) ? $_GET['root_server'] : $root_server;
+            $service_body = isset($_GET['service_body']) ? $_GET['service_body'] : $service_body;
+            $service_body_parent = isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $service_body_parent;
             if ($service_body_parent == null && $service_body == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
                 $area            = $area_data[0];
@@ -847,7 +848,7 @@ if (!class_exists("Crouton")) {
                             continue;
                         }
                     }
-                    $unique_group[] = $value[$count_type_obj['field']];
+                    $unique_group[] = $value[$count_type_obj['field'][0]] !== "" ? $value[$count_type_obj['field'][0]] : $value[$count_type_obj['field'][1]];
                 }
                 $result = array_unique($unique_group);
                 if (intval($this->options['cache_time']) > 0) {
