@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.0.3
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -36,7 +36,10 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 == Changelog ==
 
-= 2.4.0 = *UNRELEASED*
+= 2.4.1 =
+* Fix for empty div with the new map feature [#87]
+
+= 2.4.0 =
 * Added companion map feature. [#52]
 * More robust way to count groups. [#85]
 * Added case-insensitive sorting.
@@ -72,14 +75,12 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 * Tested for 5.0.0
 
 = 2.1.0 =
-
 * Added state-dropdown option.
 * Fixed some issues with how CSS was applied to the buttons with Javascript, instead applying classes.
 * Bug fix javascript error for when [meeting_count] or [group_count] is used alone. [#54]
 * Bug fix for custom query in shortcode which wasn't working at all [#50]
 
 = 2.0.0 =
-
 * Major rewrite to render the plugin on the client side.
 * Time formatting has been reimplemented using moment.js (this is a breaking change, use these format codes http://momentjs.com/docs/#/displaying/, "HH:mm" for 24hr formatting)
 * Added the ability to recurse service bodies.
@@ -92,10 +93,8 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 * Removed hardcodings
 
 = 1.0.1 =
-
 * Some code cleanups.
 * Disabled broken geolocation lookups until it can be reimplemented.
 
 = 1.0.0 =
-
 * Forked from "bmlt-tabbed-ui" plugin.

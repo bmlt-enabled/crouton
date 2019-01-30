@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 2.4.0
+Version: 2.4.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -745,7 +745,11 @@ if (!class_exists("Crouton")) {
             }
 
             $output = $this_title . $sub_title . $meeting_count. $group_count . $output;
-            $output = '<div id="bmlt-map" style="height: 400px;"></div><div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
+            $output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
+            if ($show_map == '1') {
+                $output = '<div id="bmlt-map" style="height: 400px;"></div>' . $output;
+            }
+            
             $output .= '
             <script>
                 document.getElementById("please-wait").style.display = "none";
