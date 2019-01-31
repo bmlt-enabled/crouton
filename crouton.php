@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: Adds a jQuery Tabbed UI for BMLT.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 2.4.1
+Version: 2.4.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -767,12 +767,12 @@ if (!class_exists("Crouton")) {
 
         public function meetingCount($atts, $content = null)
         {
-            return $this->getCount($atts, 'meeting', $content) . $this->getConfigJavascriptBlock();
+            return $this->getCount($atts, 'meeting', $content);
         }
 
         public function bmltGroupCount($atts, $content = null)
         {
-            return $this->getCount($atts, 'group', $content) . $this->getConfigJavascriptBlock();
+            return $this->getCount($atts, 'group', $content);
         }
 
         public function getCount($atts, $count_type, $content = null)
