@@ -1,4 +1,3 @@
-var dayOfTheWeek = {1:"Sunday",2:"Monday",3:"Tuesday",4:"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"};
 jQuery(document).ready(function($) {
 	var dropdownConfiguration = [
 		{
@@ -125,7 +124,7 @@ jQuery(document).ready(function($) {
 				hidePage("#" + this.id);
 				lowlightButton("#city");
 				lowlightButton("#day");
-				filteredPage("#byday", e.target.getAttribute("data-placeholder").toLowerCase(), val.replace("a-", ""));
+				filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
 				return;
 			});
 		});
@@ -244,7 +243,7 @@ function getUniqueValuesOfKey(array, key){
 }
 
 function getDay(day_id) {
-	return dayOfTheWeek[day_id];
+	return words['days_of_the_week'][day_id];
 }
 
 function getMeetings(meetingData, filter) {
@@ -295,6 +294,7 @@ function getMeetings(meetingData, filter) {
 				meetingData[m]['location_info'] != null
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
+			meetingData[m]['map_word'] = words['map'].toUpperCase();
 			meetings.push(meetingData[m])
 		}
 	}

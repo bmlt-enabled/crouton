@@ -177,4 +177,11 @@
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></em></p>
     </div>
+    <h3 class="help-accordian"><strong>Multilingual Support</strong></h3>
+    <div>
+        <p>With this parameter you can have crouton display the results into a pre-translated language.</p>
+        <p><strong>[bmlt_tabs language="en-US"]</strong></p>
+        <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/tree/master/languages" target="_blank">here</a>.</p>
+        <p>Open a ticket if you want to assist with other translations <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">here</a>.</p>
+    </div>
 </div>

@@ -49,7 +49,7 @@
 	</td>
 	<td class="bmlt-column3">
 		<a target="_blank" href="https://maps.google.com/maps?q={{this.latitude}},{{this.longitude}}" id="map-button" class="btn btn-primary btn-xs">
-			<span class="glyphicon glyphicon-map-marker"></span> MAP
+			<span class="glyphicon glyphicon-map-marker"></span> {{this.map_word}}
 		</a>
 		<div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>
 	</td>

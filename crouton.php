@@ -2,10 +2,10 @@
 /*
 Plugin Name: crouton
 Plugin URI: https://wordpress.org/plugins/crouton/
-Description: Adds a jQuery Tabbed UI for BMLT.
+Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 2.4.2
+Version: 2.5.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -21,7 +21,7 @@ if (!class_exists("Crouton")) {
         public $options = array();
         public $exclude_zip_codes = null;
         public static $HOUR_IN_SECONDS = 3600;
-        const DAYS_OF_THE_WEEK = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        //const DAYS_OF_THE_WEEK = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const COUNT_TYPES = array(
             ['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => array('worldid_mixed','meeting_name')],
             ['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => array('id_bigint')]
@@ -92,7 +92,7 @@ if (!class_exists("Crouton")) {
             if ($root_server == '') {
                 echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for crouton.</p>';
                 $url = admin_url('options-general.php?page=crouton.php');
-                echo "<p><a href='$url'>BMLT_Tabs Settings</a></p>";
+                echo "<p><a href='$url'>crouton Settings</a></p>";
                 echo '</div>';
             }
             add_action("admin_notices", array(
@@ -210,7 +210,7 @@ if (!class_exists("Crouton")) {
 
         public function getDay($day)
         {
-            return Crouton::DAYS_OF_THE_WEEK[$day];
+            return $words['days_of_the_week'][$day];
         }
 
         public function getCustomQuery($custom_query)
@@ -309,8 +309,10 @@ if (!class_exists("Crouton")) {
                 "custom_query" => null,
                 "used_formats" => '0',
                 "show_map" => '0',
-                "max_zoom_level" => 15
+                "max_zoom_level" => 15,
+                "language" => 'en-US'
             ), $atts));
+            include 'lang/' . $language . '.php';
             if ($show_distance == '1') {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
             }
@@ -597,14 +599,14 @@ if (!class_exists("Crouton")) {
             if ($header == '1') {
                 $output .= '<div class="hide bmlt-header">';
                 if ($include_weekday_button == '1') {
-                    $output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">Weekday</a></div>';
+                    $output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">' . $words["weekday"] . '</a></div>';
                 }
                 if ($include_city_button == '1') {
-                    $output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">City</a></div>';
+                    $output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">' . $words["city"] . '</a></div>';
                 }
                 if ($has_cities == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="height: 26px; width:' . $dropdown_width . ';" data-placeholder="Cities" id="e2">';
+                    $output .= '<select style="height: 26px; width:' . $dropdown_width . ';" data-placeholder="' . $words["cities"] . '" data-pointer="Cities" id="e2">';
                     $output .= '<option></option>';
                     foreach ($unique_city as $city_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $city_value)) . ">".$city_value."</option>";
@@ -614,7 +616,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_groups == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Groups" id="e3">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["groups"] . '" data-pointer="Groups" id="e3">';
                     $output .= '<option></option>';
                     foreach ($unique_group as $group_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $group_value)) . ">$group_value</option>";
@@ -624,7 +626,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_areas == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Areas" id="e8">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["areas"] . '" data-pointer="Areas" id="e8">';
                     $output .= '<option></option>';
                     $area_names = array();
                     foreach ($unique_area as $area_value) {
@@ -641,7 +643,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_locations == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Locations" id="e4">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["locations"] . '" data-pointer="Locations" id="e4">';
                     $output .= '<option></option>';
                     foreach ($unique_location as $location_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $location_value)) . ">$location_value</option>";
@@ -651,7 +653,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_sub_province == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Counties" id="e7">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["counties"] . '" data-pointer="Counties" id="e7">';
                     $output .= '<option></option>';
                     foreach ($unique_sub_province as $sub_province_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $sub_province_value)) . ">$sub_province_value</option>";
@@ -661,7 +663,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_states == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="States" id="e9">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["states"] . '" data-pointer="States" id="e9">';
                     $output .= '<option></option>';
                     foreach ($unique_state as $state_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $state_value)) . ">$state_value</option>";
@@ -671,7 +673,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_zip_codes == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Zips" id="e5">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["postal_codes"] . '" data-pointer="Zips" id="e5">';
                     $output .= '<option></option>';
                     foreach ($unique_zip as $zip_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $zip_value)) . ">$zip_value</option>";
@@ -681,7 +683,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($has_formats == '1') {
                     $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="Formats" id="e6">';
+                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["formats"] . '" data-pointer="Formats" id="e6">';
                     $output .= '<option></option>';
                     foreach ($unique_format_name_string as $format_value) {
                         $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $format_value)) . ">$format_value</option>";
@@ -697,17 +699,11 @@ if (!class_exists("Crouton")) {
                 } else {
                     $output .= '<div class="bmlt-page hide" id="nav-days">';
                 }
-                $output .= '
-                <ul class="nav nav-tabs">					
-                    <li><a href="#tab1" data-toggle="tab">Sunday</a></li>
-                    <li><a href="#tab2" data-toggle="tab">Monday</a></li>
-                    <li><a href="#tab3" data-toggle="tab">Tuesday</a></li>
-                    <li><a href="#tab4" data-toggle="tab">Wednesday</a></li>
-                    <li><a href="#tab5" data-toggle="tab">Thursday</a></li>
-                    <li><a href="#tab6" data-toggle="tab">Friday</a></li>
-                    <li><a href="#tab7" data-toggle="tab">Saturday</a></li>
-                </ul>
-                </div>';
+                $output .= '<ul class="nav nav-tabs">';
+                for ($tab = 1; $tab <= 7; $tab++) {
+                    $output .= '<li><a href="#tab' . $tab . '" data-toggle="tab">' . $words['days_of_the_week'][$tab] . '</a></li>';
+                }
+                $output .= '</ul></div>';
             }
 
             $output .= $this->includeToString("partials/views/_weekdays.php") . $this->includeToString("partials/views/_cities.php") . $this->includeToString("partials/views/_byday.php");
@@ -726,8 +722,9 @@ if (!class_exists("Crouton")) {
 
             $output .= "
             <script type='text/javascript'>
+                var words=" . json_encode($words) . ";
                 var meetingData=$meetingsJson;
-                var formatsData=$formatsJson;
+                var formatsData=$formatsJson;                 
             </script><style type='text/css'>$css</style>";
             $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
