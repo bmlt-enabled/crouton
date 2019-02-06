@@ -21,7 +21,6 @@ if (!class_exists("Crouton")) {
         public $options = array();
         public $exclude_zip_codes = null;
         public static $HOUR_IN_SECONDS = 3600;
-        //const DAYS_OF_THE_WEEK = [1 => "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const COUNT_TYPES = array(
             ['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => array('worldid_mixed','meeting_name')],
             ['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => array('id_bigint')]
