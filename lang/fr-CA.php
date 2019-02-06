@@ -5,11 +5,11 @@ static $words = array(
     'city' => 'Ville',
     'cities' => 'Villes',
     'groups' => 'Groupes',
-    'areas' => 'Areas',
-    'locations' => 'Locations',
+    'areas' => 'CSL',
+    'locations' => 'Emplacements',
     'counties' => 'Régions',
     'states' => 'Provinces',
     'postal_codes' => 'Codes postaux',
     'formats' => 'Formats',
-    'map' => 'Map'
+    'map' => 'Carte'
 );
