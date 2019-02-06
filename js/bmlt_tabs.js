@@ -217,7 +217,12 @@ jQuery(document).ready(function($) {
 		resetFilter();
 		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
-		$(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
+		if (dataType !== "formats") {
+			$(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
+		} else {
+			$(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
+		}
+
 		$(".bmlt-data-rows").each(function(index, value) {
 			if ($(value).find(".bmlt-data-row.hide").length === $(value).find(".bmlt-data-row").length) {
 				$(value).find(".meeting-header").addClass("hide");
