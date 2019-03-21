@@ -71,6 +71,7 @@ if (!class_exists("Crouton")) {
             $post_to_check = get_post(get_the_ID());
             // check the post content for the short code
             if (stripos($post_to_check->post_content, '[bmlt_tabs') !== false) {
+                echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
                 return true;
             }
             if (stripos($post_to_check->post_content, '[bmlt_count') !== false) {
@@ -419,12 +420,7 @@ if (!class_exists("Crouton")) {
                     return $output;
                 }
             }
-            ?>
-            
-            <div class="bootstrap-bmlt" id="please-wait">
-                <button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button>
-            </div>
-            <?php
+
             ob_flush();
             flush();
 
@@ -745,11 +741,8 @@ if (!class_exists("Crouton")) {
             if ($show_map == '1') {
                 $output = '<div id="bmlt-map" style="height: 400px;"></div>' . $output;
             }
-            
-            $output .= '
-            <script>
-                document.getElementById("please-wait").style.display = "none";
-            </script>';
+
+            $output .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
             if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
                 set_transient($transient_key, $output, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
             }
