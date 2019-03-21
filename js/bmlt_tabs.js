@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 	if (typeof croutonConfig == 'undefined') {
-		var croutonConfig = [];
+		var croutonConfig = {'view_by':'byday'};
 	}
 	if (croutonConfig['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
