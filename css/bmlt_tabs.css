@@ -328,7 +328,7 @@ span.bmlt_tabs_group_count {
 
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
-		display: none !important;
+		display: block !important;
 	}
 
 	#bmlt-tabs #day.btn-sm,#bmlt-tabs #city.btn-sm {
