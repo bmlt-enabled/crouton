@@ -12,6 +12,7 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     // die('Sorry, but you cannot access this page directly.');
 }
 ini_set('max_execution_time', 120);
+require_once 'partials/crouton_IDNAEncoder.php';
 if (!class_exists("Crouton")) {
     // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
     class Crouton
@@ -164,7 +165,8 @@ if (!class_exists("Crouton")) {
                     ['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
                     ['title' => 'momentjs', 'path' => 'moment.js'],
                     ['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
-                    ['title' => 'spinjs', 'path' => 'spin.2.3.2.js']
+                    ['title' => 'spinjs', 'path' => 'spin.2.3.2.js'],
+                    ['title' => 'punycode', 'path' => 'punycode.js'],
                 );
                 foreach ($frontend_scripts as $frontend_script) {
                     wp_enqueue_script($frontend_script['title'], plugin_dir_url(__FILE__) . "js/" . $frontend_script['path'], array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/" . $frontend_script['path']), true);
@@ -604,7 +606,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="height: 26px; width:' . $dropdown_width . ';" data-placeholder="' . $words["cities"] . '" data-pointer="Cities" id="e2">';
                     $output .= '<option></option>';
                     foreach ($unique_city as $city_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $city_value)) . ">".$city_value."</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($city_value))) . ">".$city_value."</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -614,7 +616,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["groups"] . '" data-pointer="Groups" id="e3">';
                     $output .= '<option></option>';
                     foreach ($unique_group as $group_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $group_value)) . ">$group_value</option>";
+                        $output .= "<option value=a-" .  strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($group_value))) . ">$group_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -631,7 +633,7 @@ if (!class_exists("Crouton")) {
                     $area_names_ids = array_combine($unique_area, $area_names);
                     asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
                     foreach ($area_names_ids as $key => $value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $key)) . ">" . $value . "</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($key))) . ">" . $value . "</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -641,7 +643,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["locations"] . '" data-pointer="Locations" id="e4">';
                     $output .= '<option></option>';
                     foreach ($unique_location as $location_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $location_value)) . ">$location_value</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($location_value))) . ">$location_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -651,7 +653,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["counties"] . '" data-pointer="Counties" id="e7">';
                     $output .= '<option></option>';
                     foreach ($unique_sub_province as $sub_province_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $sub_province_value)) . ">$sub_province_value</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($sub_province_value))) . ">$sub_province_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -661,7 +663,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["states"] . '" data-pointer="States" id="e9">';
                     $output .= '<option></option>';
                     foreach ($unique_state as $state_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $state_value)) . ">$state_value</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($state_value))) . ">$state_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -671,7 +673,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["postal_codes"] . '" data-pointer="Zips" id="e5">';
                     $output .= '<option></option>';
                     foreach ($unique_zip as $zip_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $zip_value)) . ">$zip_value</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($zip_value))) . ">$zip_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';
@@ -681,7 +683,7 @@ if (!class_exists("Crouton")) {
                     $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["formats"] . '" data-pointer="Formats" id="e6">';
                     $output .= '<option></option>';
                     foreach ($unique_format_name_string as $format_value) {
-                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', $format_value)) . ">$format_value</option>";
+                        $output .= "<option value=a-" . strtolower(preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii($format_value))) . ">$format_value</option>";
                     }
                     $output .= '</select>';
                     $output .= '</div>';

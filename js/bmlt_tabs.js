@@ -314,13 +314,13 @@ function renderView(templateElement, selector, context) {
 }
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
-	return str.toLowerCase().replace(/\W|_/g, "-");
+	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-");
 });
 
 Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(formatsExpanded[i]['name'].toLowerCase().replace(/\W|_/g, "-"));
+		finalFormats.push(punycode.toASCII(formatsExpanded[i]['name'].toLowerCase()).replace(/\W|_/g, "-"));
 	}
 	return finalFormats.join(" ");
 });
