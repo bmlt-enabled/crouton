@@ -77,6 +77,9 @@ jQuery(document).ready(function($) {
 		}
 	});
 
+	if (typeof(croutonConfig) == 'undefined') {
+		var croutonConfig = {};
+	}
 	if (croutonConfig['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
 			e.preventDefault();
