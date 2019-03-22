@@ -851,6 +851,7 @@ if (!class_exists("Crouton")) {
                 }
             }
             $results = count($result) - $subtract;
+            $results .= $this->getConfigJavascriptBlock();
             return $results;
         }
 
