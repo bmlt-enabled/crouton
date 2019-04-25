@@ -1,4 +1,3 @@
-var dayOfTheWeek = {1:"Sunday",2:"Monday",3:"Tuesday",4:"Wednesday",5:"Thursday",6:"Friday",7:"Saturday"};
 jQuery(document).ready(function($) {
 	var dropdownConfiguration = [
 		{
@@ -77,10 +76,8 @@ jQuery(document).ready(function($) {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
-	if (typeof croutonConfig == 'undefined') {
-		var croutonConfig = [];
-	}
-	if (croutonConfig['has_tabs'] !== "0") {
+
+	if (typeof croutonConfig !== 'undefined' && croutonConfig['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
 			e.preventDefault();
 			$(this).tab('show');
@@ -125,7 +122,7 @@ jQuery(document).ready(function($) {
 				hidePage("#" + this.id);
 				lowlightButton("#city");
 				lowlightButton("#day");
-				filteredPage("#byday", e.target.getAttribute("data-placeholder").toLowerCase(), val.replace("a-", ""));
+				filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
 				return;
 			});
 		});
@@ -218,7 +215,12 @@ jQuery(document).ready(function($) {
 		resetFilter();
 		showPage(id);
 		$(".bmlt-data-row").removeClass("hide");
-		$(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
+		if (dataType !== "formats") {
+			$(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
+		} else {
+			$(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
+		}
+
 		$(".bmlt-data-rows").each(function(index, value) {
 			if ($(value).find(".bmlt-data-row.hide").length === $(value).find(".bmlt-data-row").length) {
 				$(value).find(".meeting-header").addClass("hide");
@@ -231,9 +233,11 @@ jQuery(document).ready(function($) {
 		$(".bmlt-data-row").removeClass("hide");
 	}
 
-	showPage(".bmlt-header");
-	showPage(".bmlt-tabs");
-	showView(croutonConfig['view_by']);
+	if (typeof croutonConfig !== 'undefined') {
+		showPage(".bmlt-header");
+		showPage(".bmlt-tabs");
+		showView(croutonConfig['view_by']);
+	}
 });
 
 function getUniqueValuesOfKey(array, key){
@@ -244,7 +248,7 @@ function getUniqueValuesOfKey(array, key){
 }
 
 function getDay(day_id) {
-	return dayOfTheWeek[day_id];
+	return words['days_of_the_week'][day_id];
 }
 
 function getMeetings(meetingData, filter) {
@@ -295,6 +299,7 @@ function getMeetings(meetingData, filter) {
 				meetingData[m]['location_info'] != null
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
+			meetingData[m]['map_word'] = words['map'].toUpperCase();
 			meetings.push(meetingData[m])
 		}
 	}
@@ -309,13 +314,13 @@ function renderView(templateElement, selector, context) {
 }
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
-	return str.toLowerCase().replace(/\W|_/g, "-");
+	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-");
 });
 
 Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(formatsExpanded[i]['name'].toLowerCase().replace(/\W|_/g, "-"));
+		finalFormats.push(punycode.toASCII(formatsExpanded[i]['name'].toLowerCase()).replace(/\W|_/g, "-"));
 	}
 	return finalFormats.join(" ");
 });
