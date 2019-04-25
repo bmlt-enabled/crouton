@@ -77,10 +77,7 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	if (typeof(croutonConfig) == 'undefined') {
-		var croutonConfig = {};
-	}
-	if (croutonConfig['has_tabs'] !== "0") {
+	if (typeof croutonConfig !== 'undefined' && croutonConfig['has_tabs'] !== "0") {
 		$('.nav-tabs a').on('click', function (e) {
 			e.preventDefault();
 			$(this).tab('show');
@@ -236,9 +233,11 @@ jQuery(document).ready(function($) {
 		$(".bmlt-data-row").removeClass("hide");
 	}
 
-	showPage(".bmlt-header");
-	showPage(".bmlt-tabs");
-	showView(croutonConfig['view_by']);
+	if (typeof croutonConfig !== 'undefined') {
+		showPage(".bmlt-header");
+		showPage(".bmlt-tabs");
+		showView(croutonConfig['view_by']);
+	}
 });
 
 function getUniqueValuesOfKey(array, key){
