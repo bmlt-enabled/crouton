@@ -314,16 +314,27 @@ function renderView(templateElement, selector, context) {
 }
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
-	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-");
+	return convertToPunyCode(str)
 });
 
 Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(punycode.toASCII(formatsExpanded[i]['name'].toLowerCase()).replace(/\W|_/g, "-"));
+		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
 	}
 	return finalFormats.join(" ");
 });
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+// 1) Convert string to lower case
+// 2) Then puny code
+// 3) Swap spaces for hyphens
+function convertToPunyCode(str) {
+	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
+}
 
 Array.prototype.clean = function() {
 	for (var i = 0; i < this.length; i++) {
