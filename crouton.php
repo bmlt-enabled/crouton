@@ -829,13 +829,14 @@ if (!class_exists("Crouton")) {
             <div class="wrap">
                 <h2>crouton</h2>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
-                    <?php wp_nonce_field('bmlttabsupdate-options');
-                        $this_connected = $this->testRootServer($this->options['root_server']);
-                        $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>";
-                        if ($this_connected != false) {
-                            $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>";
-                            $this_connected = true;
-                        }?>
+                    <?php
+                    wp_nonce_field('bmlttabsupdate-options');
+                    $this_connected = $this->testRootServer($this->options['root_server']);
+                    $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>";
+                    if ($this_connected != false) {
+                        $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>";
+                        $this_connected = true;
+                    }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3>BMLT Root Server URL</h3>
                         <p>Example: https://naflorida.org/bmlt_server</p>
