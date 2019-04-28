@@ -308,6 +308,7 @@ if (!class_exists("Crouton")) {
                 "time_format" => '',
                 "exclude_zip_codes" => null,
                 "show_distance" => '0',
+                "distance_units" => 'mi',
                 "custom_query" => null,
                 "used_formats" => '0',
                 "show_map" => '0',
@@ -409,9 +410,10 @@ if (!class_exists("Crouton")) {
                 $dropdown_width,
                 $has_zip_codes,
                 $show_distance,
+                $distance_units,
                 $header,
                 $format_key,
-                $custom_query_postfix
+                $custom_query_postfix,
             ];
             $transient_key = 'bmlt_tabs_' . md5(join("", $key_items));
             if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
@@ -561,7 +563,8 @@ if (!class_exists("Crouton")) {
                 "has_zip_codes" => $has_zip_codes,
                 "has_formats" => $has_formats,
                 "has_meetings" => $has_meetings,
-                "dropdown_width" => $dropdown_width
+                "dropdown_width" => $dropdown_width,
+                "distance_units" => $distance_units
             ]);
 
             $css = $this->options['custom_css'];

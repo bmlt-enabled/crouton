@@ -151,6 +151,7 @@
 		<p>0 = don't display distance to meeting (default)</p>
 		<p>1 = display distance to meeting</p>
 		<p><em>User has to have geolocation permissions turned on.</em></p>
+        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
 	</div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
