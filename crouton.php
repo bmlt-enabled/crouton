@@ -560,7 +560,8 @@ if (!class_exists("Crouton")) {
                 "has_states" => $has_states,
                 "has_zip_codes" => $has_zip_codes,
                 "has_formats" => $has_formats,
-                "has_meetings" => $has_meetings
+                "has_meetings" => $has_meetings,
+                "dropdown_width" => $dropdown_width
             ]);
 
             $css = $this->options['custom_css'];
