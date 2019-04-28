@@ -41,6 +41,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 * Added support for setting distance units (miles, kilometers and nautical miles) [#90]
 * Fix for Gutenburg autosave issue [#81]
 * Fix for regression with has_tabs="0" and header="0" not group by day [#95]
+* Dropdowns and tabs refactored to use client side rendering (speed improvements) [#53]
 
 = 2.4.2 + 2.5.3 =
 * Fix for [meeting_count] and [group_count] render issues if they appeared after [bmlt_tabs] [#86]
