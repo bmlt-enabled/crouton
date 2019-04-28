@@ -535,172 +535,15 @@ if (!class_exists("Crouton")) {
             asort($unique_format, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_format_name_string, SORT_NATURAL | SORT_FLAG_CASE);
             array_push($unique_weekday, "1", "2", "3", "4", "5", "6", "7");
-            $meetings_cities = $meetings_days = $meeting_header = $meetings_tab = "";
-            for ($x = 0; $x <= 1; $x++) {
-                if ($x == 0) {
-                    $unique_values = $unique_city;
-                } else {
-                    $unique_values = $unique_weekday;
-                }
-                foreach ($unique_values as $this_value) {
-                    $this_meeting = $meeting_header = $meeting_tab_header = "";
-                    foreach ($the_meetings as $value) {
-                        if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
-                            if (strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false) {
-                                continue;
-                            }
-                        }
-                        if ($x == 0) {
-                            if (!isset($value['location_municipality']) || $this_value != $value['location_municipality']) {
-                                continue;
-                            }
-                        } elseif ($x == 1) {
-                            if ($this_value != $value['weekday_tinyint']) {
-                                continue;
-                            }
-                        }
-                    }
-                    if ($this_meeting != "") {
-                        $meeting_header = '<div id="bmlt-table-div">';
-                        $meeting_header .= "<table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-                        if ($x == 0) {
-                            if ($this_value) {
-                                $meeting_header .= "<tr class='meeting-header'><td colspan='3'>" . $this_value . "</td></tr>";
-                            } else {
-                                $meeting_header .= "<tr class='meeting-header'><td colspan='3'>NO CITY IN BMLT</td></tr>";
-                            }
-                        } else {
-                            $meeting_tab_header = "<div id='tab" . $this_value . "' class='tab-pane'>";
-                            $meeting_tab_header .= "<table class='table table-striped table-hover table-bordered tablesaw tablesaw-stack'>";
-                            $meeting_header .= "<tr class='meeting-header'><td colspan='3'>" . $this->getDay($this_value) . "</td></tr>";
-                        }
-                        $this_meeting .= '</table>';
-                        $this_meeting .= '</div>';
-                        if ($x == 0) {
-                            $meetings_cities .= $meeting_header;
-                            $meetings_cities .= $this_meeting;
-                        } else {
-                            $meetings_days .= $meeting_header;
-                            $meetings_days .= $this_meeting;
-                            $meetings_tab .= $meeting_tab_header;
-                            $meetings_tab .= $this_meeting;
-                        }
-                    }
-                    if ($x == 1 && $meeting_tab_header == '') {
-                        $meetings_tab .= "<div id='tab" . $this_value . "' class='tab-pane'>";
-                        $meetings_tab .= "</div>";
-                    }
-                }
-            }
 
- /*           if ($header == '1') {
-                $output .= '<div class="hide bmlt-header">';
-                if ($include_weekday_button == '1') {
-                    $output .= '<div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">' . $words["weekday"] . '</a></div>';
+            if ($has_areas == '1') {
+                $area_names = array();
+                foreach ($unique_area as $area_value) {
+                    $areas = $this->getNameFromServiceBodyID($area_value);
+                    array_push($area_names, $areas);
                 }
-                if ($include_city_button == '1') {
-                    $output .= '<div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">' . $words["city"] . '</a></div>';
-                }
-                if ($has_cities == '1')
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="height: 26px; width:' . $dropdown_width . ';" data-placeholder="' . $words["cities"] . '" data-pointer="Cities" id="e2">';
-                    $output .= '<option></option>';
-                    foreach ($unique_city as $city_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($city_value))) . ">".$city_value."</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_groups == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["groups"] . '" data-pointer="Groups" id="e3">';
-                    $output .= '<option></option>';
-                    foreach ($unique_group as $group_value) {
-                        $output .= "<option value=a-" .  preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($group_value))) . ">$group_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_areas == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["areas"] . '" data-pointer="Areas" id="e8">';
-                    $output .= '<option></option>';
-                    $area_names = array();
-                    foreach ($unique_area as $area_value) {
-                        $areas = $this->getNameFromServiceBodyID($area_value);
-                        array_push($area_names, $areas);
-                    }
-                    $area_names_ids = array_combine($unique_area, $area_names);
-                    asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
-                    foreach ($area_names_ids as $key => $value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($key))) . ">" . $value . "</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_locations == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["locations"] . '" data-pointer="Locations" id="e4">';
-                    $output .= '<option></option>';
-                    foreach ($unique_location as $location_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($location_value))) . ">$location_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_sub_province == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["counties"] . '" data-pointer="Counties" id="e7">';
-                    $output .= '<option></option>';
-                    foreach ($unique_sub_province as $sub_province_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($sub_province_value))) . ">$sub_province_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_states == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["states"] . '" data-pointer="States" id="e9">';
-                    $output .= '<option></option>';
-                    foreach ($unique_state as $state_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($state_value))) . ">$state_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_zip_codes == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["postal_codes"] . '" data-pointer="Zips" id="e5">';
-                    $output .= '<option></option>';
-                    foreach ($unique_zip as $zip_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($zip_value))) . ">$zip_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                if ($has_formats == '1') {
-                    $output .= '<div class="bmlt-dropdown-container">';
-                    $output .= '<select style="width:' . $dropdown_width . ';" data-placeholder="' . $words["formats"] . '" data-pointer="Formats" id="e6">';
-                    $output .= '<option></option>';
-                    foreach ($unique_format_name_string as $format_value) {
-                        $output .= "<option value=a-" . preg_replace("/\W|_/", '-', crouton_Requests_IDNAEncoder::to_ascii(strtolower($format_value))) . ">$format_value</option>";
-                    }
-                    $output .= '</select>';
-                    $output .= '</div>';
-                }
-                $output .= '</div>';
-            }*/
-            if ($has_tabs == '1' && $has_meetings == '1') {
-                if ($view_by == 'weekday') {
-                    $output .= '<div class="bmlt-page show" id="nav-days">';
-                } else {
-                    $output .= '<div class="bmlt-page hide" id="nav-days">';
-                }
-                $output .= '<ul class="nav nav-tabs">';
-                for ($tab = 1; $tab <= 7; $tab++) {
-                    $output .= '<li><a href="#tab' . $tab . '" data-toggle="tab">' . $words['days_of_the_week'][$tab] . '</a></li>';
-                }
-                $output .= '</ul></div>';
+                $area_names_ids = array_combine($unique_area, $area_names);
+                asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
             }
 
             $output .= $this->includeToString("partials/views/_header.php") . $this->includeToString("partials/views/_weekdays.php") . $this->includeToString("partials/views/_cities.php") . $this->includeToString("partials/views/_byday.php");
@@ -714,13 +557,28 @@ if (!class_exists("Crouton")) {
                 "exclude_zip_codes" => $exclude_zip_codes,
                 "root_server_query" => $getMeetingsUrl,
                 "header" => $header,
-                "has_cities" => $has_cities
+                "has_cities" => $has_cities,
+                "has_groups" => $has_groups,
+                "has_areas" => $has_areas,
+                "has_locations" => $has_locations,
+                "has_sub_province" => $has_sub_province,
+                "has_states" => $has_states,
+                "has_zip_codes" => $has_zip_codes,
+                "has_formats" => $has_formats,
+                "has_meetings" => $has_meetings
             ]);
 
             $css = $this->options['custom_css'];
 
             $uniqueDataJson = json_encode([
-                'cities' => array_values($unique_city)
+                'groups' => array_values($unique_group),
+                'cities' => array_values($unique_city),
+                'areas' => $area_names_ids,
+                'locations' => array_values($unique_location),
+                'sub_provinces' => array_values($unique_sub_province),
+                'states' => array_values($unique_state),
+                'zips' => array_values($unique_zip),
+                'formats' => array_values($unique_format_name_string),
             ]);
 
             $output .= "
@@ -728,7 +586,7 @@ if (!class_exists("Crouton")) {
                 var words=" . json_encode($words) . ";
                 var meetingData=$meetingsJson;
                 var formatsData=$formatsJson;      
-                var uniqueData=$uniqueDataJson;
+                var uniqueData=$uniqueDataJson;                
             </script><style type='text/css'>$css</style>";
             $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
@@ -745,7 +603,7 @@ if (!class_exists("Crouton")) {
                 $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->getCount('', 'group', null) . '</span>';
             }
 
-            $output = $this_title . $sub_title . $meeting_count. $group_count . $output;
+            $output = $this_title . $sub_title . $meeting_count . $group_count . $output;
             $output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
             if ($show_map == '1') {
                 $output = '<div id="bmlt-map" style="height: 400px;"></div>' . $output;
@@ -874,10 +732,12 @@ if (!class_exists("Crouton")) {
                     echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
                     return 0;
                 }
+
                 if (intval($this->options['cache_time']) > 0) {
                     set_transient($transient_key, $result, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
                 }
             }
+
             if ($source == 'dropdown') {
                 $unique_areas = array();
                 foreach ($result as $value) {
@@ -973,13 +833,13 @@ if (!class_exists("Crouton")) {
             <div class="wrap">
                 <h2>crouton</h2>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
-                    <?php wp_nonce_field('bmlttabsupdate-options'); ?>
-                    <?php $this_connected = $this->testRootServer($this->options['root_server']); ?>
-                    <?php $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>"; ?>
-                    <?php if ($this_connected != false) { ?>
-                        <?php $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>"?>
-                        <?php $this_connected = true; ?>
-                    <?php } ?>
+                    <?php wp_nonce_field('bmlttabsupdate-options');
+                        $this_connected = $this->testRootServer($this->options['root_server']);
+                        $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>";
+                        if ($this_connected != false) {
+                            $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>";
+                            $this_connected = true;
+                        }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3>BMLT Root Server URL</h3>
                         <p>Example: https://naflorida.org/bmlt_server</p>
@@ -997,18 +857,18 @@ if (!class_exists("Crouton")) {
                             <li>
                                 <label for="service_body_1">Default Service Body: </label>
                                 <select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
-                                <?php if ($this_connected) { ?>
-                                    <?php $unique_areas = $this->getAreas($this->options['root_server'], 'dropdown'); ?>
-                                    <?php asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE); ?>
-                                    <?php foreach ($unique_areas as $key => $unique_area) { ?>
-                                        <?php $area_data = explode(',', $unique_area); ?>
-                                        <?php $area_name = $area_data[0]; ?>
-                                        <?php $area_id = $area_data[1]; ?>
-                                        <?php $area_parent = $area_data[2]; ?>
-                                        <?php $area_parent_name = $area_data[3]; ?>
-                                        <?php $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")" ?></option>
-                                        <?php $is_data = explode(',', esc_html($this->options['service_body_1'])); ?>
-                                        <?php if ($area_id == $is_data[1]) { ?>
+                                <?php if ($this_connected) {
+                                    $unique_areas = $this->getAreas($this->options['root_server'], 'dropdown');
+                                    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
+                                    foreach ($unique_areas as $key => $unique_area) {
+                                        $area_data = explode(',', $unique_area);
+                                        $area_name = $area_data[0];
+                                        $area_id = $area_data[1];
+                                        $area_parent = $area_data[2];
+                                        $area_parent_name = $area_data[3];
+                                        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
+                                        $is_data = explode(',', esc_html($this->options['service_body_1']));
+                                        if ($area_id == $is_data[1]) {?>
                                             <option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
                                         <?php } else { ?>
                                             <option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>

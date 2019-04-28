@@ -1,4 +1,135 @@
-jQuery(document).ready(function($) {
+function getUniqueValuesOfKey(array, key){
+	return array.reduce(function(carry, item){
+		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+		return carry;
+	}, []);
+}
+
+function getDay(day_id) {
+	return words['days_of_the_week'][day_id];
+}
+
+function getMeetings(meetingData, filter) {
+	var meetings = [];
+	meetingData.exclude(croutonConfig['exclude_zip_codes'], "location_postal_code_1");
+	for (var m = 0; m < meetingData.length; m++) {
+		if (filter(meetingData[m])) {
+			meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
+			meetingData[m]['formatted_comments'] =
+				meetingData[m]['comments'] != null
+					? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
+					: "";
+			var duration = meetingData[m]['duration_time'].split(":");
+			meetingData[m]['start_time_formatted'] =
+				moment(meetingData[m]['start_time'], "HH:mm:ss")
+					.format(croutonConfig['time_format']);
+			meetingData[m]['end_time_formatted']
+				= moment(meetingData[m]['start_time'], "HH:mm:ss")
+				.add(duration[0], 'hours')
+				.add(duration[1], 'minutes')
+				.format(croutonConfig['time_format']);
+
+			var formats = meetingData[m]['formats'].split(",");
+			var formats_expanded = [];
+			for (var f = 0; f < formats.length; f++) {
+				for (var g = 0; g < formatsData.length; g++) {
+					if (formats[f] === formatsData[g]['key_string']) {
+						formats_expanded.push(
+							{
+								"key": formats[f],
+								"name": formatsData[g]['name_string'],
+								"description": formatsData[g]['description_string']
+							}
+						)
+					}
+				}
+			}
+			meetingData[m]['formats_expanded'] = formats_expanded;
+			var addressParts = [
+				meetingData[m]['location_street'],
+				meetingData[m]['location_municipality'].trim(),
+				meetingData[m]['location_province'].trim(),
+				meetingData[m]['location_postal_code_1'].trim()
+			];
+			addressParts.clean();
+			meetingData[m]['formatted_address'] = addressParts.join(", ");
+			meetingData[m]['formatted_location_info'] =
+				meetingData[m]['location_info'] != null
+					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
+					: "";
+			meetingData[m]['map_word'] = words['map'].toUpperCase();
+			meetings.push(meetingData[m])
+		}
+	}
+
+	return meetings;
+}
+
+function renderView(templateElement, selector, context) {
+	var source   = document.getElementById(templateElement).innerHTML;
+	var template = Handlebars.compile(source);
+	jQuery(selector).append(template(context));
+}
+
+Handlebars.registerHelper('formatDataPointer', function(str) {
+	return convertToPunyCode(str)
+});
+
+Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
+	var finalFormats = [];
+	for (var i = 0; i < formatsExpanded.length; i++) {
+		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
+	}
+	return finalFormats.join(" ");
+});
+
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+Handlebars.registerHelper('times', function(n, block) {
+	var accum = '';
+	for(var i = 1; i <= n; ++i)
+		accum += block.fn(i);
+	return accum;
+});
+
+Handlebars.registerHelper('getDayOfTheWeek', function(weekday_int) {
+	return getDay(weekday_int);
+});
+
+// 1) Convert string to lower case
+// 2) Then puny code
+// 3) Swap spaces for hyphens
+function convertToPunyCode(str) {
+	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
+}
+
+Array.prototype.clean = function() {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] === "") {
+			this.splice(i, 1);
+			i--;
+		}
+	}
+	return this;
+};
+
+Array.prototype.exclude = function(csv, mappedField) {
+	if (csv == null) return;
+	var excludedValues = csv.split(",");
+	for (var i = 0; i < this.length; i++) {
+		for (var i = 0; i < excludedValues.length; i++) {
+			if (excludedValues[i] === this[i][mappedField]) {
+				this.splice(i, 1);
+				i--;
+			}
+		}
+	}
+	return this;
+};
+
+jQuery(function($) {
 	var dropdownConfiguration = [
 		{
 			placeholder: "Cities",
@@ -72,25 +203,12 @@ jQuery(document).ready(function($) {
 	}
 	$('[data-toggle="popover"]').popover();
 	$('html').on('click', function (e) {
-		if ($(e.target).data('toggle') !== 'popover') { 
+		if ($(e.target).data('toggle') !== 'popover') {
 			$('[data-toggle="popover"]').popover('hide');
 		}
 	});
 
-	if (typeof croutonConfig !== 'undefined' && croutonConfig['has_tabs'] !== "0") {
-		$('.nav-tabs a').on('click', function (e) {
-			e.preventDefault();
-			$(this).tab('show');
-		});
-
-		var d = new Date();
-		var n = d.getDay();
-		n++;
-		$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-		$('#tab' + n).show();
-	}
-
-	if(jQuery.browser.mobile) {
+	if (jQuery.browser.mobile) {
 		$("#e2").prop("readonly", true);
 		$(".select2-search").css({"display":"none"});
 		$(".select2-search").remove();
@@ -233,129 +351,22 @@ jQuery(document).ready(function($) {
 		$(".bmlt-data-row").removeClass("hide");
 	}
 
+	if (typeof croutonConfig !== 'undefined' && croutonConfig['has_tabs'] !== "0") {
+		$('.nav-tabs a').on('click', function (e) {
+			e.preventDefault();
+			$(this).tab('show');
+		});
+
+		var d = new Date();
+		var n = d.getDay();
+		n++;
+		$('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+		$('#tab' + n).show();
+	}
+
 	if (typeof croutonConfig !== 'undefined') {
 		showPage(".bmlt-header");
 		showPage(".bmlt-tabs");
 		showView(croutonConfig['view_by']);
 	}
 });
-
-function getUniqueValuesOfKey(array, key){
-	return array.reduce(function(carry, item){
-		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
-		return carry;
-	}, []);
-}
-
-function getDay(day_id) {
-	return words['days_of_the_week'][day_id];
-}
-
-function getMeetings(meetingData, filter) {
-	var meetings = [];
-	meetingData.exclude(croutonConfig['exclude_zip_codes'], "location_postal_code_1");
-	for (var m = 0; m < meetingData.length; m++) {
-		if (filter(meetingData[m])) {
-			meetingData[m]['formatted_day'] = getDay(meetingData[m]['weekday_tinyint']);
-			meetingData[m]['formatted_comments'] =
-				meetingData[m]['comments'] != null
-					? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-					: "";
-			var duration = meetingData[m]['duration_time'].split(":");
-			meetingData[m]['start_time_formatted'] =
-				moment(meetingData[m]['start_time'], "HH:mm:ss")
-					.format(croutonConfig['time_format']);
-			meetingData[m]['end_time_formatted']
-				= moment(meetingData[m]['start_time'], "HH:mm:ss")
-				.add(duration[0], 'hours')
-				.add(duration[1], 'minutes')
-				.format(croutonConfig['time_format']);
-
-			var formats = meetingData[m]['formats'].split(",");
-			var formats_expanded = [];
-			for (var f = 0; f < formats.length; f++) {
-				for (var g = 0; g < formatsData.length; g++) {
-					if (formats[f] === formatsData[g]['key_string']) {
-						formats_expanded.push(
-							{
-								"key": formats[f],
-								"name": formatsData[g]['name_string'],
-								"description": formatsData[g]['description_string']
-							}
-						)
-					}
-				}
-			}
-			meetingData[m]['formats_expanded'] = formats_expanded;
-			var addressParts = [
-				meetingData[m]['location_street'],
-				meetingData[m]['location_municipality'].trim(),
-				meetingData[m]['location_province'].trim(),
-				meetingData[m]['location_postal_code_1'].trim()
-			];
-			addressParts.clean();
-			meetingData[m]['formatted_address'] = addressParts.join(", ");
-			meetingData[m]['formatted_location_info'] =
-				meetingData[m]['location_info'] != null
-					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-					: "";
-			meetingData[m]['map_word'] = words['map'].toUpperCase();
-			meetings.push(meetingData[m])
-		}
-	}
-
-	return meetings;
-}
-
-function renderView(templateElement, selector, context) {
-	var source   = document.getElementById(templateElement).innerHTML;
-	var template = Handlebars.compile(source);
-	jQuery(selector).append(template(context));
-}
-
-Handlebars.registerHelper('formatDataPointer', function(str) {
-	return convertToPunyCode(str)
-});
-
-Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
-	var finalFormats = [];
-	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
-	}
-	return finalFormats.join(" ");
-});
-
-Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
-	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-});
-
-// 1) Convert string to lower case
-// 2) Then puny code
-// 3) Swap spaces for hyphens
-function convertToPunyCode(str) {
-	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
-}
-
-Array.prototype.clean = function() {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] === "") {
-			this.splice(i, 1);
-			i--;
-		}
-	}
-	return this;
-};
-
-Array.prototype.exclude = function(csv, mappedField) {
-	if (csv == null) return;
-	var excludedValues = csv.split(",");
-	for (var i = 0; i < this.length; i++) {
-		for (var i = 0; i < excludedValues.length; i++) {
-			if (excludedValues[i] === this[i][mappedField]) {
-				this.splice(i, 1);
-				i--;
-			}
-		}
-	}
-	return this;
-};
