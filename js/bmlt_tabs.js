@@ -119,8 +119,8 @@ Array.prototype.exclude = function(csv, mappedField) {
 	if (csv == null) return;
 	var excludedValues = csv.split(",");
 	for (var i = 0; i < this.length; i++) {
-		for (var i = 0; i < excludedValues.length; i++) {
-			if (excludedValues[i] === this[i][mappedField]) {
+		for (var j = 0; j < excludedValues.length; j++) {
+			if (excludedValues[j] === this[i][mappedField]) {
 				this.splice(i, 1);
 				i--;
 			}

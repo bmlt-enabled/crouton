@@ -475,11 +475,6 @@ if (!class_exists("Crouton")) {
 
             $unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
             foreach ($the_meetings as $value) {
-                if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
-                    if (strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false) {
-                        continue;
-                    }
-                }
                 $tvalue = explode(',', $value['formats']);
                 if ($format_key != '' && !in_array($format_key, $tvalue)) {
                     continue;
