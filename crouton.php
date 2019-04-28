@@ -12,7 +12,6 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     // die('Sorry, but you cannot access this page directly.');
 }
 ini_set('max_execution_time', 120);
-require_once 'partials/crouton_IDNAEncoder.php';
 if (!class_exists("Crouton")) {
     // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
     class Crouton
