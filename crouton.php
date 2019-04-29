@@ -164,6 +164,7 @@ if (!class_exists("Crouton")) {
                     ['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
                     ['title' => 'momentjs', 'path' => 'moment.js'],
                     ['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
+                    ['title' => 'crouton', 'path' => 'crouton.js'],
                     ['title' => 'spinjs', 'path' => 'spin.2.3.2.js'],
                     ['title' => 'punycode', 'path' => 'punycode.js'],
                 );
