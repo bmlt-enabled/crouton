@@ -210,11 +210,6 @@ if (!class_exists("Crouton")) {
             return $result;
         }
 
-        public function getDay($day)
-        {
-            return $words['days_of_the_week'][$day];
-        }
-
         public function getCustomQuery($custom_query)
         {
             if (isset($_GET['custom_query'])) {
@@ -310,7 +305,6 @@ if (!class_exists("Crouton")) {
                 "max_zoom_level" => 15,
                 "language" => 'en-US'
             ), $atts));
-            include 'lang/' . $language . '.php';
             if ($show_distance == '1') {
                 wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
             }
@@ -573,7 +567,6 @@ if (!class_exists("Crouton")) {
 
             $output .= "
             <script type='text/javascript'>
-                var words=" . json_encode($words) . ";
                 var meetingData=$meetingsJson;
                 var formatsData=$formatsJson;      
                 var uniqueData=$uniqueDataJson;                
@@ -1075,7 +1068,7 @@ if (!class_exists("Crouton")) {
                     }
                 }
                 $value['start_time'] = date("g:iA", strtotime($value['start_time']));
-                $all_meetings[] = $value['meeting_name'].'||| ['.$this->getDay($value['weekday_tinyint']).'] ['.$value['start_time'].']||| ['.$area_name.']||| ['.$value['id_bigint'].']';
+                $all_meetings[] = $value['meeting_name'].'||| ['.$value['weekday_tinyint'].'] ['.$value['start_time'].']||| ['.$area_name.']||| ['.$value['id_bigint'].']';
             }
             return $all_meetings;
         }
