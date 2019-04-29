@@ -42,6 +42,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 * Fix for Gutenburg autosave issue [#81]
 * Fix for regression with has_tabs="0" and header="0" not group by day [#95]
 * Dropdowns and tabs refactored to use client side rendering (speed improvements) [#53]
+* Removed used_formats feature which has been deprecated for some time [#100]
 
 = 2.4.2 + 2.5.3 =
 * Fix for [meeting_count] and [group_count] render issues if they appeared after [bmlt_tabs] [#86]

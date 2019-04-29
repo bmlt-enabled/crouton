@@ -227,27 +227,23 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function getTheFormatsJson($root_server, $meetings = null, $used_formats = null)
+        public function getTheFormatsJson($root_server, $meetings = null)
         {
-            if ($used_formats == '1') {
-                $get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
-                $join_ids = implode(',', $get_all_ids);
-                $ids_array = explode(',', $join_ids);
-                $unique_ids = array_unique($ids_array);
-                $formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::HTTP_RETRIEVE_ARGS));
-                $formats_all_json = json_decode($formats_all, true);
-                $formats = array();
-                foreach ($formats_all_json as $format) {
-                    if (in_array($format['id'], $unique_ids)) {
-                        $formats[] = $format;
-                    }
+            $get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
+            $join_ids = implode(',', $get_all_ids);
+            $ids_array = explode(',', $join_ids);
+            $unique_ids = array_unique($ids_array);
+            $formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::HTTP_RETRIEVE_ARGS));
+            $formats_all_json = json_decode($formats_all, true);
+            $formats = array();
+
+            foreach ($formats_all_json as $format) {
+                if (in_array($format['id'], $unique_ids)) {
+                    $formats[] = $format;
                 }
-                $results = json_encode($formats);
-            } else {
-                $formats = wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::HTTP_RETRIEVE_ARGS);
-                $results = wp_remote_retrieve_body($formats);
             }
-            return $results;
+
+            return json_encode($formats);
         }
 
         public function testRootServer($root_server)
@@ -309,7 +305,6 @@ if (!class_exists("Crouton")) {
                 "show_distance" => '0',
                 "distance_units" => 'mi',
                 "custom_query" => null,
-                "used_formats" => '0',
                 "show_map" => '0',
                 "max_zoom_level" => 15,
                 "language" => 'en-US'
@@ -459,11 +454,7 @@ if (!class_exists("Crouton")) {
                 }
             }
 
-            if ($used_formats == '1') {
-                $formatsJson = $this->getTheFormatsJson($root_server, $meetingsJson, $used_formats);
-            } else {
-                $formatsJson = $this->getTheFormatsJson($root_server);
-            }
+            $formatsJson = $this->getTheFormatsJson($root_server, $meetingsJson);
             $formats = json_decode($formatsJson, true);
             $format_id = '';
             if ($format_key != '') {
