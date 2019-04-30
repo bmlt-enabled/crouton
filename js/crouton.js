@@ -3,6 +3,13 @@ function convertToPunyCode(str) {
 	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
 }
 
+function getUniqueValuesOfKey(array, key){
+	return array.reduce(function(carry, item){
+		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+		return carry;
+	}, []);
+}
+
 Array.prototype.clean = function() {
 	for (var i = 0; i < this.length; i++) {
 		if (this[i] === "") {
@@ -145,7 +152,7 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 			self.showPage("#tabs-content");
 			return;
 		});
-	}
+	};
 
 	self.cityView = function() {
 		self.resetFilter();
@@ -185,7 +192,7 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 		}
 
 		jQuery(".bmlt-data-rows").each(function(index, value) {
-			if (jQuery(value).find(".bmlt-data-row.hide").length === $(value).find(".bmlt-data-row").length) {
+			if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
 				jQuery(value).find(".meeting-header").addClass("hide");
 			}
 		})
@@ -209,11 +216,69 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 		"words": self.localization.words
 	});
 
+	self.getMeetings = function(meetingData, filter) {
+		var meetings = [];
+		meetingData.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+		for (var m = 0; m < meetingData.length; m++) {
+			if (filter(meetingData[m])) {
+				meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['weekday_tinyint']);
+				meetingData[m]['formatted_comments'] =
+					meetingData[m]['comments'] != null
+						? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
+						: "";
+				var duration = meetingData[m]['duration_time'].split(":");
+				meetingData[m]['start_time_formatted'] =
+                    moment(meetingData[m]['start_time'], "HH:mm:ss")
+                        .format(self.config['time_format']);
+				meetingData[m]['end_time_formatted']
+                    = moment(meetingData[m]['start_time'], "HH:mm:ss")
+                    .add(duration[0], 'hours')
+                    .add(duration[1], 'minutes')
+                    .format(self.config['time_format']);
+
+				var formats = meetingData[m]['formats'].split(",");
+				var formats_expanded = [];
+				for (var f = 0; f < formats.length; f++) {
+                    for (var g = 0; g < self.formatsData.length; g++) {
+                        if (formats[f] === self.formatsData[g]['key_string']) {
+                            formats_expanded.push(
+                                {
+                                    "key": formats[f],
+                                    "name": self.formatsData[g]['name_string'],
+                                    "description": self.formatsData[g]['description_string']
+                                }
+                            )
+                        }
+                    }
+                }
+				meetingData[m]['formats_expanded'] = formats_expanded;
+				var addressParts = [
+					meetingData[m]['location_street'],
+					meetingData[m]['location_municipality'].trim(),
+					meetingData[m]['location_province'].trim(),
+					meetingData[m]['location_postal_code_1'].trim()
+				];
+				addressParts.clean();
+				meetingData[m]['formatted_address'] = addressParts.join(", ");
+				meetingData[m]['formatted_location_info'] =
+					meetingData[m]['location_info'] != null
+						? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
+						: "";
+				meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+				meetings.push(meetingData[m])
+			}
+		}
+
+		return meetings;
+	};
+
+	/* running on load */
+
 	var context = {"config": self.config, "data": [] };
 	for (var day = 1; day <= 7; day++) {
 		context['data'].push({
 			"day": day,
-			"meetings": getMeetings(self.meetingData, function(item) {
+			"meetings": self.getMeetings(self.meetingData, function(item) {
 				return item['weekday_tinyint'] === day.toString();
 			})
 		});
@@ -226,7 +291,7 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 	for (var i = 0; i < cities.length; i++) {
 		context.push({
 			"city": cities[i],
-			"meetings": getMeetings(self.meetingData, function(item) {
+			"meetings": self.getMeetings(self.meetingData, function(item) {
 				return item['location_municipality'] === cities[i];
 			})
 		});
@@ -238,7 +303,7 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 	for (var day = 1; day <= 7; day++) {
 		context.push({
 			"day": this.localization.getDayOfTheWeekWord(day),
-			"meetings": getMeetings(self.meetingData, function(item) {
+			"meetings": self.getMeetings(self.meetingData, function(item) {
 				return item['weekday_tinyint'] === day.toString();
 			})
 		});

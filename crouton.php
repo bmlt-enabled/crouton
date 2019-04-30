@@ -163,7 +163,6 @@ if (!class_exists("Crouton")) {
                     ['title' => 'tablesaw', 'path' => 'tablesaw.jquery.3.0.9.js'],
                     ['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
                     ['title' => 'momentjs', 'path' => 'moment.js'],
-                    ['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
                     ['title' => 'crouton-localization', 'path' => 'crouton-localization.js'],
                     ['title' => 'crouton', 'path' => 'crouton.js'],
                     ['title' => 'spinjs', 'path' => 'spin.2.3.2.js'],
