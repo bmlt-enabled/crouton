@@ -22,8 +22,8 @@ if (!class_exists("Crouton")) {
         public $exclude_zip_codes = null;
         public static $HOUR_IN_SECONDS = 3600;
         const COUNT_TYPES = array(
-            ['name' => 'group', 'cache_key_prefix' => 'bmlt_tabs_gc_', 'field' => array('worldid_mixed','meeting_name')],
-            ['name' => 'meeting', 'cache_key_prefix' => 'bmlt_tabs_mc_', 'field' => array('id_bigint')]
+            ['name' => 'group', 'field' => array('worldid_mixed','meeting_name')],
+            ['name' => 'meeting', 'field' => array('id_bigint')]
         );
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
@@ -404,15 +404,6 @@ if (!class_exists("Crouton")) {
                 $format_key,
                 $custom_query_postfix,
             ];
-            $transient_key = 'bmlt_tabs_' . md5(join("", $key_items));
-            if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
-                //$output = get_transient('_transient_'.$transient_key);
-                $output = get_transient($transient_key);
-                //$output = gzuncompress($output);
-                if ($output != '') {
-                    return $output;
-                }
-            }
 
             ob_flush();
             flush();
@@ -550,7 +541,8 @@ if (!class_exists("Crouton")) {
                 "has_meetings" => $has_meetings,
                 "dropdown_width" => $dropdown_width,
                 "distance_units" => $distance_units,
-                "language" => $language
+                "language" => $language,
+                "root_server" => $this->options['root_server'],
             ]);
 
             $css = $this->options['custom_css'];
@@ -590,9 +582,6 @@ if (!class_exists("Crouton")) {
             }
 
             $output .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
-            if (intval($this->options['cache_time']) > 0 && $_GET['nocache'] != null) {
-                set_transient($transient_key, $output, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
-            }
             return $output;
         }
 
@@ -673,28 +662,6 @@ if (!class_exists("Crouton")) {
             } else {
                 $the_query = "$root_server/client_interface/json/?switcher=GetSearchResults" . $services;
             }
-            $transient_key = $count_type_obj['cache_key_prefix'] . md5($the_query);
-            if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-                $results = wp_remote_get($the_query, Crouton::HTTP_RETRIEVE_ARGS);
-                $httpcode = wp_remote_retrieve_response_code($results);
-                $response_message = wp_remote_retrieve_response_message($results);
-                if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
-                    return '[connect error]';
-                }
-                $result = json_decode(wp_remote_retrieve_body($results), true);
-                foreach ($result as $value) {
-                    if ($exclude_zip_codes !== null && $value['location_postal_code_1']) {
-                        if (strpos($exclude_zip_codes, $value['location_postal_code_1']) !== false) {
-                            continue;
-                        }
-                    }
-                    $unique_group[] = $value[$count_type_obj['field'][0]] !== "" ? $value[$count_type_obj['field'][0]] : $value[$count_type_obj['field'][1]];
-                }
-                $result = array_unique($unique_group);
-                if (intval($this->options['cache_time']) > 0) {
-                    set_transient($transient_key, $result, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
-                }
-            }
             $results = count($result) - $subtract;
             return $results;
         }
@@ -704,18 +671,11 @@ if (!class_exists("Crouton")) {
          */
         public function getAreas($root_server, $source)
         {
-            $transient_key = 'bmlt_tabs_' . md5("$root_server/client_interface/json/?switcher=GetServiceBodies");
-            if (false === ($result = get_transient($transient_key)) || intval($this->options['cache_time']) == 0) {
-                $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
-                $result = json_decode(wp_remote_retrieve_body($results), true);
-                if (is_wp_error($results)) {
-                    echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
-                    return 0;
-                }
-
-                if (intval($this->options['cache_time']) > 0) {
-                    set_transient($transient_key, $result, intval($this->options['cache_time']) * Crouton::$HOUR_IN_SECONDS);
-                }
+            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
+            $result = json_decode(wp_remote_retrieve_body($results), true);
+            if (is_wp_error($results)) {
+                echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
+                return 0;
             }
 
             if ($source == 'dropdown') {
@@ -759,14 +719,10 @@ if (!class_exists("Crouton")) {
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
-            if (!isset($_POST['delete_cache_action'])) {
-                $_POST['delete_cache_action'] = false;
-            }
             if ($_POST['bmlttabssave']) {
                 if (!wp_verify_nonce($_POST['_wpnonce'], 'bmlttabsupdate-options')) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
-                $this->options['cache_time']     = $_POST['cache_time'];
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
                 $this->options['custom_query']   = $_POST['custom_query'];
@@ -778,14 +734,6 @@ if (!class_exists("Crouton")) {
                 $this->saveAdminOptions();
                 set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
-                if (intval($this->options['cache_time']) == 0) {
-                    $num = $this->deleteTransientCache();
-                    if ($num > 0) {
-                        echo "<div class='updated'><p>Success! BMLT Cache Deleted! ($num entries found and deleted)</p></div>";
-                    }
-                } else {
-                    echo "<div class='updated'><p>Note: consider Deleting Cache (unless you know what you're doing)</p></div>";
-                }
             }
 
             if (!isset($this->options['extra_meetings_enabled']) || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
@@ -797,19 +745,7 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = 1;
             }
 
-            if ($_POST['delete_cache_action']) {
-                if (!wp_verify_nonce($_POST['_wpnonce'], 'delete_cache_nonce')) {
-                    die('Whoops! There was a problem with the data you posted. Please go back and try again.');
-                }
-                $num = $this->deleteTransientCache();
-                set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
-                if ($num > 0) {
-                    echo "<div class='updated'><p>Success! BMLT Cache Deleted! ($num entries found and deleted)</p></div>";
-                } else {
-                    echo "<div class='updated'><p>Success! BMLT Cache - Nothing Deleted! ($num entries found)</p></div>";
-                }
-            }
-            ?>
+           ?>
             <div class="wrap">
                 <h2>crouton</h2>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
@@ -925,65 +861,13 @@ if (!class_exists("Crouton")) {
                         </ul>
                         <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></p>
                     </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3>Meeting Cache (<?php echo $this->countTransientCache(); ?> Cached Entries)</h3>
-                        <?php global $_wp_using_ext_object_cache; ?>
-                        <?php if ($_wp_using_ext_object_cache) { ?>
-                            <p>This site is using an external object cache.</p>
-                        <?php } ?>
-                        <p>Meeting data is cached (as database transient) to load crouton faster.</p>
-                        <ul>
-                            <li>
-                                <label for="cache_time">Cache Time: </label>
-                                <input id="cache_time" onKeyPress="return numbersonly(this, event)" type="number" min="0" max="999" size="3" maxlength="3" name="cache_time" value="<?php echo $this->options['cache_time']; ?>" />&nbsp;&nbsp;<em>0 - 999 Hours (0 = disable and delete cache)</em>
-                            </li>
-                        </ul>
-                        <p>
-                            <em>The DELETE CACHE button is useful for the following:
-                                <ol>
-                                    <li>After updating meetings in BMLT.</li>
-                                    <li>Meeting information is not correct on the website.</li>
-                                    <li>Changing the Cache Time value.</li>
-                                </ol>
-                            </em>
-                        </p>
-                    </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
-                </form>
-                <form style="display:inline!important;" method="post">
-                    <?php wp_nonce_field('delete_cache_nonce'); ?>
-                    <input style="color: #000;" type="submit" value="DELETE CACHE" name="delete_cache_action" class="button-primary" />
                 </form>
                 <br/><br/>
                 <?php include 'partials/_instructions.php'; ?>
             </div>
             <script type="text/javascript">getValueSelected();</script>
             <?php
-        }
-        /**
-         * Deletes transient cache
-         */
-        public function deleteTransientCache()
-        {
-            global $wpdb, $_wp_using_ext_object_cache;
-            ;
-            wp_cache_flush();
-            $num1 = $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s ", '_transient_bmlt_tabs_%'));
-            $num2 = $wpdb->query($wpdb->prepare("DELETE FROM $wpdb->options WHERE option_name LIKE %s ", '_transient_timeout_bmlt_tabs_%'));
-            wp_cache_flush();
-            return $num1 + $num2;
-        }
-        /**
-         * count transient cache
-         */
-        public function countTransientCache()
-        {
-            global $wpdb, $_wp_using_ext_object_cache;
-            wp_cache_flush();
-            $num1 = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->options WHERE option_name LIKE %s ", '_transient_bmlt_tabs_%'));
-            $num2 = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $wpdb->options WHERE option_name LIKE %s ", '_transient_timeout_bmlt_tabs_%'));
-            wp_cache_flush();
-            return $num1;
         }
         /**
          * @desc Adds the Settings link to the plugin activate/deactivate page
@@ -1006,7 +890,6 @@ if (!class_exists("Crouton")) {
             // Don't forget to set up the default options
             if (!$theOptions = get_option($this->optionsName)) {
                 $theOptions = array(
-                    'cache_time' => '0',
                     'root_server' => '',
                     'service_body_1' => ''
                 );
