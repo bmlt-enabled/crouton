@@ -164,6 +164,7 @@ if (!class_exists("Crouton")) {
                     ['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
                     ['title' => 'momentjs', 'path' => 'moment.js'],
                     ['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.js'],
+                    ['title' => 'crouton-localization', 'path' => 'crouton-localization.js'],
                     ['title' => 'crouton', 'path' => 'crouton.js'],
                     ['title' => 'spinjs', 'path' => 'spin.2.3.2.js'],
                     ['title' => 'punycode', 'path' => 'punycode.js'],
@@ -549,7 +550,8 @@ if (!class_exists("Crouton")) {
                 "has_formats" => $has_formats,
                 "has_meetings" => $has_meetings,
                 "dropdown_width" => $dropdown_width,
-                "distance_units" => $distance_units
+                "distance_units" => $distance_units,
+                "language" => $language
             ]);
 
             $css = $this->options['custom_css'];
@@ -566,12 +568,8 @@ if (!class_exists("Crouton")) {
             ]);
 
             $output .= "
-            <script type='text/javascript'>
-                var meetingData=$meetingsJson;
-                var formatsData=$formatsJson;      
-                var uniqueData=$uniqueDataJson;                
-            </script><style type='text/css'>$css</style>";
-            $output .= $this->getConfigJavascriptBlock($config);
+            <style type='text/css'>$css</style>";
+            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson, $formatsJson, $meetingsJson);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
                 $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -599,9 +597,9 @@ if (!class_exists("Crouton")) {
             return $output;
         }
 
-        public function getConfigJavascriptBlock($config = array())
+        public function getConfigJavascriptBlock($config = array(), $uniqueData = array(), $formatsData = array(), $meetingData = array())
         {
-            return "<script type='text/javascript'>var croutonConfig=$config;</script>";
+            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData,$formatsData,$meetingData); })</script>";
         }
 
         public function meetingCount($atts, $content = null)

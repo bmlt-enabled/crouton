@@ -13,19 +13,3 @@
     </div>
 </script>
 <div class="bmlt-page hide" id="cities"></div>
-<script type="text/javascript">
-    jQuery(function() {
-        var cities = getUniqueValuesOfKey(meetingData, 'location_municipality').sort();
-        var context = [];
-        for (var i = 0; i < cities.length; i++) {
-            context.push({
-                "city": cities[i],
-                "meetings": getMeetings(meetingData, function(item) {
-                    return item['location_municipality'] === cities[i];
-                })
-            });
-        }
-
-        renderView("cities-template", "#cities", context);
-    });
-</script>

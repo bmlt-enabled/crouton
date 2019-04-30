@@ -13,18 +13,3 @@
     </div>
 </script>
 <div class="bmlt-page hide" id="byday"></div>
-<script type="text/javascript">
-    jQuery(function() {
-        var context = [];
-        for (var day = 1; day <= 7; day++) {
-            context.push({
-                "day": getDay(day),
-                "meetings": getMeetings(meetingData, function(item) {
-                    return item['weekday_tinyint'] === day.toString();
-                })
-            });
-        }
-
-        renderView("byday-template", "#byday", context);
-    });
-</script>

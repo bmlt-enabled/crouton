@@ -113,12 +113,3 @@
 {{/ifEquals}}
 </script>
 <div class="hide bmlt-header" id="bmlt-header"></div>
-<script type="text/javascript">
-    jQuery(function($) {
-        renderView("header-template", "#bmlt-header", {
-            "config": croutonConfig,
-            "uniqueData": uniqueData,
-            "words": words
-        });
-    });
-</script>

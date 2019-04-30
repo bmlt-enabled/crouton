@@ -14,18 +14,3 @@
     </div>
 </script>
 <div class="bmlt-page" id="tabs-content"></div>
-<script type="text/javascript">
-    jQuery(function() {
-        var context = {"config": croutonConfig, "data": [] };
-        for (var day = 1; day <= 7; day++) {
-            context['data'].push({
-                "day": day,
-                "meetings": getMeetings(meetingData, function(item) {
-                    return item['weekday_tinyint'] === day.toString();
-                })
-            });
-        }
-
-        renderView("weekdays-template", "#tabs-content", context);
-    });
-</script>
