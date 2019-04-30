@@ -3,11 +3,37 @@ function convertToPunyCode(str) {
 	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
 }
 
+function arrayColumn(input, columnKey) {
+	var newArr = [];
+	for (var item of input) {
+		newArr.push(item[columnKey]);
+	}
+
+	return newArr;
+}
+
 function getUniqueValuesOfKey(array, key){
 	return array.reduce(function(carry, item){
 		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
 		return carry;
 	}, []);
+}
+
+function arrayUnique(a, b, c) {
+	b = a.length;
+	while (c = --b)
+		while (c--) a[b] !== a[c] || a.splice(c, 1);
+	return a
+}
+
+function inArray(needle, haystack) {
+	for (var item of haystack) {
+		if (item === needle) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 Array.prototype.clean = function() {
@@ -33,13 +59,13 @@ Array.prototype.exclude = function(csv, mappedField) {
 	return this;
 };
 
-function Crouton(config, uniqueData, formatsData, meetingData) {
+function Crouton(config, uniqueData, meetingData) {
 	var self = this;
 	self.config = config;
 	self.uniqueData = uniqueData;
-	self.formatsData = formatsData;
 	self.meetingData = meetingData;
 	self.localization = new CroutonLocalization(self.config['language']);
+	self.service_body_data = [];
 	self.dropdownConfiguration = [
 		{
 			placeholder: "Cities",
@@ -216,6 +242,27 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 		"words": self.localization.words
 	});
 
+	self.getFormats = function(callback) {
+		var getAllIds = arrayColumn(meetingData, 'format_shared_id_list');
+		var joinIds = getAllIds.join(',');
+		var idsArray = joinIds.split(',');
+		var uniqueIds = arrayUnique(idsArray);
+		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function(data) {
+			var formats = [];
+			for (var format of data) {
+				if (inArray(format['id'], uniqueIds)) {
+					formats.push(format);
+				}
+			}
+
+			callback(formats);
+		});
+	};
+
+	self.getServiceBodies = function(callback) {
+		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&callback=?', callback);
+	};
+
 	self.getMeetings = function(meetingData, filter) {
 		var meetings = [];
 		meetingData.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
@@ -274,127 +321,127 @@ function Crouton(config, uniqueData, formatsData, meetingData) {
 
 	/* running on load */
 
-	var context = {"config": self.config, "data": [] };
-	for (var day = 1; day <= 7; day++) {
-		context['data'].push({
-			"day": day,
-			"meetings": self.getMeetings(self.meetingData, function(item) {
-				return item['weekday_tinyint'] === day.toString();
-			})
+	self.getFormats(function(data) {
+		self.formatsData = data;
+
+		self.getServiceBodies(function(data) {
+			self.service_body_data = data;
 		});
-	}
 
-	self.renderView("weekdays-template", "#tabs-content", context);
-
-	var cities = getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort();
-	var context = [];
-	for (var i = 0; i < cities.length; i++) {
-		context.push({
-			"city": cities[i],
-			"meetings": self.getMeetings(self.meetingData, function(item) {
-				return item['location_municipality'] === cities[i];
-			})
-		});
-	}
-
-	self.renderView("cities-template", "#cities", context);
-
-	var context = [];
-	for (var day = 1; day <= 7; day++) {
-		context.push({
-			"day": this.localization.getDayOfTheWeekWord(day),
-			"meetings": self.getMeetings(self.meetingData, function(item) {
-				return item['weekday_tinyint'] === day.toString();
-			})
-		});
-	}
-
-	self.renderView("byday-template", "#byday", context);
-
-	for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-		jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
-	}
-	jQuery('[data-toggle="popover"]').popover();
-	jQuery('html').on('click', function (e) {
-		if (jQuery(e.target).data('toggle') !== 'popover') {
-			jQuery('[data-toggle="popover"]').popover('hide');
+		var context = {"config": self.config, "data": [] };
+		for (var day = 1; day <= 7; day++) {
+			context['data'].push({
+				"day": day,
+				"meetings": self.getMeetings(self.meetingData, function(item) {
+					return item['weekday_tinyint'] === day.toString();
+				})
+			});
 		}
-	});
 
-	if (jQuery.browser.mobile) {
-		jQuery("#e2").prop("readonly", true);
-		jQuery(".select2-search").css({"display":"none"});
-		jQuery(".select2-search").remove();
-		for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
-			jQuery("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+		self.renderView("weekdays-template", "#tabs-content", context);
+
+		var cities = getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort();
+		var context = [];
+		for (var i = 0; i < cities.length; i++) {
+			context.push({
+				"city": cities[i],
+				"meetings": self.getMeetings(self.meetingData, function(item) {
+					return item['location_municipality'] === cities[i];
+				})
+			});
 		}
-		jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
-		jQuery(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
-	}
 
-	for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-		jQuery("#e" + a).on('select2:select', function (e) {
-			for (var j = 2; j <= self.dropdownConfiguration.length + 1; j++) {
-				if (this.id !== "e" + j) {
-					if (jQuery("#e" + j).length) {
-						jQuery("#e" + j).select2("val", null);
+		self.renderView("cities-template", "#cities", context);
+
+		var context = [];
+		for (var day = 1; day <= 7; day++) {
+			context.push({
+				"day": self.localization.getDayOfTheWeekWord(day),
+				"meetings": self.getMeetings(self.meetingData, function(item) {
+					return item['weekday_tinyint'] === day.toString();
+				})
+			});
+		}
+
+		self.renderView("byday-template", "#byday", context);
+
+		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+			jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
+		}
+		jQuery('[data-toggle="popover"]').popover();
+		jQuery('html').on('click', function (e) {
+			if (jQuery(e.target).data('toggle') !== 'popover') {
+				jQuery('[data-toggle="popover"]').popover('hide');
+			}
+		});
+
+		if (jQuery.browser.mobile) {
+			jQuery("#e2").prop("readonly", true);
+			jQuery(".select2-search").css({"display":"none"});
+			jQuery(".select2-search").remove();
+			for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
+				jQuery("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+			}
+			jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
+			jQuery(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
+		}
+
+		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+			jQuery("#e" + a).on('select2:select', function (e) {
+				for (var j = 2; j <= self.dropdownConfiguration.length + 1; j++) {
+					if (this.id !== "e" + j) {
+						if (jQuery("#e" + j).length) {
+							jQuery("#e" + j).select2("val", null);
+						}
 					}
 				}
-			}
 
-			if (jQuery.browser.mobile) {
-				jQuery("#" + this.id).prop("readonly", true);
-				jQuery(".select2-search").css({"display": "none"});
-				jQuery(".select2-search").remove();
-			}
+				if (jQuery.browser.mobile) {
+					jQuery("#" + this.id).prop("readonly", true);
+					jQuery(".select2-search").css({"display": "none"});
+					jQuery(".select2-search").remove();
+				}
 
-			var val = jQuery("#" + this.id).val();
-			jQuery('.bmlt-page').each(function (index) {
+				var val = jQuery("#" + this.id).val();
+				jQuery('.bmlt-page').each(function (index) {
+					self.hidePage("#" + this.id);
+					self.lowlightButton("#city");
+					self.lowlightButton("#day");
+					self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+					return;
+				});
+			});
+		}
+
+		jQuery("#day").on('click', function() { self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day'); });
+		jQuery("#city").on('click', function() { self.showView('city'); });
+
+		jQuery('.custom-ul').on('click', 'a', function(event) {
+			jQuery('.bmlt-page').each(function(index) {
 				self.hidePage("#" + this.id);
-				self.lowlightButton("#city");
-				self.lowlightButton("#day");
-				self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+				self.showPage("#" + event.target.id);
 				return;
 			});
 		});
-	}
 
-	jQuery("#day").on('click', function() { self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day'); });
-	jQuery("#city").on('click', function() { self.showView('city'); });
+		if (self.config['has_tabs'] !== "0") {
+			jQuery('.nav-tabs a').on('click', function (e) {
+				e.preventDefault();
+				jQuery(this).tab('show');
+			});
 
-	jQuery('.custom-ul').on('click', 'a', function(event) {
-		jQuery('.bmlt-page').each(function(index) {
-			self.hidePage("#" + this.id);
-			self.showPage("#" + event.target.id);
-			return;
-		});
+			var d = new Date();
+			var n = d.getDay();
+			n++;
+			jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+			jQuery('#tab' + n).show();
+		}
+
+		self.showPage(".bmlt-header");
+		self.showPage(".bmlt-tabs");
+		self.showView(self.config['view_by']);
 	});
-
-	if (self.config['has_tabs'] !== "0") {
-		jQuery('.nav-tabs a').on('click', function (e) {
-			e.preventDefault();
-			jQuery(this).tab('show');
-		});
-
-		var d = new Date();
-		var n = d.getDay();
-		n++;
-		jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-		jQuery('#tab' + n).show();
-	}
-
-	self.showPage(".bmlt-header");
-	self.showPage(".bmlt-tabs");
-	self.showView(self.config['view_by']);
 }
-
-Crouton.prototype.getServiceBodies = function(callback) {
-	jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&callback=?', callback);
-};
-
-Crouton.prototype.getFormats = function(callback) {
-	jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', callback);
-};
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str)

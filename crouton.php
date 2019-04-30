@@ -322,6 +322,8 @@ if (!class_exists("Crouton")) {
                     return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
                 }
             }
+
+            // TODO: move non querystring handling of settings to javascript
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
             $service_body           = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
@@ -337,12 +339,16 @@ if (!class_exists("Crouton")) {
             $custom_query_postfix   = $this->getCustomQuery($custom_query);
             $view_by                = ($has_tabs == '0' ? 'byday' : $view_by);
 
-            if ($root_server == '') {
+            // TODO: move message to javascript
+            /* if ($root_server == '') {
                 return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
-            }
+            }*/
 
+            // TODO: not sure what this was for
             // $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
-            if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
+
+            // TODO: move messages to javascript
+            /* if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
                 return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
             }
             if ($include_city_button != '0' && $include_city_button != '1') {
@@ -350,7 +356,8 @@ if (!class_exists("Crouton")) {
             }
             if ($include_weekday_button != '0' && $include_weekday_button != '1') {
                 return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
-            }
+            } */
+
             if ($service_body_parent == null && $service_body == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
                 $area            = $area_data[0];
@@ -363,12 +370,17 @@ if (!class_exists("Crouton")) {
                 }
             }
             $services = '';
-            if ($service_body_parent != null && $service_body != null) {
+
+            // TODO: move messages to javascript
+            /*if ($service_body_parent != null && $service_body != null) {
                 return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
             }
             if ($service_body == '' && $service_body_parent == '') {
                 return '<p>crouton Error: Service body missing from shortcode.</p>';
-            }
+            }*/
+
+
+            // Query construction
             if ($service_body != null) {
                 $service_body = array_map('trim', explode(",", $service_body));
                 foreach ($service_body as $key) {
@@ -381,6 +393,7 @@ if (!class_exists("Crouton")) {
                     $services .= '&recursive=1&services[]=' . $key;
                 }
             }
+
             $key_items = [
                 $root_server,
                 $services,
@@ -442,15 +455,6 @@ if (!class_exists("Crouton")) {
 
             $formatsJson = $this->getTheFormatsJson($root_server, $meetingsJson);
             $formats = json_decode($formatsJson, true);
-            $format_id = '';
-            if ($format_key != '') {
-                foreach ($formats as $value) {
-                    if ($value['key_string'] == $format_key) {
-                        $format_id = $value['id'];
-                    }
-                }
-            }
-
             $unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
             foreach ($the_meetings as $value) {
                 $tvalue = explode(',', $value['formats']);
@@ -542,7 +546,7 @@ if (!class_exists("Crouton")) {
                 "dropdown_width" => $dropdown_width,
                 "distance_units" => $distance_units,
                 "language" => $language,
-                "root_server" => $this->options['root_server'],
+                "root_server" => $root_server,
             ]);
 
             $css = $this->options['custom_css'];
@@ -560,7 +564,7 @@ if (!class_exists("Crouton")) {
 
             $output .= "
             <style type='text/css'>$css</style>";
-            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson, $formatsJson, $meetingsJson);
+            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson, $meetingsJson);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
                 $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -585,9 +589,9 @@ if (!class_exists("Crouton")) {
             return $output;
         }
 
-        public function getConfigJavascriptBlock($config = array(), $uniqueData = array(), $formatsData = array(), $meetingData = array())
+        public function getConfigJavascriptBlock($config = array(), $uniqueData = array(), $meetingData = array())
         {
-            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData,$formatsData,$meetingData); })</script>";
+            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData,$meetingData); })</script>";
         }
 
         public function meetingCount($atts, $content = null)
