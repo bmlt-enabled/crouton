@@ -174,14 +174,6 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function sortBySubkey(&$array, $subkey, $sortType = SORT_ASC)
-        {
-            foreach ($array as $subarray) {
-                $keys[] = $subarray[$subkey];
-            }
-            array_multisort($keys, $sortType, $array);
-        }
-
         public function getNameFromServiceBodyID($serviceBodyID)
         {
             $bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
@@ -496,7 +488,6 @@ if (!class_exists("Crouton")) {
                 "has_tabs" => $has_tabs,
                 "time_format" => $time_format,
                 "exclude_zip_codes" => $exclude_zip_codes,
-                "root_server_query" => $getMeetingsUrl,
                 "header" => $header,
                 "has_cities" => $has_cities,
                 "has_groups" => $has_groups,
@@ -511,6 +502,7 @@ if (!class_exists("Crouton")) {
                 "distance_units" => $distance_units,
                 "language" => $language,
                 "root_server" => $root_server,
+                "service_body_id" => $service_body,
             ]);
 
             $css = $this->options['custom_css'];
@@ -527,7 +519,7 @@ if (!class_exists("Crouton")) {
 
             $output .= "
             <style type='text/css'>$css</style>";
-            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson, $meetingsJson);
+            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
                 $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -552,9 +544,9 @@ if (!class_exists("Crouton")) {
             return $output;
         }
 
-        public function getConfigJavascriptBlock($config = array(), $uniqueData = array(), $meetingData = array())
+        public function getConfigJavascriptBlock($config = array(), $uniqueData = array())
         {
-            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData,$meetingData); })</script>";
+            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData); })</script>";
         }
 
         public function meetingCount($atts, $content = null)
