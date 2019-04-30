@@ -89,7 +89,7 @@
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="e6">
                 <option></option>
                 {{#each this.uniqueData.formats}}
-                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                <option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
                 {{/each}}
             </select>
         </div>

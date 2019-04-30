@@ -59,6 +59,17 @@ Array.prototype.exclude = function(csv, mappedField) {
 	return this;
 };
 
+Array.prototype.sortByKey = function (key) {
+	this.sort(function (a, b) {
+		if (a[key] < b[key])
+			return -1;
+		if (a[key] > b[key])
+			return 1;
+		return 0;
+	});
+	return this;
+};
+
 function Crouton(config, uniqueData, meetingData) {
 	var self = this;
 	self.config = config;
@@ -235,13 +246,6 @@ function Crouton(config, uniqueData, meetingData) {
 		jQuery(selector).append(template(context));
 	};
 
-
-	self.renderView("header-template", "#bmlt-header", {
-		"config": self.config,
-		"uniqueData": self.uniqueData,
-		"words": self.localization.words
-	});
-
 	self.getFormats = function(callback) {
 		var getAllIds = arrayColumn(meetingData, 'format_shared_id_list');
 		var joinIds = getAllIds.join(',');
@@ -255,7 +259,7 @@ function Crouton(config, uniqueData, meetingData) {
 				}
 			}
 
-			callback(formats);
+			callback(formats.sortByKey('name_string'));
 		});
 	};
 
@@ -323,9 +327,16 @@ function Crouton(config, uniqueData, meetingData) {
 
 	self.getFormats(function(data) {
 		self.formatsData = data;
+		self.uniqueData['formats'] = data;
 
 		self.getServiceBodies(function(data) {
 			self.service_body_data = data;
+		});
+
+		self.renderView("header-template", "#bmlt-header", {
+			"config": self.config,
+			"uniqueData": self.uniqueData,
+			"words": self.localization.words
 		});
 
 		var context = {"config": self.config, "data": [] };

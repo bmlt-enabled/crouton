@@ -223,25 +223,6 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function getTheFormatsJson($root_server, $meetings = null)
-        {
-            $get_all_ids = array_column(json_decode($meetings, true), 'format_shared_id_list');
-            $join_ids = implode(',', $get_all_ids);
-            $ids_array = explode(',', $join_ids);
-            $unique_ids = array_unique($ids_array);
-            $formats_all = wp_remote_retrieve_body(wp_remote_get("$root_server/client_interface/json/?switcher=GetFormats", Crouton::HTTP_RETRIEVE_ARGS));
-            $formats_all_json = json_decode($formats_all, true);
-            $formats = array();
-
-            foreach ($formats_all_json as $format) {
-                if (in_array($format['id'], $unique_ids)) {
-                    $formats[] = $format;
-                }
-            }
-
-            return json_encode($formats);
-        }
-
         public function testRootServer($root_server)
         {
             $args = array(
@@ -421,7 +402,8 @@ if (!class_exists("Crouton")) {
             ob_flush();
             flush();
 
-            $getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix);
+            // TODO: readd mechanism to filter to only show specific formats (use custom_query behind the scenes)
+            $getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, '', $custom_query_postfix);
             if ($this->options['extra_meetings']) {
                 $meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
                 $the_meetings_array = json_decode($meetingsWithoutExtrasJson, true);
@@ -453,22 +435,8 @@ if (!class_exists("Crouton")) {
                 }
             }
 
-            $formatsJson = $this->getTheFormatsJson($root_server, $meetingsJson);
-            $formats = json_decode($formatsJson, true);
             $unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
             foreach ($the_meetings as $value) {
-                $tvalue = explode(',', $value['formats']);
-                if ($format_key != '' && !in_array($format_key, $tvalue)) {
-                    continue;
-                }
-                foreach ($tvalue as $t_value) {
-                    $unique_format[] = $t_value;
-                    foreach ($formats as $s_value) {
-                        if ($s_value['key_string'] == $t_value) {
-                            $unique_format_name_string[] = $s_value['name_string'];
-                        }
-                    }
-                }
                 if ($value['location_municipality']) {
                     $unique_city[] = $value['location_municipality'];
                 }
@@ -501,16 +469,12 @@ if (!class_exists("Crouton")) {
             $unique_group              = array_unique($unique_group);
             $unique_area               = array_unique($unique_area);
             $unique_location           = array_unique($unique_location);
-            $unique_format             = array_unique($unique_format);
-            $unique_format_name_string = array_unique($unique_format_name_string);
             asort($unique_zip, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_sub_province, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_state, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_city, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_group, SORT_NATURAL | SORT_FLAG_CASE);
             asort($unique_location, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_format, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_format_name_string, SORT_NATURAL | SORT_FLAG_CASE);
             array_push($unique_weekday, "1", "2", "3", "4", "5", "6", "7");
 
             if ($has_areas == '1') {
@@ -559,7 +523,6 @@ if (!class_exists("Crouton")) {
                 'sub_provinces' => array_values($unique_sub_province),
                 'states' => array_values($unique_state),
                 'zips' => array_values($unique_zip),
-                'formats' => array_values($unique_format_name_string),
             ]);
 
             $output .= "
