@@ -86,7 +86,7 @@
 		<p><strong>[bmlt_tabs include_weekday_button="0|1"]</strong></p>
 		<p>0 = exclude Weekday button</p>
 		<p>1 = include Weekday button (default)</p>
-		<p><em>Weekday button will be included when view_by = "weekday" (include_weekday_button will be set to "1").</em></p>
+		<p><em>Weekday button will be included when view_by = "weekday" which is the default.  You will need to set view_by to something other than "weekday" to make use of this. (include_weekday_button will be set to "1").</em></p>
 	</div>
 	<h3 class="help-accordian"><strong>Tabs or No Tabs</strong></h3>
 	<div>
