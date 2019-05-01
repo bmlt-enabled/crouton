@@ -74,7 +74,6 @@ function Crouton(config, uniqueData) {
 	var self = this;
 	self.serviceBodyData = [];
 	self.config = config;
-	self.uniqueData = uniqueData;
 	self.localization = new CroutonLocalization(self.config['language']);
 	self.dropdownConfiguration = [
 		{
@@ -271,8 +270,8 @@ function Crouton(config, uniqueData) {
 		if (self.config['custom_query_postfix'] != null) {
 			url = '/client_interface/jsonp/?switcher=GetSearchResults' + self.config['custom_query_postfix'] + '&sort_key=time';
 		} else {
-			url = '/client_interface/jsonp/?switcher=GetSearchResults&sort_key=time';
-				//+ (self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "");
+			url = '/client_interface/jsonp/?switcher=GetSearchResults&sort_key=time' +
+				(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
 		}
 
 		if (self.config['service_body_id'].length > 0) url += "&services[]=" + self.config['service_body_id'][0];
@@ -340,7 +339,15 @@ function Crouton(config, uniqueData) {
 
 	self.getMeetings(function(data) {
 		self.meetingData = data;
-
+		self.uniqueData = {
+			'groups': getUniqueValuesOfKey(data, 'meeting_name').sort(),
+			'cities': getUniqueValuesOfKey(data, 'location_municipality').sort(),
+			'areas': getUniqueValuesOfKey(data, 'meeting_name').sort(),
+			'locations': getUniqueValuesOfKey(data, 'location_text').sort(),
+			'sub_provinces': getUniqueValuesOfKey(data, 'location_sub_province').sort(),
+			'states': getUniqueValuesOfKey(data, 'location_province').sort(),
+			'zips': getUniqueValuesOfKey(data, 'location_postal_code_1').sort(),
+		};
 		self.getServiceBodies(function(data) {
 			self.serviceBodyData = data;
 

@@ -367,33 +367,6 @@ if (!class_exists("Crouton")) {
                 }
             }
 
-            $key_items = [
-                $root_server,
-                $services,
-                $has_tabs,
-                $has_groups,
-                $has_areas,
-                $has_cities,
-                $has_meetings,
-                $has_formats,
-                $has_locations,
-                $has_sub_province,
-                $has_states,
-                $include_city_button,
-                $include_weekday_button,
-                $view_by,
-                $dropdown_width,
-                $has_zip_codes,
-                $show_distance,
-                $distance_units,
-                $header,
-                $format_key,
-                $custom_query_postfix,
-            ];
-
-            ob_flush();
-            flush();
-
             // TODO: readd mechanism to filter to only show specific formats (use custom_query behind the scenes)
             $getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, '', $custom_query_postfix);
             if ($this->options['extra_meetings']) {
@@ -426,48 +399,6 @@ if (!class_exists("Crouton")) {
                     return $this->doQuit('');
                 }
             }
-
-            $unique_zip = $unique_city = $unique_group = $unique_area = $unique_location = $unique_sub_province = $unique_state = $unique_format = $unique_weekday = $unique_format_name_string = array();
-            foreach ($the_meetings as $value) {
-                if ($value['location_municipality']) {
-                    $unique_city[] = $value['location_municipality'];
-                }
-                if ($value['meeting_name']) {
-                    $unique_group[] = $value['meeting_name'];
-                }
-                if ($value['service_body_bigint']) {
-                    $unique_area[] = $value['service_body_bigint'];
-                }
-                if ($value['location_text']) {
-                    $unique_location[] = $value['location_text'];
-                }
-                if ($value['location_postal_code_1']) {
-                    $unique_zip[] = $value['location_postal_code_1'];
-                }
-                if ($value['location_sub_province']) {
-                    $unique_sub_province[] = $value['location_sub_province'];
-                }
-                if ($value['location_province']) {
-                    $unique_state[] = $value['location_province'];
-                }
-            }
-            if (count($unique_group) == 0) {
-                return $this->doQuit('No Meetings Found');
-            }
-            $unique_zip                = array_unique($unique_zip);
-            $unique_sub_province       = array_unique($unique_sub_province);
-            $unique_state              = array_unique($unique_state);
-            $unique_city               = array_unique($unique_city);
-            $unique_group              = array_unique($unique_group);
-            $unique_area               = array_unique($unique_area);
-            $unique_location           = array_unique($unique_location);
-            asort($unique_zip, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_sub_province, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_state, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_city, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_group, SORT_NATURAL | SORT_FLAG_CASE);
-            asort($unique_location, SORT_NATURAL | SORT_FLAG_CASE);
-            array_push($unique_weekday, "1", "2", "3", "4", "5", "6", "7");
 
             if ($has_areas == '1') {
                 $area_names = array();
@@ -507,19 +438,9 @@ if (!class_exists("Crouton")) {
 
             $css = $this->options['custom_css'];
 
-            $uniqueDataJson = json_encode([
-                'groups' => array_values($unique_group),
-                'cities' => array_values($unique_city),
-                'areas' => $area_names_ids,
-                'locations' => array_values($unique_location),
-                'sub_provinces' => array_values($unique_sub_province),
-                'states' => array_values($unique_state),
-                'zips' => array_values($unique_zip),
-            ]);
-
             $output .= "
             <style type='text/css'>$css</style>";
-            $output .= $this->getConfigJavascriptBlock($config, $uniqueDataJson);
+            $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
                 $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -544,9 +465,9 @@ if (!class_exists("Crouton")) {
             return $output;
         }
 
-        public function getConfigJavascriptBlock($config = array(), $uniqueData = array())
+        public function getConfigJavascriptBlock($config = array())
         {
-            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config,$uniqueData); })</script>";
+            return "<script type='text/javascript'>jQuery(document).ready(function() { var crouton = new Crouton($config); })</script>";
         }
 
         public function meetingCount($atts, $content = null)
