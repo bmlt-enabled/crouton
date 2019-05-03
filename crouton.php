@@ -410,8 +410,6 @@ if (!class_exists("Crouton")) {
                 asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
             }
 
-            $output .= $this->includeToString("partials/views/_header.php") . $this->includeToString("partials/views/_weekdays.php") . $this->includeToString("partials/views/_cities.php") . $this->includeToString("partials/views/_byday.php");
-
             $config = json_encode([
                 "include_city_button" => $include_city_button,
                 "include_weekday_button" => $include_weekday_button,
@@ -434,12 +432,12 @@ if (!class_exists("Crouton")) {
                 "language" => $language,
                 "root_server" => $root_server,
                 "service_body_id" => $service_body,
+                "template_path" => plugin_dir_url(__FILE__) . 'templates/',
             ]);
 
             $css = $this->options['custom_css'];
 
-            $output .= "
-            <style type='text/css'>$css</style>";
+            $output = "<style type='text/css'>$css</style>";
             $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {

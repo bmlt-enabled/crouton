@@ -1,4 +1,5 @@
 // TODO: webpack a dist version of crouton.js that combines all the dependencies to one file.
+// TODO: use babel and write using ES6?
 function convertToPunyCode(str) {
 	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
 }
@@ -70,10 +71,17 @@ Array.prototype.sortByKey = function (key) {
 	return this;
 };
 
-function Crouton(config, uniqueData) {
+function Crouton(config) {
 	var self = this;
 	self.serviceBodyData = [];
-	self.config = config;
+	self.config = {
+		"template_path": "templates/"
+	};
+
+	for (var propertyName in config) {
+		self.config[propertyName] = config[propertyName];
+	}
+
 	self.localization = new CroutonLocalization(self.config['language']);
 	self.dropdownConfiguration = [
 		{
@@ -238,10 +246,22 @@ function Crouton(config, uniqueData) {
 		jQuery(".bmlt-data-row").removeClass("hide");
 	};
 
-	self.renderView = function(templateElement, selector, context) {
-		var source   = document.getElementById(templateElement).innerHTML;
-		var template = Handlebars.compile(source);
-		jQuery(selector).append(template(context));
+	self.renderView = function(selector, context, callback) {
+		jQuery.get(self.config['template_path'] + 'template.html', function(data) {
+			if (jQuery("#crouton-template").length == 0) {
+				jQuery("body").append("<div id='crouton-template'></div>");
+				jQuery('#crouton-template').html(data);
+				Handlebars.registerPartial('meetings', jQuery('#crouton-template > #meetings-template').html());
+				Handlebars.registerPartial('bydays', jQuery('#crouton-template > #byday-template').html());
+				Handlebars.registerPartial('weekdays', jQuery('#crouton-template > #weekdays-template').html());
+				Handlebars.registerPartial('cities', jQuery('#crouton-template > #cities-template').html());
+				Handlebars.registerPartial('header', jQuery('#crouton-template > #header-template').html());
+			}
+
+			var template = Handlebars.compile(jQuery("#crouton-template > #master-template").html());
+			jQuery(selector).append(template(context));
+			callback();
+		});
 	};
 
 	self.getFormats = function(callback) {
@@ -336,7 +356,6 @@ function Crouton(config, uniqueData) {
 	};
 
 	/* running on load */
-
 	self.getMeetings(function(data) {
 		self.meetingData = data;
 		self.uniqueData = {
@@ -355,15 +374,9 @@ function Crouton(config, uniqueData) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
 
-				self.renderView("header-template", "#bmlt-header", {
-					"config": self.config,
-					"uniqueData": self.uniqueData,
-					"words": self.localization.words
-				});
-
-				var context = {"config": self.config, "data": [] };
+				var weekdaysData = [];
 				for (var day = 1; day <= 7; day++) {
-					context['data'].push({
+					weekdaysData.push({
 						"day": day,
 						"meetings": self.enrichMeetings(self.meetingData, function(item) {
 							return item['weekday_tinyint'] === day.toString();
@@ -371,12 +384,10 @@ function Crouton(config, uniqueData) {
 					});
 				}
 
-				self.renderView("weekdays-template", "#tabs-content", context);
-
+				var citiesData = [];
 				var cities = getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort();
-				var context = [];
 				for (var i = 0; i < cities.length; i++) {
-					context.push({
+					citiesData.push({
 						"city": cities[i],
 						"meetings": self.enrichMeetings(self.meetingData, function(item) {
 							return item['location_municipality'] === cities[i];
@@ -384,11 +395,9 @@ function Crouton(config, uniqueData) {
 					});
 				}
 
-				self.renderView("cities-template", "#cities", context);
-
-				var context = [];
+				var byDayData = [];
 				for (var day = 1; day <= 7; day++) {
-					context.push({
+					byDayData.push({
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": self.enrichMeetings(self.meetingData, function(item) {
 							return item['weekday_tinyint'] === day.toString();
@@ -396,83 +405,92 @@ function Crouton(config, uniqueData) {
 					});
 				}
 
-				self.renderView("byday-template", "#byday", context);
-
-				for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-					jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
-				}
-				jQuery('[data-toggle="popover"]').popover();
-				jQuery('html').on('click', function (e) {
-					if (jQuery(e.target).data('toggle') !== 'popover') {
-						jQuery('[data-toggle="popover"]').popover('hide');
+				self.renderView("#bmlt-tabs", {
+					"config": self.config,
+					"meetings": {
+						"weekdays": weekdaysData,
+						"cities": citiesData,
+						"bydays": byDayData
+					},
+					"uniqueData": self.uniqueData,
+					"words": self.localization.words
+				}, function() {
+					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+						jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
 					}
-				});
+					jQuery('[data-toggle="popover"]').popover();
+					jQuery('html').on('click', function (e) {
+						if (jQuery(e.target).data('toggle') !== 'popover') {
+							jQuery('[data-toggle="popover"]').popover('hide');
+						}
+					});
 
-				if (jQuery.browser.mobile) {
-					jQuery("#e2").prop("readonly", true);
-					jQuery(".select2-search").css({"display":"none"});
-					jQuery(".select2-search").remove();
-					for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
-						jQuery("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+					if (jQuery.browser.mobile) {
+						jQuery("#e2").prop("readonly", true);
+						jQuery(".select2-search").css({"display":"none"});
+						jQuery(".select2-search").remove();
+						for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
+							jQuery("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+						}
+						jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
+						jQuery(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
 					}
-					jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
-					jQuery(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
-				}
 
-				for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-					jQuery("#e" + a).on('select2:select', function (e) {
-						for (var j = 2; j <= self.dropdownConfiguration.length + 1; j++) {
-							if (this.id !== "e" + j) {
-								if (jQuery("#e" + j).length) {
-									jQuery("#e" + j).select2("val", null);
+					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+						jQuery("#e" + a).on('select2:select', function (e) {
+							for (var j = 2; j <= self.dropdownConfiguration.length + 1; j++) {
+								if (this.id !== "e" + j) {
+									if (jQuery("#e" + j).length) {
+										jQuery("#e" + j).select2("val", null);
+									}
 								}
 							}
-						}
 
-						if (jQuery.browser.mobile) {
-							jQuery("#" + this.id).prop("readonly", true);
-							jQuery(".select2-search").css({"display": "none"});
-							jQuery(".select2-search").remove();
-						}
+							if (jQuery.browser.mobile) {
+								jQuery("#" + this.id).prop("readonly", true);
+								jQuery(".select2-search").css({"display": "none"});
+								jQuery(".select2-search").remove();
+							}
 
-						var val = jQuery("#" + this.id).val();
-						jQuery('.bmlt-page').each(function (index) {
+							var val = jQuery("#" + this.id).val();
+							jQuery('.bmlt-page').each(function (index) {
+								self.hidePage("#" + this.id);
+								self.lowlightButton("#city");
+								self.lowlightButton("#day");
+								self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+								return;
+							});
+						});
+					}
+
+					jQuery("#day").on('click', function() { self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day'); });
+					jQuery("#city").on('click', function() { self.showView('city'); });
+
+					jQuery('.custom-ul').on('click', 'a', function(event) {
+						jQuery('.bmlt-page').each(function(index) {
 							self.hidePage("#" + this.id);
-							self.lowlightButton("#city");
-							self.lowlightButton("#day");
-							self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+							self.showPage("#" + event.target.id);
 							return;
 						});
 					});
-				}
 
-				jQuery("#day").on('click', function() { self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day'); });
-				jQuery("#city").on('click', function() { self.showView('city'); });
+					if (self.config['has_tabs'] !== "0") {
+						jQuery('.nav-tabs a').on('click', function (e) {
+							e.preventDefault();
+							jQuery(this).tab('show');
+						});
 
-				jQuery('.custom-ul').on('click', 'a', function(event) {
-					jQuery('.bmlt-page').each(function(index) {
-						self.hidePage("#" + this.id);
-						self.showPage("#" + event.target.id);
-						return;
-					});
+						var d = new Date();
+						var n = d.getDay();
+						n++;
+						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+						jQuery('#tab' + n).show();
+					}
+
+					self.showPage(".bmlt-header");
+					self.showPage(".bmlt-tabs");
+					self.showView(self.config['view_by']);
 				});
-
-				if (self.config['has_tabs'] !== "0") {
-					jQuery('.nav-tabs a').on('click', function (e) {
-						e.preventDefault();
-						jQuery(this).tab('show');
-					});
-
-					var d = new Date();
-					var n = d.getDay();
-					n++;
-					jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-					jQuery('#tab' + n).show();
-				}
-
-				self.showPage(".bmlt-header");
-				self.showPage(".bmlt-tabs");
-				self.showView(self.config['view_by']);
 			})
 		});
 	});

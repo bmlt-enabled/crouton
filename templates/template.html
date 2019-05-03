@@ -1,0 +1,236 @@
+<script id="header-template" type="text/x-handlebars-template">
+    {{#ifEquals this.config.header "1"}}
+        {{#ifEquals this.config.include_weekday_button "1"}}
+        <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
+        {{/ifEquals}}
+        {{#ifEquals this.config.include_city_button "1"}}
+        <div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">{{getWord 'city'}}</a></div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_cities "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="e2">
+                <option></option>
+                {{#each this.uniqueData.cities}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_groups "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="e3">
+                <option></option>
+                {{#each this.uniqueData.groups}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_areas "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="e8">
+                <option></option>
+                {{#each this.uniqueData.areas}}
+                <option value="a-{{@key}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_locations "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="e4">
+                <option></option>
+                {{#each this.uniqueData.locations}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_sub_province "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="e7">
+                <option></option>
+                {{#each this.uniqueData.sub_provinces}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_states "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="e9">
+                <option></option>
+                {{#each this.uniqueData.states}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_zip_codes "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="e5">
+                <option></option>
+                {{#each this.uniqueData.zips}}
+                <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+
+        {{#ifEquals this.config.has_formats "1"}}
+        <div class="bmlt-dropdown-container">
+            <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="e6">
+                <option></option>
+                {{#each this.uniqueData.formats}}
+                <option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
+                {{/each}}
+            </select>
+        </div>
+        {{/ifEquals}}
+        </div>
+    {{/ifEquals}}
+
+    {{#ifEquals this.config.has_tabs "1"}}
+        {{#ifEquals this.config.has_meetings "1"}}
+            {{#ifEquals this.config.view_by "weekdays"}}
+            <div class="bmlt-page show" id="nav-days">
+            {{else}}
+            <div class="bmlt-page hide" id="nav-days">
+            {{/ifEquals}}
+            <ul class="nav nav-tabs">
+                {{#times 7}}
+                <li><a href="#tab{{this}}" data-toggle="tab">{{getDayOfTheWeek this}}</a></li>
+                {{/times}}
+            </ul>
+            </div>
+        {{/ifEquals}}
+    {{/ifEquals}}
+</script>
+
+<script id="cities-template" type="text/x-handlebars-template">
+    <div id="bmlt-table-div">
+        <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+            <tbody>
+            {{#each this}}
+            <tr class="meeting-header">
+                <td colspan="3">{{city}}</td>
+            </tr>
+            {{> meetings }}
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script id="weekdays-template" type="text/x-handlebars-template">
+    <div class="tab-content">
+        {{#each this}}
+        <div id='tab{{ day }}' class='tab-pane'>
+            <div id="bmlt-table-div">
+                <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+                    <tbody>
+                    {{> meetings }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</script>
+
+<script id="byday-template" type="text/x-handlebars-template">
+    <div id="bmlt-table-div">
+        <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+            {{#each this}}
+            <tbody class="bmlt-data-rows h-{{this.day}}">
+            <tr class="meeting-header">
+                <td colspan="3">{{this.day}}</td>
+            </tr>
+            {{> meetings }}
+            </tbody>
+            {{/each}}
+        </table>
+    </div>
+</script>
+
+<script id="meetings-template" type="text/x-handlebars-template">
+{{#each meetings}}
+    <tr class="bmlt-data-row"
+        data-cities="{{formatDataPointer this.location_municipality}}"
+        data-groups="{{formatDataPointer this.meeting_name}}"
+        data-locations="{{formatDataPointer this.location_text}}"
+        data-zips="{{formatDataPointer this.location_postal_code_1}}"
+        data-formats="{{formatDataPointerFormats this.formats_expanded}}"
+        data-areas="{{formatDataPointer this.service_body_bigint}}"
+        data-counties="{{formatDataPointer this.location_sub_province}}"
+        data-states="{{formatDataPointer this.location_province}}">
+        <td class="bmlt-column1">
+            <div class="bmlt-day">{{this.formatted_day}}</div>
+            <div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
+            {{#if this.formats}}
+            <a id="bmlt-formats"
+               class="btn btn-primary btn-xs"
+               title=""
+               data-html="true"
+               tabindex="0"
+               data-trigger="focus"
+               role="button"
+               data-toggle="popover"
+               data-original-title=""
+               data-content="
+                        <table class='bmlt_a_format table-bordered'>
+                        {{#each this.formats_expanded}}
+                        <tr>
+                            <td class='formats_key'>{{key}}</td>
+                            <td class='formats_name'>{{name}}</td>
+                            <td class='formats_description'>{{description}}</td>
+                        </tr>
+                        {{/each}}
+                    </table>">
+                    <span class="glyphicon glyphicon-search"
+                          aria-hidden="true"
+                          data-toggle="popover"
+                          data-trigger="focus"
+                          data-html="true"
+                          role="button"></span>{{ this.formats }}
+            </a>
+            {{/if}}
+            <div class="bmlt-comments">{{this.formatted_comments}}</div>
+        </td>
+        <td class="bmlt-column2">
+            <div class="meeting-name">{{this.meeting_name}}</div>
+            <div class="location-text">{{this.location_text}}</div>
+            <div class="meeting-address">{{this.formatted_address}}</div>
+            <div class="location-information">{{this.formatted_location_info}}</div>
+        </td>
+        <td class="bmlt-column3">
+            <a target="_blank" href="https://maps.google.com/maps?q={{this.latitude}},{{this.longitude}}" id="map-button" class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-map-marker"></span> {{this.map_word}}
+            </a>
+            <div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>
+        </td>
+    </tr>
+{{/each}}
+</script>
+
+<script id="master-template" type="text/x-handlebars-template">
+    <div id="bmlt-header" class="bmlt-header hide">
+        {{> header}}
+    </div>
+    <div id="cities" class="bmlt-page hide">
+        {{> cities this.meetings.cities}}
+    </div>
+    <div id="byday" class="bmlt-page hide">
+        {{> bydays this.meetings.bydays}}
+    </div>
+    <div id="tabs-content" class="bmlt-page">
+        {{> weekdays this.meetings.weekdays}}
+    </div>
+</script>
