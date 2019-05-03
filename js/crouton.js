@@ -1,81 +1,11 @@
 // TODO: webpack a dist version of crouton.js that combines all the dependencies to one file.
 // TODO: use babel and write using ES6?
-function convertToPunyCode(str) {
-	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
-}
-
-function arrayColumn(input, columnKey) {
-	var newArr = [];
-	for (var item of input) {
-		newArr.push(item[columnKey]);
-	}
-
-	return newArr;
-}
-
-function getUniqueValuesOfKey(array, key){
-	return array.reduce(function(carry, item){
-		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
-		return carry;
-	}, []);
-}
-
-function arrayUnique(a, b, c) {
-	b = a.length;
-	while (c = --b)
-		while (c--) a[b] !== a[c] || a.splice(c, 1);
-	return a
-}
-
-function inArray(needle, haystack) {
-	for (var item of haystack) {
-		if (item === needle) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-Array.prototype.clean = function() {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] === "") {
-			this.splice(i, 1);
-			i--;
-		}
-	}
-	return this;
-};
-
-Array.prototype.exclude = function(csv, mappedField) {
-	if (csv == null) return;
-	var excludedValues = csv.split(",");
-	for (var i = 0; i < this.length; i++) {
-		for (var j = 0; j < excludedValues.length; j++) {
-			if (i < this.length && excludedValues[j] === this[i][mappedField]) {
-				this.splice(i, 1);
-			}
-		}
-	}
-	return this;
-};
-
-Array.prototype.sortByKey = function (key) {
-	this.sort(function (a, b) {
-		if (a[key] < b[key])
-			return -1;
-		if (a[key] > b[key])
-			return 1;
-		return 0;
-	});
-	return this;
-};
-
 function Crouton(config) {
 	var self = this;
 	self.serviceBodyData = [];
 	self.config = {
-		"template_path": "templates/"
+		"template_path": "templates/",
+		"placeholder_id": "#bmlt-tabs"
 	};
 
 	for (var propertyName in config) {
@@ -405,7 +335,7 @@ function Crouton(config) {
 					});
 				}
 
-				self.renderView("#bmlt-tabs", {
+				self.renderView(self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
@@ -520,3 +450,73 @@ Handlebars.registerHelper('times', function(n, block) {
 });
 
 
+function convertToPunyCode(str) {
+	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
+}
+
+function arrayColumn(input, columnKey) {
+	var newArr = [];
+	for (var item of input) {
+		newArr.push(item[columnKey]);
+	}
+
+	return newArr;
+}
+
+function getUniqueValuesOfKey(array, key){
+	return array.reduce(function(carry, item){
+		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+		return carry;
+	}, []);
+}
+
+function arrayUnique(a, b, c) {
+	b = a.length;
+	while (c = --b)
+		while (c--) a[b] !== a[c] || a.splice(c, 1);
+	return a
+}
+
+function inArray(needle, haystack) {
+	for (var item of haystack) {
+		if (item === needle) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+Array.prototype.clean = function() {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] === "") {
+			this.splice(i, 1);
+			i--;
+		}
+	}
+	return this;
+};
+
+Array.prototype.exclude = function(csv, mappedField) {
+	if (csv == null) return;
+	var excludedValues = csv.split(",");
+	for (var i = 0; i < this.length; i++) {
+		for (var j = 0; j < excludedValues.length; j++) {
+			if (i < this.length && excludedValues[j] === this[i][mappedField]) {
+				this.splice(i, 1);
+			}
+		}
+	}
+	return this;
+};
+
+Array.prototype.sortByKey = function (key) {
+	this.sort(function (a, b) {
+		if (a[key] < b[key])
+			return -1;
+		if (a[key] > b[key])
+			return 1;
+		return 0;
+	});
+	return this;
+};
