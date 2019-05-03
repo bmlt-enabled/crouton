@@ -21,7 +21,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		},
 		{
 			placeholder: "Groups",
@@ -30,7 +30,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		},
 		{
 			placeholder: "Locations",
@@ -38,7 +38,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		},
 		{
 			placeholder: "Zips",
@@ -46,7 +46,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop-zip'
+			dropdownCssClass: 'bmlt-drop-zip'
 		},
 		{
 			placeholder: "Formats",
@@ -54,7 +54,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop-format'
+			dropdownCssClass: 'bmlt-drop-format'
 		},
 		{
 			placeholder: "Counties",
@@ -62,7 +62,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		},
 		{
 			placeholder: "Areas",
@@ -70,7 +70,7 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		},
 		{
 			placeholder: "States",
@@ -78,15 +78,15 @@ function Crouton(config) {
 			allowClear: false,
 			width: "resolve",
 			minimumResultsForSearch: 1,
-			dropdownCssClass : 'bmlt-drop'
+			dropdownCssClass: 'bmlt-drop'
 		}
 	];
 
-	self.showPage = function(id) {
+	self.showPage = function (id) {
 		jQuery(id).removeClass("hide").addClass("show");
 	};
 
-	self.showView = function(viewName) {
+	self.showView = function (viewName) {
 		if (viewName === "city") {
 			self.cityView();
 		} else if (viewName === "byday") {
@@ -96,14 +96,16 @@ function Crouton(config) {
 		}
 	};
 
-	self.byDayView = function() {
+	self.byDayView = function () {
 		self.resetFilter();
 		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-			if ( jQuery("#e" + a).length ) { jQuery("#e" + a).select2("val", null); }
+			if (jQuery("#e" + a).length) {
+				jQuery("#e" + a).select2("val", null);
+			}
 		}
 		self.highlightButton("#day");
 		self.lowlightButton("#city");
-		jQuery('.bmlt-page').each(function(index) {
+		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byday");
 			self.showPage("#nav-days");
@@ -111,14 +113,16 @@ function Crouton(config) {
 		});
 	};
 
-	self.dayView = function() {
+	self.dayView = function () {
 		self.resetFilter();
 		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-			if ( jQuery("#e" + a).length ) { jQuery("#e" + a).select2("val", null); }
+			if (jQuery("#e" + a).length) {
+				jQuery("#e" + a).select2("val", null);
+			}
 		}
 		self.highlightButton("#day");
 		self.lowlightButton("#city");
-		jQuery('.bmlt-page').each(function(index) {
+		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#days");
 			self.showPage("#nav-days");
@@ -127,34 +131,36 @@ function Crouton(config) {
 		});
 	};
 
-	self.cityView = function() {
+	self.cityView = function () {
 		self.resetFilter();
 		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-			if ( jQuery("#e" + a).length ) { jQuery("#e" + a).select2("val", null); }
+			if (jQuery("#e" + a).length) {
+				jQuery("#e" + a).select2("val", null);
+			}
 		}
 
 		self.highlightButton("#city");
 		self.lowlightButton("#day");
-		jQuery('.bmlt-page').each(function(index) {
+		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#cities");
 			return;
 		});
 	};
 
-	self.lowlightButton = function(id) {
+	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	};
 
-	self.highlightButton = function(id) {
+	self.highlightButton = function (id) {
 		jQuery(id).removeClass("buttonLowlight").addClass("buttonHighlight");
 	};
 
-	self.hidePage = function(id) {
+	self.hidePage = function (id) {
 		jQuery(id).removeClass("show").addClass("hide");
 	};
 
-	self.filteredPage = function(id, dataType, dataValue) {
+	self.filteredPage = function (id, dataType, dataValue) {
 		self.resetFilter();
 		self.showPage(id);
 		jQuery(".bmlt-data-row").removeClass("hide");
@@ -164,20 +170,20 @@ function Crouton(config) {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
 		}
 
-		jQuery(".bmlt-data-rows").each(function(index, value) {
+		jQuery(".bmlt-data-rows").each(function (index, value) {
 			if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
 				jQuery(value).find(".meeting-header").addClass("hide");
 			}
 		})
 	};
 
-	self.resetFilter = function() {
+	self.resetFilter = function () {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 	};
 
-	self.renderView = function(selector, context, callback) {
-		jQuery.get(self.config['template_path'] + 'template.html', function(data) {
+	self.renderView = function (selector, context, callback) {
+		jQuery.get(self.config['template_path'] + 'template.html', function (data) {
 			if (jQuery("#crouton-template").length == 0) {
 				jQuery("body").append("<div id='crouton-template'></div>");
 				jQuery('#crouton-template').html(data);
@@ -194,12 +200,12 @@ function Crouton(config) {
 		});
 	};
 
-	self.getFormats = function(callback) {
+	self.getFormats = function (callback) {
 		var getAllIds = arrayColumn(self.meetingData, 'format_shared_id_list');
 		var joinIds = getAllIds.join(',');
 		var idsArray = joinIds.split(',');
 		var uniqueIds = arrayUnique(idsArray);
-		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function(data) {
+		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
 			for (var format of data) {
 				if (inArray(format['id'], uniqueIds)) {
@@ -211,11 +217,11 @@ function Crouton(config) {
 		});
 	};
 
-	self.getServiceBodies = function(callback) {
+	self.getServiceBodies = function (callback) {
 		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&callback=?', callback);
 	};
 
-	self.getMeetings = function(callback) {
+	self.getMeetings = function (callback) {
 		var url;
 		if (self.config['custom_query_postfix'] != null) {
 			url = '/client_interface/jsonp/?switcher=GetSearchResults' + self.config['custom_query_postfix'] + '&sort_key=time';
@@ -229,7 +235,7 @@ function Crouton(config) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', callback);
 	};
 
-	self.enrichMeetings = function(meetingData, filter) {
+	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
 		meetingData.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 		for (var m = 0; m < meetingData.length; m++) {
@@ -241,29 +247,29 @@ function Crouton(config) {
 						: "";
 				var duration = meetingData[m]['duration_time'].split(":");
 				meetingData[m]['start_time_formatted'] =
-                    moment(meetingData[m]['start_time'], "HH:mm:ss")
-                        .format(self.config['time_format']);
+					moment(meetingData[m]['start_time'], "HH:mm:ss")
+						.format(self.config['time_format']);
 				meetingData[m]['end_time_formatted']
-                    = moment(meetingData[m]['start_time'], "HH:mm:ss")
-                    .add(duration[0], 'hours')
-                    .add(duration[1], 'minutes')
-                    .format(self.config['time_format']);
+					= moment(meetingData[m]['start_time'], "HH:mm:ss")
+					.add(duration[0], 'hours')
+					.add(duration[1], 'minutes')
+					.format(self.config['time_format']);
 
 				var formats = meetingData[m]['formats'].split(",");
 				var formats_expanded = [];
 				for (var f = 0; f < formats.length; f++) {
-                    for (var g = 0; g < self.formatsData.length; g++) {
-                        if (formats[f] === self.formatsData[g]['key_string']) {
-                            formats_expanded.push(
-                                {
-                                    "key": formats[f],
-                                    "name": self.formatsData[g]['name_string'],
-                                    "description": self.formatsData[g]['description_string']
-                                }
-                            )
-                        }
-                    }
-                }
+					for (var g = 0; g < self.formatsData.length; g++) {
+						if (formats[f] === self.formatsData[g]['key_string']) {
+							formats_expanded.push(
+								{
+									"key": formats[f],
+									"name": self.formatsData[g]['name_string'],
+									"description": self.formatsData[g]['description_string']
+								}
+							)
+						}
+					}
+				}
 				meetingData[m]['formats_expanded'] = formats_expanded;
 				var addressParts = [
 					meetingData[m]['location_street'],
@@ -284,9 +290,11 @@ function Crouton(config) {
 
 		return meetings;
 	};
+}
 
-	/* running on load */
-	self.getMeetings(function(data) {
+Crouton.prototype.render = function() {
+	var self = this;
+	self.getMeetings(function (data) {
 		self.meetingData = data;
 		self.uniqueData = {
 			'groups': getUniqueValuesOfKey(data, 'meeting_name').sort(),
@@ -297,10 +305,10 @@ function Crouton(config) {
 			'states': getUniqueValuesOfKey(data, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(data, 'location_postal_code_1').sort(),
 		};
-		self.getServiceBodies(function(data) {
+		self.getServiceBodies(function (data) {
 			self.serviceBodyData = data;
 
-			self.getFormats(function(data) {
+			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
 
@@ -308,7 +316,7 @@ function Crouton(config) {
 				for (var day = 1; day <= 7; day++) {
 					weekdaysData.push({
 						"day": day,
-						"meetings": self.enrichMeetings(self.meetingData, function(item) {
+						"meetings": self.enrichMeetings(self.meetingData, function (item) {
 							return item['weekday_tinyint'] === day.toString();
 						})
 					});
@@ -319,7 +327,7 @@ function Crouton(config) {
 				for (var i = 0; i < cities.length; i++) {
 					citiesData.push({
 						"city": cities[i],
-						"meetings": self.enrichMeetings(self.meetingData, function(item) {
+						"meetings": self.enrichMeetings(self.meetingData, function (item) {
 							return item['location_municipality'] === cities[i];
 						})
 					});
@@ -329,7 +337,7 @@ function Crouton(config) {
 				for (var day = 1; day <= 7; day++) {
 					byDayData.push({
 						"day": self.localization.getDayOfTheWeekWord(day),
-						"meetings": self.enrichMeetings(self.meetingData, function(item) {
+						"meetings": self.enrichMeetings(self.meetingData, function (item) {
 							return item['weekday_tinyint'] === day.toString();
 						})
 					});
@@ -344,7 +352,7 @@ function Crouton(config) {
 					},
 					"uniqueData": self.uniqueData,
 					"words": self.localization.words
-				}, function() {
+				}, function () {
 					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
 						jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
 					}
@@ -357,13 +365,13 @@ function Crouton(config) {
 
 					if (jQuery.browser.mobile) {
 						jQuery("#e2").prop("readonly", true);
-						jQuery(".select2-search").css({"display":"none"});
+						jQuery(".select2-search").css({"display": "none"});
 						jQuery(".select2-search").remove();
 						for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
-							jQuery("#s2id_e" + j).css({"width":"99%","margin-bottom":"3px"});
+							jQuery("#s2id_e" + j).css({"width": "99%", "margin-bottom": "3px"});
 						}
-						jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width":"98%","margin-bottom":"3px"});
-						jQuery(".bmlt-tabs .bmlt-button-cities").css({"width":"98%","margin-bottom":"3px"});
+						jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width": "98%", "margin-bottom": "3px"});
+						jQuery(".bmlt-tabs .bmlt-button-cities").css({"width": "98%", "margin-bottom": "3px"});
 					}
 
 					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
@@ -393,11 +401,15 @@ function Crouton(config) {
 						});
 					}
 
-					jQuery("#day").on('click', function() { self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day'); });
-					jQuery("#city").on('click', function() { self.showView('city'); });
+					jQuery("#day").on('click', function () {
+						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+					});
+					jQuery("#city").on('click', function () {
+						self.showView('city');
+					});
 
-					jQuery('.custom-ul').on('click', 'a', function(event) {
-						jQuery('.bmlt-page').each(function(index) {
+					jQuery('.custom-ul').on('click', 'a', function (event) {
+						jQuery('.bmlt-page').each(function (index) {
 							self.hidePage("#" + this.id);
 							self.showPage("#" + event.target.id);
 							return;
@@ -424,7 +436,7 @@ function Crouton(config) {
 			})
 		});
 	});
-}
+};
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str)
