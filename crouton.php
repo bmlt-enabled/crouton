@@ -278,9 +278,6 @@ if (!class_exists("Crouton")) {
                 "max_zoom_level" => 15,
                 "language" => 'en-US'
             ), $atts));
-            if ($show_distance == '1') {
-                wp_enqueue_script("bmlt-tabs-distance", plugin_dir_url(__FILE__) . "js/bmlt_tabs_distance.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_distance.js"), true);
-            }
             if ($show_map == '1') {
                 if ($this->options['google_api_key'] != '') {
                     wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
