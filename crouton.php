@@ -465,7 +465,7 @@ if (!class_exists("Crouton")) {
 
         public function getConfigJavascriptBlock($config = array())
         {
-            return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); })</script>";
+            return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); crouton.render(); })</script>";
         }
 
         public function meetingCount($atts, $content = null)
