@@ -294,6 +294,7 @@ function Crouton(config) {
 
 Crouton.prototype.render = function() {
 	var self = this;
+	jQuery("body").append("<style type='text/css'>" + self.config['custom_css'] + "</style>")
 	self.getMeetings(function (data) {
 		self.meetingData = data;
 		self.uniqueData = {
@@ -307,7 +308,6 @@ Crouton.prototype.render = function() {
 		};
 		self.getServiceBodies(function (data) {
 			self.serviceBodyData = data;
-
 			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;

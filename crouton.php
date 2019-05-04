@@ -392,12 +392,6 @@ if (!class_exists("Crouton")) {
                 if ($the_meetings == 0) {
                     return $this->doQuit('');
                 }
-            } else {
-                $meetingsJson = $this->getMeetingsJson($getMeetingsUrl);
-                $the_meetings = json_decode($meetingsJson, true);
-                if ($the_meetings == 0) {
-                    return $this->doQuit('');
-                }
             }
 
             if ($has_areas == '1') {
@@ -433,11 +427,9 @@ if (!class_exists("Crouton")) {
                 "root_server" => $root_server,
                 "service_body_id" => $service_body,
                 "template_path" => plugin_dir_url(__FILE__) . 'templates/',
+                "custom_css" => $this->options['custom_css']
             ]);
 
-            $css = $this->options['custom_css'];
-
-            $output = "<style type='text/css'>$css</style>";
             $output .= $this->getConfigJavascriptBlock($config);
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
