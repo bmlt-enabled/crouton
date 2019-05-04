@@ -424,7 +424,8 @@ if (!class_exists("Crouton")) {
                 "root_server" => $root_server,
                 "service_body_id" => $service_body,
                 "template_path" => plugin_dir_url(__FILE__) . 'templates/',
-                "custom_css" => $this->options['custom_css']
+                "custom_css" => $this->options['custom_css'],
+                "custom_query_postfix" => $custom_query_postfix
             ]);
 
             $output .= $this->getConfigJavascriptBlock($config);
