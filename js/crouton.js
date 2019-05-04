@@ -366,6 +366,19 @@ function Crouton(config) {
 
 		return meetings;
 	};
+
+	self.showMessage = function(message) {
+		jQuery(self.config['placeholder_id']).html("crouton: " + message);
+		jQuery(self.config['placeholder_id']).removeClass("hide");
+	};
+
+	self.isEmpty = function(obj) {
+		for (var key in obj) {
+			if(obj.hasOwnProperty(key))
+				return false;
+		}
+		return true;
+	}
 }
 
 Crouton.prototype.render = function() {
@@ -378,6 +391,10 @@ Crouton.prototype.render = function() {
 	}
 	self.getMeetings(function (data) {
 		self.meetingData = data;
+		if (self.isEmpty(data)) {
+			self.showMessage("No meetings found for parameters specified.");
+			return;
+		}
 		self.uniqueData = {
 			'groups': getUniqueValuesOfKey(data, 'meeting_name').sort(),
 			'cities': getUniqueValuesOfKey(data, 'location_municipality').sort(),
