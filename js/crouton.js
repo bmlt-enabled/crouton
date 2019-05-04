@@ -12,6 +12,26 @@ function Crouton(config) {
 		self.config[propertyName] = config[propertyName];
 	}
 
+	if (self.config["has_meetings"] === "0") {
+		self.config["has_tabs"] = "0";
+	}
+
+	if (self.config["view_by"] === "city") {
+		self.config["include_city_button"] = "1";
+	}
+
+	if (self.config["view_by"] === "weekday") {
+		self.config["include_weekday_button"] = "1";
+	}
+
+	if (self.config["time_format"] === "") {
+		self.config["time_format"] = 'h:mm a';
+	}
+
+	if (self.config["has_tabs"] === "0") {
+		self.config["view_by"] = "byday";
+	}
+
 	self.localization = new CroutonLocalization(self.config['language']);
 	self.dropdownConfiguration = [
 		{

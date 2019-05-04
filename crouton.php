@@ -293,21 +293,11 @@ if (!class_exists("Crouton")) {
                 }
             }
 
-            // TODO: move non querystring handling of settings to javascript
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
             $service_body           = ($_GET['service_body'] == null ? $service_body : $_GET['service_body']);
             $service_body_parent    = ($_GET['service_body_parent'] == null ? $service_body_parent : $_GET['service_body_parent']);
-            $has_tabs               = ($has_meetings == '0' ? '0' : $has_tabs);
-            // $has_tabs = ($include_weekday_button == '0' ? '1' : $has_tabs);
-            $include_city_button    = ($view_by == 'city' ? '1' : $include_city_button);
-            $include_weekday_button = ($view_by == 'weekday' ? '1' : $include_weekday_button);
-            $include_city_button    = ($has_meetings == '0' ? '0' : $include_city_button);
-            $include_weekday_button = ($has_meetings == '0' ? '0' : $include_weekday_button);
-            $format_key             = ($format_key != '' ? strtoupper($format_key) : '');
-            $time_format            = ($time_format == '' ? 'h:mm a' : $time_format);
             $custom_query_postfix   = $this->getCustomQuery($custom_query);
-            $view_by                = ($has_tabs == '0' ? 'byday' : $view_by);
 
             // TODO: move message to javascript
             /* if ($root_server == '') {
