@@ -281,7 +281,6 @@ if (!class_exists("Crouton")) {
             if ($show_map == '1') {
                 if ($this->options['google_api_key'] != '') {
                     wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
-                    //wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
                 } else {
                     return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
                 }
