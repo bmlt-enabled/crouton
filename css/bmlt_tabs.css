@@ -461,6 +461,10 @@ table.tablesaw {
 	display: none;
 }
 
+.bmlt-map {
+	height: 400px;
+}
+
 /* Mobile first styles: Begin with the stacked presentation at narrow widths */
 @media only all {
 	/* Show the table cells as a block level element */

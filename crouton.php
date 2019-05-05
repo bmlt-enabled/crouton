@@ -281,13 +281,7 @@ if (!class_exists("Crouton")) {
             if ($show_map == '1') {
                 if ($this->options['google_api_key'] != '') {
                     wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
-                    wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
-                    wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . $this->options['google_api_key'], '', '');
-                    wp_enqueue_script("bmlt-tabs-map", plugin_dir_url(__FILE__) . "js/bmlt_tabs_map.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_map.js"), true);
-                    wp_localize_script('bmlt-tabs-map', 'bmltTabsMap', array(
-                        'pluginUrl' => plugin_dir_url(__FILE__),
-                        'maxZoomLevel' => $max_zoom_level,
-                    ));
+                    //wp_enqueue_script("oms", plugin_dir_url(__FILE__) . "js/oms.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/oms.min.js"), true);
                 } else {
                     return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
                 }
@@ -415,7 +409,10 @@ if (!class_exists("Crouton")) {
                 "service_body_id" => $service_body,
                 "template_path" => plugin_dir_url(__FILE__) . 'templates/',
                 "custom_css" => $this->options['custom_css'],
-                "custom_query_postfix" => $custom_query_postfix
+                "custom_query_postfix" => $custom_query_postfix,
+                "show_map" => $show_map,
+                "google_api_key" => $this->options['google_api_key'],
+                "map_max_zoom" => $max_zoom_level,
             ]);
 
             $output .= $this->getConfigJavascriptBlock($config);
@@ -434,11 +431,7 @@ if (!class_exists("Crouton")) {
             }
 
             $output = $this_title . $sub_title . $meeting_count . $group_count . $output;
-            $output = '<div class="bootstrap-bmlt"><div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div></div>';
-            if ($show_map == '1') {
-                $output = '<div id="bmlt-map" style="height: 400px;"></div>' . $output;
-            }
-
+            $output = '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div>';
             $output .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
             return $output;
         }

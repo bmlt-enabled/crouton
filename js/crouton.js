@@ -5,7 +5,9 @@ function Crouton(config) {
 	self.serviceBodyData = [];
 	self.config = {
 		"template_path": "templates/",
-		"placeholder_id": "#bmlt-tabs"
+		"placeholder_id": "#bmlt-tabs",
+		"map_max_zoom": 15,
+		"time_format": "h:mm a"
 	};
 
 	for (var propertyName in config) {
@@ -22,10 +24,6 @@ function Crouton(config) {
 
 	if (self.config["view_by"] === "weekday") {
 		self.config["include_weekday_button"] = "1";
-	}
-
-	if (self.config["time_format"] === "") {
-		self.config["time_format"] = 'h:mm a';
 	}
 
 	if (self.config["has_tabs"] === "0") {
@@ -384,11 +382,6 @@ function Crouton(config) {
 Crouton.prototype.render = function() {
 	var self = this;
 	jQuery("body").append("<style type='text/css'>" + self.config['custom_css'] + "</style>");
-	if (navigator.geolocation) {
-		navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
-	} else {
-		$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
-	}
 	self.getMeetings(function (data) {
 		self.meetingData = data;
 		if (self.isEmpty(data)) {
@@ -441,6 +434,15 @@ Crouton.prototype.render = function() {
 					});
 				}
 
+				if (self.config['show_map'] === "1") {
+					var tag = document.createElement('script');
+					tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=crouton.initMap";
+					tag.defer = true;
+					tag.async = true;
+					var firstScriptTag = document.getElementsByTagName('script')[0];
+					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+				}
+
 				self.renderView(self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
@@ -451,6 +453,7 @@ Crouton.prototype.render = function() {
 					"uniqueData": self.uniqueData,
 					"words": self.localization.words
 				}, function () {
+					jQuery(self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
 						jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
 					}
@@ -530,9 +533,132 @@ Crouton.prototype.render = function() {
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
+
+					if (navigator.geolocation) {
+						navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
+					} else {
+						$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
+					}
 				});
 			})
 		});
+	});
+};
+
+Crouton.prototype.initMap = function() {
+	var self = this;
+	jQuery.getScript(self.config['template_path'] + "oms.min.js", function() {
+		var map = new google.maps.Map(document.getElementById('bmlt-map'), {
+			zoom: 3
+		});
+
+		var bounds = new google.maps.LatLngBounds();
+		// We go through all the results, and get the "spread" from them.
+		for (var c = 0; c < self.meetingData.length; c++) {
+			var lat = self.meetingData[c].latitude;
+			var lng = self.meetingData[c].longitude;
+			// We will set our minimum and maximum bounds.
+			bounds.extend(new google.maps.LatLng(lat, lng));
+		}
+		// We now have the full rectangle of our meeting search results. Scale the map to fit them.
+		map.fitBounds(bounds);
+
+		var clusterMarker = [];
+
+		var infoWindow = new google.maps.InfoWindow();
+
+		// Create OverlappingMarkerSpiderfier instance
+		var oms = new OverlappingMarkerSpiderfier(map, {markersWontMove: true, markersWontHide: true});
+
+		oms.addListener('format', function (marker, status) {
+			var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? self.config['template_path'] + '/NAMarkerR.png' :
+				status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? self.config['template_path'] + '/NAMarkerB.png' :
+					status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED ? self.config['template_path'] + '/NAMarkerB.png' :
+						status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? self.config['template_path'] + '/NAMarkerR.png' :
+							null;
+			var iconSize = new google.maps.Size(22, 32);
+			marker.setIcon({
+				url: iconURL,
+				size: iconSize,
+				scaledSize: iconSize
+			});
+		});
+
+
+		// This is necessary to make the Spiderfy work
+		oms.addListener('click', function (marker) {
+			infoWindow.setContent(marker.desc);
+			infoWindow.open(map, marker);
+		});
+		// Add some markers to the map.
+		// Note: The code uses the JavaScript Array.prototype.map() method to
+		// create an array of markers based on a given "locations" array.
+		// The map() method here has nothing to do with the Google Maps API.
+		self.meetingData.map(function (location, i) {
+			var weekdays = [null, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			var marker_html = '<dl><dt><strong>';
+			marker_html += location.meeting_name;
+			marker_html += '</strong></dt>';
+			marker_html += '<dd><em>';
+			marker_html += weekdays[parseInt(location.weekday_tinyint)];
+			var time = location.start_time.toString().split(':');
+			var hour = parseInt(time[0]);
+			var minute = parseInt(time[1]);
+			var pm = 'AM';
+			if (hour >= 12) {
+				pm = 'PM';
+				if (hour > 12) {
+					hour -= 12;
+				}
+			}
+			hour = hour.toString();
+			minute = (minute > 9) ? minute.toString() : ('0' + minute.toString());
+			marker_html += ' ' + hour + ':' + minute + ' ' + pm;
+			marker_html += '</em><br>';
+			marker_html += location.location_text;
+			marker_html += '<br>';
+
+			if (typeof location.location_street !== "undefined") {
+				marker_html += location.location_street + '<br>';
+			}
+			if (typeof location.location_municipality !== "undefined") {
+				marker_html += location.location_municipality + ' ';
+			}
+			if (typeof location.location_province !== "undefined") {
+				marker_html += location.location_province + ' ';
+			}
+			if (typeof location.location_postal_code_1 !== "undefined") {
+				marker_html += location.location_postal_code_1;
+			}
+
+			marker_html += '<br>';
+			var url = 'https://maps.google.com/maps?q=' + location.latitude + ',' + location.longitude;
+			marker_html += '<a href="' + url + '">';
+			marker_html += 'Map to Meeting';
+			marker_html += '</a>';
+			marker_html += '</dd></dl>';
+
+			var latLng = {"lat": parseFloat(location.latitude), "lng": parseFloat(location.longitude)};
+
+			var marker = new google.maps.Marker({
+				position: latLng,
+				map: map
+			});
+
+			// needed to make Spiderfy work
+			oms.addMarker(marker);
+
+			// needed to cluster marker
+			clusterMarker.push(marker);
+			google.maps.event.addListener(marker, 'click', function (evt) {
+				infoWindow.setContent(marker_html);
+				infoWindow.open(map, marker);
+			});
+			return marker;
+		});
+
+		// Add a marker clusterer to manage the markers.
+		new MarkerClusterer(map, clusterMarker, {imagePath: self.config['template_path'] + '/m', maxZoom: self.config['map_max_zoom']});
 	});
 };
 
