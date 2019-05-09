@@ -149,28 +149,8 @@ if (!class_exists("Crouton")) {
         public function enqueueFrontendFiles()
         {
             if ($this->hasShortcode()) {
-                $frontend_styles = array(
-                    ['title' => 'bmlt-tabs-select2', 'path' => 'select2.min.css'],
-                    ['title' => 'bmlt-tabs-bootstrap', 'path' => 'bootstrap.min.css'],
-                    ['title' => 'bmlt-tabs', 'path' => 'bmlt_tabs.css'],
-                );
-                foreach ($frontend_styles as $frontend_style) {
-                    wp_enqueue_style($frontend_style['title'], plugin_dir_url(__FILE__) . "css/" . $frontend_style['path'], false, filemtime(plugin_dir_path(__FILE__) . "css/" . $frontend_style['path']), false);
-                }
-                $frontend_scripts = array(
-                    ['title' => 'bmlt-tabs-bootstrap', 'path' => 'bootstrap.min.js'],
-                    ['title' => 'bmlt-tabs-select2', 'path' => 'select2.full.min.js'],
-                    ['title' => 'tablesaw', 'path' => 'tablesaw.jquery.3.0.9.js'],
-                    ['title' => 'handlebars', 'path' => 'handlebars-v4.0.12.js'],
-                    ['title' => 'momentjs', 'path' => 'moment.js'],
-                    ['title' => 'crouton-localization', 'path' => 'crouton-localization.js'],
-                    ['title' => 'crouton', 'path' => 'crouton.js'],
-                    ['title' => 'spinjs', 'path' => 'spin.2.3.2.js'],
-                    ['title' => 'punycode', 'path' => 'punycode.js'],
-                );
-                foreach ($frontend_scripts as $frontend_script) {
-                    wp_enqueue_script($frontend_script['title'], plugin_dir_url(__FILE__) . "js/" . $frontend_script['path'], array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/" . $frontend_script['path']), true);
-                }
+                wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.css", false, filemtime(plugin_dir_path(__FILE__) . "css/crouton.css"), false);
+                wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/crouton.js"), true);
             }
         }
 
@@ -278,13 +258,6 @@ if (!class_exists("Crouton")) {
                 "max_zoom_level" => 15,
                 "language" => 'en-US'
             ), $atts));
-            if ($show_map == '1') {
-                if ($this->options['google_api_key'] != '') {
-                    wp_enqueue_script("markerclusterer", plugin_dir_url(__FILE__) . "js/markerclusterer.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/markerclusterer.js"), true);
-                } else {
-                    return '<p>crouton Error: Google API Key must be set when using show_map="1"</p>';
-                }
-            }
 
             $root_server            = ($root_server != '' ? $root_server : $this->options['root_server']);
             $root_server            = ($_GET['root_server'] == null ? $root_server : $_GET['root_server']);
@@ -406,7 +379,7 @@ if (!class_exists("Crouton")) {
                 "language" => $language,
                 "root_server" => $root_server,
                 "service_body_id" => $service_body,
-                "template_path" => plugin_dir_url(__FILE__) . 'templates/',
+                "template_path" => plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/',
                 "custom_css" => $this->options['custom_css'],
                 "custom_query_postfix" => $custom_query_postfix,
                 "show_map" => $show_map,
