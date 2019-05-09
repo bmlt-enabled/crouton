@@ -1,5 +1,3 @@
-// TODO: webpack a dist version of crouton.js that combines all the dependencies to one file.
-// TODO: use babel and write using ES6?
 function Crouton(config) {
 	var self = this;
 	self.serviceBodyData = [];
@@ -237,11 +235,11 @@ function Crouton(config) {
 		var uniqueIds = arrayUnique(idsArray);
 		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
-			for (var format of data) {
+			data.forEach(function(format) {
 				if (inArray(format['id'], uniqueIds)) {
 					formats.push(format);
 				}
-			}
+			});
 
 			callback(formats.sortByKey('name_string'));
 		});
@@ -704,9 +702,9 @@ function convertToPunyCode(str) {
 
 function arrayColumn(input, columnKey) {
 	var newArr = [];
-	for (var item of input) {
+	input.forEach(function(item) {
 		newArr.push(item[columnKey]);
-	}
+	});
 
 	return newArr;
 }
@@ -726,11 +724,11 @@ function arrayUnique(a, b, c) {
 }
 
 function inArray(needle, haystack) {
-	for (var item of haystack) {
+	haystack.forEach(function(item) {
 		if (item === needle) {
 			return true;
 		}
-	}
+	});
 
 	return false;
 }
