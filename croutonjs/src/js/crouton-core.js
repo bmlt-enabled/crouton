@@ -236,11 +236,11 @@ function Crouton(config) {
 		var uniqueIds = arrayUnique(idsArray);
 		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
-			data.forEach(function(format) {
+			for (var format of data) {
 				if (inArray(format['id'], uniqueIds)) {
 					formats.push(format);
 				}
-			});
+			}
 
 			callback(formats.sortByKey('name_string'));
 		});
@@ -705,9 +705,9 @@ function convertToPunyCode(str) {
 
 function arrayColumn(input, columnKey) {
 	var newArr = [];
-	input.forEach(function(item) {
+	for (var item of input) {
 		newArr.push(item[columnKey]);
-	});
+	}
 
 	return newArr;
 }
@@ -727,11 +727,11 @@ function arrayUnique(a, b, c) {
 }
 
 function inArray(needle, haystack) {
-	haystack.forEach(function(item) {
+	for (var item of haystack) {
 		if (item === needle) {
 			return true;
 		}
-	});
+	}
 
 	return false;
 }
