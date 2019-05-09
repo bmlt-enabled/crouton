@@ -1,7 +1,8 @@
 const { watch, task, src, dest, series } = require('gulp');
-let concat = require('gulp-concat');
-let rename = require('gulp-rename');
-let uglify = require('gulp-uglify');
+const concat = require('gulp-concat');
+const minify = require('gulp-minify');
+const cleanCSS = require('gulp-clean-css');
+const rename = require('gulp-rename');
 
 let jsFiles = [
 	'jquery-3.4.1.min.js',
@@ -24,7 +25,7 @@ let cssFiles = [
 ];
 let distDir = 'croutonjs/dist';
 
-task('crouton-js-files', () => {
+task('js-files', () => {
 	let jsFilesWithFullPath = [];
 	for (let jsFile of jsFiles) {
 		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
@@ -33,12 +34,15 @@ task('crouton-js-files', () => {
 	return src(jsFilesWithFullPath)
 		.pipe(concat('crouton.js'))
 		.pipe(dest(distDir))
-		//.pipe(rename('crouton.min.js'))
-		//.pipe(uglify())
-		//.pipe(dest(jsDest));
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir));
 });
 
-task('crouton-css-files', () => {
+task('css-files', () => {
 	let cssFilesWithFullPath = [];
 	for (let cssFile of cssFiles) {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
@@ -47,17 +51,22 @@ task('crouton-css-files', () => {
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton.css'))
 		.pipe(dest(distDir))
-	//.pipe(rename('crouton.min.js'))
-	//.pipe(uglify())
-	//.pipe(dest(jsDest));
+		.pipe(cleanCSS())
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe(dest(distDir))
 });
 
-task('default', series('crouton-js-files', 'crouton-css-files'));
+task('default', series('js-files', 'css-files'));
 
-watch([
-	'croutonjs/src/js/*.js'
-], series('crouton-js-files'));
+task('watch', () => {
+	watch([
+		'croutonjs/src/js/*.js'
+	], series('js-files'));
 
-watch([
-	'croutonjs/src/css/*.css'
-], series('crouton-css-files'));
+	watch([
+		'croutonjs/src/css/*.css'
+	], series('css-files'));
+});
+

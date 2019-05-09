@@ -3,5 +3,4 @@
 logs
 vendor
 node_modules
-croutonjs/dist/crouton.js
-croutonjs/dist/crouton.css
+croutonjs/dist/crouton.*
