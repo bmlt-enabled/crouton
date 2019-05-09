@@ -17,7 +17,8 @@ function Crouton(config) {
 		has_formats: "1",
 		has_groups: "1",
 		has_locations: "1",
-		has_zip_codes: "1"
+		has_zip_codes: "1",
+		show_distance: "0"
 	};
 
 	for (var propertyName in config) {
@@ -546,10 +547,12 @@ Crouton.prototype.render = function() {
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
 
-					if (navigator.geolocation) {
-						navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
-					} else {
-						$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
+					if (self.config['show_distance'] === "1") {
+						if (navigator.geolocation) {
+							navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
+						} else {
+							$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
+						}
 					}
 				});
 			})

@@ -7,6 +7,9 @@ bundle-deps:
 bundle: bundle-deps
 	gulp
 
+watch: bundle-deps
+	gulp watch
+
 serve:
 	gulp &
 	docker-compose up
