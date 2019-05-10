@@ -22,10 +22,6 @@ if (!class_exists("Crouton")) {
         public $exclude_zip_codes = null;
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
-        const COUNT_TYPES = array(
-            ['name' => 'group', 'field' => array('worldid_mixed','meeting_name')],
-            ['name' => 'meeting', 'field' => array('id_bigint')]
-        );
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -337,10 +333,10 @@ if (!class_exists("Crouton")) {
                 $sub_title = '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
             }
             if ($_GET['meeting_count'] != null) {
-                $meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->getCount('', 'meeting', null) . '</span>';
+                $meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
             }
             if ($_GET['group_count'] != null) {
-                $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->getCount('', 'group', null) . '</span>';
+                $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmltGroupCount($atts) . '</span>';
             }
 
             $output = $this_title . $sub_title . $meeting_count . $group_count . $output;
@@ -370,13 +366,13 @@ if (!class_exists("Crouton")) {
         public function meetingCount($atts, $content = null)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><div id='meeting-count-$random_id'></div>";
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
         }
 
         public function bmltGroupCount($atts, $content = null)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><div id='group-count-$random_id'></div>";
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
         }
 
         /**
