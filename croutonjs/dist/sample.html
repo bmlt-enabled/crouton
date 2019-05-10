@@ -10,7 +10,11 @@
     crouton.meetingCount(function(res) {
         document.getElementById("meeting-count").innerHTML = "Meeting count: " + res;
     });
+    crouton.groupCount(function(res) {
+        document.getElementById("group-count").innerHTML = "Group count: " + res;
+    });
 </script>
 <div id="meeting-count"></div>
+<div id="group-count"></div>
 <div id="bmlt-tabs"></div>
 </html>

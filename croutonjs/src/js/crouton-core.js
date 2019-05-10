@@ -410,6 +410,17 @@ Crouton.prototype.meetingCount = function(callback) {
 	});
 };
 
+Crouton.prototype.groupCount = function(callback) {
+	var self = this;
+	var groups = [];
+	self.getMeetings(function(data) {
+		for (item of data) {
+			groups.push(item['worldid_mixed'] !== "" ? item['worldid_mixed'] : item['meeting_name']);
+		}
+		callback(arrayUnique(groups).length);
+	});
+};
+
 Crouton.prototype.render = function() {
 	var self = this;
 	jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");

@@ -375,7 +375,8 @@ if (!class_exists("Crouton")) {
 
         public function bmltGroupCount($atts, $content = null)
         {
-            return $this->getCount($atts, 'group', $content);
+            $random_id = rand(10000, 99999);
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><div id='group-count-$random_id'></div>";
         }
 
         /**
