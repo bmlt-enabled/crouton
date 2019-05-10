@@ -390,9 +390,15 @@ function Crouton(config) {
 	}
 }
 
+Crouton.prototype.reset = function() {
+	var self = this;
+	jQuery("#custom-css").remove();
+	jQuery(self.config["placeholder_id"]).html("");
+};
+
 Crouton.prototype.render = function() {
 	var self = this;
-	jQuery("body").append("<style type='text/css'>" + self.config['custom_css'] + "</style>");
+	jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 	self.getMeetings(function (data) {
 		self.meetingData = data;
 		if (self.isEmpty(data)) {
