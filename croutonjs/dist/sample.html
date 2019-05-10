@@ -7,6 +7,10 @@
         "service_body_id": [ 44 ]
     });
     crouton.render();
+    crouton.meetingCount(function(res) {
+        document.getElementById("meeting-count").innerHTML = "Meeting count: " + res;
+    });
 </script>
+<div id="meeting-count"></div>
 <div id="bmlt-tabs"></div>
 </html>

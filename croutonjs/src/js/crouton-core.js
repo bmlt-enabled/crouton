@@ -251,17 +251,24 @@ function Crouton(config) {
 	};
 
 	self.getMeetings = function (callback) {
-		var url;
-		if (self.config['custom_query_postfix'] != null) {
-			url = '/client_interface/jsonp/?switcher=GetSearchResults' + self.config['custom_query_postfix'] + '&sort_key=time';
-		} else {
-			url = '/client_interface/jsonp/?switcher=GetSearchResults&sort_key=time' +
-				(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
-		}
+		if (self.meetingData == null) {
+			var url;
+			if (self.config['custom_query_postfix'] != null) {
+				url = '/client_interface/jsonp/?switcher=GetSearchResults' + self.config['custom_query_postfix'] + '&sort_key=time';
+			} else {
+				url = '/client_interface/jsonp/?switcher=GetSearchResults&sort_key=time' +
+					(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
+			}
 
-		if (self.config['service_body_id'].length > 0) url += "&services[]=" + self.config['service_body_id'][0];
-		//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
-		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', callback);
+			if (self.config['service_body_id'].length > 0) url += "&services[]=" + self.config['service_body_id'][0];
+			//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
+			jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
+				self.meetingData = data;
+				callback(data);
+			});
+		} else {
+			callback(self.meetingData);
+		}
 	};
 
 	self.showLocation = function(position) {
@@ -396,11 +403,17 @@ Crouton.prototype.reset = function() {
 	jQuery(self.config["placeholder_id"]).html("");
 };
 
+Crouton.prototype.meetingCount = function(callback) {
+	var self = this;
+	self.getMeetings(function(data) {
+		callback(data.length);
+	});
+};
+
 Crouton.prototype.render = function() {
 	var self = this;
 	jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 	self.getMeetings(function (data) {
-		self.meetingData = data;
 		if (self.isEmpty(data)) {
 			self.showMessage("No meetings found for parameters specified.");
 			return;
