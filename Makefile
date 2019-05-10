@@ -11,5 +11,9 @@ watch: bundle-deps
 	gulp watch
 
 serve:
-	gulp &
+	gulp watch &
 	docker-compose up
+
+serve-static:
+	gulp watch &
+	python -m SimpleHTTPServer
