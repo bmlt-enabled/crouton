@@ -260,7 +260,7 @@ function Crouton(config) {
 					(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
 			}
 
-			if (self.config['service_body_id'].length > 0) url += "&services[]=" + self.config['service_body_id'][0];
+			if (self.config['service_body'].length > 0) url += "&services[]=" + self.config['service_body'][0];
 			//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
 			jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 				self.meetingData = data;
