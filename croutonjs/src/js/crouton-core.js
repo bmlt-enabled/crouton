@@ -238,8 +238,9 @@ function Crouton(config) {
 		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
 			for (var i = 0; i < data.length; i++) {
-				if (inArray(data[i]['id'], uniqueIds)) {
-					formats.push(data[i]);
+				var format = data[i];
+				if (inArray(format['id'], uniqueIds)) {
+					formats.push(format);
 				}
 			}
 
@@ -758,13 +759,7 @@ function arrayUnique(a, b, c) {
 }
 
 function inArray(needle, haystack) {
-	for (var i = 0; i < haystack.length; i++) {
-		if (haystack[i] === needle) {
-			return true;
-		}
-	}
-
-	return false;
+	return haystack.indexOf(needle) !== -1;
 }
 
 Array.prototype.clean = function() {
