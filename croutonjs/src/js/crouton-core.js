@@ -19,7 +19,8 @@ function Crouton(config) {
 		has_locations: "1",
 		has_zip_codes: "1",
 		show_distance: "0",
-		recurse_service_bodies: "0"
+		recurse_service_bodies: "0",
+		service_body: [],
 	};
 
 	for (var propertyName in config) {
@@ -262,7 +263,12 @@ function Crouton(config) {
 					(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
 			}
 
-			if (self.config['service_body'].length > 0) url += "&services[]=" + self.config['service_body'][0];
+			if (self.config['service_body'].length > 0) {
+				for (var service_body of self.config['service_body']) {
+					url += "&services[]=" + service_body;
+				}
+			}
+
 			//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
 			jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 				self.meetingData = data;

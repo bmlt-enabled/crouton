@@ -239,7 +239,7 @@ if (!class_exists("Crouton")) {
             // $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
 
             // TODO: move messages to javascript
-            /* if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
+            /*if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
                 return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
             }
             if ($include_city_button != '0' && $include_city_button != '1') {
@@ -247,20 +247,7 @@ if (!class_exists("Crouton")) {
             }
             if ($include_weekday_button != '0' && $include_weekday_button != '1') {
                 return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
-            } */
-
-            /*if ($params['service_body_parent'] == null && $params['service_body'] == null) {
-                $area_data       = explode(',', $this->options['service_body_1']);
-                $area            = $area_data[0];
-                $service_body_id = $area_data[1];
-                $parent_body_id  = $area_data[2];
-                if ($parent_body_id == '0') {
-                    $service_body_parent = $service_body_id;
-                } else {
-                    $service_body = $service_body_id;
-                }
-            }
-            $services = '';*/
+            }*/
 
             // TODO: move messages to javascript
             /*if ($service_body_parent != null && $service_body != null) {
@@ -268,22 +255,6 @@ if (!class_exists("Crouton")) {
             }
             if ($service_body == '' && $service_body_parent == '') {
                 return '<p>crouton Error: Service body missing from shortcode.</p>';
-            }*/
-
-
-            // TODO: move messages to javascript
-            // Query construction
-            /*if ($service_body != null) {
-                $service_body = array_map('trim', explode(",", $service_body));
-                foreach ($service_body as $key) {
-                    $services .= '&services[]=' . $key;
-                }
-            }
-            if ($service_body_parent != null) {
-                $service_body = array_map('trim', explode(",", $service_body_parent));
-                foreach ($service_body as $key) {
-                    $services .= '&recursive=1&services[]=' . $key;
-                }
             }*/
 
             // TODO: readd mechanism to filter to only show specific formats (use custom_query behind the scenes)
@@ -703,25 +674,26 @@ if (!class_exists("Crouton")) {
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
-                $area            = $area_data[0];
                 $service_body_id = $area_data[1];
                 $parent_body_id  = $area_data[2];
                 if ($parent_body_id == '0') {
-                    $service_body_parent = $service_body_id;
+                    $service_body = array_map('trim', explode(",", $parent_body_id));
+                    $params['recurse_service_bodies'] = "1";
                 } else {
-                    $service_body = $service_body_id;
+                    $service_body = array_map('trim', explode(",", $service_body_id));
                 }
             }
 
-            if ($service_body != null) {
-                $service_body = array_map('trim', explode(",", $service_body));
+            if ($params['service_body_parent'] != null) {
+                $service_body = array_map('trim', explode(",", $params['service_body_parent']));
+                $params['recurse_service_bodies'] = "1";
             }
-            if ($service_body_parent != null) {
-                $service_body = array_map('trim', explode(",", $service_body_parent));
+
+            if ($params['service_body'] != null) {
+                $service_body = array_map('trim', explode(",", $params['service_body']));
             }
 
             $params['service_body'] = $service_body;
-            $params['service_body_parent'] = $service_body_parent;
             $params['root_server'] = ($_GET['root_server'] == null ? ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']) : $_GET['root_server']);
             $params['custom_query_postfix'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
