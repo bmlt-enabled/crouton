@@ -237,7 +237,8 @@ function Crouton(config) {
 		var uniqueIds = arrayUnique(idsArray);
 		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
-			for (var format of data) {
+			for (var i = 0; i < data.length; i++) {
+				var format = data[i];
 				if (inArray(format['id'], uniqueIds)) {
 					formats.push(format);
 				}
@@ -415,8 +416,8 @@ Crouton.prototype.groupCount = function(callback) {
 	var self = this;
 	var groups = [];
 	self.getMeetings(function(data) {
-		for (item of data) {
-			groups.push(item['worldid_mixed'] !== "" ? item['worldid_mixed'] : item['meeting_name']);
+		for (var i = 0; i < data.length; i++) {
+			groups.push(data[i]['worldid_mixed'] !== "" ? data[i]['worldid_mixed'] : data[i]['meeting_name']);
 		}
 		callback(arrayUnique(groups).length);
 	});
@@ -736,8 +737,8 @@ function convertToPunyCode(str) {
 
 function arrayColumn(input, columnKey) {
 	var newArr = [];
-	for (var item of input) {
-		newArr.push(item[columnKey]);
+	for (var i = 0; i < input.length; i++) {
+		newArr.push(input[i][columnKey]);
 	}
 
 	return newArr;
@@ -758,13 +759,7 @@ function arrayUnique(a, b, c) {
 }
 
 function inArray(needle, haystack) {
-	for (var item of haystack) {
-		if (item === needle) {
-			return true;
-		}
-	}
-
-	return false;
+	return haystack.indexOf(needle) !== -1;
 }
 
 Array.prototype.clean = function() {
