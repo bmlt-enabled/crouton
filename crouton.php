@@ -128,9 +128,6 @@ if (!class_exists("Crouton")) {
             return ob_get_clean();
         }
 
-        /**
-        * @param $hook
-        */
         public function enqueueBackendFiles($hook)
         {
             if ($hook == 'settings_page_crouton') {

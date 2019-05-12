@@ -14,7 +14,7 @@ let jsFiles = [
 	'crouton-localization.js',
 	'crouton-core.js',
 	'spin.2.3.2.js',
-	'punycode.js',
+	'punycode.1.4.1.js',
 	'markerclusterer.js',
 	'oms.min.js'
 ];
