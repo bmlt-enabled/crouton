@@ -18,7 +18,8 @@ function Crouton(config) {
 		has_groups: "1",
 		has_locations: "1",
 		has_zip_codes: "1",
-		show_distance: "0"
+		show_distance: "0",
+		recurse_service_bodies: "0"
 	};
 
 	for (var propertyName in config) {
