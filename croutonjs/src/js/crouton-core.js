@@ -264,8 +264,8 @@ function Crouton(config) {
 			}
 
 			if (self.config['service_body'].length > 0) {
-				for (var service_body of self.config['service_body']) {
-					url += "&services[]=" + service_body;
+				for (var i = 0; i < self.config['service_body'].length; i++) {
+					url += "&services[]=" + self.config['service_body'][i];
 				}
 			}
 
