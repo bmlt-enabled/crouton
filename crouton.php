@@ -316,7 +316,8 @@ if (!class_exists("Crouton")) {
             return $output;
         }
 
-        public function getInitializeCroutonBlock($config = array()) {
+        public function getInitializeCroutonBlock($config = array())
+        {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); });</script>";
@@ -330,7 +331,8 @@ if (!class_exists("Crouton")) {
             return $this->getInitializeCroutonBlock($config) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
-        public function initCrouton($atts, $content = null) {
+        public function initCrouton($atts, $content = null)
+        {
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
 
@@ -425,7 +427,7 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = 1;
             }
 
-           ?>
+            ?>
             <div class="wrap">
                 <h2>crouton</h2>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
