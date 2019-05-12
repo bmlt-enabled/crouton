@@ -484,15 +484,6 @@ Crouton.prototype.render = function() {
 					});
 				}
 
-				if (self.config['show_map'] === "1") {
-					var tag = document.createElement('script');
-					tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=crouton.initMap";
-					tag.defer = true;
-					tag.async = true;
-					var firstScriptTag = document.getElementsByTagName('script')[0];
-					firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-				}
-
 				self.renderView(self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
@@ -593,6 +584,15 @@ Crouton.prototype.render = function() {
 							$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
 						}
 					}
+
+					if (self.config['show_map'] === "1") {
+						var tag = document.createElement('script');
+						tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=crouton.initMap";
+						tag.defer = true;
+						tag.async = true;
+						var firstScriptTag = document.getElementsByTagName('script')[0];
+						firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+					}
 				});
 			})
 		});
@@ -605,6 +605,7 @@ Crouton.prototype.initMap = function() {
 		zoom: 3
 	});
 
+	jQuery("#bmlt-map").removeClass("hide");
 	var bounds = new google.maps.LatLngBounds();
 	// We go through all the results, and get the "spread" from them.
 	for (var c = 0; c < self.meetingData.length; c++) {
@@ -711,7 +712,10 @@ Crouton.prototype.initMap = function() {
 	});
 
 	// Add a marker clusterer to manage the markers.
-	new MarkerClusterer(map, clusterMarker, {imagePath: self.config['template_path'] + '/m', maxZoom: self.config['map_max_zoom']});
+	new MarkerClusterer(map, clusterMarker, {
+		imagePath: self.config['template_path'] + '/m',
+		maxZoom: self.config['map_max_zoom']
+	});
 };
 
 Handlebars.registerHelper('formatDataPointer', function(str) {
