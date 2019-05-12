@@ -18,8 +18,7 @@ function Crouton(config) {
 		has_groups: "1",
 		has_locations: "1",
 		has_zip_codes: "1",
-		show_distance: "0",
-		recurse_service_bodies: "0"
+		show_distance: "0"
 	};
 
 	for (var propertyName in config) {
@@ -237,9 +236,9 @@ function Crouton(config) {
 		var uniqueIds = arrayUnique(idsArray);
 		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
 			var formats = [];
-			for (var format of data) {
-				if (inArray(format['id'], uniqueIds)) {
-					formats.push(format);
+			for (var i = 0; i < data.length; i++) {
+				if (inArray(data[i]['id'], uniqueIds)) {
+					formats.push(data[i]);
 				}
 			}
 
@@ -415,8 +414,8 @@ Crouton.prototype.groupCount = function(callback) {
 	var self = this;
 	var groups = [];
 	self.getMeetings(function(data) {
-		for (item of data) {
-			groups.push(item['worldid_mixed'] !== "" ? item['worldid_mixed'] : item['meeting_name']);
+		for (var i = 0; i < data.length; i++) {
+			groups.push(data[i]['worldid_mixed'] !== "" ? data[i]['worldid_mixed'] : data[i]['meeting_name']);
 		}
 		callback(arrayUnique(groups).length);
 	});
@@ -736,8 +735,8 @@ function convertToPunyCode(str) {
 
 function arrayColumn(input, columnKey) {
 	var newArr = [];
-	for (var item of input) {
-		newArr.push(item[columnKey]);
+	for (var i = 0; i < input.length; i++) {
+		newArr.push(input[i][columnKey]);
 	}
 
 	return newArr;
@@ -758,8 +757,8 @@ function arrayUnique(a, b, c) {
 }
 
 function inArray(needle, haystack) {
-	for (var item of haystack) {
-		if (item === needle) {
+	for (var i = 0; i < haystack.length; i++) {
+		if (haystack[i] === needle) {
 			return true;
 		}
 	}
