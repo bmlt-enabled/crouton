@@ -19,7 +19,6 @@ if (!class_exists("Crouton")) {
     {
         public $optionsName = 'bmlt_tabs_options';
         public $options = array();
-        public $exclude_zip_codes = null;
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
         const HTTP_RETRIEVE_ARGS = array(
@@ -693,6 +692,7 @@ if (!class_exists("Crouton")) {
             }
 
             $params['service_body'] = $service_body;
+            $params['exclude_zip_codes'] = explode(",", $params['exclude_zip_codes']);
             $params['root_server'] = ($_GET['root_server'] == null ? ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']) : $_GET['root_server']);
             $params['custom_query_postfix'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';

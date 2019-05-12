@@ -271,6 +271,7 @@ function Crouton(config) {
 
 			//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
 			jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
+				data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 				self.meetingData = data;
 				callback(data);
 			});
@@ -337,7 +338,6 @@ function Crouton(config) {
 
 	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
-		meetingData.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 		for (var m = 0; m < meetingData.length; m++) {
 			if (filter(meetingData[m])) {
 				meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['weekday_tinyint']);
@@ -778,12 +778,10 @@ Array.prototype.clean = function() {
 	return this;
 };
 
-Array.prototype.exclude = function(csv, mappedField) {
-	if (csv == null) return;
-	var excludedValues = csv.split(",");
-	for (var i = 0; i < this.length; i++) {
+Array.prototype.exclude = function(excludedValues, mappedField) {
+	for (var i = this.length; i--;) {
 		for (var j = 0; j < excludedValues.length; j++) {
-			if (i < this.length && excludedValues[j] === this[i][mappedField]) {
+			if (excludedValues[j] === this[i][mappedField]) {
 				this.splice(i, 1);
 			}
 		}
