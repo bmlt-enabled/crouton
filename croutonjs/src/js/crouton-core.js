@@ -21,6 +21,7 @@ function Crouton(config) {
 		show_distance: "0",
 		recurse_service_bodies: "0",
 		service_body: [],
+		exclude_zip_codes: [],
 	};
 
 	for (var propertyName in config) {
