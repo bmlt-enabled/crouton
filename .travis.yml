@@ -27,7 +27,7 @@ jobs:
     script:
     - find ./ -type d | xargs chmod 755
     - find ./ -name '*.php' | xargs chmod 644
-    - git archive --format=zip ${ZIP_FILENAME} ${TRAVIS_COMMIT}
+    - git archive --format=zip --output=${ZIP_FILENAME} ${TRAVIS_COMMIT}
     - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
