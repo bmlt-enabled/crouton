@@ -34,7 +34,7 @@
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="e8">
                 <option></option>
                 {{#each this.uniqueData.areas}}
-                <option value="a-{{@key}}">{{this}}</option>
+                <option value="a-{{this.id}}">{{this.name}}</option>
                 {{/each}}
             </select>
         </div>

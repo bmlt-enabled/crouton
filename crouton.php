@@ -231,7 +231,6 @@ if (!class_exists("Crouton")) {
                 return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
             }*/
 
-            // TODO: move messages to javascript
             /*if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
                 return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
             }
@@ -242,7 +241,6 @@ if (!class_exists("Crouton")) {
                 return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
             }*/
 
-            // TODO: move messages to javascript
             /*if ($service_body_parent != null && $service_body != null) {
                 return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
             }

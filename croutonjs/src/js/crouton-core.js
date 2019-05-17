@@ -1,6 +1,5 @@
 function Crouton(config) {
 	var self = this;
-	self.serviceBodyData = [];
 	self.config = {
 		template_path: "templates/",
 		placeholder_id: "#bmlt-tabs",
@@ -441,14 +440,23 @@ Crouton.prototype.render = function() {
 		self.uniqueData = {
 			'groups': getUniqueValuesOfKey(data, 'meeting_name').sort(),
 			'cities': getUniqueValuesOfKey(data, 'location_municipality').sort(),
-			'areas': getUniqueValuesOfKey(data, 'meeting_name').sort(),
 			'locations': getUniqueValuesOfKey(data, 'location_text').sort(),
 			'sub_provinces': getUniqueValuesOfKey(data, 'location_sub_province').sort(),
 			'states': getUniqueValuesOfKey(data, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(data, 'location_postal_code_1').sort(),
+			'unique_service_bodies_ids': getUniqueValuesOfKey(data, 'service_body_bigint').sort()
 		};
-		self.getServiceBodies(function (data) {
-			self.serviceBodyData = data;
+		self.getServiceBodies(function (service_bodies) {
+			var active_service_bodies = [];
+			for (var i = 0; i < service_bodies.length; i++) {
+				for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
+					if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
+						active_service_bodies.push(service_bodies[i]);
+					}
+				}
+ 			}
+
+			self.uniqueData['areas'] = active_service_bodies;
 			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
