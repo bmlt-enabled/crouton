@@ -25,7 +25,7 @@ jobs:
     script:
     - npm install
     - make bundle
-    - zip -r ${ZIP_FILENAME} croutonjs/dist
+    - cd croutonjs/dist && zip -r ${ZIP_FILENAME} *
     - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
