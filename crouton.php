@@ -231,9 +231,6 @@ if (!class_exists("Crouton")) {
                 return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
             }*/
 
-            // TODO: not sure what this was for
-            // $has_tabs = ($view_by == 'city' ? '0' : $has_tabs);
-
             // TODO: move messages to javascript
             /*if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
                 return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
@@ -410,7 +407,6 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
-                set_transient('admin_notice', 'Please put down your weapon. You have 20 seconds to comply.');
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
             }
 

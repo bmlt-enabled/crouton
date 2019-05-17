@@ -505,7 +505,7 @@ Crouton.prototype.render = function() {
 						}
 					});
 
-					//TODO: this was removed
+					//TODO: this was removed / special mobile settings
 					/*if (jQuery.browser.mobile) {
 						jQuery("#e2").prop("readonly", true);
 						jQuery(".select2-search").css({"display": "none"});
@@ -527,7 +527,7 @@ Crouton.prototype.render = function() {
 								}
 							}
 
-							//TODO: this was removed
+							//TODO: this was removed / special mobile settings
 							/*if (jQuery.browser.mobile) {
 								jQuery("#" + this.id).prop("readonly", true);
 								jQuery(".select2-search").css({"display": "none"});
