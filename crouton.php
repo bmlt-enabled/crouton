@@ -224,8 +224,6 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            global $unique_areas;
-
             // TODO: move message to javascript
             /* if ($root_server == '') {
                 return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
@@ -248,7 +246,7 @@ if (!class_exists("Crouton")) {
                 return '<p>crouton Error: Service body missing from shortcode.</p>';
             }*/
 
-            // TODO: readd mechanism to filter to only show specific formats (use custom_query behind the scenes)
+            // TODO: readd mechanism to filter to add extra meetings
             /*$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, '', $custom_query_postfix);
             if ($this->options['extra_meetings']) {
                 $meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
@@ -273,17 +271,6 @@ if (!class_exists("Crouton")) {
                 if ($the_meetings == 0) {
                     return $this->doQuit('');
                 }
-            }*/
-
-            // TODO: move js
-            /*if ($has_areas == '1') {
-                $area_names = array();
-                foreach ($unique_area as $area_value) {
-                    $areas = $this->getNameFromServiceBodyID($area_value);
-                    array_push($area_names, $areas);
-                }
-                $area_names_ids = array_combine($unique_area, $area_names);
-                asort($area_names_ids, SORT_NATURAL | SORT_FLAG_CASE);
             }*/
 
             $output = $this->getConfigJavascriptBlock($this->getCroutonJsConfig($atts));
