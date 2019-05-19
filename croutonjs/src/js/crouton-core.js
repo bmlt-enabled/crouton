@@ -1,5 +1,6 @@
 function Crouton(config) {
 	var self = this;
+	self.mutex = false;
 	self.config = {
 		template_path: "templates/",
 		placeholder_id: "#bmlt-tabs",
@@ -112,6 +113,42 @@ function Crouton(config) {
 			dropdownCssClass: 'bmlt-drop'
 		}
 	];
+
+	self.mutex = true;
+	var url = '/client_interface/jsonp/?switcher=GetSearchResults';
+	if (self.config['custom_query'] != null) {
+		url += self.config['custom_query'];
+	} else if (self.config['service_body'].length > 0) {
+		for (var i = 0; i < self.config['service_body'].length; i++) {
+			url += "&services[]=" + self.config['service_body'][i];
+		}
+
+		if (self.config['recurse_service_bodies'] === "1") {
+			url += "&recursive=1";
+		}
+	}
+
+	url += '&sort_key=time';
+
+	jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
+		data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+		/*if (self.config["extra_meetings"]) {
+			extra_meetings_url += ""
+		}*/
+
+		self.meetingData = data;
+		self.mutex = false;
+	});
+
+	self.lock = function(callback) {
+		var self = this;
+		var lock_id = setInterval(function() {
+			if (!self.mutex) {
+				clearInterval(lock_id);
+				callback();
+			}
+		}, 100)
+	};
 
 	self.showPage = function (id) {
 		jQuery(id).removeClass("hide").addClass("show");
@@ -253,33 +290,6 @@ function Crouton(config) {
 		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&callback=?', callback);
 	};
 
-	self.getMeetings = function (callback) {
-		if (self.meetingData == null) {
-			var url;
-			if (self.config['custom_query_postfix'] != null) {
-				url = '/client_interface/jsonp/?switcher=GetSearchResults' + self.config['custom_query_postfix'] + '&sort_key=time';
-			} else {
-				url = '/client_interface/jsonp/?switcher=GetSearchResults&sort_key=time' +
-					(self.config['recurse_service_bodies'] === "1" ? "&recursive=1" : "")
-			}
-
-			if (self.config['service_body'].length > 0) {
-				for (var i = 0; i < self.config['service_body'].length; i++) {
-					url += "&services[]=" + self.config['service_body'][i];
-				}
-			}
-
-			//if (self.config['format_key'] !== '') url += '&formats[]=' . format_id";
-			jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
-				data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
-				self.meetingData = data;
-				callback(data);
-			});
-		} else {
-			callback(self.meetingData);
-		}
-	};
-
 	self.showLocation = function(position) {
 		var latitude = position.coords.latitude;
 		var longitude = position.coords.longitude;
@@ -413,39 +423,40 @@ Crouton.prototype.reset = function() {
 
 Crouton.prototype.meetingCount = function(callback) {
 	var self = this;
-	self.getMeetings(function(data) {
-		callback(data.length);
+	self.lock(function() {
+		callback(self.meetingData.length);
 	});
 };
 
 Crouton.prototype.groupCount = function(callback) {
 	var self = this;
-	var groups = [];
-	self.getMeetings(function(data) {
-		for (var i = 0; i < data.length; i++) {
-			groups.push(data[i]['worldid_mixed'] !== "" ? data[i]['worldid_mixed'] : data[i]['meeting_name']);
+	self.lock(function() {
+		var groups = [];
+		for (var i = 0; i < self.meetingData.length; i++) {
+			groups.push(self.meetingData[i]['worldid_mixed'] !== "" ? self.meetingData[i]['worldid_mixed'] : self.meetingData[i]['meeting_name']);
 		}
 		callback(arrayUnique(groups).length);
 	});
 };
 
-Crouton.prototype.render = function() {
+Crouton.prototype.render = function(callback) {
 	var self = this;
-	jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
-	self.getMeetings(function (data) {
-		if (self.isEmpty(data)) {
+	self.lock(function() {
+		jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+		if (self.isEmpty(self.meetingData)) {
 			self.showMessage("No meetings found for parameters specified.");
 			return;
 		}
 		self.uniqueData = {
-			'groups': getUniqueValuesOfKey(data, 'meeting_name').sort(),
-			'cities': getUniqueValuesOfKey(data, 'location_municipality').sort(),
-			'locations': getUniqueValuesOfKey(data, 'location_text').sort(),
-			'sub_provinces': getUniqueValuesOfKey(data, 'location_sub_province').sort(),
-			'states': getUniqueValuesOfKey(data, 'location_province').sort(),
-			'zips': getUniqueValuesOfKey(data, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': getUniqueValuesOfKey(data, 'service_body_bigint').sort()
+			'groups': getUniqueValuesOfKey(self.meetingData, 'meeting_name').sort(),
+			'cities': getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort(),
+			'locations': getUniqueValuesOfKey(self.meetingData, 'location_text').sort(),
+			'sub_provinces': getUniqueValuesOfKey(self.meetingData, 'location_sub_province').sort(),
+			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
+			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
+			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
 		};
+		if (callback !== undefined) callback();
 		self.getServiceBodies(function (service_bodies) {
 			var active_service_bodies = [];
 			for (var i = 0; i < service_bodies.length; i++) {
@@ -454,7 +465,7 @@ Crouton.prototype.render = function() {
 						active_service_bodies.push(service_bodies[i]);
 					}
 				}
- 			}
+			}
 
 			self.uniqueData['areas'] = active_service_bodies;
 			self.getFormats(function (data) {
@@ -515,15 +526,15 @@ Crouton.prototype.render = function() {
 
 					//TODO: this was removed / special mobile settings
 					/*if (jQuery.browser.mobile) {
-						jQuery("#e2").prop("readonly", true);
-						jQuery(".select2-search").css({"display": "none"});
-						jQuery(".select2-search").remove();
-						for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
-							jQuery("#s2id_e" + j).css({"width": "99%", "margin-bottom": "3px"});
-						}
-						jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width": "98%", "margin-bottom": "3px"});
-						jQuery(".bmlt-tabs .bmlt-button-cities").css({"width": "98%", "margin-bottom": "3px"});
-					}*/
+                        jQuery("#e2").prop("readonly", true);
+                        jQuery(".select2-search").css({"display": "none"});
+                        jQuery(".select2-search").remove();
+                        for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
+                            jQuery("#s2id_e" + j).css({"width": "99%", "margin-bottom": "3px"});
+                        }
+                        jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width": "98%", "margin-bottom": "3px"});
+                        jQuery(".bmlt-tabs .bmlt-button-cities").css({"width": "98%", "margin-bottom": "3px"});
+                    }*/
 
 					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
 						jQuery("#e" + a).on('select2:select', function (e) {
@@ -537,10 +548,10 @@ Crouton.prototype.render = function() {
 
 							//TODO: this was removed / special mobile settings
 							/*if (jQuery.browser.mobile) {
-								jQuery("#" + this.id).prop("readonly", true);
-								jQuery(".select2-search").css({"display": "none"});
-								jQuery(".select2-search").remove();
-							}*/
+                                jQuery("#" + this.id).prop("readonly", true);
+                                jQuery(".select2-search").css({"display": "none"});
+                                jQuery(".select2-search").remove();
+                            }*/
 
 							var val = jQuery("#" + this.id).val();
 							jQuery('.bmlt-page').each(function (index) {

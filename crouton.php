@@ -246,33 +246,6 @@ if (!class_exists("Crouton")) {
                 return '<p>crouton Error: Service body missing from shortcode.</p>';
             }*/
 
-            // TODO: readd mechanism to filter to add extra meetings
-            /*$getMeetingsUrl = $this->generateGetMeetingsUrl($root_server, $services, '', $custom_query_postfix);
-            if ($this->options['extra_meetings']) {
-                $meetingsWithoutExtrasJson = $this->getMeetingsJson($getMeetingsUrl);
-                $the_meetings_array = json_decode($meetingsWithoutExtrasJson, true);
-                $extras = "";
-                foreach ($this->options['extra_meetings'] as $value) {
-                    $data = array(" [", "]");
-                    $value = str_replace($data, "", $value);
-                    $extras .= "&meeting_ids[]=" . $value;
-                }
-                $all_meetings_url = $root_server . '/client_interface/json/?switcher=GetSearchResults' . $extras . '&sort_key=time';
-                $extraMeetingsJson = $this->getMeetingsJson($all_meetings_url);
-                $extra_result = json_decode($extraMeetingsJson, true);
-                if ($extra_result != null) {
-                    $the_meetings = array_merge($the_meetings_array, $extra_result);
-                    foreach ($the_meetings as $key => $row) {
-                        $start_time[$key] = $row['start_time'];
-                    }
-                    array_multisort($start_time, SORT_ASC, $the_meetings);
-                    $meetingsJson = json_encode($the_meetings);
-                }
-                if ($the_meetings == 0) {
-                    return $this->doQuit('');
-                }
-            }*/
-
             $output = $this->getConfigJavascriptBlock($this->getCroutonJsConfig($atts));
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if ($_GET['this_title'] != null) {
@@ -569,27 +542,6 @@ if (!class_exists("Crouton")) {
 
         /**
          * @param $root_server
-         * @param $services
-         * @param $format_id
-         * @param $custom_query_postfix
-         * @return string
-         */
-        public function generateGetMeetingsUrl($root_server, $services, $format_id, $custom_query_postfix)
-        {
-            if ($format_id != '') {
-                $format_id = "&formats[]=$format_id";
-            }
-            if ($custom_query_postfix != null) {
-                $url = "$root_server/client_interface/json/?switcher=GetSearchResults$custom_query_postfix&sort_key=time";
-            } else {
-                $url = "$root_server/client_interface/json/?switcher=GetSearchResults$format_id$services&sort_key=time"
-                    . ($this->options['recurse_service_bodies'] == "1" ? "&recursive=1" : "");
-            }
-            return $url;
-        }
-
-        /**
-         * @param $root_server
          * @return string
          */
         public function getAllMeetings($root_server)
@@ -675,10 +627,11 @@ if (!class_exists("Crouton")) {
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = explode(",", $params['exclude_zip_codes']);
             $params['root_server'] = ($_GET['root_server'] == null ? ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']) : $_GET['root_server']);
-            $params['custom_query_postfix'] = $this->getCustomQuery($params['custom_query']);
+            $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['custom_css'] = $this->options['custom_css'];
             $params['google_api_key'] = $this->options['google_api_key'];
+            $params['extra_meetings'] = $this->options['extra_meetings'];
             return json_encode($params);
         }
     }
