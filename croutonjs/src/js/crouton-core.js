@@ -22,6 +22,7 @@ function Crouton(config) {
 		recurse_service_bodies: "0",
 		service_body: [],
 		exclude_zip_codes: [],
+		extra_meetings: [],
 	};
 
 	for (var propertyName in config) {
@@ -132,12 +133,20 @@ function Crouton(config) {
 
 	jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 		data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
-		/*if (self.config["extra_meetings"]) {
-			extra_meetings_url += ""
-		}*/
-
 		self.meetingData = data;
-		self.mutex = false;
+
+		if (self.config['extra_meetings'].length > 0) {
+			var extra_meetings_query = "";
+			for (var i = 0; i < self.config['extra_meetings'].length; i++) {
+				extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
+			}
+			jQuery.getJSON(self.config['root_server'] + url + '&callback=?' + extra_meetings_query, function (data) {
+				self.meetingData = self.meetingData.concat(data);
+				self.mutex = false;
+			});
+		} else {
+			self.mutex = false;
+		}
 	});
 
 	self.lock = function(callback) {

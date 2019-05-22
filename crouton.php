@@ -631,7 +631,13 @@ if (!class_exists("Crouton")) {
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['custom_css'] = $this->options['custom_css'];
             $params['google_api_key'] = $this->options['google_api_key'];
-            $params['extra_meetings'] = $this->options['extra_meetings'];
+            $extra_meetings_array = [];
+            foreach ($this->options['extra_meetings'] as $value) {
+                $data = array(" [", "]");
+                array_push($extra_meetings_array, str_replace($data, "", $value));
+            }
+
+            $params['extra_meetings'] = $extra_meetings_array;
             return json_encode($params);
         }
     }
