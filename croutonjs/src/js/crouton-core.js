@@ -766,6 +766,14 @@ Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) 
 	return finalFormats.join(" ");
 });
 
+Handlebars.registerHelper('formatLink', function(text) {
+	if (text.indexOf('tel:') === 0 || text.indexOf('http') === 0) {
+		return new Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
+	} else {
+		return text;
+	}
+});
+
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });

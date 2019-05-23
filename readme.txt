@@ -38,6 +38,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 = 3.0.0 =
 * Rewritten to load fully with javascript inside a browser. [#98]
+* Text from "comments" field that starts with tel: or http(s) in will be turned into a URL [#104]
 
 = 2.6.0 =
 * Added multilingual support [#88]
