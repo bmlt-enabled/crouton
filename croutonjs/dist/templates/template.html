@@ -1,13 +1,13 @@
 <script id="header-template" type="text/x-handlebars-template">
-    {{#ifEquals this.config.header "1"}}
-        {{#ifEquals this.config.include_weekday_button "1"}}
+    {{#if this.config.header}}
+        {{#if this.config.include_weekday_button}}
         <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
-        {{/ifEquals}}
-        {{#ifEquals this.config.include_city_button "1"}}
+        {{/if}}
+        {{#if this.config.include_city_button}}
         <div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">{{getWord 'city'}}</a></div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_cities "1"}}
+        {{#if this.config.has_cities}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="e2">
                 <option></option>
@@ -16,9 +16,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_groups "1"}}
+        {{#if this.config.has_groups}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="e3">
                 <option></option>
@@ -27,9 +27,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_areas "1"}}
+        {{#if this.config.has_areas}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="e8">
                 <option></option>
@@ -38,9 +38,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_locations "1"}}
+        {{#if this.config.has_locations}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="e4">
                 <option></option>
@@ -49,9 +49,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_sub_province "1"}}
+        {{#if this.config.has_sub_province}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="e7">
                 <option></option>
@@ -60,9 +60,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_states "1"}}
+        {{#if this.config.has_states}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="e9">
                 <option></option>
@@ -71,9 +71,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_zip_codes "1"}}
+        {{#if this.config.has_zip_codes}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="e5">
                 <option></option>
@@ -82,9 +82,9 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
 
-        {{#ifEquals this.config.has_formats "1"}}
+        {{#if this.config.has_formats}}
         <div class="bmlt-dropdown-container">
             <select style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="e6">
                 <option></option>
@@ -93,12 +93,12 @@
                 {{/each}}
             </select>
         </div>
-        {{/ifEquals}}
+        {{/if}}
         </div>
-    {{/ifEquals}}
+    {{/if}}
 
-    {{#ifEquals this.config.has_tabs "1"}}
-        {{#ifEquals this.config.has_meetings "1"}}
+    {{#if this.config.has_tabs}}
+        {{#if this.config.has_meetings}}
             {{#ifEquals this.config.view_by "weekdays"}}
             <div class="bmlt-page show" id="nav-days">
             {{else}}
@@ -110,8 +110,8 @@
                 {{/times}}
             </ul>
             </div>
-        {{/ifEquals}}
-    {{/ifEquals}}
+        {{/if}}
+    {{/if}}
 </script>
 
 <script id="cities-template" type="text/x-handlebars-template">

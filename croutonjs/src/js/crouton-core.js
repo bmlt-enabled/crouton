@@ -7,41 +7,49 @@ function Crouton(config) {
 		map_max_zoom: 15,
 		time_format: "h:mm a",
 		language: "en-US",
-		has_tabs: "1",
-		header: "1",
-		include_city_button: "1",
-		include_weekday_button: "1",
-		has_meetings: "1",
-		show_map: "0",
-		has_cities: "1",
-		has_formats: "1",
-		has_groups: "1",
-		has_locations: "1",
-		has_zip_codes: "1",
-		show_distance: "0",
-		recurse_service_bodies: "0",
+		has_tabs: true,
+		header: true,
+		include_city_button: true,
+		include_weekday_button: true,
+		has_meetings: true,
+		show_map: false,
+		has_cities: true,
+		has_formats: true,
+		has_groups: true,
+		has_locations: true,
+		has_zip_codes: true,
+		has_areas: false,
+		show_distance: false,
+		recurse_service_bodies: false,
 		service_body: [],
 		exclude_zip_codes: [],
 		extra_meetings: [],
 	};
 
 	for (var propertyName in config) {
-		self.config[propertyName] = config[propertyName];
+		if (config[propertyName] === "1" || config[propertyName] === 1) {
+			self.config[propertyName] = true;
+		} else if (config[propertyName] === "0" || config[propertyName] === 0) {
+			self.config[propertyName] = false;
+		} else {
+			self.config[propertyName] = config[propertyName];
+		}
+
 	}
 
-	if (self.config["has_meetings"] === "0") {
-		self.config["has_tabs"] = "0";
+	if (!self.config["has_meetings"]) {
+		self.config["has_tabs"] = false;
 	}
 
 	if (self.config["view_by"] === "city") {
-		self.config["include_city_button"] = "1";
+		self.config["include_city_button"] = true;
 	}
 
 	if (self.config["view_by"] === "weekday") {
-		self.config["include_weekday_button"] = "1";
+		self.config["include_weekday_button"] = true;
 	}
 
-	if (self.config["has_tabs"] === "0") {
+	if (!self.config["has_tabs"]) {
 		self.config["view_by"] = "byday";
 	}
 
@@ -124,7 +132,7 @@ function Crouton(config) {
 			url += "&services[]=" + self.config['service_body'][i];
 		}
 
-		if (self.config['recurse_service_bodies'] === "1") {
+		if (self.config['recurse_service_bodies']) {
 			url += "&recursive=1";
 		}
 	}
@@ -588,7 +596,7 @@ Crouton.prototype.render = function(callback) {
 						});
 					});
 
-					if (self.config['has_tabs'] !== "0") {
+					if (self.config['has_tabs']) {
 						jQuery('.nav-tabs a').on('click', function (e) {
 							e.preventDefault();
 							jQuery(this).tab('show');
@@ -605,7 +613,7 @@ Crouton.prototype.render = function(callback) {
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
 
-					if (self.config['show_distance'] === "1") {
+					if (self.config['show_distance']) {
 						if (navigator.geolocation) {
 							navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
 						} else {
@@ -613,7 +621,7 @@ Crouton.prototype.render = function(callback) {
 						}
 					}
 
-					if (self.config['show_map'] === "1") {
+					if (self.config['show_map']) {
 						var tag = document.createElement('script');
 						tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=crouton.initMap";
 						tag.defer = true;
