@@ -24,6 +24,8 @@ function Crouton(config) {
 		service_body: [],
 		exclude_zip_codes: [],
 		extra_meetings: [],
+		auto_tz_adjust: false,
+		base_tz: null
 	};
 
 	for (var propertyName in config) {
@@ -365,22 +367,18 @@ function Crouton(config) {
 
 	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
+
 		for (var m = 0; m < meetingData.length; m++) {
 			if (filter(meetingData[m])) {
-				meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['weekday_tinyint']);
-				meetingData[m]['formatted_comments'] =
-					meetingData[m]['comments'] != null
-						? meetingData[m]['comments'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-						: "";
+				meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 				var duration = meetingData[m]['duration_time'].split(":");
-				meetingData[m]['start_time_formatted'] =
-					moment(meetingData[m]['start_time'], "HH:mm:ss")
-						.format(self.config['time_format']);
-				meetingData[m]['end_time_formatted']
-					= moment(meetingData[m]['start_time'], "HH:mm:ss")
+				var start_time = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
+				meetingData[m]['start_time_formatted'] = start_time.format(self.config['time_format']);
+				meetingData[m]['end_time_formatted'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time'])
 					.add(duration[0], 'hours')
 					.add(duration[1], 'minutes')
 					.format(self.config['time_format']);
+				meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(start_time.get('day') + 1);
 
 				var formats = meetingData[m]['formats'].split(",");
 				var formats_expanded = [];
@@ -805,6 +803,22 @@ function getUniqueValuesOfKey(array, key){
 		return carry;
 	}, []);
 }
+
+Crouton.prototype.getNextInstanceOfDay = function(day_id, time_stamp) {
+	if (this.config['base_tz'] != null) {
+		moment.tz.setDefault(this.config['base_tz']);
+	}
+
+	var today = moment().isoWeekday();
+	var time = moment(time_stamp, "HH:mm");
+	var date_stamp = today <= day_id ? moment().isoWeekday(day_id) : moment().add(1, 'weeks').isoWeekday(day_id);
+
+	if (this.config['auto_tz_adjust']) {
+		return date_stamp.set({hour: time.get('hour'), minute: time.get('minute')}).tz(moment.tz.guess());
+	} else {
+		return date_stamp.set({hour: time.get('hour'), minute: time.get('minute')});
+	}
+};
 
 function arrayUnique(a, b, c) {
 	b = a.length;

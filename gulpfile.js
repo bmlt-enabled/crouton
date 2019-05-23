@@ -11,6 +11,7 @@ let jsFiles = [
 	'tablesaw.jquery.3.0.9.js',
 	'handlebars-v4.0.12.js',
 	'moment.js',
+	'moment-timezone.js',
 	'crouton-localization.js',
 	'crouton-core.js',
 	'punycode.1.4.1.js',
