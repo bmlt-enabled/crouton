@@ -402,7 +402,7 @@ Crouton.prototype.render = function(callback) {
 				}
 			}
 
-			self.uniqueData['areas'] = active_service_bodies;
+			self.uniqueData['areas'] = active_service_bodies.sortByKey('name');
 			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
