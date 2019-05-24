@@ -59,10 +59,11 @@ jobs:
       - ZIP_FILENAME=crouton-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
       - S3_KEY=crouton
     script:
-      - make bundle
       - find ./ -type d | xargs chmod 755
       - find ./ -name '*.php' | xargs chmod 644
       - git archive --format=zip --output=${ZIP_FILENAME} ${TRAVIS_COMMIT}
+      - make bundle
+      - zip -r ${ZIP_FILENAME} croutonjs/dist/*
       - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
       - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
