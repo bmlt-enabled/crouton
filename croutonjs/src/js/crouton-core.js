@@ -2,7 +2,6 @@ function Crouton(config) {
 	var self = this;
 	self.mutex = false;
 	self.config = {
-		template_path: "templates/",
 		placeholder_id: "#bmlt-tabs",
 		map_max_zoom: 15,
 		time_format: "h:mm a",
@@ -270,21 +269,14 @@ function Crouton(config) {
 	};
 
 	self.renderView = function (selector, context, callback) {
-		jQuery.get(self.config['template_path'] + 'template.html', function (data) {
-			if (jQuery("#crouton-template").length == 0) {
-				jQuery("body").append("<div id='crouton-template'></div>");
-				jQuery('#crouton-template').html(data);
-				Handlebars.registerPartial('meetings', jQuery('#crouton-template > #meetings-template').html());
-				Handlebars.registerPartial('bydays', jQuery('#crouton-template > #byday-template').html());
-				Handlebars.registerPartial('weekdays', jQuery('#crouton-template > #weekdays-template').html());
-				Handlebars.registerPartial('cities', jQuery('#crouton-template > #cities-template').html());
-				Handlebars.registerPartial('header', jQuery('#crouton-template > #header-template').html());
-			}
-
-			var template = Handlebars.compile(jQuery("#crouton-template > #master-template").html());
-			jQuery(selector).append(template(context));
-			callback();
-		});
+		Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
+		Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
+		Handlebars.registerPartial('cities', hbs_Crouton.templates['cities']);
+		Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
+		var template = hbs_Crouton.templates['master'];
+		jQuery(selector).append(template(context));
+		callback();
 	};
 
 	self.getFormats = function (callback) {

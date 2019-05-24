@@ -1,0 +1,13 @@
+<div id="bmlt-map" class="bmlt-map hide"></div>
+<div id="bmlt-header" class="bmlt-header hide">
+    {{> header}}
+</div>
+<div id="cities" class="bmlt-page hide">
+    {{> cities this.meetings.cities}}
+</div>
+<div id="byday" class="bmlt-page hide">
+    {{> bydays this.meetings.bydays}}
+</div>
+<div id="tabs-content" class="bmlt-page">
+    {{> weekdays this.meetings.weekdays}}
+</div>
