@@ -2,7 +2,7 @@ function Crouton(config) {
 	var self = this;
 	self.mutex = false;
 	self.config = {
-		placeholder_id: "#bmlt-tabs",
+		placeholder_id: "bmlt-tabs",  // The DOM id that will be using
 		map_max_zoom: 15,
 		time_format: "h:mm a",
 		language: "en-US",
@@ -55,75 +55,6 @@ function Crouton(config) {
 	}
 
 	self.localization = new CroutonLocalization(self.config['language']);
-	self.dropdownConfiguration = [
-		{
-			placeholder: "Cities",
-			dropdownAutoWidth: true,
-			dropdownMaxWidth: '100px',
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		},
-		{
-			placeholder: "Groups",
-			dropdownAutoWidth: true,
-			dropdownMaxWidth: '100px',
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		},
-		{
-			placeholder: "Locations",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		},
-		{
-			placeholder: "Zips",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop-zip'
-		},
-		{
-			placeholder: "Formats",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop-format'
-		},
-		{
-			placeholder: "Counties",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		},
-		{
-			placeholder: "Areas",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		},
-		{
-			placeholder: "States",
-			dropdownAutoWidth: true,
-			allowClear: false,
-			width: "resolve",
-			minimumResultsForSearch: 1,
-			dropdownCssClass: 'bmlt-drop'
-		}
-	];
-
 	self.mutex = true;
 	var url = '/client_interface/jsonp/?switcher=GetSearchResults';
 	if (self.config['custom_query'] != null) {
@@ -184,7 +115,7 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -201,7 +132,7 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -219,7 +150,7 @@ function Crouton(config) {
 
 	self.cityView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -333,9 +264,7 @@ function Crouton(config) {
 	self.distance = function(lat1, lon1, lat2, lon2, unit) {
 		if ((lat1 === lat2) && (lon1 === lon2)) {
 			return 0;
-		}
-
-		else {
+		} else {
 			var radlat1 = Math.PI * lat1/180;
 			var radlat2 = Math.PI * lat2/180;
 			var theta = lon1-lon2;
@@ -408,8 +337,8 @@ function Crouton(config) {
 	};
 
 	self.showMessage = function(message) {
-		jQuery(self.config['placeholder_id']).html("crouton: " + message);
-		jQuery(self.config['placeholder_id']).removeClass("hide");
+		jQuery("#" + self.config['placeholder_id']).html("crouton: " + message);
+		jQuery("#" + self.config['placeholder_id']).removeClass("hide");
 	};
 
 	self.isEmpty = function(obj) {
@@ -424,7 +353,7 @@ function Crouton(config) {
 Crouton.prototype.reset = function() {
 	var self = this;
 	jQuery("#custom-css").remove();
-	jQuery(self.config["placeholder_id"]).html("");
+	jQuery("#" + self.config["placeholder_id"]).html("");
 };
 
 Crouton.prototype.meetingCount = function(callback) {
@@ -504,7 +433,7 @@ Crouton.prototype.render = function(callback) {
 					});
 				}
 
-				self.renderView(self.config['placeholder_id'], {
+				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
@@ -514,10 +443,16 @@ Crouton.prototype.render = function(callback) {
 					"uniqueData": self.uniqueData,
 					"words": self.localization.words
 				}, function () {
-					jQuery(self.config['placeholder_id']).addClass("bootstrap-bmlt");
-					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
-						jQuery("#e" + a).select2(self.dropdownConfiguration[a - 2]);
-					}
+					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
+					//jQuery.fn.select2.defaults.set();
+					jQuery("select").select2({
+						dropdownAutoWidth: true,
+						allowClear: false,
+						width: "resolve",
+						minimumResultsForSearch: 1,
+						dropdownCssClass: 'bmlt-drop'
+					});
+
 					jQuery('[data-toggle="popover"]').popover();
 					jQuery('html').on('click', function (e) {
 						if (jQuery(e.target).data('toggle') !== 'popover') {
@@ -525,34 +460,15 @@ Crouton.prototype.render = function(callback) {
 						}
 					});
 
-					//TODO: this was removed / special mobile settings
-					/*if (jQuery.browser.mobile) {
-                        jQuery("#e2").prop("readonly", true);
-                        jQuery(".select2-search").css({"display": "none"});
-                        jQuery(".select2-search").remove();
-                        for (var j = 2; j <= this.dropdownConfiguration.length + 1; j++) {
-                            jQuery("#s2id_e" + j).css({"width": "99%", "margin-bottom": "3px"});
-                        }
-                        jQuery(".bmlt-tabs .bmlt-button-weekdays").css({"width": "98%", "margin-bottom": "3px"});
-                        jQuery(".bmlt-tabs .bmlt-button-cities").css({"width": "98%", "margin-bottom": "3px"});
-                    }*/
-
-					for (var a = 2; a <= self.dropdownConfiguration.length + 1; a++) {
+					for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
 						jQuery("#e" + a).on('select2:select', function (e) {
-							for (var j = 2; j <= self.dropdownConfiguration.length + 1; j++) {
+							for (var j = 2; j <= jQuery(".bmlt-dropdown-container").length + 1; j++) {
 								if (this.id !== "e" + j) {
 									if (jQuery("#e" + j).length) {
 										jQuery("#e" + j).select2("val", null);
 									}
 								}
 							}
-
-							//TODO: this was removed / special mobile settings
-							/*if (jQuery.browser.mobile) {
-                                jQuery("#" + this.id).prop("readonly", true);
-                                jQuery(".select2-search").css({"display": "none"});
-                                jQuery(".select2-search").remove();
-                            }*/
 
 							var val = jQuery("#" + this.id).val();
 							jQuery('.bmlt-page').each(function (index) {
