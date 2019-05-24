@@ -153,6 +153,20 @@
 		<p><em>User has to have geolocation permissions turned on.</em></p>
         <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
 	</div>
+    <h3 class="help-accordian"><strong>Time Zone Adjustments</strong></h3>
+    <div>
+        <p>With these parameters you can adjust the time for a specific timezone.</p>
+        <p><strong>[bmlt_tabs auto_tz_adjust="0|1"]</strong></p>
+        <p>0 = do not adjust timezone</p>
+        <p>1 = adjust timezone relative to `base_tz` parameter</p>
+        <p><strong>[bmlt_tabs base_tz="UTC"]</strong></p>
+        <p>If no option is set, timezone will be assumed to the local PC time.</p>
+        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjuction with auto_tz_adjust parameter, time will be shown relative to that.</p>
+    </div>
+    <h3 class="help-accordian"><strong>Links</strong></h3>
+    <div>
+        <p>If the "comments" field in the BMLT for an entry starts with "tel:" or "http", it will automatically be turned into a URL.</p>
+    </div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
 		<p>With this parameter you can use a custom root server query.  This will take precedence over any other kind filtering parameters.</p>

@@ -369,48 +369,47 @@ function Crouton(config) {
 		var meetings = [];
 
 		for (var m = 0; m < meetingData.length; m++) {
-			if (filter(meetingData[m])) {
-				meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
-				var duration = meetingData[m]['duration_time'].split(":");
-				var start_time = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
-				meetingData[m]['start_time_formatted'] = start_time.format(self.config['time_format']);
-				meetingData[m]['end_time_formatted'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time'])
-					.add(duration[0], 'hours')
-					.add(duration[1], 'minutes')
-					.format(self.config['time_format']);
-				meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(start_time.get('day') + 1);
+			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
+			var duration = meetingData[m]['duration_time'].split(":");
+			var start_time = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
+			meetingData[m]['start_time_formatted'] = start_time.format(self.config['time_format']);
+			meetingData[m]['end_time_formatted'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time'])
+				.add(duration[0], 'hours')
+				.add(duration[1], 'minutes')
+				.format(self.config['time_format']);
+			meetingData[m]['day_of_the_week'] = start_time.get('day') + 1;
+			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(start_time.get('day') + 1);
 
-				var formats = meetingData[m]['formats'].split(",");
-				var formats_expanded = [];
-				for (var f = 0; f < formats.length; f++) {
-					for (var g = 0; g < self.formatsData.length; g++) {
-						if (formats[f] === self.formatsData[g]['key_string']) {
-							formats_expanded.push(
-								{
-									"key": formats[f],
-									"name": self.formatsData[g]['name_string'],
-									"description": self.formatsData[g]['description_string']
-								}
-							)
-						}
+			var formats = meetingData[m]['formats'].split(",");
+			var formats_expanded = [];
+			for (var f = 0; f < formats.length; f++) {
+				for (var g = 0; g < self.formatsData.length; g++) {
+					if (formats[f] === self.formatsData[g]['key_string']) {
+						formats_expanded.push(
+							{
+								"key": formats[f],
+								"name": self.formatsData[g]['name_string'],
+								"description": self.formatsData[g]['description_string']
+							}
+						)
 					}
 				}
-				meetingData[m]['formats_expanded'] = formats_expanded;
-				var addressParts = [
-					meetingData[m]['location_street'],
-					meetingData[m]['location_municipality'].trim(),
-					meetingData[m]['location_province'].trim(),
-					meetingData[m]['location_postal_code_1'].trim()
-				];
-				addressParts.clean();
-				meetingData[m]['formatted_address'] = addressParts.join(", ");
-				meetingData[m]['formatted_location_info'] =
-					meetingData[m]['location_info'] != null
-						? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
-						: "";
-				meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
-				meetings.push(meetingData[m])
 			}
+			meetingData[m]['formats_expanded'] = formats_expanded;
+			var addressParts = [
+				meetingData[m]['location_street'],
+				meetingData[m]['location_municipality'].trim(),
+				meetingData[m]['location_province'].trim(),
+				meetingData[m]['location_postal_code_1'].trim()
+			];
+			addressParts.clean();
+			meetingData[m]['formatted_address'] = addressParts.join(", ");
+			meetingData[m]['formatted_location_info'] =
+				meetingData[m]['location_info'] != null
+					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
+					: "";
+			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+			meetings.push(meetingData[m])
 		}
 
 		return meetings;
@@ -488,13 +487,12 @@ Crouton.prototype.render = function(callback) {
 				self.uniqueData['formats'] = data;
 
 				var weekdaysData = [];
+				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 				for (var day = 1; day <= 7; day++) {
 					weekdaysData.push({
 						"day": day,
-						"meetings": self.enrichMeetings(self.meetingData, function (item) {
-							return item['weekday_tinyint'] === day.toString();
-						})
-					});
+						"meetings": enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day)
+					})
 				}
 
 				var citiesData = [];
@@ -502,9 +500,7 @@ Crouton.prototype.render = function(callback) {
 				for (var i = 0; i < cities.length; i++) {
 					citiesData.push({
 						"city": cities[i],
-						"meetings": self.enrichMeetings(self.meetingData, function (item) {
-							return item['location_municipality'] === cities[i];
-						})
+						"meetings": enrichedMeetingData.filterByObjectKeyValue('location_municipality', cities[i])
 					});
 				}
 
@@ -512,9 +508,7 @@ Crouton.prototype.render = function(callback) {
 				for (var day = 1; day <= 7; day++) {
 					byDayData.push({
 						"day": self.localization.getDayOfTheWeekWord(day),
-						"meetings": self.enrichMeetings(self.meetingData, function (item) {
-							return item['weekday_tinyint'] === day.toString();
-						})
+						"meetings": enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day)
 					});
 				}
 
@@ -783,7 +777,6 @@ Handlebars.registerHelper('times', function(n, block) {
 	return accum;
 });
 
-
 function convertToPunyCode(str) {
 	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
 }
@@ -830,6 +823,25 @@ function arrayUnique(a, b, c) {
 function inArray(needle, haystack) {
 	return haystack.indexOf(needle) !== -1;
 }
+
+Array.prototype.filterByObjectKeyValue = function(key, value) {
+	var ret = [];
+	for (var i = 0; i < this.length; i++) {
+		if (this[i][key] === value) {
+			ret.push(this[i])
+		}
+	}
+
+	return ret;
+};
+
+Array.prototype.getArrayItemByObjectKeyValue = function(key, value) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i][key] === value) {
+			return this[i];
+		}
+	}
+};
 
 Array.prototype.clean = function() {
 	for (var i = 0; i < this.length; i++) {

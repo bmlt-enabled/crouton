@@ -594,6 +594,8 @@ if (!class_exists("Crouton")) {
                 "show_map" => '0',
                 "max_zoom_level" => 15,
                 "language" => 'en-US',
+                "auto_tz_adjust" => '0',
+                "base_tz" => null,
             ), $atts);
         }
 
