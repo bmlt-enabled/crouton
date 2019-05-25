@@ -105,21 +105,40 @@ span.bmlt_tabs_group_count {
 
 #bmlt-tabs .bmlt-column1 {
 	text-align: left;
-	width: 30%;
+	width: 20%;
 	word-break: break-all;
 	vertical-align: top;
 }
 
 #bmlt-tabs .bmlt-column2 {
 	text-align: left;
-	width: 55%;
+	width: 60%;
 	vertical-align: top;
 }
 
 #bmlt-tabs .bmlt-column3 {
 	text-align: center !important;
 	vertical-align: middle !important;
-	width: 15%;
+	width: 20%;
+}
+
+#bmlt-tabs .virtual .bmlt-column1 {
+	text-align: left;
+	width: 20%;
+	word-break: break-all;
+	vertical-align: top;
+}
+
+#bmlt-tabs .virtual .bmlt-column2 {
+	text-align: left;
+	width: 50%;
+	vertical-align: top;
+}
+
+#bmlt-tabs .virtual .bmlt-column3 {
+	text-align: center !important;
+	vertical-align: middle !important;
+	width: 30%;
 }
 
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {

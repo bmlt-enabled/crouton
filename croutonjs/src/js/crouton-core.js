@@ -62,7 +62,7 @@ function Crouton(config) {
 	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=location_postal_code_1,duration_time,' +
 		'start_time,weekday_tinyint,service_body_bigint,longitude,latitude,location_province,location_municipality,' +
 		'location_street,location_info,location_text,formats,format_shared_id_list,comments,meeting_name,' +
-		'location_sub_province,worldid_mixed';
+		'location_sub_province,worldid_mixed,root_server_uri';
 	if (self.config['custom_query'] != null) {
 		url += self.config['custom_query'];
 	} else if (self.config['service_body'].length > 0) {
@@ -306,6 +306,7 @@ function Crouton(config) {
 				.format(self.config['time_format']);
 			meetingData[m]['day_of_the_week'] = start_time.get('day') + 1;
 			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(start_time.get('day') + 1);
+			meetingData[m]['is_virtual'] = meetingData[m]['root_server_uri'].indexOf('virtual') >= 0;
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
