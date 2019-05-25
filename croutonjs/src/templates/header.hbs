@@ -97,17 +97,15 @@
 {{/if}}
 
 {{#if this.config.has_tabs}}
-    {{#if this.config.has_meetings}}
-        {{#ifEquals this.config.view_by "weekdays"}}
-            <div class="bmlt-page show" id="nav-days">
-        {{else}}
-            <div class="bmlt-page hide" id="nav-days">
-        {{/ifEquals}}
-            <ul class="nav nav-tabs">
-                {{#times 7}}
-                    <li><a href="#tab{{this}}" data-toggle="tab">{{getDayOfTheWeek this}}</a></li>
-                {{/times}}
-            </ul>
-        </div>
-    {{/if}}
+    {{#ifEquals this.config.view_by "weekdays"}}
+        <div class="bmlt-page show" id="nav-days">
+    {{else}}
+        <div class="bmlt-page hide" id="nav-days">
+    {{/ifEquals}}
+        <ul class="nav nav-tabs">
+            {{#times 7}}
+                <li><a href="#tab{{this}}" data-toggle="tab">{{getDayOfTheWeek this}}</a></li>
+            {{/times}}
+        </ul>
+    </div>
 {{/if}}

@@ -4,30 +4,29 @@ function Crouton(config) {
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
-		map_max_zoom: 15,
-		time_format: "h:mm a",
-		language: "en-US",
-		has_tabs: true,
-		header: true,
-		include_city_button: true,
-		include_weekday_button: true,
-		has_meetings: true,
-		show_map: false,
-		has_cities: true,
-		has_formats: true,
-		has_groups: true,
-		has_locations: true,
-		has_zip_codes: true,
-		has_areas: false,
-		has_states: false,
-		has_sub_province: false,
-		show_distance: false,
-		recurse_service_bodies: false,
-		service_body: [],
-		exclude_zip_codes: [],
-		extra_meetings: [],
-		auto_tz_adjust: false,
-		base_tz: null
+		map_max_zoom: 15,		      // Maximum zoom for the display map
+		time_format: "h:mm a",        // The format for time
+		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
+		has_tabs: true,               // Shows the day tabs
+		header: true,                 // Shows the dropdowns and buttons
+		include_city_button: true,    // Shows the city button
+		include_weekday_button: true, // Shows the weekday button
+		show_map: false,              // Shows the map with pins
+		has_cities: true,             // Shows the cities dropdown
+		has_formats: true,            // Shows the formats dropdown
+		has_groups: true,             // Shows the groups dropdown
+		has_locations: true,          // Shows the locations dropdown
+		has_zip_codes: true,          // Shows the zip codes dropdown
+		has_areas: false,             // Shows the areas dropdown
+		has_states: false,            // Shows the states dropdown
+		has_sub_province: false,      // Shows the sub province dropdown (counties)
+		show_distance: false,         // Determines distance on page load
+		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
+		service_body: [],             // Array of service bodies to return data for.
+		exclude_zip_codes: [],        // List of zip codes to exclude
+		extra_meetings: [],           // List of id_bigint of meetings to include
+		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
+		base_tz: null                 // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 	};
 
 	for (var propertyName in config) {
@@ -39,10 +38,6 @@ function Crouton(config) {
 			self.config[propertyName] = config[propertyName];
 		}
 
-	}
-
-	if (!self.config["has_meetings"]) {
-		self.config["has_tabs"] = false;
 	}
 
 	if (self.config["view_by"] === "city") {

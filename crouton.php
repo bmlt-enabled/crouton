@@ -574,7 +574,6 @@ if (!class_exists("Crouton")) {
                 "has_groups" => '1',
                 "has_areas" => '0',
                 "has_cities" => '1',
-                "has_meetings" => '1',
                 "has_formats" => '1',
                 "has_locations" => '1',
                 "has_sub_province" => '0',
