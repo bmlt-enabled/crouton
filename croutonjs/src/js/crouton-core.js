@@ -1,8 +1,9 @@
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
+	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
-		placeholder_id: "bmlt-tabs",  // The DOM id that will be using
+		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
 		map_max_zoom: 15,
 		time_format: "h:mm a",
 		language: "en-US",
@@ -115,7 +116,7 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
+		for (var a = 1; a < 10; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -132,7 +133,7 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
+		for (var a = 1; a < 10; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -150,7 +151,7 @@ function Crouton(config) {
 
 	self.cityView = function () {
 		self.resetFilter();
-		for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
+		for (var a = 1; a < 10; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -444,7 +445,6 @@ Crouton.prototype.render = function(callback) {
 					"words": self.localization.words
 				}, function () {
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
-					//jQuery.fn.select2.defaults.set();
 					jQuery("select").select2({
 						dropdownAutoWidth: true,
 						allowClear: false,
@@ -460,9 +460,9 @@ Crouton.prototype.render = function(callback) {
 						}
 					});
 
-					for (var a = 2; a <= jQuery(".bmlt-dropdown-container").length + 1; a++) {
+					for (var a = 1; a < 10; a++) {
 						jQuery("#e" + a).on('select2:select', function (e) {
-							for (var j = 2; j <= jQuery(".bmlt-dropdown-container").length + 1; j++) {
+							for (var j = 1; j < 10; j++) {
 								if (this.id !== "e" + j) {
 									if (jQuery("#e" + j).length) {
 										jQuery("#e" + j).select2("val", null);
