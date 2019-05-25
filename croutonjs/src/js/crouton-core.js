@@ -19,6 +19,8 @@ function Crouton(config) {
 		has_locations: true,
 		has_zip_codes: true,
 		has_areas: false,
+		has_states: false,
+		has_sub_province: false,
 		show_distance: false,
 		recurse_service_bodies: false,
 		service_body: [],
@@ -57,7 +59,10 @@ function Crouton(config) {
 
 	self.localization = new CroutonLocalization(self.config['language']);
 	self.mutex = true;
-	var url = '/client_interface/jsonp/?switcher=GetSearchResults';
+	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=location_postal_code_1,duration_time,' +
+		'start_time,weekday_tinyint,service_body_bigint,longitude,latitude,location_province,location_municipality,' +
+		'location_street,location_info,location_text,formats,format_shared_id_list,comments,meeting_name,' +
+		'location_sub_province,worldid_mixed';
 	if (self.config['custom_query'] != null) {
 		url += self.config['custom_query'];
 	} else if (self.config['service_body'].length > 0) {
@@ -116,7 +121,7 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < 10; a++) {
+		for (var a = 1; a < self.max_filters; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -133,7 +138,7 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < 10; a++) {
+		for (var a = 1; a < self.max_filters; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -151,7 +156,7 @@ function Crouton(config) {
 
 	self.cityView = function () {
 		self.resetFilter();
-		for (var a = 1; a < 10; a++) {
+		for (var a = 1; a < self.max_filters; a++) {
 			if (jQuery("#e" + a).length) {
 				jQuery("#e" + a).select2("val", null);
 			}
@@ -460,9 +465,9 @@ Crouton.prototype.render = function(callback) {
 						}
 					});
 
-					for (var a = 1; a < 10; a++) {
+					for (var a = 1; a < self.max_filters; a++) {
 						jQuery("#e" + a).on('select2:select', function (e) {
-							for (var j = 1; j < 10; j++) {
+							for (var j = 1; j < self.max_filters; j++) {
 								if (this.id !== "e" + j) {
 									if (jQuery("#e" + j).length) {
 										jQuery("#e" + j).select2("val", null);
