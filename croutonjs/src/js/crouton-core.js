@@ -446,7 +446,7 @@ Crouton.prototype.render = function(callback) {
 					"words": self.localization.words
 				}, function () {
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
-					jQuery(".bmlt-select").select2({
+					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
 						allowClear: false,
 						width: "resolve",
