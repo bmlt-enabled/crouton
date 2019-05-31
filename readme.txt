@@ -37,10 +37,11 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 == Changelog ==
 
 = 3.0.0 =
-* Rewritten to load fully with javascript inside a browser. [#98]
+* Rewritten to load fully with javascript inside a browser. This is enables usage on any website, not just Wordpress. [#98]
 * Text from "comments" field that starts with tel: or http(s) in will be turned into a URL [#104]
-* Timezone and auto adjust [#103]
+* Timezone and auto adjust to users' local timezone, it will also automatically backfill the day if the timezone causes it to shift. [#103]
 * Fix for non-display on IE11 [#106]
+* Fix for non-display on K-meleon [#114]
 
 = 2.6.0 =
 * Added multilingual support [#88]
