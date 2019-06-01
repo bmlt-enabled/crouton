@@ -360,9 +360,9 @@ if (!class_exists("Crouton")) {
                 $this->options['service_body_1'] = $_POST['service_body_1'];
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = $_POST['custom_css'];
-                $this->options['recurse_service_bodies'] = $_POST['recurse_service_bodies'];
-                $this->options['extra_meetings'] = $_POST['extra_meetings'];
-                $this->options['extra_meetings_enabled'] = intval($_POST['extra_meetings_enabled']);
+                $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
+                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
+                $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
