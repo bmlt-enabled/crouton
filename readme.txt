@@ -4,8 +4,8 @@ Contributors: odathp, radius314, pjaudiomv
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.1.1
-Stable tag: 3.0.0
+Tested up to: 5.2.1
+Stable tag: 3.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 <a href="https://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
 
 == Changelog ==
+
+= 3.0.1 =
+* Fix for virtual meetings not rendering with WP shortcode [#115]
 
 = 3.0.0 =
 * Rewritten to load fully with javascript inside a browser. This is enables usage on any website, not just Wordpress. [#98]
