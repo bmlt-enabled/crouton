@@ -248,16 +248,16 @@ if (!class_exists("Crouton")) {
 
             $output = $this->getConfigJavascriptBlock($this->getCroutonJsConfig($atts));
             $this_title = $sub_title = $meeting_count = $group_count= '';
-            if ($_GET['this_title'] != null) {
+            if (isset($_GET['this_title'])) {
                 $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
             }
-            if ($_GET['sub_title'] != null) {
+            if (isset($_GET['sub_title'])) {
                 $sub_title = '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
             }
-            if ($_GET['meeting_count'] != null) {
+            if (isset($_GET['meeting_count'])) {
                 $meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
             }
-            if ($_GET['group_count'] != null) {
+            if (isset($_GET['group_count'])) {
                 $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmltGroupCount($atts) . '</span>';
             }
 
@@ -601,8 +601,8 @@ if (!class_exists("Crouton")) {
         public function getCroutonJsConfig($atts)
         {
             $params = $this->getExtractedShortcodeParameters($atts);
-            $params['service_body'] = ($_GET['service_body'] == null ? $params['service_body'] : $_GET['service_body']);
-            $params['service_body_parent'] = ($_GET['service_body_parent'] == null ? $params['service_body_parent'] : $_GET['service_body_parent']);
+            $params['service_body'] = (isset($_GET['service_body']) ? $_GET['service_body'] : $params['service_body']);
+            $params['service_body_parent'] = (isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $params['service_body_parent']);
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 $area_data       = explode(',', $this->options['service_body_1']);
@@ -627,15 +627,17 @@ if (!class_exists("Crouton")) {
 
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
-            $params['root_server'] = ($_GET['root_server'] == null ? ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']) : $_GET['root_server']);
+            $params['root_server'] = (isset($_GET['root_server']) ? $_GET['root_server'] : ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']));
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['custom_css'] = $this->options['custom_css'];
             $params['google_api_key'] = $this->options['google_api_key'];
             $extra_meetings_array = [];
-            foreach ($this->options['extra_meetings'] as $value) {
-                $data = array(" [", "]");
-                array_push($extra_meetings_array, str_replace($data, "", $value));
+            if (isset($this->options['extra_meetings'])) {
+                foreach ($this->options['extra_meetings'] as $value) {
+                    $data = array(" [", "]");
+                    array_push($extra_meetings_array, str_replace($data, "", $value));
+                }
             }
 
             $params['extra_meetings'] = $extra_meetings_array;
