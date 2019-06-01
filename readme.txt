@@ -38,6 +38,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 = 3.0.2 =
 * Fix for filemtime calculation for cache busting CSS + JS files for crouton [#117]
+* Fix for extra_meetings and several other warnings [#116]
 * Using minified versions of crouton.js and crouton.css.
 
 = 3.0.1 =
