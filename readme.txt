@@ -38,6 +38,7 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 
 = 3.0.3 =
 * Bundle croutonjs without jQuery for Wordpress which automatically loads it, to prevent clashing [#119]
+* Fix for shortcode croutonjs initializing issue [#118]
 
 = 3.0.2 =
 * Fix for filemtime calculation for cache busting CSS + JS files for crouton [#117]

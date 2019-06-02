@@ -29,28 +29,7 @@ function Crouton(config) {
 		base_tz: null                 // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 	};
 
-	for (var propertyName in config) {
-		if (config[propertyName] === "1" || config[propertyName] === 1) {
-			self.config[propertyName] = true;
-		} else if (config[propertyName] === "0" || config[propertyName] === 0) {
-			self.config[propertyName] = false;
-		} else {
-			self.config[propertyName] = config[propertyName];
-		}
-
-	}
-
-	if (self.config["view_by"] === "city") {
-		self.config["include_city_button"] = true;
-	}
-
-	if (self.config["view_by"] === "weekday") {
-		self.config["include_weekday_button"] = true;
-	}
-
-	if (!self.config["has_tabs"]) {
-		self.config["view_by"] = "byday";
-	}
+	self.setConfig(config);
 
 	self.localization = new CroutonLocalization(self.config['language']);
 	self.mutex = true;
@@ -73,6 +52,7 @@ function Crouton(config) {
 	url += '&sort_key=time';
 
 	jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
+		if (data === null) console.error("Could not find any meetings for the criteria specified.");
 		data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 		self.meetingData = data;
 
@@ -351,6 +331,31 @@ function Crouton(config) {
 		return true;
 	}
 }
+
+Crouton.prototype.setConfig = function(config) {
+	var self = this;
+	for (var propertyName in config) {
+		if (config[propertyName] === "1" || config[propertyName] === 1) {
+			self.config[propertyName] = true;
+		} else if (config[propertyName] === "0" || config[propertyName] === 0) {
+			self.config[propertyName] = false;
+		} else {
+			self.config[propertyName] = config[propertyName];
+		}
+	}
+
+	if (self.config["view_by"] === "city") {
+		self.config["include_city_button"] = true;
+	}
+
+	if (self.config["view_by"] === "weekday") {
+		self.config["include_weekday_button"] = true;
+	}
+
+	if (!self.config["has_tabs"]) {
+		self.config["view_by"] = "byday";
+	}
+};
 
 Crouton.prototype.reset = function() {
 	var self = this;

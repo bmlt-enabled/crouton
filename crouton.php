@@ -224,28 +224,6 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            // TODO: move message to javascript
-            /* if ($root_server == '') {
-                return '<p><strong>crouton Error: Root Server missing.<br/><br/>Please go to Settings -> BMLT_Tabs and verify Root Server</strong></p>';
-            }*/
-
-            /*if ($view_by != 'city' && $view_by != 'weekday' && $view_by != 'byday') {
-                return '<p>crouton Error: view_by must = "city" or "weekday".</p>';
-            }
-            if ($include_city_button != '0' && $include_city_button != '1') {
-                return '<p>crouton Error: include_city_button must = "0" or "1".</p>';
-            }
-            if ($include_weekday_button != '0' && $include_weekday_button != '1') {
-                return '<p>crouton Error: include_weekday_button must = "0" or "1".</p>';
-            }*/
-
-            /*if ($service_body_parent != null && $service_body != null) {
-                return '<p>crouton Error: Cannot use service_body_parent and service_body at the same time.</p>';
-            }
-            if ($service_body == '' && $service_body_parent == '') {
-                return '<p>crouton Error: Service body missing from shortcode.</p>';
-            }*/
-
             $output = $this->getConfigJavascriptBlock($this->getCroutonJsConfig($atts));
             $this_title = $sub_title = $meeting_count = $group_count= '';
             if (isset($_GET['this_title'])) {
@@ -273,7 +251,7 @@ if (!class_exists("Crouton")) {
                 $this->croutonBlockInitialized = true;
                 return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); });</script>";
             } else {
-                return "";
+                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
             }
         }
 
