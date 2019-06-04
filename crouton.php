@@ -579,31 +579,30 @@ if (!class_exists("Crouton")) {
         public function getCroutonJsConfig($atts)
         {
             $params = $this->getExtractedShortcodeParameters($atts);
+            // Pulling from querystring
             $params['service_body'] = (isset($_GET['service_body']) ? $_GET['service_body'] : $params['service_body']);
             $params['service_body_parent'] = (isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $params['service_body_parent']);
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
+                // Pulling from configuration
                 $area_data       = explode(',', $this->options['service_body_1']);
-                $service_body_id = $area_data[1];
+                $service_body = [ $area_data[1] ];
                 $parent_body_id  = $area_data[2];
                 if ($parent_body_id == '0') {
-                    $service_body = array_map('trim', explode(",", $parent_body_id));
                     $params['recurse_service_bodies'] = "1";
-                } else {
-                    $service_body = array_map('trim', explode(",", $service_body_id));
+                }
+            } else {
+                // Shortcode based settings
+                if ($params['service_body_parent'] != null) {
+                    $service_body = array_map('trim', explode(",", $params['service_body_parent']));
+                    $params['recurse_service_bodies'] = "1";
+                } else if ($params['service_body'] != null) {
+                    $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
             }
 
-            if ($params['service_body_parent'] != null) {
-                $service_body = array_map('trim', explode(",", $params['service_body_parent']));
-                $params['recurse_service_bodies'] = "1";
-            }
-
-            if ($params['service_body'] != null) {
-                $service_body = array_map('trim', explode(",", $params['service_body']));
-            }
-
             $params['service_body'] = $service_body;
+            if ($params['recurse_service_bodies'] != "1") $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
             $params['root_server'] = (isset($_GET['root_server']) ? $_GET['root_server'] : ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']));
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
