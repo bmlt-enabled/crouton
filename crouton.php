@@ -602,7 +602,9 @@ if (!class_exists("Crouton")) {
             }
 
             $params['service_body'] = $service_body;
-            if ($params['recurse_service_bodies'] != "1") $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
+            if ($params['recurse_service_bodies'] != "1") {
+                $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
+            }
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
             $params['root_server'] = (isset($_GET['root_server']) ? $_GET['root_server'] : ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']));
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);

@@ -52,7 +52,10 @@ function Crouton(config) {
 	url += '&sort_key=time';
 
 	jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
-		if (data === null) console.error("Could not find any meetings for the criteria specified.");
+		if (data === null || JSON.stringify(data) === "{}") {
+			console.error("Could not find any meetings for the criteria specified.");
+			return;
+		}
 		data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 		self.meetingData = data;
 
