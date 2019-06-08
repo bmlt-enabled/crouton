@@ -71,9 +71,9 @@ CroutonLocalization.prototype.getWord = function(word) {
 };
 
 Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
-	return words['en-US']['days_of_the_week'][day_id];
+	return words[crouton.localization.language]['days_of_the_week'][day_id];
 });
 
 Handlebars.registerHelper('getWord', function(word) {
-	return words['en-US'][word];
+	return words[crouton.localization.language][word];
 });
