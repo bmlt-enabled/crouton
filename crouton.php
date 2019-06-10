@@ -358,7 +358,7 @@ if (!class_exists("Crouton")) {
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
-                    <img id="tallyBannerImage" src="<?php echo plugin_dir_url( __FILE__ )?>css/images/banner.png">
+                    <img id="tallyBannerImage" src="<?php echo plugin_dir_url(__FILE__); ?>css/images/banner.png">
                 </div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
                     <?php
