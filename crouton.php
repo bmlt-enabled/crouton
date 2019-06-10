@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.0.5
+Version: 3.0.6
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -357,7 +357,9 @@ if (!class_exists("Crouton")) {
 
             ?>
             <div class="wrap">
-                <h2>crouton</h2>
+                <div id="tallyBannerContainer">
+                    <img id="tallyBannerImage" src="<?php echo plugin_dir_url( __FILE__ )?>css/images/banner.png">
+                </div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
                     <?php
                     wp_nonce_field('bmlttabsupdate-options');
