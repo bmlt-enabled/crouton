@@ -69,11 +69,3 @@ CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
 CroutonLocalization.prototype.getWord = function(word) {
 	return words[this.language][word];
 };
-
-Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
-	return words[crouton.localization.language]['days_of_the_week'][day_id];
-});
-
-Handlebars.registerHelper('getWord', function(word) {
-	return words[crouton.localization.language][word];
-});

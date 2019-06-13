@@ -198,6 +198,7 @@ function Crouton(config) {
 	};
 
 	self.renderView = function (selector, context, callback) {
+		hbs_Crouton['localization'] = self.localization;
 		Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
@@ -679,6 +680,14 @@ Crouton.prototype.initMap = function() {
 	});
 };
 
+Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
+	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
+});
+
+Handlebars.registerHelper('getWord', function(word) {
+	return hbs_Crouton.localization.getWord(word);
+});
+
 Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str)
 });
@@ -700,7 +709,7 @@ Handlebars.registerHelper('formatLink', function(text) {
 });
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
-	return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+	return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
 });
 
 Handlebars.registerHelper('times', function(n, block) {
