@@ -151,8 +151,6 @@
         <p>0 = don't run a distance search (default)</p>
         <p>1 or higher = the distance in miles of results (or km if distance_units is set to km)</p>
         <p>-1 or lower = the number of results to return sorted by distance from the location</p>
-        <p><em>User has to have geolocation permissions turned on.</em></p>
-        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
     </div>
 	<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
 	<div>
