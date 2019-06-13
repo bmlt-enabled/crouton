@@ -144,6 +144,16 @@
 		<p><strong>[group_count service_body_parent="1,2,3"]</strong></p>
 		<p>Will return the number of Groups in one or more BMLT parent service bodies.</p>
 	</div>
+    <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
+    <div>
+        <p>With this parameter you can display meetings that within the distance of the browser location, or return a number of results from the current distance.</p>
+        <p><strong>[bmlt_tabs distance_search="0"]</strong></p>
+        <p>0 = don't run a distance search (default)</p>
+        <p>1 or higher = the distance in miles of results (or km if distance_units is set to km)</p>
+        <p>-1 or lower = the number of results to return sorted by distance from the location</p>
+        <p><em>User has to have geolocation permissions turned on.</em></p>
+        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
+    </div>
 	<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
 	<div>
 		<p>With this parameter you can display the users distance to meetings under the map link button.</p>

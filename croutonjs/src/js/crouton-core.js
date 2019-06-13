@@ -21,6 +21,7 @@ function Crouton(config) {
 		has_states: false,            // Shows the states dropdown
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		show_distance: false,         // Determines distance on page load
+		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
 		exclude_zip_codes: [],        // List of zip codes to exclude
@@ -30,48 +31,61 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
-
 	self.localization = new CroutonLocalization(self.config['language']);
+	self.getMeetings = function(url) {
+		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
+			if (data === null || JSON.stringify(data) === "{}") {
+				console.error("Could not find any meetings for the criteria specified.");
+				return;
+			}
+			data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+			self.meetingData = data;
+
+			if (self.config['extra_meetings'].length > 0) {
+				var extra_meetings_query = "";
+				for (var i = 0; i < self.config['extra_meetings'].length; i++) {
+					extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
+				}
+				jQuery.getJSON(self.config['root_server'] + url + '&callback=?' + extra_meetings_query, function (data) {
+					self.meetingData = self.meetingData.concat(data);
+					self.mutex = false;
+				});
+			} else {
+				self.mutex = false;
+			}
+		});
+	};
 	self.mutex = true;
 	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=location_postal_code_1,duration_time,' +
 		'start_time,weekday_tinyint,service_body_bigint,longitude,latitude,location_province,location_municipality,' +
 		'location_street,location_info,location_text,formats,format_shared_id_list,comments,meeting_name,' +
 		'location_sub_province,worldid_mixed,root_server_uri';
-	if (self.config['custom_query'] != null) {
-		url += self.config['custom_query'];
+
+	if (self.config['distance_search'] !== 0) {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function(position) {
+				url += '&lat_val=' + position.coords.latitude
+					+ '&long_val=' + position.coords.longitude
+					+ '&sort_results_by_distance=1';
+
+				url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
+				self.getMeetings(url);
+			}, self.errorHandler);
+		}
+	} else if (self.config['custom_query'] != null) {
+		url += self.config['custom_query'] + '&sort_key=time';
+		self.getMeetings(url);
 	} else if (self.config['service_body'].length > 0) {
 		for (var i = 0; i < self.config['service_body'].length; i++) {
-			url += "&services[]=" + self.config['service_body'][i];
+			url += '&services[]=' + self.config['service_body'][i];
 		}
 
 		if (self.config['recurse_service_bodies']) {
-			url += "&recursive=1";
+			url += '&recursive=1&sort_key=time';
 		}
+
+		self.getMeetings(url);
 	}
-
-	url += '&sort_key=time';
-
-	jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
-		if (data === null || JSON.stringify(data) === "{}") {
-			console.error("Could not find any meetings for the criteria specified.");
-			return;
-		}
-		data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
-		self.meetingData = data;
-
-		if (self.config['extra_meetings'].length > 0) {
-			var extra_meetings_query = "";
-			for (var i = 0; i < self.config['extra_meetings'].length; i++) {
-				extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
-			}
-			jQuery.getJSON(self.config['root_server'] + url + '&callback=?' + extra_meetings_query, function (data) {
-				self.meetingData = self.meetingData.concat(data);
-				self.mutex = false;
-			});
-		} else {
-			self.mutex = false;
-		}
-	});
 
 	self.lock = function(callback) {
 		var self = this;
@@ -346,6 +360,8 @@ Crouton.prototype.setConfig = function(config) {
 			self.config[propertyName] = config[propertyName];
 		}
 	}
+
+	self.config["distance_search"] = parseInt(self.config["distance_search"]);
 
 	if (self.config["view_by"] === "city") {
 		self.config["include_city_button"] = true;
