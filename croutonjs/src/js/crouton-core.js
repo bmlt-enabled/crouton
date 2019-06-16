@@ -362,7 +362,7 @@ Crouton.prototype.setConfig = function(config) {
 		}
 	}
 
-	self.config["distance_search"] = parseInt(self.config["distance_search"]);
+	self.config["distance_search"] = parseInt(self.config["distance_search"] || 0);
 
 	if (self.config["view_by"] === "city") {
 		self.config["include_city_button"] = true;
