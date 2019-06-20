@@ -27,7 +27,8 @@ function Crouton(config) {
 		exclude_zip_codes: [],        // List of zip codes to exclude
 		extra_meetings: [],           // List of id_bigint of meetings to include
 		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
-		base_tz: null                 // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
+		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
+		custom_query: null			  // Enables overriding the services related queries for a custom one
 	};
 
 	self.setConfig(config);
