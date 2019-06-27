@@ -56,7 +56,7 @@ if (!class_exists("Crouton")) {
                 ));
                 add_shortcode('group_count', array(
                     &$this,
-                    "bmltGroupCount"
+                    "groupCount"
                 ));
             }
             // Content filter
@@ -224,25 +224,26 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            $output = $this->getConfigJavascriptBlock($this->getCroutonJsConfig($atts));
-            $this_title = $sub_title = $meeting_count = $group_count= '';
+            $output = "";
             if (isset($_GET['this_title'])) {
-                $this_title = '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
-            }
-            if (isset($_GET['sub_title'])) {
-                $sub_title = '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
-            }
-            if (isset($_GET['meeting_count'])) {
-                $meeting_count = '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
-            }
-            if (isset($_GET['group_count'])) {
-                $group_count = '<span class="bmlt_tabs_group_count">Groups: ' . $this->bmltGroupCount($atts) . '</span>';
+                $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
+            } else {
+                $output .= $sub_title = $meeting_count = $group_count= '';
             }
 
-            $output = $this_title . $sub_title . $meeting_count . $group_count . $output;
-            $output = '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $output . '</div>';
-            $output .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
-            return $output;
+            if (isset($_GET['sub_title'])) {
+                $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
+            }
+
+            if (isset($_GET['meeting_count'])) {
+                $output .= '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
+            }
+
+            if (isset($_GET['group_count'])) {
+                $output .= '<span class="bmlt_tabs_group_count">Groups: ' . $this->groupCount($atts) . '</span>';
+            }
+
+            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $output .  $this->renderTable($atts) . '</div><script>document.getElementById("please-wait").style.display = "none";</script>';
         }
 
         public function getInitializeCroutonBlock($config = array())
@@ -255,23 +256,23 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function getConfigJavascriptBlock($config = array())
+        public function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock($config) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
-        public function initCrouton($atts, $content = null)
+        public function initCrouton($atts)
         {
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
 
-        public function meetingCount($atts, $content = null)
+        public function meetingCount($atts)
         {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
         }
 
-        public function bmltGroupCount($atts, $content = null)
+        public function groupCount($atts)
         {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
