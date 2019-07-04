@@ -410,7 +410,7 @@ if (!class_exists("Crouton")) {
                                 </select>
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
                                 <p id="txtSelectedValues2"></p>
-                                <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo ($this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
+                                <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo (isset($this->options['recurse_service_bodies']) && $this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
                                 <label for="recurse_service_bodies">Recurse Service Bodies</label>
                             </li>
                         </ul>
@@ -450,7 +450,7 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <label for="custom_query">Custom Query: </label>
-                                <input id="custom_query" name="custom_query" size="50" value="<?php echo $this->options['custom_query']; ?>" />
+                                <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
                             </li>
                         </ul>
                     </div>
@@ -459,7 +459,7 @@ if (!class_exists("Crouton")) {
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
                             <li>
-                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo $this->options['custom_css']; ?></textarea>
+                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? $this->options['custom_css'] : ""); ?></textarea>
                             </li>
                         </ul>
                     </div>
@@ -469,7 +469,7 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <label for="google_api_key">API Key: </label>
-                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo $this->options['google_api_key']; ?>" />
+                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
                             </li>
                         </ul>
                         <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></p>
