@@ -28,7 +28,8 @@ function Crouton(config) {
 		extra_meetings: [],           // List of id_bigint of meetings to include
 		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
 		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
-		custom_query: null			  // Enables overriding the services related queries for a custom one
+		custom_query: null,			  // Enables overriding the services related queries for a custom one
+		google_api_key: null		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
 	};
 
 	self.setConfig(config);
@@ -468,8 +469,7 @@ Crouton.prototype.render = function(callback) {
 						"cities": citiesData,
 						"bydays": byDayData
 					},
-					"uniqueData": self.uniqueData,
-					"words": self.localization.words
+					"uniqueData": self.uniqueData
 				}, function () {
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery(".crouton-select").select2({
