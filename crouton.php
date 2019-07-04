@@ -347,10 +347,10 @@ if (!class_exists("Crouton")) {
                 echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
             }
 
-            if (!isset($this->options['extra_meetings_enabled']) || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
+            if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
                 $this->options['extra_meetings_enabled'] = 0;
             }
-            if (!isset($this->options['extra_meetings']) || $this->options['extra_meetings'] == '') {
+            if (!isset($this->options['extra_meetings']) || count($this->options['extra_meetings']) == 0) {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
