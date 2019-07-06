@@ -144,6 +144,13 @@
 		<p><strong>[group_count service_body_parent="1,2,3"]</strong></p>
 		<p>Will return the number of Groups in one or more BMLT parent service bodies.</p>
 	</div>
+    <h3 class="help-accordian"><strong>Sorting</strong></h3>
+    <div>
+        <p>You can sort the results in the response.</p>
+        <p><strong>[bmlt_tabs sort_keys="start_time"]</strong></p>
+        <p>start_time = (default)</p>
+        <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
+    </div>
     <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
     <div>
         <p>With this parameter you can display meetings that within the distance of the browser location, or return a number of results from the current distance.</p>

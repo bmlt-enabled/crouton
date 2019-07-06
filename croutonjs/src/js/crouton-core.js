@@ -29,7 +29,8 @@ function Crouton(config) {
 		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
 		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 		custom_query: null,			  // Enables overriding the services related queries for a custom one
-		google_api_key: null		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
+		google_api_key: null,		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
+		sort_keys: "start_time"		  // Controls sort keys on the query
 	};
 
 	self.setConfig(config);
@@ -75,7 +76,7 @@ function Crouton(config) {
 			}, self.errorHandler);
 		}
 	} else if (self.config['custom_query'] != null) {
-		url += self.config['custom_query'] + '&sort_key=time';
+		url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
 		self.getMeetings(url);
 	} else if (self.config['service_body'].length > 0) {
 		for (var i = 0; i < self.config['service_body'].length; i++) {
@@ -83,8 +84,10 @@ function Crouton(config) {
 		}
 
 		if (self.config['recurse_service_bodies']) {
-			url += '&recursive=1&sort_key=time';
+			url += '&recursive=1';
 		}
+
+		url += '&sort_keys=' + self.config['sort_keys'];
 
 		self.getMeetings(url);
 	}
