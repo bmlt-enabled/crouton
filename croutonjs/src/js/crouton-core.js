@@ -204,6 +204,7 @@ function Crouton(config) {
 
 	self.renderView = function (selector, context, callback) {
 		hbs_Crouton['localization'] = self.localization;
+		Handlebars.noConflict();
 		Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
