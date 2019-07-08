@@ -203,7 +203,7 @@
     <div>
         <p>With this parameter you can have crouton display the results into a pre-translated language.</p>
         <p><strong>[bmlt_tabs language="en-US"]</strong></p>
-        <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/tree/master/lang" target="_blank">here</a>.</p>
+        <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js" target="_blank">here</a>.</p>
         <p>Open a ticket if you want to assist with other translations <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">here</a>.</p>
     </div>
 </div>
