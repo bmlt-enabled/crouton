@@ -1,3 +1,4 @@
+var crouton_Handlebars = Handlebars.noConflict();
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -204,12 +205,11 @@ function Crouton(config) {
 
 	self.renderView = function (selector, context, callback) {
 		hbs_Crouton['localization'] = self.localization;
-		Handlebars.noConflict();
-		Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
-		Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
-		Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
-		Handlebars.registerPartial('cities', hbs_Crouton.templates['cities']);
-		Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
+		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
+		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
+		crouton_Handlebars.registerPartial('cities', hbs_Crouton.templates['cities']);
+		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).append(template(context));
 		callback();
@@ -685,19 +685,19 @@ Crouton.prototype.initMap = function() {
 	});
 };
 
-Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
+crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
 });
 
-Handlebars.registerHelper('getWord', function(word) {
+crouton_Handlebars.registerHelper('getWord', function(word) {
 	return hbs_Crouton.localization.getWord(word);
 });
 
-Handlebars.registerHelper('formatDataPointer', function(str) {
+crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str)
 });
 
-Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
+crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
 		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
@@ -705,19 +705,19 @@ Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) 
 	return finalFormats.join(" ");
 });
 
-Handlebars.registerHelper('formatLink', function(text) {
+crouton_Handlebars.registerHelper('formatLink', function(text) {
 	if (text.indexOf('tel:') === 0 || text.indexOf('http') === 0) {
-		return new Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
+		return new crouton_Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
 	} else {
 		return text;
 	}
 });
 
-Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+crouton_Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 	return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
 });
 
-Handlebars.registerHelper('times', function(n, block) {
+crouton_Handlebars.registerHelper('times', function(n, block) {
 	var accum = '';
 	for(var i = 1; i <= n; ++i)
 		accum += block.fn(i);
