@@ -59,6 +59,20 @@ function CroutonLocalization(language) {
 			"formats" : "Formati",
 			"map" : "Mappa",
 		},
+		"es-US": {
+			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			"weekday" : "Día de la semana",
+			"city" : "Ciudad",
+			"cities" : "Ciudades",
+			"groups" : "Grupos",
+			"areas" : "Areas",
+			"locations" : "Ubicaciones",
+			"counties" : "Condados",
+			"states" : "Estados",
+			"postal_codes" : "Codiagos postales",
+			"formats" : "Formatos",
+			"map" : "Mapa",
+		},
 	};
 }
 
