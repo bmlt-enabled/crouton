@@ -1,18 +1,18 @@
 === crouton ===  
 
-Contributors: odathp, radius314, pjaudiomv
+Contributors: odathp, radius314, pjaudiomv, Paul N
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.0.3
-Stable tag: 2.5.3
+Tested up to: 5.2.2
+Stable tag: 3.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
 
 == Description ==
 
-Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BMLT).  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own tabbed interface to BMLT.  Not into a tabbed interface?  There is a shortcode parameter to display meetings without tabs.  This would be useful for Areas that have fewer meetings.  This plugin also provides various shortcodes to return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
+Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BMLT).  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own tabbed interface to BMLT.  Not into a tabbed interface?  There is a shortcode parameter to display meetings without tabs.  This would be useful for Areas that have fewer meetings.  This plugin also provides various shortcodes to return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
 
 == Installation ==
 
@@ -35,6 +35,57 @@ Crouton is a "Fork" of the BMLT Tabbed UI plugin. This plugin provides a Tabbed 
 <a href="https://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
 
 == Changelog ==
+
+= 3.2.2 =
+* Fixed an edge case with plugins that might use handlebars.js and clash with croutonjs.
+
+= 3.2.0 =
+* Added new shortcode option to be able to control sort results.
+* Fix for default time sort not working [#132]
+
+= 3.1.1 =
+* Several minor bug fixes.
+* Extra meetings enabled flag is not always checked now.
+
+= 3.1.0 =
+* Distance based searches from browser location now possible
+* Adding <div> wrapper to make selection a little better for hiding [#125]
+
+= 3.0.6 =
+* Added banner
+
+= 3.0.5 =
+* Temporary patch for language information not rendering [#124]
+
+= 3.0.4 =
+* Legacy logic regression for parent service bodies [#121]
+
+= 3.0.3 =
+* Bundle croutonjs without jQuery for Wordpress which automatically loads it, to prevent clashing [#119]
+* Fix for shortcode croutonjs initializing issue [#118]
+
+= 3.0.2 =
+* Fix for filemtime calculation for cache busting CSS + JS files for crouton [#117]
+* Fix for extra_meetings and several other warnings [#116]
+* Using minified versions of crouton.js and crouton.css.
+
+= 3.0.1 =
+* Fix for virtual meetings not rendering with WP shortcode [#115]
+
+= 3.0.0 =
+* Rewritten to load fully with javascript inside a browser. This is enables usage on any website, not just Wordpress. [#98]
+* Text from "comments" field that starts with tel: or http(s) in will be turned into a URL [#104]
+* Timezone and auto adjust to users' local timezone, it will also automatically backfill the day if the timezone causes it to shift. [#103]
+* Fix for non-display on IE11 [#106]
+* Fix for non-display on K-meleon [#114]
+
+= 2.6.0 =
+* Added multilingual support [#88]
+* Added support for setting distance units (miles, kilometers and nautical miles) [#90]
+* Fix for Gutenburg autosave issue [#81]
+* Fix for regression with has_tabs="0" and header="0" not group by day [#95]
+* Dropdowns and tabs refactored to use client side rendering (speed improvements) [#53]
+* Removed used_formats feature which has been deprecated for some time [#100]
 
 = 2.4.2 + 2.5.3 =
 * Fix for [meeting_count] and [group_count] render issues if they appeared after [bmlt_tabs] [#86]

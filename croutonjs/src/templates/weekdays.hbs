@@ -1,0 +1,13 @@
+<div class="tab-content">
+    {{#each this}}
+        <div id='tab{{ day }}' class='tab-pane'>
+            <div id="bmlt-table-div">
+                <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+                    <tbody>
+                    {{> meetings }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {{/each}}
+</div>

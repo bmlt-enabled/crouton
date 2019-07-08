@@ -1,0 +1,111 @@
+{{#if this.config.header}}
+    {{#if this.config.include_weekday_button}}
+        <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
+    {{/if}}
+    {{#if this.config.include_city_button}}
+        <div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">{{getWord 'city'}}</a></div>
+    {{/if}}
+
+    {{#if this.config.has_cities}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="e1">
+                <option></option>
+                {{#each this.uniqueData.cities}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_groups}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="e2">
+                <option></option>
+                {{#each this.uniqueData.groups}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_areas}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="e3">
+                <option></option>
+                {{#each this.uniqueData.areas}}
+                    <option value="a-{{this.id}}">{{this.name}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_locations}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="e4">
+                <option></option>
+                {{#each this.uniqueData.locations}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_sub_province}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="e5">
+                <option></option>
+                {{#each this.uniqueData.sub_provinces}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_states}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="e6">
+                <option></option>
+                {{#each this.uniqueData.states}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_zip_codes}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="e7">
+                <option></option>
+                {{#each this.uniqueData.zips}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+
+    {{#if this.config.has_formats}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="e8">
+                <option></option>
+                {{#each this.uniqueData.formats}}
+                    <option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
+                {{/each}}
+            </select>
+        </div>
+    {{/if}}
+    </div>
+{{/if}}
+
+{{#if this.config.has_tabs}}
+    {{#ifEquals this.config.view_by "weekdays"}}
+        <div class="bmlt-page show" id="nav-days">
+    {{else}}
+        <div class="bmlt-page hide" id="nav-days">
+    {{/ifEquals}}
+        <ul class="nav nav-tabs">
+            {{#times 7}}
+                <li><a href="#tab{{this}}" data-toggle="tab">{{getDayOfTheWeek this}}</a></li>
+            {{/times}}
+        </ul>
+    </div>
+{{/if}}

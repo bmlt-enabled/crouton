@@ -86,7 +86,7 @@
 		<p><strong>[bmlt_tabs include_weekday_button="0|1"]</strong></p>
 		<p>0 = exclude Weekday button</p>
 		<p>1 = include Weekday button (default)</p>
-		<p><em>Weekday button will be included when view_by = "weekday" (include_weekday_button will be set to "1").</em></p>
+		<p><em>Weekday button will be included when view_by = "weekday" which is the default.  You will need to set view_by to something other than "weekday" to make use of this. (include_weekday_button will be set to "1").</em></p>
 	</div>
 	<h3 class="help-accordian"><strong>Tabs or No Tabs</strong></h3>
 	<div>
@@ -144,6 +144,21 @@
 		<p><strong>[group_count service_body_parent="1,2,3"]</strong></p>
 		<p>Will return the number of Groups in one or more BMLT parent service bodies.</p>
 	</div>
+    <h3 class="help-accordian"><strong>Sorting</strong></h3>
+    <div>
+        <p>You can sort the results in the response.</p>
+        <p><strong>[bmlt_tabs sort_keys="start_time"]</strong></p>
+        <p>start_time = (default)</p>
+        <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
+    </div>
+    <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
+    <div>
+        <p>With this parameter you can display meetings that within the distance of the browser location, or return a number of results from the current distance.</p>
+        <p><strong>[bmlt_tabs distance_search="0"]</strong></p>
+        <p>0 = don't run a distance search (default)</p>
+        <p>1 or higher = the distance in miles of results (or km if distance_units is set to km)</p>
+        <p>-1 or lower = the number of results to return sorted by distance from the location</p>
+    </div>
 	<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
 	<div>
 		<p>With this parameter you can display the users distance to meetings under the map link button.</p>
@@ -151,7 +166,22 @@
 		<p>0 = don't display distance to meeting (default)</p>
 		<p>1 = display distance to meeting</p>
 		<p><em>User has to have geolocation permissions turned on.</em></p>
+        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
 	</div>
+    <h3 class="help-accordian"><strong>Time Zone Adjustments</strong></h3>
+    <div>
+        <p>With these parameters you can adjust the time for a specific timezone.</p>
+        <p><strong>[bmlt_tabs auto_tz_adjust="0|1"]</strong></p>
+        <p>0 = do not adjust timezone</p>
+        <p>1 = adjust timezone relative to `base_tz` parameter</p>
+        <p><strong>[bmlt_tabs base_tz="UTC"]</strong></p>
+        <p>If no option is set, timezone will be assumed to the local PC time.</p>
+        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjuction with auto_tz_adjust parameter, time will be shown relative to that.</p>
+    </div>
+    <h3 class="help-accordian"><strong>Links</strong></h3>
+    <div>
+        <p>If the "comments" field in the BMLT for an entry starts with "tel:" or "http", it will automatically be turned into a URL.</p>
+    </div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
 		<p>With this parameter you can use a custom root server query.  This will take precedence over any other kind filtering parameters.</p>
@@ -159,14 +189,6 @@
 		<p>Example: [bmlt_tabs custom_query="&meeting_key=location_sub_province&meeting_key_value=Sampson"]</p>
 		<p><em>This can be overridden using a querystring parameter as well, but use must URL encode the query.  Example: <a target="_blank" href="about:blank">http://localhost:8080/?page_id=5&custom_query=%26meeting_key%3Dlocation_sub_province%26meeting_key_value%3DSampson</a></em></p>
 	</div>
-    <h3 class="help-accordian"><strong>Only Show Used Formats</strong></h3>
-    <div>
-        <p>With this parameter you can have crouton only display the formats that are being used.</p>
-        <p><strong>[bmlt_tabs used_formats="0|1"]</strong></p>
-        <p>0 = display all formats in server (default)</p>
-        <p>1 = display only used formats</p>
-        <p><em>This will only work with root server versions 2.10.3 or greater, as it makes use of the format_shared_id_list.</em></p>
-    </div>
     <h3 class="help-accordian"><strong>Companion Map</strong></h3>
     <div>
         <p>With this parameter you can have crouton display a companion map of all the meetings.</p>
@@ -176,5 +198,12 @@
         <p>You can specify the maximum zoom level at which clustering is enabled, 15 is the default. This may be desirable with smaller data sets in which you don't want to cluster at all.</p>
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></em></p>
+    </div>
+    <h3 class="help-accordian"><strong>Multilingual Support</strong></h3>
+    <div>
+        <p>With this parameter you can have crouton display the results into a pre-translated language.</p>
+        <p><strong>[bmlt_tabs language="en-US"]</strong></p>
+        <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js" target="_blank">here</a>.</p>
+        <p>Open a ticket if you want to assist with other translations <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">here</a>.</p>
     </div>
 </div>

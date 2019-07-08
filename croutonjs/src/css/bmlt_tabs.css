@@ -10,31 +10,6 @@
 /* Half the width */
 }
 
-.glyphicon-repeat-animate {
-	-animation: spin .7s infinite linear;
-	-webkit-animation: spin2 .7s infinite linear;
-}
-
-@-webkit-keyframes spin2 {
-	from {
-		-webkit-transform: rotate(0deg);
-	}
-
-	to {
-		-webkit-transform: rotate(360deg);
-	}
-}
-
-@keyframes spin {
-	from {
-		transform: scale(1) rotate(0deg);
-	}
-
-	to {
-		transform: scale(1) rotate(360deg);
-	}
-}
-
 span.bmlt_tabs_meeting_count {
 	font-size: 18px;
 	padding: 0 10px 15px 0;
@@ -99,14 +74,6 @@ span.bmlt_tabs_group_count {
 	top: 1px !important;
 }
 
-.bmlt-drop-format {
-	width: 250px !important;
-}
-
-.bmlt-drop-zip {
-	width: 100px !important;
-}
-
 .bmlt-drop {
 	width: 300px !important;
 }
@@ -145,14 +112,33 @@ span.bmlt_tabs_group_count {
 
 #bmlt-tabs .bmlt-column2 {
 	text-align: left;
-	width: 55%;
+	width: 60%;
 	vertical-align: top;
 }
 
 #bmlt-tabs .bmlt-column3 {
 	text-align: center !important;
 	vertical-align: middle !important;
-	width: 15%;
+	width: 10%;
+}
+
+#bmlt-tabs .virtual .bmlt-column1 {
+	text-align: left;
+	width: 20%;
+	word-break: break-all;
+	vertical-align: top;
+}
+
+#bmlt-tabs .virtual .bmlt-column2 {
+	text-align: left;
+	width: 50%;
+	vertical-align: top;
+}
+
+#bmlt-tabs .virtual .bmlt-column3 {
+	text-align: center !important;
+	vertical-align: middle !important;
+	width: 30%;
 }
 
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
@@ -328,7 +314,7 @@ span.bmlt_tabs_group_count {
 
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
-		display: none !important;
+		display: block !important;
 	}
 
 	#bmlt-tabs #day.btn-sm,#bmlt-tabs #city.btn-sm {
@@ -459,6 +445,10 @@ table.tablesaw {
 
 .tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
 	display: none;
+}
+
+.bmlt-map {
+	height: 400px;
 }
 
 /* Mobile first styles: Begin with the stacked presentation at narrow widths */
