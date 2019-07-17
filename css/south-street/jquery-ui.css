@@ -928,8 +928,8 @@ body .ui-tooltip {
 works properly when clicked or hovered */
 html .ui-button.ui-state-disabled:hover,
 html .ui-button.ui-state-disabled:active {
-	border: 1px solid #327E04;
-	background: #459e00 url("images/ui-bg_highlight-hard_15_459e00_1x100.png") 50% 50% repeat-x;
+	border: 1px solid #0a61ad;
+	background: #0a61ad url("images/ui-bg_highlight-hard_15_0a61ad_1x100.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #ffffff;
 }
@@ -951,8 +951,8 @@ a:visited.ui-button,
 .ui-widget-header .ui-state-focus,
 .ui-button:hover,
 .ui-button:focus {
-	border: 1px solid #327E04;
-	background: #67b021 url("images/ui-bg_highlight-soft_25_67b021_1x100.png") 50% 50% repeat-x;
+	border: 1px solid #0a61ad;
+	background: #5aadf5 url("images/ui-bg_highlight-soft_25_5aadf5_1x100.png") 50% 50% repeat-x;
 	font-weight: bold;
 	color: #ffffff;
 }
@@ -979,20 +979,20 @@ a.ui-button:focus {
 a.ui-button:active,
 .ui-button:active,
 .ui-button.ui-state-active:hover {
-	border: 1px solid #d4ccb0;
+	border: 1px solid #0a61ad;
 	background: #fafaf4 url("images/ui-bg_highlight-hard_100_fafaf4_1x100.png") 50% 50% repeat-x;
 	font-weight: bold;
-	color: #459e00;
+	color: #0a61ad;
 }
 .ui-icon-background,
 .ui-state-active .ui-icon-background {
 	border: #d4ccb0;
-	background-color: #459e00;
+	background-color: #0a61ad;
 }
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
-	color: #459e00;
+	color: #0a61ad;
 	text-decoration: none;
 }
 
