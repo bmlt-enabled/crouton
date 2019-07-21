@@ -4,15 +4,17 @@ bundle-deps:
 	npm install
 	npm install -g gulp-cli
 
-bundle: bundle-deps
+bundle:
 	gulp
 
-watch: bundle-deps
+watch:
 	gulp watch
 
 serve:
 	gulp watch &
 	docker-compose up
+
+deploy: bundle-deps bundle
 
 serve-static:
 	gulp watch &
