@@ -587,6 +587,7 @@ if (!class_exists("Crouton")) {
             // Pulling from querystring
             $params['service_body'] = (isset($_GET['service_body']) ? $_GET['service_body'] : $params['service_body']);
             $params['service_body_parent'] = (isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $params['service_body_parent']);
+            $params['language'] = isset($_GET['language']) ? $_GET['language'] : $params['language'];
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration

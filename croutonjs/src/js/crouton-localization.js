@@ -101,6 +101,20 @@ function CroutonLocalization(language) {
 			"formats" : "Formats",
 			"map" : "Map"
 		},
+		"en-UK": {
+			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+			"weekday" : "Weekday",
+			"city" : "City",
+			"cities" : "Cities",
+			"groups" : "Groups",
+			"areas" : "Areas",
+			"locations" : "Locations",
+			"counties" : "Counties",
+			"states" : "States",
+			"postal_codes" : "Postcodes",
+			"formats" : "Formats",
+			"map" : "Map"
+		},
 	};
 }
 

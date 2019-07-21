@@ -36,6 +36,10 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 
 == Changelog ==
 
+= 3.2.5 =
+* Added translation of UK English (en-UK).
+* Allowed for setting language via querystring.
+
 = 3.2.4 =
 * Added translation for New Zealand and Austrailian English (en-NZ and en-AU).
 
