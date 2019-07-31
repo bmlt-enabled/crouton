@@ -1,6 +1,6 @@
 === crouton ===  
 
-Contributors: odathp, radius314, pjaudiomv, Paul N
+Contributors: odathp, radius314, pjaudiomv, californiasteve9390 Paul N
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
