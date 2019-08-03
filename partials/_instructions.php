@@ -1,16 +1,14 @@
 <h2>Instructions</h2>
 <p> Please open a ticket <a href="https://github.com/bmlt-enabled/crouton/issues" target="_top">https://github.com/bmlt-enabled/crouton/issues</a> with problems, questions or comments.</p>
 <div id="accordion">
-	<h3 class="help-accordian"><strong>URL Parameters (New)</strong></h3>
+	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
 	<div>
-		<p>This feature will provide the capabity to re-use one page to generate a Tabbed UI for unlimited service bodies.</p>
-		<p>Example: A Region would have seperate pages for each Area with a Tabbed UI.</p>
+		<p>This feature will provide the capability to re-use one page to generate a Tabbed UI for unlimited service bodies.</p>
+		<p>Example: A Region would have separate pages for each Area with a Tabbed UI.</p>
 		<p>Instead: One page can be used to display a Tabbed UI for all Areas.</p>
 		<p>1. Insert the [bmlt_tabs] into a page.</p>
 		<p>2. Link to that page using parameters as described below.</p>
-		<p>Accepted Parameters: root_server, service_body, service_body_parent, this_title, meeting_count, group_count.
-		<p><em>"service_body" parameter required - all others optional</em></p>
-		<p><em>"service_body_parent" parameter for regional meetings</em></p>
+		<p>You can override any shortcode value.
 		<p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
 		<p><strong>Meetings for One Area.</strong></p>
 		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body=2&this_title=Greater%20Orlando%20Area%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
@@ -21,7 +19,6 @@
 		<p><em>Title, meeting and group count have unique CSS classes that can be used for custom styling.</em></p>
 	</div>
 	<h3 class="help-accordian"><strong>Time Format</strong></h3>
-
 	<div>
 		<p>With this parameter you can configure the time format.</p>
 		<p><strong>[bmlt_tabs time_format="HH:mm"]</strong></p>
@@ -30,6 +27,12 @@
 		<p><em>Default is 12 Hour Time Fomat</em></p>
 		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='http://momentjs.com/docs/#/displaying/'>Moment.JS Date</a> function for other ways to configure the time.
 	</div>
+    <h3 class="help-accordian"><strong>Start of Week</strong></h3>
+    <div>
+        <p>With this parameter you can change the first day of the week.  Useful for other countries where the day doesn't start with Sunday.</p>
+        <p><strong>[bmlt_tabs int_start_day_id="1"]</strong></p>
+        <p>1 is the default which is Sunday.  2 is Monday and so on.</p>
+    </div>
 	<h3 class="help-accordian"><strong>crouton Shortcode Usage</strong></h3>
 	<div>
 		<p>Insert the following shortcodes into a page.</p>
