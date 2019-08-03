@@ -31,7 +31,8 @@ function Crouton(config) {
 		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 		custom_query: null,			  // Enables overriding the services related queries for a custom one
 		google_api_key: null,		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
-		sort_keys: "start_time"		  // Controls sort keys on the query
+		sort_keys: "start_time",	  // Controls sort keys on the query
+		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 	};
 
 	self.setConfig(config);
@@ -359,16 +360,31 @@ function Crouton(config) {
 Crouton.prototype.setConfig = function(config) {
 	var self = this;
 	for (var propertyName in config) {
-		if (config[propertyName] === "1" || config[propertyName] === 1) {
-			self.config[propertyName] = true;
-		} else if (config[propertyName] === "0" || config[propertyName] === 0) {
-			self.config[propertyName] = false;
+		if (propertyName.indexOf("int_") === -1) {
+			if (config[propertyName] === "1" || config[propertyName] === 1) {
+				self.config[propertyName] = true;
+			} else if (config[propertyName] === "0" || config[propertyName] === 0) {
+				self.config[propertyName] = false;
+			} else {
+				self.config[propertyName] = config[propertyName];
+			}
 		} else {
-			self.config[propertyName] = config[propertyName];
+			self.config[propertyName] = parseInt(config[propertyName] || 0);
 		}
 	}
 
 	self.config["distance_search"] = parseInt(self.config["distance_search"] || 0);
+
+	self.config["day_sequence"] = [];
+	self.config.day_sequence.push(self.config.int_start_day_id);
+	for (var i = 1; i < 7; i++) {
+		var next_day = self.config.day_sequence[i - 1] + 1;
+		if (next_day > 7) {
+			self.config.day_sequence.push(next_day - 7);
+		} else {
+			self.config.day_sequence.push(next_day);
+		}
+	}
 
 	if (self.config["view_by"] === "city") {
 		self.config["include_city_button"] = true;

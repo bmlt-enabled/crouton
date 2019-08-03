@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.2.5
+Version: 3.3.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -27,6 +27,40 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
+        public $shortCodeOptions = array(
+                "root_server" => '',
+                "service_body" => '',
+                "service_body_parent" => '',
+                "has_tabs" => '1',
+                "has_groups" => '1',
+                "has_areas" => '0',
+                "has_cities" => '1',
+                "has_formats" => '1',
+                "has_locations" => '1',
+                "has_sub_province" => '0',
+                "has_states" => '0',
+                "include_city_button" => '1',
+                "include_weekday_button" => '1',
+                "view_by" => 'weekday',
+                "dropdown_width" => 'auto',
+                "has_zip_codes" => '1',
+                "header" => '1',
+                "format_key" => '',
+                "time_format" => 'h:mm a',
+                "exclude_zip_codes" => null,
+                "show_distance" => '0',
+                "distance_search" => '0',
+                "distance_units" => 'mi',
+                "custom_query" => null,
+                "show_map" => '0',
+                "max_zoom_level" => 15,
+                "language" => 'en-US',
+                "auto_tz_adjust" => '0',
+                "base_tz" => null,
+                "sort_keys" => 'start_time',
+                "int_start_day_id" => '1'
+            );
+
         public function __construct()
         {
             $this->getOptions();
@@ -545,45 +579,9 @@ if (!class_exists("Crouton")) {
             return $all_meetings;
         }
 
-        public function getExtractedShortcodeParameters($atts)
-        {
-            return shortcode_atts(array(
-                "root_server" => '',
-                "service_body" => '',
-                "service_body_parent" => '',
-                "has_tabs" => '1',
-                "has_groups" => '1',
-                "has_areas" => '0',
-                "has_cities" => '1',
-                "has_formats" => '1',
-                "has_locations" => '1',
-                "has_sub_province" => '0',
-                "has_states" => '0',
-                "include_city_button" => '1',
-                "include_weekday_button" => '1',
-                "view_by" => 'weekday',
-                "dropdown_width" => 'auto',
-                "has_zip_codes" => '1',
-                "header" => '1',
-                "format_key" => '',
-                "time_format" => 'h:mm a',
-                "exclude_zip_codes" => null,
-                "show_distance" => '0',
-                "distance_search" => '0',
-                "distance_units" => 'mi',
-                "custom_query" => null,
-                "show_map" => '0',
-                "max_zoom_level" => 15,
-                "language" => 'en-US',
-                "auto_tz_adjust" => '0',
-                "base_tz" => null,
-                "sort_keys" => 'start_time'
-            ), $atts);
-        }
-
         public function getCroutonJsConfig($atts)
         {
-            $params = $this->getExtractedShortcodeParameters($atts);
+            $params = shortcode_atts($this->shortCodeOptions, $atts);
             // Pulling from querystring
             $params['service_body'] = (isset($_GET['service_body']) ? $_GET['service_body'] : $params['service_body']);
             $params['service_body_parent'] = (isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $params['service_body_parent']);
