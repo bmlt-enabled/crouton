@@ -583,10 +583,10 @@ if (!class_exists("Crouton")) {
         public function getCroutonJsConfig($atts)
         {
             $params = shortcode_atts($this->shortCodeOptions, $atts);
-            // Pulling from querystring
 
+            // Pulling from querystring
             foreach ($params as $key => $value) {
-	            $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
+                $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
             }
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
