@@ -298,14 +298,14 @@ function Crouton(config) {
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
-			var start_time = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
-			meetingData[m]['start_time_formatted'] = start_time.format(self.config['time_format']);
+			meetingData[m]['start_time_raw'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
+			meetingData[m]['start_time_formatted'] = meetingData[m]['start_time_raw'].format(self.config['time_format']);
 			meetingData[m]['end_time_formatted'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time'])
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
 				.format(self.config['time_format']);
-			meetingData[m]['day_of_the_week'] = start_time.get('day') + 1;
-			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(start_time.get('day') + 1);
+			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].get('day') + 1;
+			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['start_time_raw'].get('day') + 1);
 			meetingData[m]['is_virtual'] = meetingData[m]['root_server_uri'].indexOf('virtual') >= 0;
 
 			var formats = meetingData[m]['formats'].split(",");
@@ -455,9 +455,13 @@ Crouton.prototype.render = function(callback) {
 			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
-
 				var weekdaysData = [];
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+
+				enrichedMeetingData.sort(function(a, b) {
+					return a['start_time_raw'] - b['start_time_raw'];
+				});
+
 				for (var day = 1; day <= 7; day++) {
 					weekdaysData.push({
 						"day": day,
