@@ -37,7 +37,8 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 == Changelog ==
 
 = 3.3.0 =
-* Added the ability to change the start of the week sequence.
+* Added the ability to change the start of the week sequence. [#143]
+* All shortcodes can be overridden via querystring for the Wordpress plugin. [#141]
 
 = 3.2.5 =
 * Added translation of UK English (en-UK).

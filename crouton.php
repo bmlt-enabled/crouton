@@ -58,7 +58,8 @@ if (!class_exists("Crouton")) {
                 "auto_tz_adjust" => '0',
                 "base_tz" => null,
                 "sort_keys" => 'start_time',
-                "int_start_day_id" => '1'
+                "int_start_day_id" => '1',
+                "recurse_service_bodies" => '0'
             );
 
         public function __construct()
@@ -583,14 +584,15 @@ if (!class_exists("Crouton")) {
         {
             $params = shortcode_atts($this->shortCodeOptions, $atts);
             // Pulling from querystring
-            $params['service_body'] = (isset($_GET['service_body']) ? $_GET['service_body'] : $params['service_body']);
-            $params['service_body_parent'] = (isset($_GET['service_body_parent']) ? $_GET['service_body_parent'] : $params['service_body_parent']);
-            $params['language'] = isset($_GET['language']) ? $_GET['language'] : $params['language'];
+
+            foreach ($params as $key => $value) {
+	            $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
+            }
 
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration
                 $area_data       = explode(',', $this->options['service_body_1']);
-                $service_body = [ $area_data[1] ];
+                $service_body = [$area_data[1]];
                 $parent_body_id  = $area_data[2];
                 if ($parent_body_id == '0') {
                     $params['recurse_service_bodies'] = "1";
@@ -606,11 +608,9 @@ if (!class_exists("Crouton")) {
             }
 
             $params['service_body'] = $service_body;
-            if ($params['recurse_service_bodies'] != "1") {
-                $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
-            }
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
-            $params['root_server'] = (isset($_GET['root_server']) ? $_GET['root_server'] : ($params['root_server'] != '' ? $params['root_server'] : $this->options['root_server']));
+            $params['root_server'] = $params['root_server'] != '' ? $params['root_server'] : $this->options['root_server'];
+            $params['recurse_service_bodies'] = $params['recurse_service_bodies'] != '' ? $params['recurse_service_bodies'] : $this->options['recurse_service_bodies'];
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['custom_css'] = $this->options['custom_css'];
