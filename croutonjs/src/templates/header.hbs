@@ -2,9 +2,9 @@
     {{#if this.config.include_weekday_button}}
         <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
     {{/if}}
-    {{#if this.config.include_city_button}}
-        <div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">{{getWord 'city'}}</a></div>
-    {{/if}}
+    {{#each this.config.button_filters}}
+        <div class="bmlt-button-container"><a id="city" class="btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+    {{/each}}
 
     {{#if this.config.has_cities}}
         <div class="bmlt-dropdown-container">

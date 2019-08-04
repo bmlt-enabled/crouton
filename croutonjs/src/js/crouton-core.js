@@ -10,8 +10,12 @@ function Crouton(config) {
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
 		header: true,                 // Shows the dropdowns and buttons
-		include_city_button: true,    // Shows the city button
+		//include_city_button: true,    // Shows the city button
 		include_weekday_button: true, // Shows the weekday button
+		button_filters: [
+			{'title': 'City', 'field': 'location_municipality'},
+			{'title': 'Counties', 'field': 'location_sub_province'},
+		],
 		show_map: false,              // Shows the map with pins
 		has_cities: true,             // Shows the cities dropdown
 		has_formats: true,            // Shows the formats dropdown
@@ -211,6 +215,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('cities', hbs_Crouton.templates['cities']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
+		crouton_Handlebars.registerPartial('button_filters', hbs_Crouton.templates['button_filters']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).append(template(context));
 		callback();
@@ -480,20 +485,26 @@ Crouton.prototype.render = function(callback) {
 					day_counter++;
 				}
 
-				var citiesData = [];
-				var cities = getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort();
-				for (var i = 0; i < cities.length; i++) {
-					citiesData.push({
-						"city": cities[i],
-						"meetings": enrichedMeetingData.filterByObjectKeyValue('location_municipality', cities[i])
-					});
+				var buttonFiltersData = {};
+				for (var f = 0; f < self.config.button_filters.length; f++) {
+					var groupByName = self.config.button_filters[f]['field'];
+					var groupByData = getUniqueValuesOfKey(self.meetingData, groupByName).sort();
+					var pushArray = [];
+					for (var i = 0; i < groupByData.length; i++) {
+						pushArray.push({
+							"groupByNames": groupByData[i],
+							"meetings": enrichedMeetingData.filterByObjectKeyValue(groupByName, groupByData[i])
+						});
+
+						buttonFiltersData[groupByName] = pushArray;
+					}
 				}
 
 				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
-						"cities": citiesData,
+						"buttonFilters": buttonFiltersData,
 						"bydays": byDayData
 					},
 					"uniqueData": self.uniqueData
