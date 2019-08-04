@@ -10,11 +10,9 @@ function Crouton(config) {
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
 		header: true,                 // Shows the dropdowns and buttons
-		//include_city_button: true,    // Shows the city button
 		include_weekday_button: true, // Shows the weekday button
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
-			{'title': 'Counties', 'field': 'location_sub_province'},
 		],
 		show_map: false,              // Shows the map with pins
 		has_cities: true,             // Shows the cities dropdown
@@ -113,9 +111,7 @@ function Crouton(config) {
 	};
 
 	self.showView = function (viewName) {
-		if (viewName === "city") {
-			self.cityView();
-		} else if (viewName === "byday") {
+		if (viewName === "byday") {
 			self.byDayView();
 		} else {
 			self.dayView();
@@ -129,8 +125,9 @@ function Crouton(config) {
 				jQuery("#e" + a).select2("val", null);
 			}
 		}
+
+		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
-		self.lowlightButton("#city");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byday");
@@ -146,8 +143,9 @@ function Crouton(config) {
 				jQuery("#e" + a).select2("val", null);
 			}
 		}
+
+		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
-		self.lowlightButton("#city");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#days");
@@ -157,7 +155,7 @@ function Crouton(config) {
 		});
 	};
 
-	self.cityView = function () {
+	self.filteredView = function (field) {
 		self.resetFilter();
 		for (var a = 1; a < self.max_filters; a++) {
 			if (jQuery("#e" + a).length) {
@@ -165,11 +163,12 @@ function Crouton(config) {
 			}
 		}
 
-		self.highlightButton("#city");
 		self.lowlightButton("#day");
+		self.lowlightButton(".filterButton");
+		self.highlightButton("#filterButton_" + field);
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.showPage("#cities");
+			self.showPage("#byfield_" + field);
 			return;
 		});
 	};
@@ -213,9 +212,8 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
-		crouton_Handlebars.registerPartial('cities', hbs_Crouton.templates['cities']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
-		crouton_Handlebars.registerPartial('button_filters', hbs_Crouton.templates['button_filters']);
+		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).append(template(context));
 		callback();
@@ -391,9 +389,9 @@ Crouton.prototype.setConfig = function(config) {
 		}
 	}
 
-	if (self.config["view_by"] === "city") {
+	/*if (self.config["view_by"] === "city") {
 		self.config["include_city_button"] = true;
-	}
+	}*/
 
 	if (self.config["view_by"] === "weekday") {
 		self.config["include_weekday_button"] = true;
@@ -485,7 +483,7 @@ Crouton.prototype.render = function(callback) {
 					day_counter++;
 				}
 
-				var buttonFiltersData = {};
+				var buttonFiltersData = [];
 				for (var f = 0; f < self.config.button_filters.length; f++) {
 					var groupByName = self.config.button_filters[f]['field'];
 					var groupByData = getUniqueValuesOfKey(self.meetingData, groupByName).sort();
@@ -495,9 +493,12 @@ Crouton.prototype.render = function(callback) {
 							"groupByNames": groupByData[i],
 							"meetings": enrichedMeetingData.filterByObjectKeyValue(groupByName, groupByData[i])
 						});
-
-						buttonFiltersData[groupByName] = pushArray;
 					}
+
+					buttonFiltersData.push({
+						"field": groupByName,
+						"data": pushArray
+					});
 				}
 
 				self.renderView("#" + self.config['placeholder_id'], {
@@ -538,7 +539,7 @@ Crouton.prototype.render = function(callback) {
 							var val = jQuery("#" + this.id).val();
 							jQuery('.bmlt-page').each(function (index) {
 								self.hidePage("#" + this.id);
-								self.lowlightButton("#city");
+								self.lowlightButton(".filterButton");
 								self.lowlightButton("#day");
 								self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
 								return;
@@ -549,8 +550,8 @@ Crouton.prototype.render = function(callback) {
 					jQuery("#day").on('click', function () {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 					});
-					jQuery("#city").on('click', function () {
-						self.showView('city');
+					jQuery(".filterButton").on('click', function (e) {
+						self.filteredView(e.target.attributes['data-field'].value);
 					});
 
 					jQuery('.custom-ul').on('click', 'a', function (event) {

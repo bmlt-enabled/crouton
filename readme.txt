@@ -41,6 +41,9 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 * All shortcodes can be overridden via querystring for the Wordpress plugin. [#141]
 * Fixes for sorting results for auto timezone.
 
+** Breaking Changes **
+croutonjs no longer support `include_city_button`, use `button_filters` instead.  Wordpress plugin is not affected, however users should move to `button_filters_options`.
+
 = 3.2.5 =
 * Added translation of UK English (en-UK).
 * Allowed for setting language via querystring.

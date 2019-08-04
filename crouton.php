@@ -41,6 +41,7 @@ if (!class_exists("Crouton")) {
                 "has_states" => '0',
                 "include_city_button" => '1',
                 "include_weekday_button" => '1',
+                "button_filters_option" => "Weekday:weekday_tinyint,City:location_municipality",
                 "view_by" => 'weekday',
                 "dropdown_width" => 'auto',
                 "has_zip_codes" => '1',
@@ -605,6 +606,16 @@ if (!class_exists("Crouton")) {
                 } else if ($params['service_body'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
+            }
+
+
+            $params['button_filters'] = [];
+            foreach (explode(",", $params['button_filters_option']) as $item) {
+                $setting = explode(":", $item);
+
+                // Legacy switch check
+
+                array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
             }
 
             $params['service_body'] = $service_body;
