@@ -41,7 +41,7 @@ if (!class_exists("Crouton")) {
                 "has_states" => '0',
                 "include_city_button" => '1',
                 "include_weekday_button" => '1',
-                "button_filters_option" => "Weekday:weekday_tinyint,City:location_municipality",
+                "button_filters_option" => "City:location_municipality",
                 "view_by" => 'weekday',
                 "dropdown_width" => 'auto',
                 "has_zip_codes" => '1',
