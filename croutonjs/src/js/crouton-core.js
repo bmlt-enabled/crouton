@@ -458,15 +458,26 @@ Crouton.prototype.render = function(callback) {
 				var weekdaysData = [];
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
-				enrichedMeetingData.sort(function(a, b) {
+				enrichedMeetingData.sort(function (a, b) {
 					return a['start_time_raw'] - b['start_time_raw'];
 				});
 
-				for (var day = 1; day <= 7; day++) {
+				var day_counter = 0;
+				var byDayData = [];
+				while (day_counter < 7) {
+					var day = self.config.day_sequence[day_counter];
+					var meetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
 					weekdaysData.push({
 						"day": day,
-						"meetings": enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day)
-					})
+						"meetings": meetings
+					});
+
+					byDayData.push({
+						"day": self.localization.getDayOfTheWeekWord(day),
+						"meetings": meetings
+					});
+
+					day_counter++;
 				}
 
 				var citiesData = [];
@@ -475,14 +486,6 @@ Crouton.prototype.render = function(callback) {
 					citiesData.push({
 						"city": cities[i],
 						"meetings": enrichedMeetingData.filterByObjectKeyValue('location_municipality', cities[i])
-					});
-				}
-
-				var byDayData = [];
-				for (var day = 1; day <= 7; day++) {
-					byDayData.push({
-						"day": self.localization.getDayOfTheWeekWord(day),
-						"meetings": enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day)
 					});
 				}
 
