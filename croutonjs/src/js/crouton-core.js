@@ -774,7 +774,9 @@ Crouton.prototype.getNextInstanceOfDay = function(day_id, time_stamp) {
 	var date_stamp = today <= day_id ? moment().isoWeekday(day_id) : moment().add(1, 'weeks').isoWeekday(day_id);
 
 	if (this.config['auto_tz_adjust']) {
-		return date_stamp.set({hour: time.get('hour'), minute: time.get('minute')}).tz(moment.tz.guess());
+		var guessed_time_zone_date_stamp = date_stamp.set({hour: time.get('hour'), minute: time.get('minute')}).tz(moment.tz.guess());
+		return moment() > guessed_time_zone_date_stamp
+			&& today !== guessed_time_zone_date_stamp.isoWeekday() ? guessed_time_zone_date_stamp.add(1, 'weeks') : guessed_time_zone_date_stamp;
 	} else {
 		return date_stamp.set({hour: time.get('hour'), minute: time.get('minute')});
 	}
