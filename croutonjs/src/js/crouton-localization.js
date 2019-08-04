@@ -123,5 +123,5 @@ CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
 };
 
 CroutonLocalization.prototype.getWord = function(word) {
-	return words[this.language][word];
+	return words[this.language][word.toLowerCase()];
 };
