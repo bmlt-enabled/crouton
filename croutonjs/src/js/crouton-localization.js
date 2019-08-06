@@ -31,6 +31,20 @@ function CroutonLocalization(language) {
 			"formats" : "Formats",
 			"map" : "Map"
 		},
+		"en-CA": {
+			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+			"weekday" : "Weekday",
+			"city" : "City",
+			"cities" : "Cities",
+			"groups" : "Groups",
+			"areas" : "Areas",
+			"locations" : "Locations",
+			"counties" : "Counties",
+			"states" : "Provinces",
+			"postal_codes" : "Postal Codes",
+			"formats" : "Formats",
+			"map" : "Map"
+		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
 			"weekday" : "Journée",
