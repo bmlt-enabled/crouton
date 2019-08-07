@@ -326,6 +326,7 @@ function Crouton(config) {
 					}
 				}
 			}
+
 			meetingData[m]['formats_expanded'] = formats_expanded;
 			var addressParts = [
 				meetingData[m]['location_street'],
@@ -388,10 +389,6 @@ Crouton.prototype.setConfig = function(config) {
 			self.config.day_sequence.push(next_day);
 		}
 	}
-
-	/*if (self.config["view_by"] === "city") {
-		self.config["include_city_button"] = true;
-	}*/
 
 	if (self.config["view_by"] === "weekday") {
 		self.config["include_weekday_button"] = true;
@@ -467,38 +464,38 @@ Crouton.prototype.render = function(callback) {
 
 				var day_counter = 0;
 				var byDayData = [];
+				var buttonFiltersData = {};
 				while (day_counter < 7) {
 					var day = self.config.day_sequence[day_counter];
-					var meetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
+					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
 					weekdaysData.push({
 						"day": day,
-						"meetings": meetings
+						"meetings": daysOfTheWeekMeetings
 					});
 
 					byDayData.push({
 						"day": self.localization.getDayOfTheWeekWord(day),
-						"meetings": meetings
+						"meetings": daysOfTheWeekMeetings
 					});
 
-					day_counter++;
-				}
+					for (var f = 0; f < self.config.button_filters.length; f++) {
+						var groupByName = self.config.button_filters[f]['field'];
+						var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
+						for (var i = 0; i < groupByData.length; i++) {
+							var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
+							if (buttonFiltersData.hasOwnProperty(groupByName) && buttonFiltersData[groupByName].hasOwnProperty(groupByData[i])) {
+								buttonFiltersData[groupByName][groupByData[i]] = buttonFiltersData[groupByName][groupByData[i]].concat(groupByMeetings);
+							} else if (buttonFiltersData.hasOwnProperty(groupByName)) {
+								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
+							} else {
+								buttonFiltersData[groupByName] = {};
+								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
+							}
 
-				var buttonFiltersData = [];
-				for (var f = 0; f < self.config.button_filters.length; f++) {
-					var groupByName = self.config.button_filters[f]['field'];
-					var groupByData = getUniqueValuesOfKey(self.meetingData, groupByName).sort();
-					var pushArray = [];
-					for (var i = 0; i < groupByData.length; i++) {
-						pushArray.push({
-							"groupByNames": groupByData[i],
-							"meetings": enrichedMeetingData.filterByObjectKeyValue(groupByName, groupByData[i])
-						});
+						}
 					}
 
-					buttonFiltersData.push({
-						"field": groupByName,
-						"data": pushArray
-					});
+					day_counter++;
 				}
 
 				self.renderView("#" + self.config['placeholder_id'], {

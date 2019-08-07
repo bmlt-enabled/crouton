@@ -4,8 +4,8 @@
         {{> header}}
     </div>
 	{{#each this.meetings.buttonFilters}}
-		<div id="byfield_{{ this.field }}" class="bmlt-page hide">
-			{{> byfields this.data }}
+		<div id="byfield_{{ @key }}" class="bmlt-page hide">
+			{{> byfields this }}
 		</div>
 	{{/each}}
     <div id="byday" class="bmlt-page hide">

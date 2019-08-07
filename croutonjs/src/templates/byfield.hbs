@@ -3,9 +3,9 @@
 		<tbody>
 		{{#each this}}
 			<tr class="meeting-header">
-				<td colspan="3">{{this.groupByNames}}</td>
+				<td colspan="3">{{@key}}</td>
 			</tr>
-			{{> meetings this }}
+			{{> meetings }}
 		{{/each}}
 		</tbody>
 	</table>
