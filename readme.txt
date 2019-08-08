@@ -38,6 +38,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 
 = 3.3.0 =
 * Added the ability to change the start of the week sequence. [#143]
+* Added the ability to create custom group by buttons using `button_filters`.
 * All shortcodes can be overridden via querystring for the Wordpress plugin. [#141]
 * Fixes for sorting results for auto timezone.
 
