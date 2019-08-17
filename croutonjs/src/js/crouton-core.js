@@ -113,8 +113,12 @@ function Crouton(config) {
 	self.showView = function (viewName) {
 		if (viewName === "byday") {
 			self.byDayView();
-		} else {
+		} else if (viewName === "day") {
 			self.dayView();
+		} else if (viewName === "city") {
+			self.filteredView("location_municipality");
+		} else {
+			self.filteredView(viewName);
 		}
 	};
 
@@ -378,7 +382,6 @@ Crouton.prototype.setConfig = function(config) {
 	}
 
 	self.config["distance_search"] = parseInt(self.config["distance_search"] || 0);
-
 	self.config["day_sequence"] = [];
 	self.config.day_sequence.push(self.config.int_start_day_id);
 	for (var i = 1; i < 7; i++) {
