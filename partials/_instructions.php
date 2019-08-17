@@ -66,30 +66,24 @@
 	</div>
 	<h3 class="help-accordian"><strong>View By City or Weekday</strong></h3>
 	<div>
-		<p>With this parameter you can initially view meetings by City or Weekday.</p>
-		<p><strong>[bmlt_tabs view_by="city|weekday"]</strong></p>
-		<p>city = view meetings by City</p>
+		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the button_filter_option was added ahead of time.</p>
+		<p><strong>[bmlt_tabs view_by="weekday"]</strong></p>
 		<p>weekday = view meetings by Weekdays (default)</p>
+        <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Exclude City Button</strong></h3>
 	<div>
 		<p>With this parameter you can exclude the City button.</p>
-
 		<p><strong>[bmlt_tabs include_city_button="0|1"]</strong></p>
-
 		<p>0 = exclude City button</p>
-
 		<p>1 = include City button (default)</p>
-
 		<p><em>City button will be included when view_by = "city" (include_city_button will be set to "1").</em></p>
 	</div>
-	<h3 class="help-accordian"><strong>Exclude Weekday Button</strong></h3>
+	<h3 class="help-accordian"><strong>Show Filter Buttons</strong></h3>
 	<div>
-		<p>With this parameter you can exclude the Weekday button.</p>
-		<p><strong>[bmlt_tabs include_weekday_button="0|1"]</strong></p>
-		<p>0 = exclude Weekday button</p>
-		<p>1 = include Weekday button (default)</p>
-		<p><em>Weekday button will be included when view_by = "weekday" which is the default.  You will need to set view_by to something other than "weekday" to make use of this. (include_weekday_button will be set to "1").</em></p>
+		<p>With this parameter you can include specific buttons.</p>
+		<p><strong>[bmlt_tabs button_filter_option="City:location_municipality"]</strong></p>
+        <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Tabs or No Tabs</strong></h3>
 	<div>
