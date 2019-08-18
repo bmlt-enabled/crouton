@@ -35,6 +35,7 @@ function Crouton(config) {
 		google_api_key: null,		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
 		sort_keys: "start_time",	  // Controls sort keys on the query
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
+		view_by: "weekday"            // TODO: replace with using the first choice in button_filters as the default view_by.
 	};
 
 	self.setConfig(config);
@@ -113,7 +114,7 @@ function Crouton(config) {
 	self.showView = function (viewName) {
 		if (viewName === "byday") {
 			self.byDayView();
-		} else if (viewName === "day") {
+		} else if (viewName === "day" || viewName === "weekday") {
 			self.dayView();
 		} else if (viewName === "city") {
 			self.filteredView("location_municipality");
