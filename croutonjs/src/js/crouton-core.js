@@ -502,11 +502,27 @@ Crouton.prototype.render = function(callback) {
 					day_counter++;
 				}
 
+				var buttonFiltersDataSorted = {};
+				for (var b = 0; b < self.config.button_filters.length; b++) {
+					var sortKey = [];
+					var groupByName = self.config.button_filters[b]['field'];
+					for (var buttonFiltersDataItem in buttonFiltersData[groupByName]) {
+						sortKey.push(buttonFiltersDataItem);
+					}
+
+					sortKey.sort();
+
+					buttonFiltersDataSorted[groupByName] = {};
+					for (var s = 0; s < sortKey.length; s++) {
+						buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
+					}
+				}
+
 				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
-						"buttonFilters": buttonFiltersData,
+						"buttonFilters": buttonFiltersDataSorted,
 						"bydays": byDayData
 					},
 					"uniqueData": self.uniqueData
