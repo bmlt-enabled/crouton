@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.3.1
+Version: 3.3.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -589,20 +589,21 @@ if (!class_exists("Crouton")) {
             foreach ($params as $key => $value) {
                 $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
             }
-
+            
+            $legacy_force_recurse = false;
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration
                 $area_data       = explode(',', $this->options['service_body_1']);
                 $service_body = [$area_data[1]];
                 $parent_body_id  = $area_data[2];
                 if ($parent_body_id == '0') {
-                    $params['recurse_service_bodies'] = "1";
+                    $legacy_force_recurse = true;
                 }
             } else {
                 // Shortcode based settings
                 if ($params['service_body_parent'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body_parent']));
-                    $params['recurse_service_bodies'] = "1";
+                    $legacy_force_recurse = true;
                 } else if ($params['service_body'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
@@ -621,7 +622,15 @@ if (!class_exists("Crouton")) {
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
             $params['root_server'] = $params['root_server'] != '' ? $params['root_server'] : $this->options['root_server'];
-            $params['recurse_service_bodies'] = $params['recurse_service_bodies'] != '' ? $params['recurse_service_bodies'] : $this->options['recurse_service_bodies'];
+
+            if ($legacy_force_recurse) {
+                $params['recurse_service_bodies'] = true;
+            } else if (isset($_GET['recurse_service_bodies'])) {
+                $params['recurse_service_bodies'] = filter_var($_GET['recurse_service_bodies'], FILTER_VALIDATE_BOOLEAN);
+            } else if (!isset($atts['recurse_service_bodies'])) {
+                $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
+            }
+
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['custom_css'] = $this->options['custom_css'];
