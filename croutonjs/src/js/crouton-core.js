@@ -35,7 +35,8 @@ function Crouton(config) {
 		google_api_key: null,		  // Required if using the show_map option.  Be sure to add an HTTP restriction as well.
 		sort_keys: "start_time",	  // Controls sort keys on the query
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
-		view_by: "weekday"            // TODO: replace with using the first choice in button_filters as the default view_by.
+		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
+		theme: "jack",               // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 	};
 
 	self.setConfig(config);
@@ -401,6 +402,10 @@ Crouton.prototype.setConfig = function(config) {
 	if (!self.config["has_tabs"]) {
 		self.config["view_by"] = "byday";
 	}
+
+	if (self.config["template_path"] == null) {
+		self.config["template_path"] = "templates"
+	}
 };
 
 Crouton.prototype.reset = function() {
@@ -430,7 +435,13 @@ Crouton.prototype.groupCount = function(callback) {
 Crouton.prototype.render = function(callback) {
 	var self = this;
 	self.lock(function() {
-		jQuery("body").append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+		var body = jQuery("body");
+		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+
+		if (self.config['theme'] !== '') {
+			body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
+		}
+
 		if (self.isEmpty(self.meetingData)) {
 			self.showMessage("No meetings found for parameters specified.");
 			return;

@@ -45,6 +45,10 @@ jQuery(document).ready(function($) {
 		inherit_select_classes: true,
 		width: "40%"
 	});
+	$(".theme_select").chosen({
+		inherit_select_classes: true,
+		width: "20%"
+	});
 	$("#extra_meetings").chosen({
 		no_results_text: "Oops, nothing found!",
 		width: "60%",

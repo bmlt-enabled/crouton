@@ -39,6 +39,11 @@ select.service_body_select {
 	max-width: 40%;
 }
 
+select.theme_select {
+	width: 20%;
+	max-width: 20%;
+}
+
 .extra_meetings_label label {
 	vertical-align: top;
 }

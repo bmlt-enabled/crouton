@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.3.3
+Version: 3.4.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -21,6 +21,10 @@ if (!class_exists("Crouton")) {
         public $options = array();
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
+        public $themes = [
+            "jack",
+            "lucy"
+        ];
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -60,7 +64,8 @@ if (!class_exists("Crouton")) {
                 "base_tz" => null,
                 "sort_keys" => 'start_time',
                 "int_start_day_id" => '1',
-                "recurse_service_bodies" => '0'
+                "recurse_service_bodies" => '0',
+                "theme" => '',
             );
 
         public function __construct()
@@ -375,6 +380,7 @@ if (!class_exists("Crouton")) {
                 $this->options['service_body_1'] = $_POST['service_body_1'];
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = $_POST['custom_css'];
+                $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
@@ -487,6 +493,19 @@ if (!class_exists("Crouton")) {
                             <li>
                                 <label for="custom_query">Custom Query: </label>
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Theme</h3>
+                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
+                        <ul>
+                            <li>
+                                <select style="display:inline;" id="theme" name="theme"  class="theme_select">
+                                    <?php foreach ($this->themes as $theme) { ?>
+                                        <option <?php echo ($theme === $this->options['theme'] ? "selected" : "")?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                    <?}?>
+                                </select>
                             </li>
                         </ul>
                     </div>
@@ -633,6 +652,9 @@ if (!class_exists("Crouton")) {
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
+
+            $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
+
             $params['custom_css'] = $this->options['custom_css'];
             $params['google_api_key'] = $this->options['google_api_key'];
             $extra_meetings_array = [];
