@@ -502,9 +502,16 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <select style="display:inline;" id="theme" name="theme"  class="theme_select">
-                                    <?php foreach ($this->themes as $theme) { ?>
-                                        <option <?php echo ($theme === $this->options['theme'] ? "selected" : "")?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
-                                    <?}?>
+                                    <?php
+                                    foreach ($this->themes as $theme) { ?>
+                                        <option <?php if ($theme === $this->options['theme']) {
+                                                    echo "selected";
+                                                } else {
+                                                    echo "";
+                                                }
+                                                ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                        <?php
+                                    }?>
                                 </select>
                             </li>
                         </ul>
