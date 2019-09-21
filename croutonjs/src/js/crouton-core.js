@@ -197,7 +197,7 @@ function Crouton(config) {
 		if (dataType !== "formats") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
-			jQuery(".bmlt-data-row").not("[data-" + dataType + "*='" + dataValue + "']").addClass("hide");
+			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 		}
 
 		jQuery(".bmlt-data-rows").each(function (index, value) {
