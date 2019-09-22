@@ -23,7 +23,8 @@ if (!class_exists("Crouton")) {
         public static $HOUR_IN_SECONDS = 3600;
         public $themes = [
             "jack",
-            "lucy"
+            "lucy",
+            "patrick"
         ];
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
