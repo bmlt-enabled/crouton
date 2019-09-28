@@ -381,6 +381,7 @@ if (!class_exists("Crouton")) {
                 $this->options['service_body_1'] = $_POST['service_body_1'];
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = $_POST['custom_css'];
+                $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
@@ -496,6 +497,26 @@ if (!class_exists("Crouton")) {
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
                             </li>
                         </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <?php
+                        $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
+                        ?>
+                        <h3>Meeting Data Template</h3>
+                        <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <ul>
+                            <li>
+                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : $default_template; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_meeting_data_template").click(function() {
+                                jQuery('#meeting_data_template').val("<?php echo $default_template?>");
+                            });
+                        </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3>Theme</h3>
@@ -664,6 +685,7 @@ if (!class_exists("Crouton")) {
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
 
             $params['custom_css'] = $this->options['custom_css'];
+            $params['meeting_data_template'] = html_entity_decode($this->options['meeting_data_template']);
             $params['google_api_key'] = $this->options['google_api_key'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings'])) {

@@ -37,6 +37,7 @@ function Crouton(config) {
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
 		theme: "jack",               // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
+		meeting_data_template: "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>"
 	};
 
 	self.setConfig(config);
@@ -65,10 +66,34 @@ function Crouton(config) {
 		});
 	};
 	self.mutex = true;
-	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=location_postal_code_1,duration_time,' +
-		'start_time,weekday_tinyint,service_body_bigint,longitude,latitude,location_province,location_municipality,' +
-		'location_street,location_info,location_text,formats,format_shared_id_list,comments,meeting_name,' +
-		'location_sub_province,worldid_mixed,root_server_uri';
+
+	var data_field_keys = [
+		'location_postal_code_1',
+		'duration_time',
+		'start_time',
+		'weekday_tinyint',
+		'service_body_bigint',
+		'longitude',
+		'latitude',
+		'location_province',
+		'location_municipality',
+		'location_street',
+		'location_info',
+		'location_text',
+		'formats',
+		'format_shared_id_list',
+		'comments',
+		'meeting_name',
+		'location_sub_province',
+		'worldid_mixed',
+		'root_server_uri'
+	];
+
+	var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
+	while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
+		data_field_keys.push(arr[1])
+	}
+	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
 
 	if (self.config['distance_search'] !== 0) {
 		if (navigator.geolocation) {
@@ -304,6 +329,8 @@ function Crouton(config) {
 	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
 
+		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
+
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
@@ -347,6 +374,7 @@ function Crouton(config) {
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+			meetingData[m]['meeting_data_template'] = "meetingDataTemplate";
 			meetings.push(meetingData[m])
 		}
 
@@ -785,6 +813,13 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 	for(var i = 1; i <= n; ++i)
 		accum += block.fn(i);
 	return accum;
+});
+
+crouton_Handlebars.registerHelper('partial', function(name, ctx, hash) {
+	var ps = crouton_Handlebars.partials;
+	if(typeof ps[name] !== 'function')
+		ps[name] = crouton_Handlebars.compile(ps[name]);
+	return ps[name](ctx, hash);
 });
 
 function convertToPunyCode(str) {

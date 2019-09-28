@@ -46,10 +46,7 @@
             {{/if}}
         </td>
         <td class="bmlt-column2">
-            <div class="meeting-name">{{this.meeting_name}}</div>
-            <div class="location-text">{{this.location_text}}</div>
-            <div class="meeting-address">{{this.formatted_address}}</div>
-            <div class="location-information">{{this.formatted_location_info}}</div>
+			<div class="meeting-data-template">{{{partial this.meeting_data_template this}}}</div>
         </td>
         {{#if this.is_virtual}}
         <td class="bmlt-column3 virtual">

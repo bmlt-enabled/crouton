@@ -37,6 +37,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 == Changelog ==
 
 = 3.4.0 =
+* Added the ability to create a custom template for meeting data [#154]
 * Added the ability to set pre-packaged CSS themes.
 
 = 3.3.3 =
