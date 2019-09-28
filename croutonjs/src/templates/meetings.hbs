@@ -46,7 +46,7 @@
             {{/if}}
         </td>
         <td class="bmlt-column2">
-			<div class="meeting-data-template">{{{partial this.meeting_data_template this}}}</div>
+			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>
         </td>
         {{#if this.is_virtual}}
         <td class="bmlt-column3 virtual">

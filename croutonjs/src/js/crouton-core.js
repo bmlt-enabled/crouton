@@ -374,7 +374,6 @@ function Crouton(config) {
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
-			meetingData[m]['meeting_data_template'] = "meetingDataTemplate";
 			meetings.push(meetingData[m])
 		}
 
@@ -813,13 +812,6 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 	for(var i = 1; i <= n; ++i)
 		accum += block.fn(i);
 	return accum;
-});
-
-crouton_Handlebars.registerHelper('partial', function(name, ctx, hash) {
-	var ps = crouton_Handlebars.partials;
-	if(typeof ps[name] !== 'function')
-		ps[name] = crouton_Handlebars.compile(ps[name]);
-	return ps[name](ctx, hash);
 });
 
 function convertToPunyCode(str) {
