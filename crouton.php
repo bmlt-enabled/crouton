@@ -523,7 +523,7 @@ if (!class_exists("Crouton")) {
                         <h3>Theme</h3>
                         <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
                         <ul>
-                            <li>The default original theme is called "jack".  If no theme is selected, the default one will be used.</li>
+                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
                             <li>
                                 <select style="display:inline;" id="theme" name="theme"  class="theme_select">
                                     <?php
@@ -533,7 +533,7 @@ if (!class_exists("Crouton")) {
                                                 } else {
                                                     echo "";
                                                 }
-                                                ?> value="<?php echo $theme ?>"><?php echo $theme ?></option>
+                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
                                         <?php
                                     }?>
                                 </select>

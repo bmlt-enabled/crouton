@@ -463,11 +463,11 @@ Crouton.prototype.render = function(callback) {
 	var self = this;
 	self.lock(function() {
 		var body = jQuery("body");
-		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
-
 		if (self.config['theme'] !== '') {
 			body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
 		}
+
+		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 
 		if (self.isEmpty(self.meetingData)) {
 			self.showMessage("No meetings found for parameters specified.");
