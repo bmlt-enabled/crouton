@@ -38,6 +38,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 
 = 3.4.2 =
 * Added media queries patch for "kevin" theme. [#155]
+* Fix for formats displaying in the selected language [#161]
 
 = 3.4.1 =
 * Fix for bug with backward compatibility with `meeting_data_template`.
