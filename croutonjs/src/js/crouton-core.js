@@ -255,7 +255,7 @@ function Crouton(config) {
 		var joinIds = getAllIds.join(',');
 		var idsArray = joinIds.split(',');
 		var uniqueIds = arrayUnique(idsArray);
-		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&callback=?', function (data) {
+		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=' + self.config['short_language'] + '&callback=?', function (data) {
 			var formats = [];
 			for (var i = 0; i < data.length; i++) {
 				var format = data[i];
@@ -433,6 +433,8 @@ Crouton.prototype.setConfig = function(config) {
 	if (self.config["template_path"] == null) {
 		self.config["template_path"] = "templates"
 	}
+
+	self.config['short_language'] = self.config['language'].substring(0, 2);
 };
 
 Crouton.prototype.reset = function() {
