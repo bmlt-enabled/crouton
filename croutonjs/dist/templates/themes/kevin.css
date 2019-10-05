@@ -43,3 +43,9 @@
     border-radius: 0;
     border: 1px solid #ccc;
 }
+@media screen and (max-width: 991px){
+    #bmlt-tabs .nav-tabs > li > a {
+        padding: 5px;
+        font-size: 1.1rem;
+    }
+}
