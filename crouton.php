@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.4.0
+Version: 3.4.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -27,6 +27,7 @@ if (!class_exists("Crouton")) {
             "lucy",
             "patrick"
         ];
+        public $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -500,14 +501,11 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <?php
-                        $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
-                        ?>
                         <h3>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : $default_template; ?></textarea>
+                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : $this->default_template; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
@@ -515,7 +513,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_meeting_data_template").click(function() {
-                                jQuery('#meeting_data_template').val("<?php echo $default_template?>");
+                                jQuery('#meeting_data_template').val("<?php echo $this->default_template?>");
                             });
                         </script>
                     </div>
@@ -687,7 +685,12 @@ if (!class_exists("Crouton")) {
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
 
             $params['custom_css'] = $this->options['custom_css'];
-            $params['meeting_data_template'] = html_entity_decode($this->options['meeting_data_template']);
+            if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
+                $meeting_data_template = $this->default_template;
+            } else {
+                $meeting_data_template = $this->options['meeting_data_template'];
+            }
+            $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
             $params['google_api_key'] = $this->options['google_api_key'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings'])) {
