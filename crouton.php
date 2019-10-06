@@ -382,7 +382,7 @@ if (!class_exists("Crouton")) {
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
                 $this->options['custom_query']   = $_POST['custom_query'];
-                $this->options['custom_css']     = $_POST['custom_css'];
+                $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
@@ -543,7 +543,7 @@ if (!class_exists("Crouton")) {
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
                             <li>
-                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? $this->options['custom_css'] : ""); ?></textarea>
+                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
                             </li>
                         </ul>
                     </div>
@@ -684,7 +684,7 @@ if (!class_exists("Crouton")) {
 
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
 
-            $params['custom_css'] = $this->options['custom_css'];
+            $params['custom_css'] = html_entity_decode($this->options['custom_css']);
             if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
                 $meeting_data_template = $this->default_template;
             } else {

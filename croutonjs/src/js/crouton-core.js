@@ -330,6 +330,7 @@ function Crouton(config) {
 		var meetings = [];
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
+		//crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -434,6 +435,7 @@ Crouton.prototype.setConfig = function(config) {
 		self.config["template_path"] = "templates"
 	}
 
+	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	self.config['short_language'] = self.config['language'].substring(0, 2);
 };
 
@@ -793,6 +795,14 @@ crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsEx
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
 		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
+	}
+	return finalFormats.join(" ");
+});
+
+crouton_Handlebars.registerHelper('formatDataKeyFormats', function(formatsExpanded) {
+	var finalFormats = [];
+	for (var i = 0; i < formatsExpanded.length; i++) {
+		finalFormats.push(convertToPunyCode(formatsExpanded[i]['key']));
 	}
 	return finalFormats.join(" ");
 });
