@@ -41,7 +41,6 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
-	self.localization = new CroutonLocalization(self.config['language']);
 	self.getMeetings = function(url) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 			if (data === null || JSON.stringify(data) === "{}") {
@@ -437,6 +436,7 @@ Crouton.prototype.setConfig = function(config) {
 
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	self.config['short_language'] = self.config['language'].substring(0, 2);
+	self.localization = new CroutonLocalization(self.config['language']);
 };
 
 Crouton.prototype.reset = function() {

@@ -37,6 +37,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 == Changelog ==
 
 = 3.4.2 =
+* Added the ability to override the language once already initialized [#163]
 * Added media queries patch for "kevin" theme. [#155]
 * Fix for meeting formats displaying in the selected language. [#161]
 * Fix for bug with Custom CSS escaping.
