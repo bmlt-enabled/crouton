@@ -17,6 +17,20 @@ function CroutonLocalization(language) {
 			"formats": "Struktur",
 			"map": "Kort"
 		},
+		"de-DE":{
+			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
+			"weekday": 'Wochentag',
+			"city": "Stadt",
+			"cities": "Städte",
+			"groups": "Gruppen",
+			"areas": "Gebiete",
+			"locations": "Orte",
+			"counties": "Landkreise",
+			"states": "Bundesländer",
+			"postal_codes": "PLZ",
+			"formats": "Formate",
+			"map": "Karte"
+		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 			"weekday" : "Weekday",
