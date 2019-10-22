@@ -59,6 +59,20 @@ function CroutonLocalization(language) {
 			"formats" : "Formats",
 			"map" : "Map"
 		},
+		"fa-IR": {
+			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
+			"weekday" : "روز هفته",
+			"city" : "شهر",
+			"cities" : "شهرها",
+			"groups" : "گروه ها",
+			"areas" : "نواحی",
+			"locations" : "آدرسها",
+			"counties" : "بخشها",
+			"states" : "ایالات",
+			"postal_codes":"کد پستی",
+			"formats" : "فورمت ها",
+			"map" : "نقشه"
+		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
 			"weekday" : "Journée",
