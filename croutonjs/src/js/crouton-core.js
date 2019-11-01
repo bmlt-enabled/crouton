@@ -746,8 +746,8 @@ Crouton.prototype.initMap = function() {
 		}
 
 		marker_html += '<br>';
-		var url = 'https://maps.google.com/maps?q=' + location.latitude + ',' + location.longitude;
-		marker_html += '<a href="' + url + '">';
+		var url = 'https://maps.google.com/maps?q=' + location.latitude + ',' + location.longitude + '&hl=' + self.config['short_language'];
+		marker_html += '<a target=\"_blank\" href="' + url + '">';
 		marker_html += self.localization.getWord('map');
 		marker_html += '</a>';
 		marker_html += '</dd></dl>';
