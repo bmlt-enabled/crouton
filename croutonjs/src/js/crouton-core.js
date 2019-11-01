@@ -710,12 +710,11 @@ Crouton.prototype.initMap = function() {
 	// create an array of markers based on a given "locations" array.
 	// The map() method here has nothing to do with the Google Maps API.
 	self.meetingData.map(function (location, i) {
-		var weekdays = [null, 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 		var marker_html = '<dl><dt><strong>';
 		marker_html += location.meeting_name;
 		marker_html += '</strong></dt>';
 		marker_html += '<dd><em>';
-		marker_html += weekdays[parseInt(location.weekday_tinyint)];
+		marker_html += self.localization.getDayOfTheWeekWord(location.weekday_tinyint);
 		var time = location.start_time.toString().split(':');
 		var hour = parseInt(time[0]);
 		var minute = parseInt(time[1]);
