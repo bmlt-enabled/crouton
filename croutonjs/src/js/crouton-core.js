@@ -4,6 +4,7 @@ function Crouton(config) {
 	self.mutex = false;
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
+		on_complete: null,            // Javascript function to callback when data querying is completed.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
 		map_max_zoom: 15,		      // Maximum zoom for the display map
 		time_format: "h:mm a",        // The format for time
@@ -654,6 +655,10 @@ Crouton.prototype.render = function(callback) {
 						var firstScriptTag = document.getElementsByTagName('script')[0];
 						firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 					}
+
+					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
+						self.config['on_complete']();
+					}
 				});
 			})
 		});
@@ -872,6 +877,10 @@ function arrayUnique(a, b, c) {
 
 function inArray(needle, haystack) {
 	return haystack.indexOf(needle) !== -1;
+}
+
+function isFunction(functionToCheck) {
+	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
 
 Array.prototype.filterByObjectKeyValue = function(key, value) {
