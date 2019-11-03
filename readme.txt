@@ -4,7 +4,7 @@ Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.2.3
+Tested up to: 5.2.4
 Stable tag: 3.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -38,6 +38,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 
 = 3.4.6 =
 * Added on_complete callback for croutonjs
+* pl-PL translations added.
 
 = 3.4.5 =
 * Fix for localizing Map modal word [#165]

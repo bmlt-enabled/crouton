@@ -157,6 +157,20 @@ function CroutonLocalization(language) {
 			"formats" : "Formats",
 			"map" : "Map"
 		},
+		"pl-PL": {
+			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
+			"weekday" : "Dzień tygodnia",
+			"city" : "Miasto",
+			"cities" : "Miasta",
+			"groups" : "Grupy",
+			"areas" : "Okręgi",
+			"locations" : "Lokalizacje",
+			"counties" : "Powiaty",
+			"states" : "Województwa",
+			"postal_codes" : "Kody pocztowe",
+			"formats" : "Formaty",
+			"map" : "Mapa"
+		},
 	};
 }
 
