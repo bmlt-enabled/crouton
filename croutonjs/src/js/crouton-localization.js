@@ -15,7 +15,8 @@ function CroutonLocalization(language) {
 			"states": "Provinser",
 			"postal_codes": "Post nummer",
 			"formats": "Struktur",
-			"map": "Kort"
+			"map": "Kort",
+			"neighborhood": "",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -29,7 +30,8 @@ function CroutonLocalization(language) {
 			"states": "Bundesländer",
 			"postal_codes": "PLZ",
 			"formats": "Formate",
-			"map": "Karte"
+			"map": "Karte",
+			"neighborhood": "",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -43,7 +45,8 @@ function CroutonLocalization(language) {
 			"states" : "States",
 			"postal_codes" : "Zips",
 			"formats" : "Formats",
-			"map" : "Map"
+			"map" : "Map",
+			"neighborhood": "Neighborhood",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -57,7 +60,8 @@ function CroutonLocalization(language) {
 			"states" : "Provinces",
 			"postal_codes" : "Postal Codes",
 			"formats" : "Formats",
-			"map" : "Map"
+			"map" : "Map",
+			"neighborhood": "Neighborhood",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -71,7 +75,8 @@ function CroutonLocalization(language) {
 			"states" : "ایالات",
 			"postal_codes":"کد پستی",
 			"formats" : "فورمت ها",
-			"map" : "نقشه"
+			"map" : "نقشه",
+			"neighborhood": "Neighborhood",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -85,7 +90,8 @@ function CroutonLocalization(language) {
 			"states" : "Provinces",
 			"postal_codes" : "Codes postaux",
 			"formats" : "Formats",
-			"map" : "Carte"
+			"map" : "Carte",
+			"neighborhood": "",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -100,6 +106,7 @@ function CroutonLocalization(language) {
 			"postal_codes" : "CAP",
 			"formats" : "Formati",
 			"map" : "Mappa",
+			"neighborhood": "",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -114,6 +121,7 @@ function CroutonLocalization(language) {
 			"postal_codes" : "Codiagos postales",
 			"formats" : "Formatos",
 			"map" : "Mapa",
+			"neighborhood": "Neighborhood",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -127,7 +135,8 @@ function CroutonLocalization(language) {
 			"states" : "States",
 			"postal_codes" : "Postcodes",
 			"formats" : "Formats",
-			"map" : "Map"
+			"map" : "Map",
+			"neighborhood": "Neighborhood",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -155,7 +164,8 @@ function CroutonLocalization(language) {
 			"states" : "States",
 			"postal_codes" : "Postcodes",
 			"formats" : "Formats",
-			"map" : "Map"
+			"map" : "Map",
+			"neighborhood": "Neighborhood",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -169,7 +179,23 @@ function CroutonLocalization(language) {
 			"states" : "Województwa",
 			"postal_codes" : "Kody pocztowe",
 			"formats" : "Formaty",
-			"map" : "Mapa"
+			"map" : "Mapa",
+			"neighborhood": "",
+		},
+		"pt-BR": {
+			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
+			"weekday" : "Dia da semana",
+			"city" : "Cidade",
+			"cities" : "Cidades",
+			"groups" : "Grupos",
+			"areas" : "Áreas",
+			"locations" : "Localizações",
+			"counties" : "Municípios",
+			"states" : "Estados",
+			"postal_codes" : "CEPs",
+			"formats" : "Formatos",
+			"map" : "Mapa",
+			"neighborhood": "Bairro",
 		},
 	};
 }
