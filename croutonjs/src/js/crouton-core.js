@@ -16,7 +16,7 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		show_map: false,              // Shows the map with pins
-		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y}
+		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_cities: true,             // Shows the cities dropdown
 		has_formats: true,            // Shows the formats dropdown
 		has_groups: true,             // Shows the groups dropdown
@@ -51,6 +51,13 @@ function Crouton(config) {
 		tag.async = true;
 		var firstScriptTag = document.getElementsByTagName('script')[0];
 		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	};
+	self.getCurrentLocation = function(callback, erroHandler) {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(callback, errorHandler);
+		} else {
+			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
+		}
 	};
 	self.getMeetings = function(url, callback) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
@@ -662,11 +669,7 @@ Crouton.prototype.render = function(callback) {
 					self.showView(self.config['view_by']);
 
 					if (self.config['show_distance']) {
-						if (navigator.geolocation) {
-							navigator.geolocation.getCurrentPosition(self.showLocation, self.errorHandler);
-						} else {
-							$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
-						}
+						self.getCurrentLocation(self.showLocation, self.errorHandler);
 					}
 
 					if (self.config['show_map']) {
@@ -685,6 +688,8 @@ Crouton.prototype.render = function(callback) {
 Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+
+
 	var map = new google.maps.Map(document.getElementById('bmlt-map'), {
 		zoom: self.config['map_search']['zoom'] || 10,
 		center: {

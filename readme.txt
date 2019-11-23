@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.2.4
-Stable tag: 3.4.7
+Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,10 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 <a href="https://orlandona.org/meetings/">Go to this Web page to get an idea of how this works.</a>
 
 == Changelog ==
+
+= 3.5.0 =
+* Added neighborhood dropdown feature [#175]
+* Search by map [#126]
 
 = 3.4.7 =
 * pt-BR translations added.

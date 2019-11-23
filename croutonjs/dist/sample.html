@@ -6,21 +6,20 @@
     <script type="text/javascript" src="crouton.min.js"></script>
     <script type="text/javascript">
         var crouton = new Crouton({
-            "root_server": "https://tomato.bmltenabled.org/main_server",
-            "map_search": { latitude: 35.542053, longitude: -78.0652501, width: -100, zoom: 8 },
-            "google_api_key": "AIzaSyDpJ6g4zMJlIA8S5u9lP-jL21ATpR7dSig",
-            "show_distance": true
+            "root_server": "https://bmlt.sezf.org/main_server",
+            "service_body": [ 44 ],
         });
-        /*crouton.meetingCount(function(res) {
+        crouton.render();
+        crouton.meetingCount(function(res) {
             document.getElementById("meeting-count").innerHTML = "Meeting count: " + res;
         });
         crouton.groupCount(function(res) {
             document.getElementById("group-count").innerHTML = "Group count: " + res;
-        });*/
+        });
     </script>
 </head>
 <body>
-    <!--<span id="meeting-count"></span>, <span id="group-count"></span>-->
-    <div id="bmlt-tabs"></div>
+<span id="meeting-count"></span>, <span id="group-count"></span>
+<div id="bmlt-tabs"></div>
 </body>
 </html>
