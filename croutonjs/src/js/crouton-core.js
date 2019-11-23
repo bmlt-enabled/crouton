@@ -16,6 +16,7 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		show_map: false,              // Shows the map with pins
+		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y}
 		has_cities: true,             // Shows the cities dropdown
 		has_formats: true,            // Shows the formats dropdown
 		has_groups: true,             // Shows the groups dropdown
@@ -43,7 +44,15 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
-	self.getMeetings = function(url) {
+	self.loadGapi = function(callbackFunctionName) {
+		var tag = document.createElement('script');
+		tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=" + callbackFunctionName;
+		tag.defer = true;
+		tag.async = true;
+		var firstScriptTag = document.getElementsByTagName('script')[0];
+		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	};
+	self.getMeetings = function(url, callback) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 			if (data === null || JSON.stringify(data) === "{}") {
 				console.error("Could not find any meetings for the criteria specified.");
@@ -60,24 +69,39 @@ function Crouton(config) {
 				jQuery.getJSON(self.config['root_server'] + url + '&callback=?' + extra_meetings_query, function (data) {
 					self.meetingData = self.meetingData.concat(data);
 					self.mutex = false;
+					callback();
 				});
 			} else {
 				self.mutex = false;
+				callback();
 			}
 		});
 	};
 	self.mutex = true;
 
-	jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFieldKeys&callback=?', function(data) {
+	self.meetingSearch = function(callback) {
 		var data_field_keys = [
+			'location_postal_code_1',
+			'duration_time',
+			'start_time',
+			'weekday_tinyint',
+			'service_body_bigint',
+			'longitude',
+			'latitude',
+			'location_province',
+			'location_municipality',
+			'location_street',
+			'location_info',
+			'location_text',
+			'location_neighborhood',
+			'formats',
 			'format_shared_id_list',
+			'comments',
+			'meeting_name',
+			'location_sub_province',
+			'worldid_mixed',
 			'root_server_uri'
 		];
-
-		for (var f = 0; f < data.length; f++) {
-			var data_field = data[f];
-			data_field_keys.push(data_field['key']);
-		}
 
 		var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
 		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
@@ -93,12 +117,12 @@ function Crouton(config) {
 						+ '&sort_results_by_distance=1';
 
 					url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
-					self.getMeetings(url);
+					self.getMeetings(url, callback);
 				}, self.errorHandler);
 			}
 		} else if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
-			self.getMeetings(url);
+			self.getMeetings(url, callback);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
 				url += '&services[]=' + self.config['service_body'][i];
@@ -110,9 +134,15 @@ function Crouton(config) {
 
 			url += '&sort_keys=' + self.config['sort_keys'];
 
-			self.getMeetings(url);
+			self.getMeetings(url, callback);
 		}
-	});
+	};
+
+	if (self.config['map_search'] !== null) {
+		self.loadGapi('crouton.renderMap');
+	} else {
+		self.meetingSearch();
+	}
 
 	self.lock = function(callback) {
 		var self = this;
@@ -383,7 +413,7 @@ function Crouton(config) {
 				return false;
 		}
 		return true;
-	}
+	};
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -640,12 +670,7 @@ Crouton.prototype.render = function(callback) {
 					}
 
 					if (self.config['show_map']) {
-						var tag = document.createElement('script');
-						tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=crouton.initMap";
-						tag.defer = true;
-						tag.async = true;
-						var firstScriptTag = document.getElementsByTagName('script')[0];
-						firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+						self.loadGapi('crouton.initMap');
 					}
 
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
@@ -657,11 +682,40 @@ Crouton.prototype.render = function(callback) {
 	});
 };
 
-Crouton.prototype.initMap = function() {
+Crouton.prototype.renderMap = function() {
 	var self = this;
+	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
 	var map = new google.maps.Map(document.getElementById('bmlt-map'), {
-		zoom: 3
+		zoom: self.config['map_search']['zoom'] || 10,
+		center: {
+			lat: self.config['map_search']['latitude'],
+			lng: self.config['map_search']['longitude'],
+		}
 	});
+
+	google.maps.event.addDomListener(map, 'click', function(data) {
+		var latitude = data.latLng.lat();
+		var longitude = data.latLng.lng();
+		var width = self.config['map_search']['width'] || -10;
+
+		self.config['custom_query'] = "&lat_val=" + latitude + "&long_val=" + longitude
+			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
+		self.meetingSearch(function() {
+			self.reset();
+			self.render();
+			self.initMap(map);
+		});
+	});
+};
+
+Crouton.prototype.initMap = function(map) {
+	var self = this;
+	if (map == null) {
+		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+		map = new google.maps.Map(document.getElementById('bmlt-map'), {
+			zoom: 3,
+		});
+	}
 
 	jQuery("#bmlt-map").removeClass("hide");
 	var bounds = new google.maps.LatLngBounds();
