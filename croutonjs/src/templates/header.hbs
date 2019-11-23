@@ -61,6 +61,17 @@
         </div>
     {{/if}}
 
+	{{#if this.config.has_neighborhoods}}
+        <div class="bmlt-dropdown-container">
+            <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'neighborhood'}}" data-pointer="Neighborhoods" id="e5">
+                <option></option>
+				{{#each this.uniqueData.neighborhoods}}
+                    <option value="a-{{formatDataPointer this}}">{{this}}</option>
+				{{/each}}
+            </select>
+        </div>
+	{{/if}}
+
     {{#if this.config.has_states}}
         <div class="bmlt-dropdown-container">
             <select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="e6">

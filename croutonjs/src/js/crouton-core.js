@@ -24,6 +24,7 @@ function Crouton(config) {
 		has_areas: false,             // Shows the areas dropdown
 		has_states: false,            // Shows the states dropdown
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
+		has_neighborhoods: false,     // Shows the neighborhood dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
@@ -473,6 +474,7 @@ Crouton.prototype.render = function(callback) {
 			'cities': getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort(),
 			'locations': getUniqueValuesOfKey(self.meetingData, 'location_text').sort(),
 			'sub_provinces': getUniqueValuesOfKey(self.meetingData, 'location_sub_province').sort(),
+			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
 			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
