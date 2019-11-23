@@ -67,61 +67,51 @@ function Crouton(config) {
 	};
 	self.mutex = true;
 
-	var data_field_keys = [
-		'location_postal_code_1',
-		'duration_time',
-		'start_time',
-		'weekday_tinyint',
-		'service_body_bigint',
-		'longitude',
-		'latitude',
-		'location_province',
-		'location_municipality',
-		'location_street',
-		'location_info',
-		'location_text',
-		'formats',
-		'format_shared_id_list',
-		'comments',
-		'meeting_name',
-		'location_sub_province',
-		'worldid_mixed',
-		'root_server_uri'
-	];
+	jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFieldKeys&callback=?', function(data) {
+		var data_field_keys = [
+			'format_shared_id_list',
+			'root_server_uri'
+		];
 
-	var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
-	while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
-		data_field_keys.push(arr[1])
-	}
-	var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
-
-	if (self.config['distance_search'] !== 0) {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function(position) {
-				url += '&lat_val=' + position.coords.latitude
-					+ '&long_val=' + position.coords.longitude
-					+ '&sort_results_by_distance=1';
-
-				url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
-				self.getMeetings(url);
-			}, self.errorHandler);
-		}
-	} else if (self.config['custom_query'] != null) {
-		url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
-		self.getMeetings(url);
-	} else if (self.config['service_body'].length > 0) {
-		for (var i = 0; i < self.config['service_body'].length; i++) {
-			url += '&services[]=' + self.config['service_body'][i];
+		for (var f = 0; f < data.length; f++) {
+			var data_field = data[f];
+			data_field_keys.push(data_field['key']);
 		}
 
-		if (self.config['recurse_service_bodies']) {
-			url += '&recursive=1';
+		var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
+		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
+			data_field_keys.push(arr[1])
 		}
+		var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
 
-		url += '&sort_keys=' + self.config['sort_keys'];
+		if (self.config['distance_search'] !== 0) {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					url += '&lat_val=' + position.coords.latitude
+						+ '&long_val=' + position.coords.longitude
+						+ '&sort_results_by_distance=1';
 
-		self.getMeetings(url);
-	}
+					url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
+					self.getMeetings(url);
+				}, self.errorHandler);
+			}
+		} else if (self.config['custom_query'] != null) {
+			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
+			self.getMeetings(url);
+		} else if (self.config['service_body'].length > 0) {
+			for (var i = 0; i < self.config['service_body'].length; i++) {
+				url += '&services[]=' + self.config['service_body'][i];
+			}
+
+			if (self.config['recurse_service_bodies']) {
+				url += '&recursive=1';
+			}
+
+			url += '&sort_keys=' + self.config['sort_keys'];
+
+			self.getMeetings(url);
+		}
+	});
 
 	self.lock = function(callback) {
 		var self = this;
