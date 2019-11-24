@@ -52,12 +52,23 @@ function Crouton(config) {
 		var firstScriptTag = document.getElementsByTagName('script')[0];
 		firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 	};
-	self.getCurrentLocation = function(callback, erroHandler) {
+	self.getCurrentLocation = function(callback) {
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(callback, errorHandler);
+			navigator.geolocation.getCurrentPosition(callback, self.errorHandler);
 		} else {
 			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
 		}
+	};
+	self.searchByCoordinates = function(map, latitude, longitude) {
+		var width = self.config['map_search']['width'] || -10;
+
+		self.config['custom_query'] = "&lat_val=" + latitude + "&long_val=" + longitude
+			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
+		self.meetingSearch(function() {
+			self.reset();
+			self.render();
+			self.initMap(map);
+		});
 	};
 	self.getMeetings = function(url, callback) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
@@ -669,7 +680,7 @@ Crouton.prototype.render = function(callback) {
 					self.showView(self.config['view_by']);
 
 					if (self.config['show_distance']) {
-						self.getCurrentLocation(self.showLocation, self.errorHandler);
+						self.getCurrentLocation(self.showLocation);
 					}
 
 					if (self.config['show_map']) {
@@ -689,7 +700,6 @@ Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
 
-
 	var map = new google.maps.Map(document.getElementById('bmlt-map'), {
 		zoom: self.config['map_search']['zoom'] || 10,
 		center: {
@@ -699,18 +709,14 @@ Crouton.prototype.renderMap = function() {
 	});
 
 	google.maps.event.addDomListener(map, 'click', function(data) {
-		var latitude = data.latLng.lat();
-		var longitude = data.latLng.lng();
-		var width = self.config['map_search']['width'] || -10;
-
-		self.config['custom_query'] = "&lat_val=" + latitude + "&long_val=" + longitude
-			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
-		self.meetingSearch(function() {
-			self.reset();
-			self.render();
-			self.initMap(map);
-		});
+		self.searchByCoordinates(map, data.latLng.lat(), data.latLng.lng());
 	});
+
+	if (self.config['map_search']['auto']) {
+		self.getCurrentLocation(function(position) {
+			self.searchByCoordinates(map, position.coords.latitude, position.coords.longitude)
+		});
+	}
 };
 
 Crouton.prototype.initMap = function(map) {
