@@ -304,7 +304,7 @@ if (!class_exists("Crouton")) {
 
         public function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . ($atts['map_search_option'] == null ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>" : "");
         }
 
         public function initCrouton($atts)
