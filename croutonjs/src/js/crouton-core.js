@@ -2,6 +2,9 @@ var crouton_Handlebars = Handlebars.noConflict();
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
+	self.map = null;
+	self.map_objects = [];
+	self.map_clusters = [];
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
@@ -59,7 +62,8 @@ function Crouton(config) {
 			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
 		}
 	};
-	self.searchByCoordinates = function(map, latitude, longitude) {
+
+	self.searchByCoordinates = function(latitude, longitude) {
 		var width = self.config['map_search']['width'] || -10;
 
 		self.config['custom_query'] = "&lat_val=" + latitude + "&long_val=" + longitude
@@ -67,9 +71,50 @@ function Crouton(config) {
 		self.meetingSearch(function() {
 			self.reset();
 			self.render();
-			self.initMap(map);
+			self.initMap(function() {
+				self.addCurrentLocationPin(latitude, longitude);
+			});
 		});
 	};
+
+	self.addCurrentLocationPin = function(latitude, longitude) {
+		var latlng = new google.maps.LatLng(latitude, longitude);
+		self.map.setCenter(latlng);
+
+		var currentLocationMarker = new google.maps.Marker({
+			"map": self.map,
+			"position": latlng,
+		});
+
+		self.addToMapObjectCollection(currentLocationMarker);
+
+		// TODO: needs to show on click only
+		/*var infowindow = new google.maps.InfoWindow({
+			"content": 'Current Location',
+			"position": latlng,
+		}).open(self.map, currentLocationMarker);*/
+	};
+
+	self.addToMapObjectCollection = function(obj) {
+		self.map_objects.push(obj);
+	};
+
+	self.clearAllMapClusters = function() {
+		while (self.map_clusters.length > 0) {
+			self.map_clusters[0].remove();
+			self.map_clusters.splice(0, 1);
+		}
+	};
+
+	self.clearAllMapObjects = function() {
+		while (self.map_objects.length > 0) {
+			self.map_objects[0].setMap(null);
+			self.map_objects.splice(0, 1);
+		}
+
+		//infoWindow.close();
+	};
+
 	self.getMeetings = function(url, callback) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
 			if (data === null || JSON.stringify(data) === "{}") {
@@ -483,6 +528,8 @@ Crouton.prototype.reset = function() {
 	var self = this;
 	jQuery("#custom-css").remove();
 	jQuery("#" + self.config["placeholder_id"]).html("");
+	self.clearAllMapObjects();
+	self.clearAllMapClusters();
 };
 
 Crouton.prototype.meetingCount = function(callback) {
@@ -700,7 +747,7 @@ Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
 
-	var map = new google.maps.Map(document.getElementById('bmlt-map'), {
+	self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
 		zoom: self.config['map_search']['zoom'] || 10,
 		center: {
 			lat: self.config['map_search']['latitude'],
@@ -708,22 +755,82 @@ Crouton.prototype.renderMap = function() {
 		}
 	});
 
-	google.maps.event.addDomListener(map, 'click', function(data) {
-		self.searchByCoordinates(map, data.latLng.lat(), data.latLng.lng());
+	var controlDiv = document.createElement('div');
+
+	// Set CSS for the control border
+	var controlUI = document.createElement('div');
+	controlUI.style.backgroundColor = '#fff';
+	controlUI.style.border = '2px solid #fff';
+	controlUI.style.cursor = 'pointer';
+	controlUI.style.marginBottom = '22px';
+	controlUI.style.textAlign = 'center';
+	controlUI.title = 'Click to recenter the map';
+	controlDiv.appendChild(controlUI);
+
+	// Set CSS for the control interior
+	var clickSearch = document.createElement('div');
+	clickSearch.style.color = 'rgb(25,25,25)';
+	clickSearch.style.fontFamily = 'Roboto,Arial,sans-serif';
+	clickSearch.style.fontSize = '16px';
+	clickSearch.style.lineHeight = '38px';
+	clickSearch.style.paddingLeft = '5px';
+	clickSearch.style.paddingRight = '5px';
+	clickSearch.innerHTML = 'Click Search';
+	controlUI.appendChild(clickSearch);
+
+	var panZoom = document.createElement('div');
+	panZoom.style.color = 'rgb(25,25,25)';
+	panZoom.style.fontFamily = 'Roboto,Arial,sans-serif';
+	panZoom.style.fontSize = '16px';
+	panZoom.style.lineHeight = '38px';
+	panZoom.style.paddingLeft = '5px';
+	panZoom.style.paddingRight = '5px';
+	panZoom.innerHTML = 'Pan + Zoom';
+	controlUI.appendChild(panZoom);
+
+	controlDiv.index = 1;
+
+	google.maps.event.addDomListener(clickSearch, 'click', function() {
+		console.log('clickSearch click');
+		self.mapClickSearchMode = true;
+		self.map.setOptions({
+			draggableCursor: 'crosshair',
+			zoomControl: false,
+			gestureHandling: 'none'
+		});
+	});
+
+	google.maps.event.addDomListener(panZoom, 'click', function() {
+		console.log('zoom click');
+		self.mapClickSearchMode = false;
+		self.map.setOptions({
+			draggableCursor: 'default',
+			zoomControl: true,
+			gestureHandling: 'auto'
+		});
+	});
+
+	self.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
+
+	self.map.addListener('click', function (data) {
+		if (self.mapClickSearchMode) {
+			console.log('search by coords click');
+			self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
+		}
 	});
 
 	if (self.config['map_search']['auto']) {
 		self.getCurrentLocation(function(position) {
-			self.searchByCoordinates(map, position.coords.latitude, position.coords.longitude)
+			self.searchByCoordinates(position.coords.latitude, position.coords.longitude)
 		});
 	}
 };
 
-Crouton.prototype.initMap = function(map) {
+Crouton.prototype.initMap = function(callback) {
 	var self = this;
-	if (map == null) {
+	if (self.map == null) {
 		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
-		map = new google.maps.Map(document.getElementById('bmlt-map'), {
+		self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
 			zoom: 3,
 		});
 	}
@@ -738,14 +845,15 @@ Crouton.prototype.initMap = function(map) {
 		bounds.extend(new google.maps.LatLng(lat, lng));
 	}
 	// We now have the full rectangle of our meeting search results. Scale the map to fit them.
-	map.fitBounds(bounds);
-
-	var clusterMarker = [];
+	self.map.fitBounds(bounds);
 
 	var infoWindow = new google.maps.InfoWindow();
 
 	// Create OverlappingMarkerSpiderfier instance
-	var oms = new OverlappingMarkerSpiderfier(map, {markersWontMove: true, markersWontHide: true});
+	var oms = new OverlappingMarkerSpiderfier(self.map, {
+		markersWontMove: true,
+		markersWontHide: true,
+	});
 
 	oms.addListener('format', function (marker, status) {
 		var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? self.config['template_path'] + '/NAMarkerR.png' :
@@ -761,11 +869,11 @@ Crouton.prototype.initMap = function(map) {
 		});
 	});
 
-
 	// This is necessary to make the Spiderfy work
 	oms.addListener('click', function (marker) {
+		console.log("oms_click");
 		infoWindow.setContent(marker.desc);
-		infoWindow.open(map, marker);
+		infoWindow.open(self.map, marker);
 	});
 	// Add some markers to the map.
 	// Note: The code uses the JavaScript Array.prototype.map() method to
@@ -818,26 +926,32 @@ Crouton.prototype.initMap = function(map) {
 
 		var marker = new google.maps.Marker({
 			position: latLng,
-			map: map
+			map: self.map
 		});
+
+		self.addToMapObjectCollection(marker);
 
 		// needed to make Spiderfy work
 		oms.addMarker(marker);
 
 		// needed to cluster marker
-		clusterMarker.push(marker);
+		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
+			console.log("marker_click");
 			infoWindow.setContent(marker_html);
-			infoWindow.open(map, marker);
+			infoWindow.open(self.map, marker);
 		});
 		return marker;
 	});
 
 	// Add a marker clusterer to manage the markers.
-	new MarkerClusterer(map, clusterMarker, {
+	var markerClusterer = new MarkerClusterer(self.map, self.map_clusters, {
 		imagePath: self.config['template_path'] + '/m',
-		maxZoom: self.config['map_max_zoom']
+		maxZoom: self.config['map_max_zoom'],
+		zoomOnClick: false
 	});
+
+	callback();
 };
 
 crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
