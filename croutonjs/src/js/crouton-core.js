@@ -835,7 +835,7 @@ Crouton.prototype.initMap = function(callback) {
 		});
 	}
 
-	jQuery("#bmlt-map").removeClass("hide");
+ 	jQuery("#bmlt-map").removeClass("hide");
 	var bounds = new google.maps.LatLngBounds();
 	// We go through all the results, and get the "spread" from them.
 	for (var c = 0; c < self.meetingData.length; c++) {
@@ -856,11 +856,19 @@ Crouton.prototype.initMap = function(callback) {
 	});
 
 	oms.addListener('format', function (marker, status) {
-		var iconURL = status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED ? self.config['template_path'] + '/NAMarkerR.png' :
-			status == OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE ? self.config['template_path'] + '/NAMarkerB.png' :
-				status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED ? self.config['template_path'] + '/NAMarkerB.png' :
-					status == OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE ? self.config['template_path'] + '/NAMarkerR.png' :
-						null;
+		var iconURL = null;
+		if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED) {
+			iconURL = self.config['template_path'] + '/NAMarkerR.png';
+		} else if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE) {
+			iconURL = self.config['template_path'] + '/NAMarkerR.png';
+		} else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED) {
+			iconURL = self.config['template_path'] + '/NAMarkerR.png';
+		} else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE) {
+			iconURL = self.config['template_path'] + '/NAMarkerB.png';
+		} else {
+			iconURL = null;
+		}
+
 		var iconSize = new google.maps.Size(22, 32);
 		marker.setIcon({
 			url: iconURL,
@@ -869,9 +877,18 @@ Crouton.prototype.initMap = function(callback) {
 		});
 	});
 
+	self.map.addListener('zoom_changed', function() {
+		self.map.addListener('idle', function() {
+			var spidered = oms.markersNearAnyOtherMarker();
+			for (var i = 0; i < spidered.length; i ++) {
+				spidered[i].icon.url = self.config['template_path'] + '/NAMarkerR.png';
+			}
+		});
+	});
+
 	// This is necessary to make the Spiderfy work
 	oms.addListener('click', function (marker) {
-		console.log("oms_click");
+		marker.zIndex = 999;
 		infoWindow.setContent(marker.desc);
 		infoWindow.open(self.map, marker);
 	});
@@ -925,8 +942,7 @@ Crouton.prototype.initMap = function(callback) {
 		var latLng = {"lat": parseFloat(location.latitude), "lng": parseFloat(location.longitude)};
 
 		var marker = new google.maps.Marker({
-			position: latLng,
-			map: self.map
+			position: latLng
 		});
 
 		self.addToMapObjectCollection(marker);
@@ -937,7 +953,6 @@ Crouton.prototype.initMap = function(callback) {
 		// needed to cluster marker
 		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
-			console.log("marker_click");
 			infoWindow.setContent(marker_html);
 			infoWindow.open(self.map, marker);
 		});

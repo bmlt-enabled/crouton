@@ -18,8 +18,8 @@ let jsFilesNoJQuery = [
 	'templates.js',
 	'crouton-core.js',
 	'punycode.1.4.1.js',
-	'markerclusterer.js',
-	'oms.min.js',
+	'markerclusterer-2.0.3.js',
+	'oms-1.0.3.min.js',
 ];
 let jsFilesWithJquery = [
 	'jquery-3.4.1.min.js',
