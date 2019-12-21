@@ -101,7 +101,7 @@ function Crouton(config) {
 
 	self.clearAllMapClusters = function() {
 		while (self.map_clusters.length > 0) {
-			self.map_clusters[0].remove();
+			self.map_clusters[0].setMap(null);
 			self.map_clusters.splice(0, 1);
 		}
 	};
