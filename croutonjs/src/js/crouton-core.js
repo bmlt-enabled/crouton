@@ -5,6 +5,8 @@ function Crouton(config) {
 	self.map = null;
 	self.map_objects = [];
 	self.map_clusters = [];
+	self.oms = null;
+	self.markerClusterer = null;
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
@@ -103,6 +105,14 @@ function Crouton(config) {
 		while (self.map_clusters.length > 0) {
 			self.map_clusters[0].setMap(null);
 			self.map_clusters.splice(0, 1);
+		}
+
+		if (self.oms !== null) {
+			self.oms.removeAllMarkers();
+		}
+
+		if (self.markerClusterer !== null) {
+			self.markerClusterer.clearMarkers();
 		}
 	};
 
@@ -850,17 +860,17 @@ Crouton.prototype.initMap = function(callback) {
 	var infoWindow = new google.maps.InfoWindow();
 
 	// Create OverlappingMarkerSpiderfier instance
-	var oms = new OverlappingMarkerSpiderfier(self.map, {
+	self.oms = new OverlappingMarkerSpiderfier(self.map, {
 		markersWontMove: true,
 		markersWontHide: true,
 	});
 
-	oms.addListener('format', function (marker, status) {
+	self.oms.addListener('format', function (marker, status) {
 		var iconURL;
 		if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED
 			|| status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE
 			|| status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED) {
-			iconURL = self.config['template_path'] + '/NAMarkerR.png';;
+			iconURL = self.config['template_path'] + '/NAMarkerR.png';
 		} else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE) {
 			iconURL = self.config['template_path'] + '/NAMarkerB.png';
 		} else {
@@ -877,7 +887,7 @@ Crouton.prototype.initMap = function(callback) {
 
 	self.map.addListener('zoom_changed', function() {
 		self.map.addListener('idle', function() {
-			var spidered = oms.markersNearAnyOtherMarker();
+			var spidered = self.oms.markersNearAnyOtherMarker();
 			for (var i = 0; i < spidered.length; i ++) {
 				spidered[i].icon.url = self.config['template_path'] + '/NAMarkerR.png';
 			}
@@ -885,7 +895,7 @@ Crouton.prototype.initMap = function(callback) {
 	});
 
 	// This is necessary to make the Spiderfy work
-	oms.addListener('click', function (marker) {
+	self.oms.addListener('click', function (marker) {
 		marker.zIndex = 999;
 		infoWindow.setContent(marker.desc);
 		infoWindow.open(self.map, marker);
@@ -944,7 +954,7 @@ Crouton.prototype.initMap = function(callback) {
 		});
 
 		self.addToMapObjectCollection(marker);
-		oms.addMarker(marker);
+		self.oms.addMarker(marker);
 
 		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
@@ -955,7 +965,7 @@ Crouton.prototype.initMap = function(callback) {
 	});
 
 	// Add a marker clusterer to manage the markers.
-	var markerClusterer = new MarkerClusterer(self.map, self.map_clusters, {
+	self.markerClusterer = new MarkerClusterer(self.map, self.map_clusters, {
 		imagePath: self.config['template_path'] + '/m',
 		maxZoom: self.config['map_max_zoom'],
 		zoomOnClick: false
