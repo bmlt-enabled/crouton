@@ -856,13 +856,11 @@ Crouton.prototype.initMap = function(callback) {
 	});
 
 	oms.addListener('format', function (marker, status) {
-		var iconURL = null;
-		if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED) {
-			iconURL = self.config['template_path'] + '/NAMarkerR.png';
-		} else if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE) {
-			iconURL = self.config['template_path'] + '/NAMarkerR.png';
-		} else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED) {
-			iconURL = self.config['template_path'] + '/NAMarkerR.png';
+		var iconURL;
+		if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED
+			|| status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE
+			|| status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED) {
+			iconURL = self.config['template_path'] + '/NAMarkerR.png';;
 		} else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE) {
 			iconURL = self.config['template_path'] + '/NAMarkerB.png';
 		} else {
@@ -946,11 +944,8 @@ Crouton.prototype.initMap = function(callback) {
 		});
 
 		self.addToMapObjectCollection(marker);
-
-		// needed to make Spiderfy work
 		oms.addMarker(marker);
 
-		// needed to cluster marker
 		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
 			infoWindow.setContent(marker_html);
