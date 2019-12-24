@@ -25,7 +25,8 @@ if (!class_exists("Crouton")) {
             "jack",
             "kevin",
             "lucy",
-            "patrick"
+            "patrick",
+            "sezf"
         ];
         public $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
         const HTTP_RETRIEVE_ARGS = array(

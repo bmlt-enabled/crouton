@@ -39,6 +39,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 = 3.5.0 =
 * Added neighborhood dropdown feature. [#175]
 * Search by map, by click or automatically by location. [#126]
+* Added "sezf" theme.
 
 = 3.4.7 =
 * pt-BR translations added.
