@@ -801,7 +801,6 @@ Crouton.prototype.renderMap = function() {
 	controlDiv.index = 1;
 
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
-		console.log('clickSearch click');
 		self.mapClickSearchMode = true;
 		self.map.setOptions({
 			draggableCursor: 'crosshair',
@@ -811,7 +810,6 @@ Crouton.prototype.renderMap = function() {
 	});
 
 	google.maps.event.addDomListener(panZoom, 'click', function() {
-		console.log('zoom click');
 		self.mapClickSearchMode = false;
 		self.map.setOptions({
 			draggableCursor: 'default',
@@ -824,7 +822,6 @@ Crouton.prototype.renderMap = function() {
 
 	self.map.addListener('click', function (data) {
 		if (self.mapClickSearchMode) {
-			console.log('search by coords click');
 			self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
 		}
 	});
