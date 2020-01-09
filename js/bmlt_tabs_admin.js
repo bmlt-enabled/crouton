@@ -7,6 +7,7 @@
 	document.getElementById("txtSelectedValues1").innerHTML = '<b>Service Body ID:</b> <span class="bmlt_sb">' + res[1] + '</span>';
 	document.getElementById("txtSelectedValues2").innerHTML = '<b>Service Body Parent:</b> <span class="bmlt_sb">' + res[3] + '</span>, <b>Service Body Parent ID:</b> <span class="bmlt_sb">' + res[2] + '</span>';
 };
+
 function numbersonly(myfield, e, dec)
 {
 	var key;
@@ -36,6 +37,7 @@ function numbersonly(myfield, e, dec)
 };
 
 jQuery(document).ready(function($) {
+	var tomato = "https://tomato.na-bmlt.org/main_server";
 	$("#accordion").accordion({
 		heightStyle: "content",
 		active: false,
@@ -61,4 +63,13 @@ jQuery(document).ready(function($) {
 	$('#extra_meetings').on('chosen:hiding_dropdown', function(evt, params) {
 		$(".ctrl_key").hide();
 	});
+	$('#use_tomato').click(function() {
+		if($(this).is(':checked')) {
+			$("#root_server").val(tomato);
+		}
+	});
+	var rootServerValue = $('#root_server').val();
+	if(~rootServerValue.indexOf(tomato)) {
+		$("#use_tomato").prop("checked", true);
+	}
 });

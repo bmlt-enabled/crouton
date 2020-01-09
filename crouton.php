@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.5.0
+Version: 3.5.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -426,6 +426,10 @@ if (!class_exists("Crouton")) {
                             <li>
                                 <label for="root_server">Default Root Server: </label>
                                 <input id="root_server" type="text" size="50" name="root_server" value="<?php echo $this->options['root_server']; ?>" /> <?php echo $connect; ?>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="use_tomato" name="use_tomato" value="1"/>
+                                <label for="use_tomato">Use Tomato &#127813; (Root Server Aggregator)</label>
                             </li>
                         </ul>
                     </div>
