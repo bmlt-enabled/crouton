@@ -37,7 +37,7 @@ function numbersonly(myfield, e, dec)
 };
 
 jQuery(document).ready(function($) {
-	var tomato = "https://tomato.na-bmlt.org/main_server";
+	var tomato = "https://tomato.bmltenabled.org/main_server";
 	$("#accordion").accordion({
 		heightStyle: "content",
 		active: false,
