@@ -6,6 +6,7 @@ const rename = require('gulp-rename');
 const handlebars = require('gulp-handlebars');
 const wrap = require('gulp-wrap');
 const declare = require('gulp-declare');
+const notify = require('gulp-notify');
 
 let jsFilesNoJQuery = [
 	'bootstrap.min.js',
@@ -45,7 +46,8 @@ task('js-files-nojquery', () => {
 				min:'.min.js'
 			},
 		}))
-		.pipe(dest(distDir));
+		.pipe(dest(distDir))
+		.pipe(notify("js-files-nojquery complete"));
 });
 
 task('js-files', () => {
@@ -62,7 +64,8 @@ task('js-files', () => {
 				min:'.min.js'
 			},
 		}))
-		.pipe(dest(distDir));
+		.pipe(dest(distDir))
+		.pipe(notify("js-files complete"));
 });
 
 task('templates', function () {
@@ -74,7 +77,8 @@ task('templates', function () {
 			noRedeclare: true, // Avoid duplicate declarations
 		}))
 		.pipe(concat('templates.js'))
-		.pipe(dest('croutonjs/src/js'));
+		.pipe(dest('croutonjs/src/js'))
+		.pipe(notify("templates complete"));
 });
 
 task('css-files', () => {
@@ -91,6 +95,7 @@ task('css-files', () => {
 			suffix: '.min'
 		}))
 		.pipe(dest(distDir))
+		.pipe(notify("css-files complete"));
 });
 
 task('default', series('templates', 'js-files', 'js-files-nojquery', 'css-files'));
