@@ -12,7 +12,7 @@ let jsFilesNoJQuery = [
 	'bootstrap.min.js',
 	'select2.full.min.js',
 	'tablesaw.jquery.3.0.9.js',
-	'handlebars-v4.0.12.js',
+	'handlebars-v4.5.3.js',
 	'moment.js',
 	'moment-timezone.js',
 	'crouton-localization.js',
