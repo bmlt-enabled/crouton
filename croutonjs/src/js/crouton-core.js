@@ -782,7 +782,11 @@ Crouton.prototype.renderMap = function() {
 		center: {
 			lat: self.config['map_search']['latitude'],
 			lng: self.config['map_search']['longitude'],
-		}
+		},
+		mapTypeControl: true,
+		mapTypeControlOptions: {
+			style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+		},
 	});
 
 	var controlDiv = document.createElement('div');
