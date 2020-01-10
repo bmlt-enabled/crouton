@@ -93,7 +93,7 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "tabbedUi"
                 ));
-                add_shortcode('bmlt_tabs_map', array(
+                add_shortcode('crouton_map', array(
                     &$this,
                     "croutonMap"
                 ));
@@ -125,7 +125,7 @@ if (!class_exists("Crouton")) {
                 echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[bmlt_tabs_map') !== false) {
+            if (stripos($post_to_check->post_content, '[crouton_map') !== false) {
                 return true;
             }
             if (stripos($post_to_check->post_content, '[bmlt_count') !== false) {
@@ -327,11 +327,14 @@ if (!class_exists("Crouton")) {
 
         public function renderMap($atts)
         {
-            if ($atts == null) $atts = array();
+            if ($atts == null) {
+                $atts = array();
+            }
             $atts['map_search'] = (object)[
                 "zoom" => 10,
                 "latitude" => 0,
                 "longitude" => 0,
+                "width" => "-50",
                 "auto" => true
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
