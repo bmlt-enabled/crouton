@@ -72,4 +72,21 @@ jQuery(document).ready(function($) {
 	if(~rootServerValue.indexOf(tomato)) {
 		$("#use_tomato").prop("checked", true);
 	}
+	$('.tooltip').tooltipster({
+		animation: 'grow',
+		delay: 200,
+		theme: 'tooltipster-noir',
+		hideOnClick: true,
+		contentAsHTML: true,
+		positionTracker: false,
+		icon: '(?)',
+		iconCloning: true,
+		iconDesktop: true,
+		iconTouch: false,
+		iconTheme: 'tooltipster-icon',
+		interactive: true,
+		arrow: true,
+		position: 'right',
+		trigger: 'click'
+	});
 });
