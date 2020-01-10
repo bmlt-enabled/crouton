@@ -753,6 +753,26 @@ Crouton.prototype.render = function(callback) {
 	});
 };
 
+Crouton.prototype.mapSearchClickMode = function() {
+	var self = this;
+	self.mapClickSearchMode = true;
+	self.map.setOptions({
+		draggableCursor: 'crosshair',
+		zoomControl: false,
+		gestureHandling: 'none'
+	});
+};
+
+Crouton.prototype.mapSearchPanZoomMode = function() {
+	var self = this;
+	self.mapClickSearchMode = false;
+	self.map.setOptions({
+		draggableCursor: 'default',
+		zoomControl: true,
+		gestureHandling: 'auto'
+	});
+};
+
 Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
@@ -790,31 +810,25 @@ Crouton.prototype.renderMap = function() {
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
 		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
 		if (controlsButtonSelections === "clicksearch") {
-			self.mapClickSearchMode = true;
-			self.map.setOptions({
-				draggableCursor: 'crosshair',
-				zoomControl: false,
-				gestureHandling: 'none'
-			});
+			self.mapSearchClickMode();
 		} else if (controlsButtonSelections === "panzoom") {
-			self.mapClickSearchMode = false;
-			self.map.setOptions({
-				draggableCursor: 'default',
-				zoomControl: true,
-				gestureHandling: 'auto'
-			});
+			self.mapSearchPanZoomMode();
 		}
 	});
 
 	self.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
 	self.map.addListener('click', function (data) {
 		if (self.mapClickSearchMode) {
+			self.mapSearchPanZoomMode();
+			jQuery("#panzoom").prop("checked", true);
 			self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
 		}
 	});
 
 	if (self.config['map_search']['auto']) {
 		self.getCurrentLocation(function(position) {
+			self.mapSearchPanZoomMode();
+			jQuery("#panzoom").prop("checked", true);
 			self.searchByCoordinates(position.coords.latitude, position.coords.longitude)
 		});
 	}
