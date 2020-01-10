@@ -71,7 +71,7 @@ if (!class_exists("Crouton")) {
                 "int_start_day_id" => '1',
                 "recurse_service_bodies" => '0',
                 "theme" => '',
-                "map_search_option" => null,
+                "map_search" => null,
             );
 
         public function __construct()
@@ -92,6 +92,10 @@ if (!class_exists("Crouton")) {
                 add_shortcode('bmlt_tabs', array(
                     &$this,
                     "tabbedUi"
+                ));
+                add_shortcode('crouton_map', array(
+                    &$this,
+                    "croutonMap"
                 ));
                 add_shortcode('bmlt_count', array(
                     &$this,
@@ -119,6 +123,9 @@ if (!class_exists("Crouton")) {
             // check the post content for the short code
             if (stripos($post_to_check->post_content, '[bmlt_tabs') !== false) {
                 echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
+                return true;
+            }
+            if (stripos($post_to_check->post_content, '[crouton_map') !== false) {
                 return true;
             }
             if (stripos($post_to_check->post_content, '[bmlt_count') !== false) {
@@ -270,8 +277,7 @@ if (!class_exists("Crouton")) {
             return $message;
         }
 
-        public function tabbedUi($atts, $content = null)
-        {
+        public function sharedRender() {
             $output = "";
             if (isset($_GET['this_title'])) {
                 $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
@@ -290,8 +296,17 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['group_count'])) {
                 $output .= '<span class="bmlt_tabs_group_count">Groups: ' . $this->groupCount($atts) . '</span>';
             }
+            return $output;
+        }
 
-            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $output .  $this->renderTable($atts) . '</div><script>document.getElementById("please-wait").style.display = "none";</script>';
+        public function tabbedUi($atts, $content = null)
+        {
+            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderTable($atts) . '</div><script>document.getElementById("please-wait").style.display = "none";</script>';
+        }
+
+        public function croutonMap($atts, $content = null)
+        {
+            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderMap($atts) . '</div>';
         }
 
         public function getInitializeCroutonBlock($config = array())
@@ -306,7 +321,18 @@ if (!class_exists("Crouton")) {
 
         public function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . ($atts['map_search_option'] == null ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>" : "");
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+        }
+
+        public function renderMap($atts)
+        {
+            $atts['map_search'] = (object)[
+                "zoom" => 10,
+                "latitude" => 0,
+                "longitude" => 0,
+                "auto" => true
+            ];
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
         public function initCrouton($atts)
@@ -675,14 +701,14 @@ if (!class_exists("Crouton")) {
                 array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
             }
 
-            $convert_to_int = array("latitude", "longitude", "width", "zoom");
+            /*$convert_to_int = array("latitude", "longitude", "width", "zoom");
             $params['map_search'] = null;
             foreach (explode(",", $params['map_search_option']) as $item) {
                 $setting = explode(":", $item);
                 $key = trim($setting[0]);
                 $value = trim($setting[1]);
                 $params['map_search'][$key] = intval($value);
-            }
+            }*/
 
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());

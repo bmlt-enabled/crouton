@@ -772,7 +772,8 @@ Crouton.prototype.renderMap = function() {
 	controlUI.style.backgroundColor = '#fff';
 	controlUI.style.border = '2px solid #fff';
 	controlUI.style.cursor = 'pointer';
-	controlUI.style.marginBottom = '22px';
+	controlUI.style.marginTop = '10px';
+	controlUI.style.marginRight = '10px';
 	controlUI.style.textAlign = 'center';
 	controlUI.title = 'Click to recenter the map';
 	controlDiv.appendChild(controlUI);
@@ -781,45 +782,31 @@ Crouton.prototype.renderMap = function() {
 	var clickSearch = document.createElement('div');
 	clickSearch.style.color = 'rgb(25,25,25)';
 	clickSearch.style.fontFamily = 'Roboto,Arial,sans-serif';
-	clickSearch.style.fontSize = '16px';
-	clickSearch.style.lineHeight = '38px';
-	clickSearch.style.paddingLeft = '5px';
-	clickSearch.style.paddingRight = '5px';
-	clickSearch.innerHTML = 'Click Search';
+	clickSearch.style.fontSize = '10px';
+	clickSearch.innerHTML = '<input type=\"radio\" id=\"clicksearch\" name=\"mapcontrols\"> Click Search <input type=\"radio\" id=\"panzoom\" name=\"mapcontrols\" checked> Pan + Zoom';
 	controlUI.appendChild(clickSearch);
-
-	var panZoom = document.createElement('div');
-	panZoom.style.color = 'rgb(25,25,25)';
-	panZoom.style.fontFamily = 'Roboto,Arial,sans-serif';
-	panZoom.style.fontSize = '16px';
-	panZoom.style.lineHeight = '38px';
-	panZoom.style.paddingLeft = '5px';
-	panZoom.style.paddingRight = '5px';
-	panZoom.innerHTML = 'Pan + Zoom';
-	controlUI.appendChild(panZoom);
-
 	controlDiv.index = 1;
 
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
-		self.mapClickSearchMode = true;
-		self.map.setOptions({
-			draggableCursor: 'crosshair',
-			zoomControl: false,
-			gestureHandling: 'none'
-		});
-	});
-
-	google.maps.event.addDomListener(panZoom, 'click', function() {
-		self.mapClickSearchMode = false;
-		self.map.setOptions({
-			draggableCursor: 'default',
-			zoomControl: true,
-			gestureHandling: 'auto'
-		});
+		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
+		if (controlsButtonSelections === "clicksearch") {
+			self.mapClickSearchMode = true;
+			self.map.setOptions({
+				draggableCursor: 'crosshair',
+				zoomControl: false,
+				gestureHandling: 'none'
+			});
+		} else if (controlsButtonSelections === "panzoom") {
+			self.mapClickSearchMode = false;
+			self.map.setOptions({
+				draggableCursor: 'default',
+				zoomControl: true,
+				gestureHandling: 'auto'
+			});
+		}
 	});
 
 	self.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
-
 	self.map.addListener('click', function (data) {
 		if (self.mapClickSearchMode) {
 			self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
