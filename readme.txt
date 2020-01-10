@@ -4,7 +4,7 @@ Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.3.0
+Tested up to: 5.3.2
 Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -37,6 +37,7 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 == Changelog ==
 
 = 3.5.0 =
+* Added checkbox for using tomato as root server. [#181]
 * Added neighborhood dropdown feature. [#175]
 * Search by map, by click or automatically by location. [#126]
 * Added "sezf" theme.
