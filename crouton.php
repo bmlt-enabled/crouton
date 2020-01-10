@@ -277,7 +277,8 @@ if (!class_exists("Crouton")) {
             return $message;
         }
 
-        public function sharedRender() {
+        public function sharedRender()
+        {
             $output = "";
             if (isset($_GET['this_title'])) {
                 $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
