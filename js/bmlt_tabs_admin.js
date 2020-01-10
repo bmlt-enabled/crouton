@@ -63,6 +63,11 @@ jQuery(document).ready(function($) {
 	$('#extra_meetings').on('chosen:hiding_dropdown', function(evt, params) {
 		$(".ctrl_key").hide();
 	});
+	$(window).on("load", function () {
+		if($('#use_tomato').is(':checked')) {
+			$("#root_server").prop("readonly", true);
+		}
+	});
 	$('#use_tomato').click(function() {
 		if($(this).is(':checked')) {
 			$("#root_server").val(tomato);
