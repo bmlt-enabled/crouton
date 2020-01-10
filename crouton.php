@@ -72,6 +72,11 @@ if (!class_exists("Crouton")) {
                 "recurse_service_bodies" => '0',
                 "theme" => '',
                 "map_search" => null,
+                "map_search_zoom" => 10,
+                "map_search_latitude" => 0,
+                "map_search_longitude" => 0,
+                "map_search_width" => '-50',
+                "map_search_auto" => false
             );
 
         public function __construct()
@@ -331,11 +336,11 @@ if (!class_exists("Crouton")) {
                 $atts = array();
             }
             $atts['map_search'] = (object)[
-                "zoom" => 10,
-                "latitude" => 0,
-                "longitude" => 0,
-                "width" => "-50",
-                "auto" => true
+                "zoom" => intval($atts['map_search_zoom']),
+                "latitude" => intval($atts['map_search_latitude']),
+                "longitude" => intval($atts['map_search_longitude']),
+                "width" => $atts['map_search_width'],
+                "auto" => boolval($atts['map_search_auto'])
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
