@@ -803,7 +803,7 @@ Crouton.prototype.renderMap = function() {
 	clickSearch.style.color = 'rgb(25,25,25)';
 	clickSearch.style.fontFamily = 'Roboto,Arial,sans-serif';
 	clickSearch.style.fontSize = '10px';
-	clickSearch.innerHTML = '<input type=\"radio\" id=\"clicksearch\" name=\"mapcontrols\"> Click Search <input type=\"radio\" id=\"panzoom\" name=\"mapcontrols\" checked> Pan + Zoom';
+	clickSearch.innerHTML = '<label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
 	controlUI.appendChild(clickSearch);
 	controlDiv.index = 1;
 

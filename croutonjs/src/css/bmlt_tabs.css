@@ -536,3 +536,10 @@ table.tablesaw {
 		display: none !important;
 	}
 }
+
+.mapcontrolslabel {
+	font-size: 10px;
+	display: inline;
+	cursor: pointer;
+	margin-right: 2px;
+}
