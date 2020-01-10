@@ -458,7 +458,7 @@ if (!class_exists("Crouton")) {
                     }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3>BMLT Root Server URL</h3>
-                        <p>Example: https://naflorida.org/bmlt_server</p>
+                        <p>Example: https://bmlt.sezf.org/main_server</p>
                         <ul>
                             <li>
                                 <label for="root_server">Default Root Server: </label>

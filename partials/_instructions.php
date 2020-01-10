@@ -11,11 +11,11 @@
 		<p>You can override any shortcode value.
 		<p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
 		<p><strong>Meetings for One Area.</strong></p>
-		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body=2&this_title=Greater%20Orlando%20Area%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://bmlt.sezf.org/main_server&service_body=44&this_title=Crossroads%20Area%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44&<span style="color:red;">this_title</span>=Crossroads%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 		<p><strong>Meetings for Two (or more) Areas.</strong></p>
-		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body=2,18&this_title=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body</span>=2,18&<span style="color:red;">this_title</span>=Greater%20Orlando%20Area%20and%20Central%20Florda%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://bmlt.sezf.org/main_server&service_body=44,56&this_title=Crossroads%20Area%20and%20Down%20East%20Area&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44,45&<span style="color:red;">this_title</span>=Crossroads%20Area%20and%20Down%20East%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 		<p><strong>Meetings for One Region.</strong></p>
-		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://naflorida.org/bmlt_server&service_body_parent=1&this_title=Florida%20Region%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://naflorida.org/bmlt_server&<span style="color:red;">service_body_parent</span>=1&<span style="color:red;">this_title</span>=Florida%20Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://nameetinglist.org/bmlt-tabs/?root_server=https://bmlt.sezf.org/main_server&service_body_parent=43&this_title=North%20Carolina%20Region%20Meetings&meeting_count=1&group_count=1">https://nameetinglist.org/bmlt-tabs/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body_parent</span>=43&<span style="color:red;">this_title</span>=North%20Carolina%2-Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 		<p><em>Title, meeting and group count have unique CSS classes that can be used for custom styling.</em></p>
 	</div>
 	<h3 class="help-accordian"><strong>Time Format</strong></h3>
@@ -59,7 +59,7 @@
 	<h3 class="help-accordian"><strong>Root Server</strong></h3>
 	<div>
 		<p>Use a different Root Server.</p>
-		<p><strong>[bmlt_tabs service_body="2" root_server="https://naflorida.org/bmlt_server"]</strong></p>
+		<p><strong>[bmlt_tabs service_body="2" root_server="https://bmlt.sezf.org/main_server"]</strong></p>
 		<p>Useful for displaying meetings from a different root server.</p>
 		<em><p>Hint: To find service body IDs enter the different root server into the "BMLT Root Server URL" box and save.</p>
 			<p>Remember to enter your current Root Server back into the "BMLT Root Server URL".</p></em>
