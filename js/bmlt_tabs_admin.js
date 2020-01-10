@@ -66,6 +66,10 @@ jQuery(document).ready(function($) {
 	$('#use_tomato').click(function() {
 		if($(this).is(':checked')) {
 			$("#root_server").val(tomato);
+			$("#root_server").prop("readonly", true);
+		} else {
+			$("#root_server").val("");
+			$("#root_server").prop("readonly", false);
 		}
 	});
 	var rootServerValue = $('#root_server').val();
