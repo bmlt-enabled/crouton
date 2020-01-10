@@ -342,7 +342,7 @@ if (!class_exists("Crouton")) {
                 "width" => $atts['map_search_width'],
                 "auto" => boolval($atts['map_search_auto'])
             ];
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
 
         public function initCrouton($atts)
