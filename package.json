@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/bmlt-enabled/crouton#readme",
   "dependencies": {
-    "gulp-notify": "^3.2.0"
+    "gulp-notify": "^3.2.0",
+    "handlebars": "^4.5.3"
   }
 }
