@@ -781,10 +781,9 @@ Crouton.prototype.mapSearchNearMeMode = function() {
 	});
 };
 
-Crouton.prototype.mapSearchTextMode = function() {
+Crouton.prototype.mapSearchTextMode = function(location) {
 	var self = this;
-	var location = prompt("Enter a location or postal code:");
-	if (location !== null && location.trim().length > 0) {
+	if (location !== undefined && location !== null && location !== "") {
 		self.geocoder.geocode({'address': location}, function (results, status) {
 			if (status === 'OK') {
 				self.mapSearchPanZoomMode();
@@ -830,7 +829,7 @@ Crouton.prototype.renderMap = function() {
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
 		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
 		if (controlsButtonSelections === "textsearch") {
-			self.mapSearchTextMode();
+			self.mapSearchTextMode(prompt("Enter a location or postal code:"));
 		} else if (controlsButtonSelections === "nearme") {
 			self.mapSearchNearMeMode();
 		} else if (controlsButtonSelections === "clicksearch") {
@@ -851,6 +850,8 @@ Crouton.prototype.renderMap = function() {
 
 	if (self.config['map_search']['auto']) {
 		self.mapSearchNearMeMode();
+	} else if (self.config['map_search']['location'] !== null) {
+		self.mapSearchTextMode(self.config['map_search']['location']);
 	}
 };
 

@@ -76,7 +76,8 @@ if (!class_exists("Crouton")) {
                 "map_search_latitude" => 0,
                 "map_search_longitude" => 0,
                 "map_search_width" => '-50',
-                "map_search_auto" => false
+                "map_search_auto" => false,
+                "map_search_location" => null
             );
 
         public function __construct()
@@ -340,7 +341,8 @@ if (!class_exists("Crouton")) {
                 "latitude" => intval($atts['map_search_latitude']),
                 "longitude" => intval($atts['map_search_longitude']),
                 "width" => $atts['map_search_width'],
-                "auto" => boolval($atts['map_search_auto'])
+                "auto" => boolval($atts['map_search_auto']),
+                "location" => $atts['map_search_location']
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
