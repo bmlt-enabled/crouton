@@ -793,20 +793,13 @@ Crouton.prototype.renderMap = function() {
 
 	// Set CSS for the control border
 	var controlUI = document.createElement('div');
-	controlUI.style.backgroundColor = '#fff';
-	controlUI.style.border = '2px solid #fff';
-	controlUI.style.cursor = 'pointer';
-	controlUI.style.marginTop = '10px';
-	controlUI.style.marginRight = '10px';
-	controlUI.style.textAlign = 'center';
+	controlUI.className = 'mapcontrolcontainer';
 	controlUI.title = 'Click to recenter the map';
 	controlDiv.appendChild(controlUI);
 
 	// Set CSS for the control interior
 	var clickSearch = document.createElement('div');
-	clickSearch.style.color = 'rgb(25,25,25)';
-	clickSearch.style.fontFamily = 'Roboto,Arial,sans-serif';
-	clickSearch.style.fontSize = '10px';
+	clickSearch.className = 'mapcontrols';
 	clickSearch.innerHTML = '<label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
 	controlUI.appendChild(clickSearch);
 	controlDiv.index = 1;
