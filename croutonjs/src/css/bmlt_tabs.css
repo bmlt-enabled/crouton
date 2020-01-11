@@ -540,8 +540,9 @@ table.tablesaw {
 .mapcontrolslabel {
 	font-size: 12px;
 	cursor: pointer;
-	margin-right: 5px;
+	margin: 5px;
 	text-align: left;
+	display: block;
 }
 
 .mapcontrolcontainer {
@@ -550,7 +551,6 @@ table.tablesaw {
 	cursor: pointer;
 	margin-top: 10px;
 	margin-left: 10px;
-	text-align: center;
 }
 
 .mapcontrols {
