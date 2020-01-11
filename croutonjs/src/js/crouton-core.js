@@ -3,6 +3,7 @@ function Crouton(config) {
 	var self = this;
 	self.mutex = false;
 	self.map = null;
+	self.geocoder = null;
 	self.map_objects = [];
 	self.map_clusters = [];
 	self.oms = null;
@@ -74,7 +75,7 @@ function Crouton(config) {
 			self.reset();
 			self.render();
 			self.initMap(function() {
-				self.addCurrentLocationPin(latitude, longitude);
+				//self.addCurrentLocationPin(latitude, longitude);
 			});
 		});
 	};
@@ -776,26 +777,39 @@ Crouton.prototype.mapSearchPanZoomMode = function() {
 Crouton.prototype.mapSearchNearMeMode = function() {
 	var self = this;
 	self.getCurrentLocation(function(position) {
-		self.mapSearchPanZoomMode();
-		jQuery("#panzoom").prop("checked", true);
-		self.searchByCoordinates(position.coords.latitude, position.coords.longitude)
+		self.searchByCoordinates(position.coords.latitude, position.coords.longitude);
 	});
+};
+
+Crouton.prototype.mapSearchTextMode = function() {
+	var self = this;
+	var location = prompt("Enter a location or postal code:");
+	if (location.trim().length > 0) {
+		self.geocoder.geocode({'address': location}, function (results, status) {
+			if (status === 'OK') {
+				self.mapSearchPanZoomMode();
+				jQuery("#panzoom").prop("checked", true);
+				self.searchByCoordinates(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+			} else {
+				console.log('Geocode was not successful for the following reason: ' + status);
+			}
+		});
+	}
+	//}
 };
 
 Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
 
+	self.geocoder = new google.maps.Geocoder();
 	self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
 		zoom: self.config['map_search']['zoom'] || 10,
 		center: {
 			lat: self.config['map_search']['latitude'],
 			lng: self.config['map_search']['longitude'],
 		},
-		mapTypeControl: true,
-		mapTypeControlOptions: {
-			style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-		},
+		mapTypeControl: false,
 	});
 
 	var controlDiv = document.createElement('div');
@@ -809,13 +823,15 @@ Crouton.prototype.renderMap = function() {
 	// Set CSS for the control interior
 	var clickSearch = document.createElement('div');
 	clickSearch.className = 'mapcontrols';
-	clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> Near Me</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
+	clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> Near Me</label><label for="textsearch" class="mapcontrolslabel"><input type="radio" id="textsearch" name="mapcontrols"> Text Search</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
 	controlUI.appendChild(clickSearch);
 	controlDiv.index = 1;
 
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
 		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
-		if (controlsButtonSelections === "nearme") {
+		if (controlsButtonSelections === "textsearch") {
+			self.mapSearchTextMode();
+		} else if (controlsButtonSelections === "nearme") {
 			self.mapSearchNearMeMode();
 		} else if (controlsButtonSelections === "clicksearch") {
 			self.mapSearchClickMode();
@@ -824,7 +840,7 @@ Crouton.prototype.renderMap = function() {
 		}
 	});
 
-	self.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
+	self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(controlDiv);
 	self.map.addListener('click', function (data) {
 		if (self.mapClickSearchMode) {
 			self.mapSearchPanZoomMode();
