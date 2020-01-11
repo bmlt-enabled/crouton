@@ -47,7 +47,7 @@ task('js-files-nojquery', () => {
 			},
 		}))
 		.pipe(dest(distDir))
-		.pipe(notify("js-files-nojquery complete"));
+		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
 });
 
 task('js-files', () => {
@@ -65,7 +65,7 @@ task('js-files', () => {
 			},
 		}))
 		.pipe(dest(distDir))
-		.pipe(notify("js-files complete"));
+		.pipe(notify({message: "js-files complete", wait: true}));
 });
 
 task('templates', function () {
@@ -78,7 +78,7 @@ task('templates', function () {
 		}))
 		.pipe(concat('templates.js'))
 		.pipe(dest('croutonjs/src/js'))
-		.pipe(notify("templates complete"));
+		.pipe(notify({message: "templates complete", wait: true}));
 });
 
 task('css-files', () => {
@@ -95,7 +95,7 @@ task('css-files', () => {
 			suffix: '.min'
 		}))
 		.pipe(dest(distDir))
-		.pipe(notify("css-files complete"));
+		.pipe(notify({message: "css-files complete", wait: true}));
 });
 
 task('default', series('templates', 'js-files', 'js-files-nojquery', 'css-files'));
@@ -113,4 +113,3 @@ task('watch', () => {
 		'croutonjs/src/css/*.css'
 	], series('css-files'));
 });
-
