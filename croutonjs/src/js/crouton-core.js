@@ -784,7 +784,7 @@ Crouton.prototype.mapSearchNearMeMode = function() {
 Crouton.prototype.mapSearchTextMode = function() {
 	var self = this;
 	var location = prompt("Enter a location or postal code:");
-	if (location.trim().length > 0) {
+	if (location !== null && location.trim().length > 0) {
 		self.geocoder.geocode({'address': location}, function (results, status) {
 			if (status === 'OK') {
 				self.mapSearchPanZoomMode();
