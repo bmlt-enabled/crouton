@@ -340,7 +340,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
-		jQuery(selector).append(template(context));
+		jQuery(selector).html(template(context));
 		callback();
 	};
 
