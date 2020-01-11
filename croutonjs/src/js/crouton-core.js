@@ -75,7 +75,7 @@ function Crouton(config) {
 			self.reset();
 			self.render();
 			self.initMap(function() {
-				//self.addCurrentLocationPin(latitude, longitude);
+				self.addCurrentLocationPin(latitude, longitude);
 			});
 		});
 	};
