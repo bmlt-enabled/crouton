@@ -773,6 +773,15 @@ Crouton.prototype.mapSearchPanZoomMode = function() {
 	});
 };
 
+Crouton.prototype.mapSearchNearMeMode = function() {
+	var self = this;
+	self.getCurrentLocation(function(position) {
+		self.mapSearchPanZoomMode();
+		jQuery("#panzoom").prop("checked", true);
+		self.searchByCoordinates(position.coords.latitude, position.coords.longitude)
+	});
+};
+
 Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
@@ -800,13 +809,15 @@ Crouton.prototype.renderMap = function() {
 	// Set CSS for the control interior
 	var clickSearch = document.createElement('div');
 	clickSearch.className = 'mapcontrols';
-	clickSearch.innerHTML = '<label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
+	clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> Near Me</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> Click Search</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> Pan + Zoom</label>';
 	controlUI.appendChild(clickSearch);
 	controlDiv.index = 1;
 
 	google.maps.event.addDomListener(clickSearch, 'click', function() {
 		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
-		if (controlsButtonSelections === "clicksearch") {
+		if (controlsButtonSelections === "nearme") {
+			self.mapSearchNearMeMode();
+		} else if (controlsButtonSelections === "clicksearch") {
 			self.mapSearchClickMode();
 		} else if (controlsButtonSelections === "panzoom") {
 			self.mapSearchPanZoomMode();
@@ -823,11 +834,7 @@ Crouton.prototype.renderMap = function() {
 	});
 
 	if (self.config['map_search']['auto']) {
-		self.getCurrentLocation(function(position) {
-			self.mapSearchPanZoomMode();
-			jQuery("#panzoom").prop("checked", true);
-			self.searchByCoordinates(position.coords.latitude, position.coords.longitude)
-		});
+		self.mapSearchNearMeMode();
 	}
 };
 
