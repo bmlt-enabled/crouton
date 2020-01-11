@@ -539,9 +539,9 @@ table.tablesaw {
 
 .mapcontrolslabel {
 	font-size: 12px;
-	display: inline;
 	cursor: pointer;
-	margin-right: 2px;
+	margin-right: 5px;
+	text-align: left;
 }
 
 .mapcontrolcontainer {
