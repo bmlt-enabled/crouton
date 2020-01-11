@@ -37,10 +37,12 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 == Changelog ==
 
 = 3.5.0 =
+* Search by map text, click or automatically by location with [crouton_map] shortcode. [#126]
 * Added checkbox for using tomato as root server. [#181]
 * Added neighborhood dropdown feature. [#175]
-* Search by map, by click or automatically by location with [crouton_map] shortcode. [#126]
 * Added "sezf" theme.
+* Fixed bug with multiple meetings and clustering before clicking (red pins).
+* Swapped red (multiple) and blue (single) meeting pins, for consistency sake.
 
 = 3.4.7 =
 * pt-BR translations added.
