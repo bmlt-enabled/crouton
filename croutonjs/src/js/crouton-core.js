@@ -215,7 +215,7 @@ function Crouton(config) {
 	if (self.config['map_search'] !== null) {
 		self.loadGapi('crouton.renderMap');
 	} else {
-		self.meetingSearch();
+		self.meetingSearch(function() {});
 	}
 
 	self.lock = function(callback) {
