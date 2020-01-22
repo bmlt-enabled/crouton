@@ -991,7 +991,7 @@ Crouton.prototype.initMap = function(callback) {
 		zoomOnClick: false
 	});
 
-	callback();
+	if (callback !== undefined && isFunction(callback)) callback();
 };
 
 crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
