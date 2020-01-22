@@ -56,9 +56,9 @@ jobs:
         skip_cleanup: true
         name: "$TRAVIS_TAG"
         prerelease: true
-          on:
-            tags: true
-            condition: $TRAVIS_TAG =~ "beta"
+        on:
+          tags: true
+          condition: $TRAVIS_TAG =~ "beta"
   - stage: wordpress-plugin zip file
     env:
       - BUILD_DIR=build
@@ -108,9 +108,9 @@ jobs:
       skip_cleanup: true
       name: "$TRAVIS_TAG"
       prerelease: true
-        on:
-          tags: true
-          condition: $TRAVIS_TAG =~ "beta"
+      on:
+        tags: true
+        condition: $TRAVIS_TAG =~ "beta"
     - provider: script
       script: ./deploy-wordpress.sh
       skip_cleanup: true
