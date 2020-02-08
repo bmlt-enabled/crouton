@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.5.1
+Version: 3.5.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -706,12 +706,12 @@ if (!class_exists("Crouton")) {
 
 
             $params['button_filters'] = [];
-            foreach (explode(",", $params['button_filters_option']) as $item) {
-                $setting = explode(":", $item);
-
-                // Legacy switch check
-
-                array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
+            if (strlen($params['button_filters_option']) > 0) {
+                foreach (explode(",", $params['button_filters_option']) as $item) {
+                    $setting = explode(":", $item);
+                    if (strcmp($params['include_city_button'], "0") == 0 && strcmp($setting[0], "City") == 0) continue;
+                    array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
+                }
             }
 
             /*$convert_to_int = array("latitude", "longitude", "width", "zoom");
