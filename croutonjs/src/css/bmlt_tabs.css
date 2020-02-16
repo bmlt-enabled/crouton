@@ -558,3 +558,7 @@ table.tablesaw {
 	font-family: Roboto,Arial,sans-serif;
 	font-size: 12px;
 }
+
+.formats_popup {
+	border-bottom: lightgrey 1px solid;
+}
