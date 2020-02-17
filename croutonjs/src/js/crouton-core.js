@@ -99,6 +99,24 @@ function Crouton(config) {
 		}).open(self.map, currentLocationMarker);*/
 	};
 
+	self.findMarkerById = function(id) {
+		for (var m = 0; m < self.map_objects.length; m++) {
+			var map_object = self.map_objects[m];
+			if (parseInt(map_object['id']) === id) {
+				return map_object;
+			}
+		}
+
+		return null;
+	};
+
+	self.rowClick = function(id) {
+		var map_marker = self.findMarkerById(id);
+		self.map.setCenter(map_marker.getPosition());
+		self.map.setZoom(17);
+		google.maps.event.trigger(map_marker, "click");
+	};
+
 	self.addToMapObjectCollection = function(obj) {
 		self.map_objects.push(obj);
 	};
@@ -354,6 +372,12 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).html(template(context));
+		if (self.config['map_search'] != null || self.config['show_map']) {
+			jQuery(".bmlt-data-row").css({cursor: "pointer"});
+			jQuery(".bmlt-data-row").click(function () {
+				self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+			});
+		}
 		callback();
 	};
 
