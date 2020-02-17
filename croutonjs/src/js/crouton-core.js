@@ -99,6 +99,24 @@ function Crouton(config) {
 		}).open(self.map, currentLocationMarker);*/
 	};
 
+	self.findMarkerById = function(id) {
+		for (var m = 0; m < self.map_objects.length; m++) {
+			var map_object = self.map_objects[m];
+			if (parseInt(map_object['id']) === id) {
+				return map_object;
+			}
+		}
+
+		return null;
+	};
+
+	self.rowClick = function(id) {
+		var map_marker = self.findMarkerById(id);
+		self.map.setCenter(map_marker.getPosition());
+		self.map.setZoom(17);
+		google.maps.event.trigger(map_marker, "click");
+	};
+
 	self.addToMapObjectCollection = function(obj) {
 		self.map_objects.push(obj);
 	};
@@ -175,7 +193,8 @@ function Crouton(config) {
 			'meeting_name',
 			'location_sub_province',
 			'worldid_mixed',
-			'root_server_uri'
+			'root_server_uri',
+			'id_bigint',
 		];
 
 		var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
@@ -227,6 +246,12 @@ function Crouton(config) {
 				callback();
 			}
 		}, 100)
+	};
+
+	self.dayTab = function(day_id) {
+		self.hideAllPages();
+		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		self.showPage("#" + day_id);
 	};
 
 	self.showPage = function (id) {
@@ -312,6 +337,10 @@ function Crouton(config) {
 		jQuery(id).removeClass("show").addClass("hide");
 	};
 
+	self.hideAllPages = function (id) {
+		jQuery("#tab-pane").removeClass("show").addClass("hide");
+	};
+
 	self.filteredPage = function (id, dataType, dataValue) {
 		self.resetFilter();
 		self.showPage(id);
@@ -343,6 +372,12 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).html(template(context));
+		if (self.config['map_search'] != null || self.config['show_map']) {
+			jQuery(".bmlt-data-row").css({cursor: "pointer"});
+			jQuery(".bmlt-data-row").click(function () {
+				self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+			});
+		}
 		callback();
 	};
 
@@ -983,11 +1018,17 @@ Crouton.prototype.initMap = function(callback) {
 			position: latLng
 		});
 
+		marker['id'] = location['id_bigint'];
+		marker['day_id'] = location['weekday_tinyint'];
+
 		self.addToMapObjectCollection(marker);
 		self.oms.addMarker(marker);
 
 		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
+			jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+			jQuery("#meeting-data-row-" + marker['id'] + " > td").addClass("rowHighlight");
+			self.dayTab(marker['day_id']);
 			infoWindow.setContent(marker_html);
 			infoWindow.open(self.map, marker);
 		});

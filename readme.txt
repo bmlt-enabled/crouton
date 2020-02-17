@@ -37,8 +37,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.6.0 =
-* Added languages format selection dropdown
-* Added translations for [crouton_map] feature.
+* Added row click and highlight map synchronization [#189]
+* Added languages format selection dropdown [#200]
+* Added translations for [crouton_map] feature. [#195]
 
 = 3.5.2 =
 * Fix for backward compatibility for include_city_button="0" (for hiding City button)

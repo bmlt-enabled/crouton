@@ -49,3 +49,7 @@
         font-size: 1.1rem;
     }
 }
+#bmlt-tabs .rowHighlight {
+    background-color: #DB4865;
+    color: black;
+}
