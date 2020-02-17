@@ -21,6 +21,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -40,6 +41,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -59,6 +61,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -78,6 +81,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -97,6 +101,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -116,6 +121,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -135,6 +141,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -154,6 +161,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -173,6 +181,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -192,6 +201,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -211,6 +221,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -230,6 +241,7 @@ function CroutonLocalization(language) {
 			"text_search": "Text Search",
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Languages",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -249,6 +261,7 @@ function CroutonLocalization(language) {
 			"text_search": "Buscar por Texto",
 			"click_search": "Clique no local",
 			"pan_and_zoom": "Panorâmico + Zoom",
+			"languages": "Languages",
 		},
 	};
 }
