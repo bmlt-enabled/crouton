@@ -37,3 +37,8 @@
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
     background-color: #7DABD0;
 }
+
+#bmlt-tabs .rowHighlight {
+    background-color: #EC8432;
+    color: black;
+}

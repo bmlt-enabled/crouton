@@ -242,6 +242,11 @@ span.bmlt_tabs_group_count {
 	margin-left: 2px;
 }
 
+#bmlt-tabs .rowHighlight {
+	background-color: #DB4865;
+	color: black;
+}
+
 #bmlt-tabs .bmlt-header {
 	padding: 4px 0 0 4px;
 	background-color: #35414F;

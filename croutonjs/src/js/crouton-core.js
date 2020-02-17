@@ -175,7 +175,8 @@ function Crouton(config) {
 			'meeting_name',
 			'location_sub_province',
 			'worldid_mixed',
-			'root_server_uri'
+			'root_server_uri',
+			'id_bigint',
 		];
 
 		var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
@@ -227,6 +228,12 @@ function Crouton(config) {
 				callback();
 			}
 		}, 100)
+	};
+
+	self.dayTab = function(day_id) {
+		self.hideAllPages();
+		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		self.showPage("#" + day_id);
 	};
 
 	self.showPage = function (id) {
@@ -310,6 +317,10 @@ function Crouton(config) {
 
 	self.hidePage = function (id) {
 		jQuery(id).removeClass("show").addClass("hide");
+	};
+
+	self.hideAllPages = function (id) {
+		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 
 	self.filteredPage = function (id, dataType, dataValue) {
@@ -983,11 +994,17 @@ Crouton.prototype.initMap = function(callback) {
 			position: latLng
 		});
 
+		marker['id'] = location['id_bigint'];
+		marker['day_id'] = location['weekday_tinyint'];
+
 		self.addToMapObjectCollection(marker);
 		self.oms.addMarker(marker);
 
 		self.map_clusters.push(marker);
 		google.maps.event.addListener(marker, 'click', function (evt) {
+			jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+			jQuery("#meeting-data-row-" + marker['id'] + " > td").addClass("rowHighlight");
+			self.dayTab(marker['day_id']);
 			infoWindow.setContent(marker_html);
 			infoWindow.open(self.map, marker);
 		});
