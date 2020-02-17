@@ -104,6 +104,17 @@
             </select>
         </div>
     {{/if}}
+
+	{{#if this.config.has_languages}}
+		<div class="bmlt-dropdown-container">
+			<select class="crouton-select" style="width:{{this.config.dropdown_width}};" data-placeholder="Languages" data-pointer="Languages" id="e9">
+				<option></option>
+				{{#each this.uniqueData.languages}}
+					<option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
+				{{/each}}
+			</select>
+		</div>
+	{{/if}}
     </div>
 {{/if}}
 

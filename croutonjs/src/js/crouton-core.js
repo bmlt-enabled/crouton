@@ -32,6 +32,7 @@ function Crouton(config) {
 		has_states: false,            // Shows the states dropdown
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
+		has_languages: false,		  // Shows the language dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
@@ -600,6 +601,15 @@ Crouton.prototype.render = function(callback) {
 			self.getFormats(function (data) {
 				self.formatsData = data;
 				self.uniqueData['formats'] = data;
+				self.uniqueData['languages'] = [];
+
+				for (var l = 0; l < data.length; l++) {
+					var format = data[l];
+					if (format['format_type_enum'] === "LANG") {
+						self.uniqueData['languages'].push(data[l]);
+					}
+				}
+
 				var weekdaysData = [];
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
