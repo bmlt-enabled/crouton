@@ -1,29 +1,29 @@
 {{#each this}}
-    <tr class="bmlt-data-row"
-        data-cities="{{formatDataPointer this.location_municipality}}"
-        data-groups="{{formatDataPointer this.meeting_name}}"
-        data-locations="{{formatDataPointer this.location_text}}"
-        data-zips="{{formatDataPointer this.location_postal_code_1}}"
-        data-formats="{{formatDataPointerFormats this.formats_expanded}}"
-        data-areas="{{formatDataPointer this.service_body_bigint}}"
-        data-counties="{{formatDataPointer this.location_sub_province}}"
-        data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
-        data-states="{{formatDataPointer this.location_province}}">
+	<tr class="bmlt-data-row"
+		data-cities="{{formatDataPointer this.location_municipality}}"
+		data-groups="{{formatDataPointer this.meeting_name}}"
+		data-locations="{{formatDataPointer this.location_text}}"
+		data-zips="{{formatDataPointer this.location_postal_code_1}}"
+		data-formats="{{formatDataPointerFormats this.formats_expanded}}"
+		data-areas="{{formatDataPointer this.service_body_bigint}}"
+		data-counties="{{formatDataPointer this.location_sub_province}}"
+		data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
+		data-states="{{formatDataPointer this.location_province}}">
 		data-languages="{{formatDataPointerFormats this.formats_expanded}}">
-        <td class="bmlt-column1">
-            <div tabindex="0" class="bmlt-day">{{this.formatted_day}}</div>
+		<td class="bmlt-column1">
+			<div tabindex="0" class="bmlt-day">{{this.formatted_day}}</div>
 			<div tabindex="0" class="bmlt-time-2" role="timer">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
-            {{#if this.formats}}
-                <a id="bmlt-formats"
-                   class="btn btn-primary btn-xs"
-                   title="{{getWord "formats"}}"
-                   data-html="true"
-                   data-trigger="focus"
+			{{#if this.formats}}
+				<a id="bmlt-formats"
+				   class="btn btn-primary btn-xs"
+				   title="{{getWord "formats"}}"
+				   data-html="true"
+				   data-trigger="focus"
 				   tabindex="0"
-                   role="button"
-                   data-toggle="popover"
-                   data-original-title="{{getWord "formats"}}"
-                   data-content="<div>
+				   role="button"
+				   data-toggle="popover"
+				   data-original-title="{{getWord "formats"}}"
+				   data-content="<div>
                         {{#each this.formats_expanded}}
                         <div class='formats_popup'>
                             <div class='formats_key'>{{key}}</div>
@@ -33,33 +33,35 @@
                         {{/each}}
                         </div>">
                    <span class="glyphicon glyphicon-search"
-                   		aria-hidden="true"
-                        data-toggle="popover"
-                        data-trigger="focus"
-                        data-html="true"
-					    aria-label="{{getWord "formats"}}"></span>{{ this.formats }}
-                </a>
-            {{/if}}
-            {{#if this.is_virtual}}
-                <div></div>
-            {{else }}
-                <div tabindex="0" class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
-            {{/if}}
-        </td>
-        <td class="bmlt-column2">
+						 aria-hidden="true"
+						 data-toggle="popover"
+						 data-trigger="focus"
+						 data-html="true"
+						 aria-label="{{getWord "formats"}}"></span>{{ this.formats }}
+				</a>
+			{{/if}}
+			{{#if this.is_virtual}}
+				<div></div>
+			{{else }}
+				<div tabindex="0" class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
+			{{/if}}
+		</td>
+		<td class="bmlt-column2">
 			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>
-        </td>
-        {{#if this.is_virtual}}
-        <td class="bmlt-column3 virtual">
-            <div tabindex="0" class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
-        </td>
-        {{else}}
-        <td class="bmlt-column3">
-            <a tabindex="0" target="_blank" href="https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}" id="map-button" class="btn btn-primary btn-xs">
-            <span class="glyphicon glyphicon-map-marker"></span> {{this.map_word}}
-            </a>
-            <div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>
-        </td>
-        {{/if}}
-    </tr>
+		</td>
+		{{#if this.is_virtual}}
+			<td class="bmlt-column3 virtual">
+				<div tabindex="0" class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
+			</td>
+		{{else}}
+			<td class="bmlt-column3">
+				<a tabindex="0" target="_blank" href="https://www.google.com/maps/search/?api=1&query={{this.latitude}}
+				,{{this.longitude}}&q={{this.latitude}},{{this.longitude}}" id="map-button" class="btn btn-primary
+				btn-xs">
+				<span class="glyphicon glyphicon-map-marker"></span> {{this.map_word}}
+				</a>
+				<div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>
+			</td>
+		{{/if}}
+	</tr>
 {{/each}}
