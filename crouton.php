@@ -48,6 +48,7 @@ if (!class_exists("Crouton")) {
                 "has_sub_province" => '0',
                 "has_neighborhoods" => '0',
                 "has_states" => '0',
+                "has_languages" => '0',
                 "include_city_button" => '1',
                 "include_weekday_button" => '1',
                 "button_filters_option" => "City:location_municipality",
