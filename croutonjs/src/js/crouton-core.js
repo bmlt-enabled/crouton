@@ -345,7 +345,7 @@ function Crouton(config) {
 		self.resetFilter();
 		self.showPage(id);
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats") {
+		if (dataType !== "formats" && dataType !== "languages") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");

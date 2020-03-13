@@ -23,7 +23,7 @@ jobs:
     - ZIP_FILENAME=croutonjs-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
     - S3_KEY=croutonjs
     script:
-    - make deploy
+    - DISABLE_NOTIFIER=true make deploy
     - cd croutonjs/dist && zip -r ${ZIP_FILENAME} *
     - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
@@ -73,7 +73,7 @@ jobs:
       - find ./ -type d | xargs chmod 755
       - find ./ -name '*.php' | xargs chmod 644
       - git archive --format=zip --output=${ZIP_FILENAME} ${TRAVIS_COMMIT}
-      - make deploy
+      - DISABLE_NOTIFIER=true make deploy
       - zip -r ${ZIP_FILENAME} croutonjs/dist/*
       - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
