@@ -111,7 +111,7 @@
     <div>
         <p>With this parameter you can set the default filter for dropdowns.</p>
         <p><strong>[bmlt_tabs default_filter_dropdown="formats=closed"]</strong></p>
-        <p>Any of the dropdown choices are available for use.  Keep in mind that the dropdown must be visible and that the default selection exists.</p>
+        <p>Any of the dropdown choices are available for use.  Keep in mind that the dropdown must be visible and that the default selection exists.  Spaces should be separated with a hyphen.  Example [bmlt_tabs default_filter_dropdown="formats=Basic-Text"].</p>
     </div>
 	<h3 class="help-accordian"><strong>Dropdown Width</strong></h3>
 	<div>
