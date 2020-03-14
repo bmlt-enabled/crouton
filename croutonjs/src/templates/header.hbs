@@ -8,7 +8,7 @@
 
     {{#if this.config.has_cities}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="e1">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="filter-dropdown-cities">
                 <option></option>
                 {{#each this.uniqueData.cities}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -19,7 +19,7 @@
 
     {{#if this.config.has_groups}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="e2">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="filter-dropdown-groups">
                 <option></option>
                 {{#each this.uniqueData.groups}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -30,7 +30,7 @@
 
     {{#if this.config.has_areas}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="e3">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="filter-dropdown-areas">
                 <option></option>
                 {{#each this.uniqueData.areas}}
                     <option value="a-{{this.id}}">{{this.name}}</option>
@@ -41,7 +41,7 @@
 
     {{#if this.config.has_locations}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="e4">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="filter-dropdown-locations">
                 <option></option>
                 {{#each this.uniqueData.locations}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -52,7 +52,7 @@
 
     {{#if this.config.has_sub_province}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="e5">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="filter-dropdown-sub_province">
                 <option></option>
                 {{#each this.uniqueData.sub_provinces}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -63,7 +63,7 @@
 
 	{{#if this.config.has_neighborhoods}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'neighborhood'}}" data-pointer="Neighborhoods" id="e5">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'neighborhood'}}" data-pointer="Neighborhoods" id="filter-dropdown-neighborhoods">
                 <option></option>
 				{{#each this.uniqueData.neighborhoods}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -74,7 +74,7 @@
 
     {{#if this.config.has_states}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="e6">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="filter-dropdown-states">
                 <option></option>
                 {{#each this.uniqueData.states}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -85,7 +85,7 @@
 
     {{#if this.config.has_zip_codes}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="e7">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="filter-dropdown-has_zipcodes">
                 <option></option>
                 {{#each this.uniqueData.zips}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -96,7 +96,7 @@
 
     {{#if this.config.has_formats}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="e8">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="filter-dropdown-formats">
                 <option></option>
                 {{#each this.uniqueData.formats}}
                     <option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
@@ -107,7 +107,7 @@
 
 	{{#if this.config.has_languages}}
 		<div class="bmlt-dropdown-container">
-			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'languages'}}" data-pointer="Languages" id="e9">
+			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'languages'}}" data-pointer="Languages" id="filter-dropdown-languages">
 				<option></option>
 				{{#each this.uniqueData.languages}}
 					<option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>

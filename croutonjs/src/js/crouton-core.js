@@ -11,6 +11,7 @@ function Crouton(config) {
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
+		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
 		map_max_zoom: 15,		      // Maximum zoom for the display map
 		time_format: "h:mm a",        // The format for time
@@ -21,6 +22,7 @@ function Crouton(config) {
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
 		],
+		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_cities: true,             // Shows the cities dropdown
@@ -719,11 +721,11 @@ Crouton.prototype.render = function(callback) {
 					});
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
-						//jQuery(this).siblings().select2("val", null);
+						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
 
-						var val = jQuery("#" + this.id).val();
+						var val = jQuery(this).val();
 						jQuery('.bmlt-page').each(function (index) {
-							self.hidePage("#" + this.id);
+							self.hidePage(this);
 							self.lowlightButton(".filterButton");
 							self.lowlightButton("#day");
 							self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
@@ -763,9 +765,10 @@ Crouton.prototype.render = function(callback) {
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
 
-					jQuery("#e9").val('a-polish');
-					jQuery("#e9").trigger('change');
-					jQuery("#e9").trigger('select2:select');
+					if (self.config['default_filter_dropdown'] !== "") {
+						var filter = self.config['default_filter_dropdown'].split("=");
+						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
+					}
 
 					if (self.config['show_distance']) {
 						self.getCurrentLocation(self.showLocation);
