@@ -766,7 +766,7 @@ Crouton.prototype.render = function(callback) {
 					self.showView(self.config['view_by']);
 
 					if (self.config['default_filter_dropdown'] !== "") {
-						var filter = self.config['default_filter_dropdown'].split("=");
+						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
 						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
 					}
 
