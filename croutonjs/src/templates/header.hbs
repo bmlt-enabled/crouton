@@ -85,7 +85,7 @@
 
     {{#if this.config.has_zip_codes}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="filter-dropdown-has_zipcodes">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="filter-dropdown-zipcodes">
                 <option></option>
                 {{#each this.uniqueData.zips}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
