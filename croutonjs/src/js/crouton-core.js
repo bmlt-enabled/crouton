@@ -11,6 +11,7 @@ function Crouton(config) {
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
+		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
 		map_max_zoom: 15,		      // Maximum zoom for the display map
 		time_format: "h:mm a",        // The format for time
@@ -21,6 +22,7 @@ function Crouton(config) {
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
 		],
+		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_cities: true,             // Shows the cities dropdown
@@ -272,11 +274,7 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
+		jQuery(".filter-dropdown").select2("val", null);
 
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
@@ -290,11 +288,7 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
+		jQuery(".filter-dropdown").select2("val", null);
 
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
@@ -309,11 +303,7 @@ function Crouton(config) {
 
 	self.filteredView = function (field) {
 		self.resetFilter();
-		for (var a = 1; a < self.max_filters; a++) {
-			if (jQuery("#e" + a).length) {
-				jQuery("#e" + a).select2("val", null);
-			}
-		}
+		jQuery(".filter-dropdown").select2("val", null);
 
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
@@ -372,12 +362,6 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['master'];
 		jQuery(selector).html(template(context));
-		if (self.config['map_search'] != null || self.config['show_map']) {
-			jQuery(".bmlt-data-row").css({cursor: "pointer"});
-			jQuery(".bmlt-data-row").click(function () {
-				self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
-			});
-		}
 		callback();
 	};
 
@@ -713,6 +697,13 @@ Crouton.prototype.render = function(callback) {
 					},
 					"uniqueData": self.uniqueData
 				}, function () {
+					if (self.config['map_search'] != null || self.config['show_map']) {
+						jQuery(".bmlt-data-row").css({cursor: "pointer"});
+						jQuery(".bmlt-data-row").click(function () {
+							self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+						});
+					}
+
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
@@ -729,26 +720,18 @@ Crouton.prototype.render = function(callback) {
 						}
 					});
 
-					for (var a = 1; a < self.max_filters; a++) {
-						jQuery("#e" + a).on('select2:select', function (e) {
-							for (var j = 1; j < self.max_filters; j++) {
-								if (this.id !== "e" + j) {
-									if (jQuery("#e" + j).length) {
-										jQuery("#e" + j).select2("val", null);
-									}
-								}
-							}
+					jQuery('.filter-dropdown').on('select2:select', function (e) {
+						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
 
-							var val = jQuery("#" + this.id).val();
-							jQuery('.bmlt-page').each(function (index) {
-								self.hidePage("#" + this.id);
-								self.lowlightButton(".filterButton");
-								self.lowlightButton("#day");
-								self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
-								return;
-							});
+						var val = jQuery(this).val();
+						jQuery('.bmlt-page').each(function (index) {
+							self.hidePage(this);
+							self.lowlightButton(".filterButton");
+							self.lowlightButton("#day");
+							self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+							return;
 						});
-					}
+					});
 
 					jQuery("#day").on('click', function () {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
@@ -781,6 +764,11 @@ Crouton.prototype.render = function(callback) {
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
 					self.showView(self.config['view_by']);
+
+					if (self.config['default_filter_dropdown'] !== "") {
+						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
+						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
+					}
 
 					if (self.config['show_distance']) {
 						self.getCurrentLocation(self.showLocation);
