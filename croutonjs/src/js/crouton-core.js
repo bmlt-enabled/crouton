@@ -274,7 +274,7 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		jQuery(".filter-dropdown").select2("val", null);
+		jQuery(".filter-dropdown").val(null);
 
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
@@ -288,7 +288,7 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		jQuery(".filter-dropdown").select2("val", null);
+		jQuery(".filter-dropdown").val(null);
 
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
@@ -303,7 +303,7 @@ function Crouton(config) {
 
 	self.filteredView = function (field) {
 		self.resetFilter();
-		jQuery(".filter-dropdown").select2("val", null);
+		jQuery(".filter-dropdown").val(null);
 
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
