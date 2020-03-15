@@ -434,7 +434,7 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
-                echo '<div class="updated"><p>Success! Your changes were successfully saved!</p></div>';
+                echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').fadeOut(5000);});</script>";
             }
 
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
@@ -445,12 +445,12 @@ if (!class_exists("Crouton")) {
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
             }
-
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
                     <img id="tallyBannerImage" src="<?php echo plugin_dir_url(__FILE__); ?>css/images/banner.png">
                 </div>
+                <div id="updated"></div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
                     <?php
                     wp_nonce_field('bmlttabsupdate-options');
