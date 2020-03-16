@@ -29,6 +29,7 @@ if (!class_exists("Crouton")) {
             "sezf"
         ];
         public $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
+        public $default_metadata_template = "<a target='_blank' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -429,6 +430,7 @@ if (!class_exists("Crouton")) {
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
+                $this->options['metadata_template'] = isset($_POST['metadata_template']) ? str_replace('\\', '', $_POST['metadata_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
@@ -564,6 +566,23 @@ if (!class_exists("Crouton")) {
                         <script type="text/javascript">
                             jQuery("#reset_meeting_data_template").click(function() {
                                 jQuery('#meeting_data_template').val("<?php echo $this->default_template?>");
+                            });
+                        </script>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Metadata Template</h3>
+                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <ul>
+                            <li>
+                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : $this->default_metadata_template; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_metadata_template").click(function() {
+                                jQuery('#metadata_template').val("<?php echo $this->default_metadata_template?>");
                             });
                         </script>
                     </div>
@@ -742,7 +761,6 @@ if (!class_exists("Crouton")) {
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
-
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
 
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
@@ -752,6 +770,14 @@ if (!class_exists("Crouton")) {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
             $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
+
+            if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
+                $metadata_template = $this->default_metadata_template;
+            } else {
+                $metadata_template = $this->options['metadata_template'];
+            }
+            $params['metadata_template'] = html_entity_decode($metadata_template);
+
             $params['google_api_key'] = $this->options['google_api_key'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings'])) {

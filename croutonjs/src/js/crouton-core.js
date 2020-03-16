@@ -50,7 +50,8 @@ function Crouton(config) {
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
 		theme: "jack",               // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
-		meeting_data_template: "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>"
+		meeting_data_template: "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>",
+		metadata_template: "<a target='_blank' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>"
 	};
 
 	self.setConfig(config);
@@ -449,7 +450,7 @@ function Crouton(config) {
 		var meetings = [];
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
-		//crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
+		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
