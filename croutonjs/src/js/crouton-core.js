@@ -17,6 +17,7 @@ function Crouton(config) {
 		time_format: "h:mm a",        // The format for time
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
+		filter_tabs: false,   		  // Whether to show weekday tabs on filtering.
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
 		button_filters: [
@@ -274,8 +275,6 @@ function Crouton(config) {
 
 	self.byDayView = function () {
 		self.resetFilter();
-		jQuery(".filter-dropdown").val(null);
-
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -288,8 +287,6 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		jQuery(".filter-dropdown").val(null);
-
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -303,8 +300,6 @@ function Crouton(config) {
 
 	self.filteredView = function (field) {
 		self.resetFilter();
-		jQuery(".filter-dropdown").val(null);
-
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#filterButton_" + field);
@@ -331,9 +326,8 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 
-	self.filteredPage = function (id, dataType, dataValue) {
-		self.resetFilter();
-		self.showPage(id);
+	self.filteredPage = function (dataType, dataValue) {
+		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		if (dataType !== "formats" && dataType !== "languages") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
@@ -341,14 +335,24 @@ function Crouton(config) {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 		}
 
-		jQuery(".bmlt-data-rows").each(function (index, value) {
-			if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-				jQuery(value).find(".meeting-header").addClass("hide");
-			}
-		})
+		if (self.config['filter_tabs']) {
+			self.showPage("#nav-days");
+			self.showPage("#tabs-content");
+		} else {
+			self.lowlightButton(".filterButton");
+			self.lowlightButton("#day");
+			self.showPage("#byday");
+
+			jQuery(".bmlt-data-rows").each(function (index, value) {
+				if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
+					jQuery(value).find(".meeting-header").addClass("hide");
+				}
+			});
+		}
 	};
 
 	self.resetFilter = function () {
+		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 	};
@@ -724,11 +728,9 @@ Crouton.prototype.render = function(callback) {
 						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
 
 						var val = jQuery(this).val();
-						jQuery('.bmlt-page').each(function (index) {
+						jQuery('.bmlt-page').each(function () {
 							self.hidePage(this);
-							self.lowlightButton(".filterButton");
-							self.lowlightButton("#day");
-							self.filteredPage("#byday", e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+							self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
 							return;
 						});
 					});
