@@ -81,7 +81,7 @@ if (!class_exists("Crouton")) {
                 "map_search_auto" => false,
                 "map_search_location" => null,
                 "default_filter_dropdown" => '',
-                "filter_tabs" => false
+                "meeting_data_template" => null,
             );
 
         public function __construct()
@@ -766,6 +766,8 @@ if (!class_exists("Crouton")) {
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
             if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
                 $meeting_data_template = $this->default_template;
+            } else if ($atts['meeting_data_template'] !== null) {
+                $meeting_data_template = $atts['meeting_data_template'];
             } else {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
@@ -773,6 +775,8 @@ if (!class_exists("Crouton")) {
 
             if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
                 $metadata_template = $this->default_metadata_template;
+            } else if ($atts['metadata_template'] !== null) {
+                $metadata_template = $atts['metadata_template'];
             } else {
                 $metadata_template = $this->options['metadata_template'];
             }
