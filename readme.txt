@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.8.0 =
-* Added feature to keep tabs on dropdown filtering (e.g. `filter_tabs="1"`)
+* Added feature to keep tabs on dropdown filtering (e.g. `filter_tabs="1"`) [#21]
+* Added feature to fully customize content template of the 3rd (metadata) column. [#159]
 
 = 3.7.1 =
 * Fix for header shortcode not working. [#208]
