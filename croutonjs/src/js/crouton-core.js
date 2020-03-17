@@ -205,6 +205,9 @@ function Crouton(config) {
 		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
 			data_field_keys.push(arr[1])
 		}
+		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
+			data_field_keys.push(arr[1])
+		}
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
 
 		if (self.config['distance_search'] !== 0) {
