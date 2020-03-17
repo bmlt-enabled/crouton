@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.8.1
+Version: 3.8.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -764,21 +764,21 @@ if (!class_exists("Crouton")) {
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
-
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
-            if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
-                $meeting_data_template = $this->default_template;
-            } else if ($atts['meeting_data_template'] !== null) {
+
+            if ($atts['meeting_data_template'] !== null) {
                 $meeting_data_template = $atts['meeting_data_template'];
+            } else if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
+                $meeting_data_template = $this->default_template;;
             } else {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
             $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
 
-            if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
-                $metadata_template = $this->default_metadata_template;
-            } else if ($atts['metadata_template'] !== null) {
+            if ($atts['metadata_template'] !== null) {
                 $metadata_template = $atts['metadata_template'];
+            } else if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
+                $metadata_template = $this->default_metadata_template;
             } else {
                 $metadata_template = $this->options['metadata_template'];
             }
