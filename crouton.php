@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.8.2
+Version: 3.8.3
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -766,7 +766,7 @@ if (!class_exists("Crouton")) {
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
 
-            if ($atts['meeting_data_template'] !== null) {
+            if ($atts['meeting_data_template'] !== null && $atts['meeting_data_template'] !== "") {
                 $meeting_data_template = $atts['meeting_data_template'];
             } else if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
                 $meeting_data_template = $this->default_template;
@@ -775,7 +775,7 @@ if (!class_exists("Crouton")) {
             }
             $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
 
-            if ($atts['metadata_template'] !== null) {
+            if ($atts['metadata_template'] !== null && $atts['metadata_template'] !== "") {
                 $metadata_template = $atts['metadata_template'];
             } else if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
                 $metadata_template = $this->default_metadata_template;
