@@ -769,7 +769,7 @@ if (!class_exists("Crouton")) {
             if ($atts['meeting_data_template'] !== null) {
                 $meeting_data_template = $atts['meeting_data_template'];
             } else if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
-                $meeting_data_template = $this->default_template;;
+                $meeting_data_template = $this->default_template;
             } else {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
