@@ -201,7 +201,7 @@ function Crouton(config) {
 			'id_bigint',
 		];
 
-		var extra_fields_regex = /{{this\.([A-Za-z_]*)}}/gi;
+		var extra_fields_regex = /this\.([A-Za-z_]*)}}/gi;
 		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
 			data_field_keys.push(arr[1])
 		}
