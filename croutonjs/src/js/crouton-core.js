@@ -498,6 +498,14 @@ function Crouton(config) {
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+			for (var k in meetingData[m]) {
+				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
+					if (meetingData[m][k].indexOf('#@-@#') !== -1) {
+						var split = meetingData[m][k].split('#@-@#');
+						meetingData[m][k] = split[1]
+					}
+				}
+			}
 			meetings.push(meetingData[m])
 		}
 
