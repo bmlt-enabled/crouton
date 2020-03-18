@@ -203,10 +203,10 @@ function Crouton(config) {
 
 		var extra_fields_regex = /this\.([A-Za-z_]*)}}/gi;
 		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
-			data_field_keys.push(arr[1])
+			data_field_keys.push(arr[1]);
 		}
 		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
-			data_field_keys.push(arr[1])
+			data_field_keys.push(arr[1]);
 		}
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
 
@@ -502,7 +502,7 @@ function Crouton(config) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
 					if (meetingData[m][k].indexOf('#@-@#') !== -1) {
 						var split = meetingData[m][k].split('#@-@#');
-						meetingData[m][k] = split[1]
+						meetingData[m][k] = split[1];
 					}
 				}
 			}
