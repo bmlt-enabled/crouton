@@ -364,4 +364,5 @@ div#updated
 	font-size: 14px;
 	box-shadow: 0 1px 01px rgba(0,0,0,.04);
 	padding: 1px 12px;
+	display: none;
 }

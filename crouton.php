@@ -154,13 +154,6 @@ if (!class_exists("Crouton")) {
 
         public function isRootServerMissing()
         {
-            $root_server = $this->options['root_server'];
-            if ($root_server == '') {
-                echo '<div id="message" class="error"><p>Missing BMLT Root Server in settings for crouton.</p>';
-                $url = admin_url('options-general.php?page=crouton.php');
-                echo "<p><a href='$url'>crouton Settings</a></p>";
-                echo '</div>';
-            }
             add_action("admin_notices", array(
                 &$this,
                 "clearAdminMessage"
@@ -453,7 +446,7 @@ if (!class_exists("Crouton")) {
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
-                    <img id="tallyBannerImage" src="<?php echo plugin_dir_url(__FILE__); ?>css/images/banner.png">
+                    <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo plugin_dir_url(__FILE__); ?>css/images/banner.png"/>
                 </div>
                 <div id="updated"></div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
