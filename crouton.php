@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.8.8
+Version: 3.9.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -28,8 +28,8 @@ if (!class_exists("Crouton")) {
             "patrick",
             "sezf"
         ];
-        public $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
-        public $default_metadata_template = "<a target='_blank' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>";
+        public $default_template = "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span>{{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
+        public $default_metadata_template = "{{#isVirtual this}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -37,54 +37,55 @@ if (!class_exists("Crouton")) {
             'timeout' => 60
         );
         public $shortCodeOptions = array(
-                "root_server" => '',
-                "service_body" => '',
-                "service_body_parent" => '',
-                "has_tabs" => '1',
-                "has_groups" => '1',
-                "has_areas" => '0',
-                "has_cities" => '1',
-                "has_formats" => '1',
-                "has_locations" => '1',
-                "has_sub_province" => '0',
-                "has_neighborhoods" => '0',
-                "has_states" => '0',
-                "has_languages" => '0',
-                "include_city_button" => '1',
-                "include_weekday_button" => '1',
-                "button_filters_option" => "City:location_municipality",
-                "view_by" => 'weekday',
-                "dropdown_width" => 'auto',
-                "has_zip_codes" => '1',
-                "header" => '1',
-                "format_key" => '',
-                "time_format" => 'h:mm a',
-                "exclude_zip_codes" => null,
-                "show_distance" => '0',
-                "distance_search" => '0',
-                "distance_units" => 'mi',
-                "custom_query" => null,
-                "show_map" => '0',
-                "max_zoom_level" => 15,
-                "language" => 'en-US',
-                "auto_tz_adjust" => '0',
-                "base_tz" => null,
-                "sort_keys" => 'start_time',
-                "int_start_day_id" => '1',
-                "recurse_service_bodies" => '0',
-                "theme" => '',
-                "map_search" => null,
-                "map_search_zoom" => 10,
-                "map_search_latitude" => 0,
-                "map_search_longitude" => 0,
-                "map_search_width" => '-50',
-                "map_search_auto" => false,
-                "map_search_location" => null,
-                "default_filter_dropdown" => '',
-                "meeting_data_template" => null,
-                "metadata_template" => null,
-                "filter_tabs" => false
-            );
+            "root_server" => '',
+            "service_body" => '',
+            "service_body_parent" => '',
+            "has_tabs" => '1',
+            "has_groups" => '1',
+            "has_areas" => '0',
+            "has_cities" => '1',
+            "has_formats" => '1',
+            "has_locations" => '1',
+            "has_sub_province" => '0',
+            "has_neighborhoods" => '0',
+            "has_states" => '0',
+            "has_languages" => '0',
+            "include_city_button" => '1',
+            "include_weekday_button" => '1',
+            "button_filters_option" => "City:location_municipality",
+            "view_by" => 'weekday',
+            "dropdown_width" => 'auto',
+            "has_zip_codes" => '1',
+            "header" => '1',
+            "format_key" => '',
+            "time_format" => 'h:mm a',
+            "exclude_zip_codes" => null,
+            "show_distance" => '0',
+            "distance_search" => '0',
+            "distance_units" => 'mi',
+            "custom_query" => null,
+            "show_map" => '0',
+            "max_zoom_level" => 15,
+            "language" => 'en-US',
+            "auto_tz_adjust" => '0',
+            "base_tz" => null,
+            "sort_keys" => 'start_time',
+            "int_start_day_id" => '1',
+            "recurse_service_bodies" => '0',
+            "theme" => '',
+            "map_search" => null,
+            "map_search_zoom" => 10,
+            "map_search_latitude" => 0,
+            "map_search_longitude" => 0,
+            "map_search_width" => '-50',
+            "map_search_auto" => false,
+            "map_search_location" => null,
+            "default_filter_dropdown" => '',
+            "meeting_data_template" => null,
+            "metadata_template" => null,
+            "filter_tabs" => false,
+            "show_qrcode" => false
+        );
 
         public function __construct()
         {
@@ -432,7 +433,7 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
-                echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').fadeOut(5000);});</script>";
+                echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
 
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {

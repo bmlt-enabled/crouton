@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.3.2
-Stable tag: 3.8.8
+Stable tag: 3.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,14 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.9.0 =
+* Native support for Virtual Meetings (VM format) that automatically shows the new virtual_meeting_link and phone_meeting_number (requires root server 2.15.0)
+* Native support for QR codes for Virtual Meetings (VM format) with new shortcodes `show_qrcode="1"`
+* Native support for Temporary Closed (TC format) that automatically displays a flag and the description field text.
+* CSS changes to support virtual meetings + responsive displays.
+* Fix for configuration screen saved confirmation.
+* Removal of misconfigured root server header on admin UI.
 
 = 3.8.8 =
 * Fix for MarkerClusterer not working.  [#216]
