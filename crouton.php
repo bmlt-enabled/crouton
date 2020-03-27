@@ -25,6 +25,7 @@ if (!class_exists("Crouton")) {
             "jack",
             "kevin",
             "lucy",
+            "one-nine",
             "patrick",
             "sezf"
         ];
