@@ -476,7 +476,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-bmlt-root-server"></a>BMLT Root Server URL</h3>
+                        <h3><a id="config-bmlt-root-server" class="anchor"></a>BMLT Root Server URL</h3>
                         <p>Example: https://bmlt.sezf.org/main_server</p>
                         <ul>
                             <li>
@@ -491,7 +491,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-service-body"></a>Service Body</h3>
+                        <h3><a id="config-service-body" class="anchor"></a>Service Body</h3>
                         <p>This service body will be used when no service body is defined in the shortcode.</p>
                         <ul>
                             <li>
@@ -526,7 +526,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-include-extra-meetings"></a>Include Extra Meetings</h3>
+                        <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
                             <p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
                             <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
@@ -555,7 +555,7 @@ if (!class_exists("Crouton")) {
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-query"></a>Custom Query</h3>
+                        <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
                         <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
                         <ul>
                             <li>
@@ -565,7 +565,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-data-template"></a>Meeting Data Template</h3>
+                        <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
@@ -582,7 +582,7 @@ if (!class_exists("Crouton")) {
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-metadata-data-template"></a>Metadata Template</h3>
+                        <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
@@ -599,7 +599,7 @@ if (!class_exists("Crouton")) {
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-theme"></a>Theme</h3>
+                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
                         <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
                         <ul>
                             <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
@@ -620,7 +620,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-css"></a>Custom CSS</h3>
+                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
                             <li>
@@ -629,7 +629,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-google-api-key"></a>Google API Key</h3>
+                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
                         <p>This is only needed when using the companion map feature show_map.</p>
                         <ul>
                             <li>

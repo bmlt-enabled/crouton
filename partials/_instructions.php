@@ -1,4 +1,4 @@
-<h2><a id="config-documentation"></a>Documentation</h2>
+<h2><a id="config-documentation" class="anchor"></a>Documentation</h2>
 <div id="accordion">
 	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
 	<div>
