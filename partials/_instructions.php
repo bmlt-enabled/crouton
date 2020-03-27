@@ -1,5 +1,4 @@
-<h2>Instructions</h2>
-<p>Please open a ticket <a href="https://github.com/bmlt-enabled/crouton/issues" target="_top">https://github.com/bmlt-enabled/crouton/issues</a> with problems, questions or comments.</p>
+<h2><a id="config-documentation"></a>Documentation</h2>
 <div id="accordion">
 	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
 	<div>
@@ -228,5 +227,14 @@
         <p><strong>[bmlt_tabs language="en-US"]</strong></p>
         <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js" target="_blank">here</a>.</p>
         <p>Open a ticket if you want to assist with other translations <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">here</a>.</p>
+    </div>
+    <h3 class="help-accordian"><strong>Virtual Meetings</strong></h3>
+    <div>
+        <p>If you use the format code "VM" it will render the virtual_meeting_link and phone_meeting_number in the metadata template column.  It will automaticlaly turn them into hyperlinks.  This behavior is overridable through the metadata template functionality.</p>
+        <p>If you want to display a QR Code along with this, set the short code <strong>[bmlt_tabs show_qrcode="1"]</strong>.</p>
+    </div>
+    <h3 class="help-accordian"><strong>Temporarily Closed</strong></h3>
+    <div>
+        <p>If you use the format code "TC" it will render the format description for that format above the meeting name with a flag icon.  It will show in the defined language (assuming that it was set in the root server).  This behavior is overridable through the meeting data template functionality.</p>
     </div>
 </div>
