@@ -105,21 +105,23 @@ span.bmlt_tabs_group_count {
 
 #bmlt-tabs .bmlt-column1 {
 	text-align: left;
-	width: 30%;
+	width: auto;
+	white-space: nowrap;
+	overflow: hidden;
 	word-break: break-all;
 	vertical-align: top;
 }
 
 #bmlt-tabs .bmlt-column2 {
 	text-align: left;
-	width: 60%;
+	width: auto;
 	vertical-align: top;
 }
 
 #bmlt-tabs .bmlt-column3 {
 	text-align: center !important;
 	vertical-align: middle !important;
-	width: 10%;
+	width: 30%;
 }
 
 #bmlt-tabs .virtual .bmlt-column1 {
@@ -542,6 +544,12 @@ table.tablesaw {
 	}
 }
 
+@media only screen and (max-width: 480px) {
+	#bmlt-tabs .bmlt-column3 {
+		width: auto;
+	}
+}
+
 .mapcontrolslabel {
 	font-size: 12px;
 	cursor: pointer;
@@ -562,4 +570,15 @@ table.tablesaw {
 	color: rgb(25,25,25);
 	font-family: Roboto,Arial,sans-serif;
 	font-size: 12px;
+}
+
+.temporarilyClosed {
+	font-size: 16px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.qrcode {
+	text-align: center;
+	display: inline-block;
 }

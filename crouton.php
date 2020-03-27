@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.8.8
+Version: 3.9.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -28,8 +28,8 @@ if (!class_exists("Crouton")) {
             "patrick",
             "sezf"
         ];
-        public $default_template = "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
-        public $default_metadata_template = "<a target='_blank' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>";
+        public $default_template = "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span>{{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
+        public $default_metadata_template = "{{#isVirtual this}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -37,54 +37,55 @@ if (!class_exists("Crouton")) {
             'timeout' => 60
         );
         public $shortCodeOptions = array(
-                "root_server" => '',
-                "service_body" => '',
-                "service_body_parent" => '',
-                "has_tabs" => '1',
-                "has_groups" => '1',
-                "has_areas" => '0',
-                "has_cities" => '1',
-                "has_formats" => '1',
-                "has_locations" => '1',
-                "has_sub_province" => '0',
-                "has_neighborhoods" => '0',
-                "has_states" => '0',
-                "has_languages" => '0',
-                "include_city_button" => '1',
-                "include_weekday_button" => '1',
-                "button_filters_option" => "City:location_municipality",
-                "view_by" => 'weekday',
-                "dropdown_width" => 'auto',
-                "has_zip_codes" => '1',
-                "header" => '1',
-                "format_key" => '',
-                "time_format" => 'h:mm a',
-                "exclude_zip_codes" => null,
-                "show_distance" => '0',
-                "distance_search" => '0',
-                "distance_units" => 'mi',
-                "custom_query" => null,
-                "show_map" => '0',
-                "max_zoom_level" => 15,
-                "language" => 'en-US',
-                "auto_tz_adjust" => '0',
-                "base_tz" => null,
-                "sort_keys" => 'start_time',
-                "int_start_day_id" => '1',
-                "recurse_service_bodies" => '0',
-                "theme" => '',
-                "map_search" => null,
-                "map_search_zoom" => 10,
-                "map_search_latitude" => 0,
-                "map_search_longitude" => 0,
-                "map_search_width" => '-50',
-                "map_search_auto" => false,
-                "map_search_location" => null,
-                "default_filter_dropdown" => '',
-                "meeting_data_template" => null,
-                "metadata_template" => null,
-                "filter_tabs" => false
-            );
+            "root_server" => '',
+            "service_body" => '',
+            "service_body_parent" => '',
+            "has_tabs" => '1',
+            "has_groups" => '1',
+            "has_areas" => '0',
+            "has_cities" => '1',
+            "has_formats" => '1',
+            "has_locations" => '1',
+            "has_sub_province" => '0',
+            "has_neighborhoods" => '0',
+            "has_states" => '0',
+            "has_languages" => '0',
+            "include_city_button" => '1',
+            "include_weekday_button" => '1',
+            "button_filters_option" => "City:location_municipality",
+            "view_by" => 'weekday',
+            "dropdown_width" => 'auto',
+            "has_zip_codes" => '1',
+            "header" => '1',
+            "format_key" => '',
+            "time_format" => 'h:mm a',
+            "exclude_zip_codes" => null,
+            "show_distance" => '0',
+            "distance_search" => '0',
+            "distance_units" => 'mi',
+            "custom_query" => null,
+            "show_map" => '0',
+            "max_zoom_level" => 15,
+            "language" => 'en-US',
+            "auto_tz_adjust" => '0',
+            "base_tz" => null,
+            "sort_keys" => 'start_time',
+            "int_start_day_id" => '1',
+            "recurse_service_bodies" => '0',
+            "theme" => '',
+            "map_search" => null,
+            "map_search_zoom" => 10,
+            "map_search_latitude" => 0,
+            "map_search_longitude" => 0,
+            "map_search_width" => '-50',
+            "map_search_auto" => false,
+            "map_search_location" => null,
+            "default_filter_dropdown" => '',
+            "meeting_data_template" => null,
+            "metadata_template" => null,
+            "filter_tabs" => false,
+            "show_qrcode" => false
+        );
 
         public function __construct()
         {
@@ -432,7 +433,7 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->saveAdminOptions();
-                echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').fadeOut(5000);});</script>";
+                echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
 
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
@@ -459,7 +460,23 @@ if (!class_exists("Crouton")) {
                         $this_connected = true;
                     }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3>BMLT Root Server URL</h3>
+                        <h3>Configuration</h3>
+                        <p>Please open a ticket <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">https://github.com/bmlt-enabled/crouton/issues</a> for bugs, enhancements, or questions.</p>
+                        <ul class="configuration-toc">
+                            <li><a href="#config-bmlt-root-server">BMLT Root Server</a></li>
+                            <li><a href="#config-service-body">Service Body</a></li>
+                            <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
+                            <li><a href="#config-custom-query">Custom Query</a></li>
+                            <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
+                            <li><a href="#config-metadata-data-template">Metadata Template</a></li>
+                            <li><a href="#config-theme">Theme</a></li>
+                            <li><a href="#config-custom-css">Custom CSS</a></li>
+                            <li><a href="#config-google-api-key">Google API Key</a></li>
+                            <li><a href="#config-documentation">Documentation</a></li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                        <h3><a id="config-bmlt-root-server" class="anchor"></a>BMLT Root Server URL</h3>
                         <p>Example: https://bmlt.sezf.org/main_server</p>
                         <ul>
                             <li>
@@ -474,7 +491,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Service Body</h3>
+                        <h3><a id="config-service-body" class="anchor"></a>Service Body</h3>
                         <p>This service body will be used when no service body is defined in the shortcode.</p>
                         <ul>
                             <li>
@@ -509,7 +526,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Include Extra Meetings</h3>
+                        <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
                             <p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
                             <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
@@ -538,7 +555,7 @@ if (!class_exists("Crouton")) {
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Custom Query</h3>
+                        <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
                         <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
                         <ul>
                             <li>
@@ -548,7 +565,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Meeting Data Template</h3>
+                        <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
@@ -565,7 +582,7 @@ if (!class_exists("Crouton")) {
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Metadata Template</h3>
+                        <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
@@ -582,7 +599,7 @@ if (!class_exists("Crouton")) {
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Theme</h3>
+                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
                         <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
                         <ul>
                             <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
@@ -603,7 +620,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Custom CSS</h3>
+                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
                             <li>
@@ -612,7 +629,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3>Google API Key</h3>
+                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
                         <p>This is only needed when using the companion map feature show_map.</p>
                         <ul>
                             <li>

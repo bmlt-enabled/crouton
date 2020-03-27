@@ -49,9 +49,10 @@ function Crouton(config) {
 		sort_keys: "start_time",	  // Controls sort keys on the query
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
-		theme: "jack",               // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
-		meeting_data_template: "<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>",
-		metadata_template: "<a target='_blank' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' id='map-button' class='btn btn-primary btn-xs'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>"
+		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
+		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
+		meeting_data_template: "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span>{{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>",
+		metadata_template: "{{#isVirtual this}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class=\"glyphicon glyphicon-earphone\"></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class=\"qrcode\">{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}"
 	};
 
 	self.setConfig(config);
@@ -466,7 +467,6 @@ function Crouton(config) {
 				.format(self.config['time_format']);
 			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].get('day') + 1;
 			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['start_time_raw'].get('day') + 1);
-			meetingData[m]['is_virtual'] = meetingData[m]['root_server_uri'].indexOf('virtual') >= 0;
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
@@ -498,6 +498,7 @@ function Crouton(config) {
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+			meetingData[m]['show_qrcode'] = self.config['show_qrcode'];
 			for (var k in meetingData[m]) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
 					if (meetingData[m][k].indexOf('#@-@#') !== -1) {
@@ -1059,6 +1060,39 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str)
 });
 
+crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
+	var fnTrue = options.fn;
+	var fnFalse = options.inverse;
+
+	return inArray('VM', data['formats'].split(",")) && (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
+});
+
+crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
+	var fnTrue = options.fn;
+	var fnFalse = options.inverse;
+
+	return inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
+});
+
+crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
+	var fnTrue = options.fn;
+	var fnFalse = options.inverse;
+
+	return !inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
+});
+
+crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC') !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC')['description'];
+	} else {
+		return "TEMPORARILY CLOSED";
+	}
+});
+
+crouton_Handlebars.registerHelper('qrCode', function(link, options) {
+	return new crouton_Handlebars.SafeString("<img alt=\"qrcode\" src=\"https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8\">");
+});
+
 crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
@@ -1081,6 +1115,14 @@ crouton_Handlebars.registerHelper('formatLink', function(text) {
 	} else {
 		return text;
 	}
+});
+
+crouton_Handlebars.registerHelper('webLinkify', function(text) {
+	return new crouton_Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
+});
+
+crouton_Handlebars.registerHelper('phoneLinkify', function(text) {
+	return new crouton_Handlebars.SafeString("<a href='tel:" + text + "' target='_blank'>" + text + "</a>");
 });
 
 crouton_Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
