@@ -1064,21 +1064,21 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 	var fnTrue = options.fn;
 	var fnFalse = options.inverse;
 
-	return data['formats'].indexOf("VM") > 0 && (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
+	return inArray('VM', data['formats'].split(",")) && (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
 	var fnTrue = options.fn;
 	var fnFalse = options.inverse;
 
-	return data['formats'].indexOf("TC") > 0 ? fnTrue(this): fnFalse(this)
+	return inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
 });
 
 crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
 	var fnTrue = options.fn;
 	var fnFalse = options.inverse;
 
-	return data['formats'].indexOf("TC") < 0 ? fnTrue(this): fnFalse(this)
+	return !inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
 });
 
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
