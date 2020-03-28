@@ -130,3 +130,12 @@
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
     color: #EEE;
 }
+
+.bootstrap-bmlt a {
+    color: #7DABD0;
+}
+
+.bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
+    color: #7DABD0;
+    text-decoration: underline;
+}

@@ -225,12 +225,12 @@
     <div>
         <p>With this parameter you can have crouton display the results into a pre-translated language.</p>
         <p><strong>[bmlt_tabs language="en-US"]</strong></p>
-        <p>You can find the currently supported lanuages <a href="https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js" target="_blank">here</a>.</p>
+        <p>You can find the currently supported languages <a href="https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js" target="_blank">here</a>.</p>
         <p>Open a ticket if you want to assist with other translations <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">here</a>.</p>
     </div>
     <h3 class="help-accordian"><strong>Virtual Meetings</strong></h3>
     <div>
-        <p>If you use the format code "VM" it will render the virtual_meeting_link and phone_meeting_number in the metadata template column.  It will automaticlaly turn them into hyperlinks.  This behavior is overridable through the metadata template functionality.</p>
+        <p>If you use the format code "VM" it will render the virtual_meeting_link and phone_meeting_number in the metadata template column.  It will automatically turn them into hyperlinks.  This behavior is overridable through the metadata template functionality.  This will also place the description of the VM format above the links.</p>
         <p>If you want to display a QR Code along with this, set the short code <strong>[bmlt_tabs show_qrcode="1"]</strong>.</p>
     </div>
     <h3 class="help-accordian"><strong>Temporarily Closed</strong></h3>
