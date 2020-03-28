@@ -577,13 +577,13 @@ table.tablesaw {
 	 font-weight: bold;
  }
 
+.qrcode {
+	text-align: center;
+	display: inline-block;
+}
+
 .meetsVirtually {
 	font-size: 16px;
 	text-transform: uppercase;
 	font-weight: bold;
-}
-
-.qrcode {
-	text-align: center;
-	display: inline-block;
 }
