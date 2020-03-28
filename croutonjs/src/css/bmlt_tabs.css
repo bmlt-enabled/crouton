@@ -572,6 +572,12 @@ table.tablesaw {
 }
 
 .temporarilyClosed {
+	 font-size: 16px;
+	 text-transform: uppercase;
+	 font-weight: bold;
+ }
+
+.meetsVirtually {
 	font-size: 16px;
 	text-transform: uppercase;
 	font-weight: bold;
