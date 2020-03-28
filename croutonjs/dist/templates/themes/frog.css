@@ -136,5 +136,14 @@
 #bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover {
     color: #AAA;
     background-color: #444;
-    border-color: #444;
+    border-color: lightseagreen;
+}
+
+.bootstrap-bmlt a {
+    color: lightseagreen;
+}
+
+.bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
+    color: lightseagreen;
+    text-decoration: underline;
 }
