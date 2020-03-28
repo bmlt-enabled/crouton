@@ -105,8 +105,7 @@ span.bmlt_tabs_group_count {
 
 #bmlt-tabs .bmlt-column1 {
 	text-align: left;
-	width: auto;
-	white-space: nowrap;
+	width: 20%;
 	overflow: hidden;
 	word-break: break-all;
 	vertical-align: top;
