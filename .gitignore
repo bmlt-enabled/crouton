@@ -5,3 +5,4 @@ vendor
 node_modules
 croutonjs/dist/crouton.*
 croutonjs/src/js/templates.js
+*.orig

@@ -51,8 +51,8 @@ function Crouton(config) {
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
 		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
-		meeting_data_template: "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span>{{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>",
-		metadata_template: "{{#isVirtual this}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class=\"glyphicon glyphicon-earphone\"></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class=\"qrcode\">{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}"
+		meeting_data_template: "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>",
+		metadata_template: "{{#isVirtual this}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud'></span> {{meetsVirtually this}}</div>{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<div><a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a></div><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}"
 	};
 
 	self.setConfig(config);
@@ -1085,12 +1085,20 @@ crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
 	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC') !== undefined) {
 		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC')['description'];
 	} else {
-		return "TEMPORARILY CLOSED";
+		return "FACILITY IS TEMPORARILY CLOSED";
+	}
+});
+
+crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'VM') !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'VM')['description'];
+	} else {
+		return "MEETS VIRTUALLY";
 	}
 });
 
 crouton_Handlebars.registerHelper('qrCode', function(link, options) {
-	return new crouton_Handlebars.SafeString("<img alt=\"qrcode\" src=\"https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8\">");
+	return new crouton_Handlebars.SafeString("<img alt='qrcode' src='https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8&chld=L|0'>");
 });
 
 crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {

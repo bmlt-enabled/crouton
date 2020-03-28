@@ -22,14 +22,16 @@ if (!class_exists("Crouton")) {
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
         public $themes = [
+            "frog",
             "jack",
             "kevin",
             "lucy",
+            "one-nine",
             "patrick",
             "sezf"
         ];
-        public $default_template = "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span>{{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
-        public $default_metadata_template = "{{#isVirtual this}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}";
+        public $default_template = "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>";
+        public $default_metadata_template = "{{#isVirtual this}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud'></span> {{meetsVirtually this}}</div>{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}<div><a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a></div><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/isNotTemporarilyClosed}}";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
