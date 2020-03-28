@@ -1090,7 +1090,7 @@ crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
 });
 
 crouton_Handlebars.registerHelper('qrCode', function(link, options) {
-	return new crouton_Handlebars.SafeString("<img alt=\"qrcode\" src=\"https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8\">");
+	return new crouton_Handlebars.SafeString("<img alt='qrcode' src='https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8&chld=L|0'>");
 });
 
 crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
