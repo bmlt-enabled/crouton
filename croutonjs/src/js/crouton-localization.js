@@ -263,6 +263,26 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Panorâmico + Zoom",
 			"languages": "Languages",
 		},
+		"sv-SE": {
+			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
+			"weekday" : "Veckodag",
+			"city" : "Stad",
+			"cities" : "Städer",
+			"groups" : "Grupper",
+			"areas" : "Distrikt",
+			"locations" : "Plats",
+			"counties" : "Land",
+			"states" : "Stater",
+			"postal_codes" : "Postnummer",
+			"formats" : "Format",
+			"map" : "Karta",
+			"neighborhood": "Region",
+			"near_me": "Nära mig",
+			"text_search": "Söktext",
+			"click_search": "Sök",
+			"pan_and_zoom": "Panorera + Zooma",
+			"languages": "Språk",
+		},
 	};
 }
 
