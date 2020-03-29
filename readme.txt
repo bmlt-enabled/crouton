@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 * Native support for Virtual Meetings (VM format) that automatically shows the new virtual_meeting_link and phone_meeting_number (requires root server 2.15.0)
 * Native support for QR codes for Virtual Meetings (VM format) with new shortcodes `show_qrcode="1"`
 * Native support for Temporary Closed (TC format) that automatically displays a flag and the description field text.
+* Three new themes: Orange Monster, One-Nine and Frog.
 * CSS changes to support virtual meetings + responsive displays.
 * Fix for configuration screen saved confirmation.
 * Removal of misconfigured root server header on admin UI.
