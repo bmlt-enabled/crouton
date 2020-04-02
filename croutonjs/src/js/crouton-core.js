@@ -568,7 +568,8 @@ Crouton.prototype.setConfig = function(config) {
 	}
 
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-	self.config['short_language'] = self.config['language'].substring(0, 2);
+	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
+	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
 	self.localization = new CroutonLocalization(self.config['language']);
 };
 

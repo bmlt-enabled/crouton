@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.4.0
-Stable tag: 3.9.2
+Stable tag: 3.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -36,15 +36,20 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.9.3 =
+* Compatibility support for WP 5.4.
+* Added new theme: Florida-Nights.
+* Fix for legacy issue with da-DK in the root server where it doesn't follow ISO 639 standards.
+
 = 3.9.2 =
-* Null condition fixes for meeting_data_template and metadata_template
+* Null condition fixes for meeting_data_template and metadata_template.
 
 = 3.9.1 =
 * Swedish Translations
 
 = 3.9.0 =
-* Native support for Virtual Meetings (VM format) that automatically shows the new virtual_meeting_link and phone_meeting_number (requires root server 2.15.0)
-* Native support for QR codes for Virtual Meetings (VM format) with new shortcodes `show_qrcode="1"`
+* Native support for Virtual Meetings (VM format) that automatically shows the new virtual_meeting_link and phone_meeting_number (requires root server 2.15.0).
+* Native support for QR codes for Virtual Meetings (VM format) with new shortcodes `show_qrcode="1"`.
 * Native support for Temporary Closed (TC format) that automatically displays a flag and the description field text.
 * Three new themes: Orange Monster, One-Nine and Frog.
 * CSS changes to support virtual meetings + responsive displays.
