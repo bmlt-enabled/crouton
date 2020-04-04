@@ -216,6 +216,7 @@
         <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs]</p>
         <p><strong>[crouton_map map_search_auto="true"]</strong> - specifies if you want to automatically use your current latitude and longitude to find meetings (default: false).</p>
         <p><strong>[crouton_map map_search_location="Greensboro, NC"]</strong> - specifies the starting search location on the map (default: none).</p>
+        <p><strong>[crouton_map map_search_coordinates_search="true"]</strong> - specifies the starting search coordinates on the map, will use (and require) the latitude and longitude settings as mentioned here. (default: none).</p>
         <p><strong>[crouton_map map_search_latitude="0" map_search_longitude="0"]</strong> - specifies the starting latitude and longitude in the map view (default: 0, 0).</p>
         <p><strong>[crouton_map map_search_zoom="10"]</strong> - specifies the starting zoom level on the map (default: 10).</p>
         <p><strong>[crouton_map map_search_width="-50"]</strong> - specifies how many meetings to return, a positive integer means how many miles or kilometers to search.  A negative integer indicates the closest number of meetings from that point with no distance limits. (default: -50 [the fifty closest meetings to the point selected]).</p>

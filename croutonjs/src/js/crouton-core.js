@@ -900,8 +900,10 @@ Crouton.prototype.renderMap = function() {
 
 	if (self.config['map_search']['auto']) {
 		self.mapSearchNearMeMode();
-	} else if (self.config['map_search']['location'] !== null) {
+	} else if (self.config['map_search']['location'] !== undefined) {
 		self.mapSearchTextMode(self.config['map_search']['location']);
+	} else if (self.config['map_search']['coordinates_search']) {
+		self.searchByCoordinates(self.config['map_search']['latitude'], self.config['map_search']['longitude']);
 	}
 };
 
