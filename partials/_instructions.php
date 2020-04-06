@@ -192,6 +192,8 @@
     <div>
         <p>With this parameter you can include unpublished meetings.  You could also use a custom query to accomplish this by adding "&advanced_published=0" into your query.</p>
         <p><strong>[bmlt_tabs include_unpublished="1"]</strong></p>
+        <p>You can also set this to only include unpublished with the following.</p>
+        <p><strong>[bmlt_tabs include_unpublished="-1"]</strong></p>
     </div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
