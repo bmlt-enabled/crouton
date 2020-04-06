@@ -20,6 +20,7 @@ function Crouton(config) {
 		filter_tabs: false,   		  // Whether to show weekday tabs on filtering.
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
+		include_unpublished: false,	  // Includes unpublished meeting
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
 		],
@@ -210,6 +211,10 @@ function Crouton(config) {
 			data_field_keys.push(arr[1]);
 		}
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
+
+		if (self.config['include_unpublished']) {
+			url += "&advanced_published=0"
+		}
 
 		if (self.config['distance_search'] !== 0) {
 			if (navigator.geolocation) {

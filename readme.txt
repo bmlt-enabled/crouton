@@ -38,6 +38,8 @@ https://demo.bmlt.app/crouton
 
 = 3.9.4 =
 * Added initial map coordinates search feature.
+* Added the ability to use new shortcode option `include_unpublished="1"` to display unpublished meetings (requires root server v2.15.2)
+* Added new theme: Truth.
 
 = 3.9.3 =
 * Compatibility support for WP 5.4.

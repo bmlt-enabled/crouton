@@ -188,9 +188,10 @@
         <p>If no option is set, timezone will be assumed to the local PC time.</p>
         <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjuction with auto_tz_adjust parameter, time will be shown relative to that.</p>
     </div>
-    <h3 class="help-accordian"><strong>Links</strong></h3>
+    <h3 class="help-accordian"><strong>Include Unpublished Meetings</strong></h3>
     <div>
-        <p>If the "comments" field in the BMLT for an entry starts with "tel:" or "http", it will automatically be turned into a URL.</p>
+        <p>With this parameter you can include unpublished meetings.  You could also use a custom query to accomplish this by adding "&advanced_published=0" into your query.</p>
+        <p><strong>[bmlt_tabs include_unpublished="1"]</strong></p>
     </div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
