@@ -283,6 +283,26 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Panorera + Zooma",
 			"languages": "Språk",
 		},
+		"ru-RU": {
+			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+			"weekday" : "будний день",
+			"city" : "Город",
+			"cities" : "Города",
+			"groups" : "Группы",
+			"areas" : "Зоны",
+			"locations" : "Локации",
+			"counties" : "Страны",
+			"states" : "Штаты",
+			"postal_codes" : "Индексы (почтовые)",
+			"formats" : "Форматы",
+			"map" : "Карта",
+			"neighborhood": "Соседство",
+			"near_me": "Около меня",
+			"text_search": "Поиск текста",
+			"click_search": "Нажмите Поиск",
+			"pan_and_zoom": "Pan + Zoom",
+			"languages": "Языки"
+		}
 	};
 }
 
