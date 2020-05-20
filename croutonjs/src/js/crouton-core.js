@@ -1077,6 +1077,13 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 	return inArray('VM', data['formats'].split(",")) && (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
 });
 
+crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
+	var fnTrue = options.fn;
+	var fnFalse = options.inverse;
+
+	return inArray('VM', data['formats'].split(",")) && !inArray('TC', data['formats'].split(",")) && (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
+});
+
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
 	var fnTrue = options.fn;
 	var fnFalse = options.inverse;
@@ -1104,6 +1111,14 @@ crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
 		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'VM')['description'];
 	} else {
 		return "MEETS VIRTUALLY";
+	}
+});
+
+crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'HY') !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'HY')['description'];
+	} else {
+		return "MEETS VIRTUALLY AND IN PERSON";
 	}
 });
 
