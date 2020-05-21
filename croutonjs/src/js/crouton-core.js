@@ -1083,8 +1083,7 @@ crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
 	var fnTrue = options.fn;
 	var fnFalse = options.inverse;
 
-	return (inArray('HY', data['formats'].split(",")) ||
-		(inArray('VM', data['formats'].split(",")) && !inArray('TC', data['formats'].split(","))))
+	return inArray('HY', data['formats'].split(","))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
 });
 
