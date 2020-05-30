@@ -717,10 +717,11 @@ Crouton.prototype.render = function(callback) {
 				jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 				jQuery(".crouton-select").select2({
 					dropdownAutoWidth: true,
-					allowClear: false,
+					allowClear: true,
 					width: "resolve",
 					minimumResultsForSearch: 1,
-					dropdownCssClass: 'bmlt-drop'
+					dropdownCssClass: 'bmlt-drop',
+					//multiple: true,
 				});
 
 				jQuery('[data-toggle="popover"]').popover();
@@ -730,9 +731,9 @@ Crouton.prototype.render = function(callback) {
 					}
 				});
 
-				jQuery('.filter-dropdown').on('select2:select', function (e) {
+				var filterDropDown = jQuery('.filter-dropdown');
+				filterDropDown.on('select2:select', function (e) {
 					jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
-
 					var val = jQuery(this).val();
 					jQuery('.bmlt-page').each(function () {
 						self.hidePage(this);
@@ -741,19 +742,23 @@ Crouton.prototype.render = function(callback) {
 					});
 				});
 
+				filterDropDown.on('select2:unselect', function (e) {
+					jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
+					var val = jQuery(this).val();
+					jQuery('.bmlt-page').each(function () {
+						self.showPage(this);
+						//self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+						return;
+					});
+					self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+				});
+
 				jQuery("#day").on('click', function () {
 					self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 				});
+
 				jQuery(".filterButton").on('click', function (e) {
 					self.filteredView(e.target.attributes['data-field'].value);
-				});
-
-				jQuery('.custom-ul').on('click', 'a', function (event) {
-					jQuery('.bmlt-page').each(function (index) {
-						self.hidePage("#" + this.id);
-						self.showPage("#" + event.target.id);
-						return;
-					});
 				});
 
 				if (self.config['has_tabs']) {
