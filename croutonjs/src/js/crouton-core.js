@@ -77,7 +77,7 @@ function Crouton(config) {
 	self.searchByCoordinates = function(latitude, longitude) {
 		var width = self.config['map_search']['width'] || -50;
 
-		self.config['custom_query'] = "&lat_val=" + latitude + "&long_val=" + longitude
+		self.config['custom_query'] = self.config['custom_query'] + "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
 		self.meetingSearch(function() {
 			self.reset();
