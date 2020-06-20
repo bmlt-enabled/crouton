@@ -1,4 +1,5 @@
 var crouton_Handlebars = Handlebars.noConflict();
+
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -157,8 +158,9 @@ function Crouton(config) {
 				console.error("Could not find any meetings for the criteria specified.");
 				return;
 			}
-			data.exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
-			self.meetingData = data;
+			data['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+			self.meetingData = data['meetings'];
+			self.formatsData = data['formats'];
 
 			if (self.config['extra_meetings'].length > 0) {
 				var extra_meetings_query = "";
@@ -210,7 +212,8 @@ function Crouton(config) {
 		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
 			data_field_keys.push(arr[1]);
 		}
-		var url = '/client_interface/jsonp/?switcher=GetSearchResults&data_field_key=' + data_field_keys.join(',');
+		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
+			'&data_field_key=' + data_field_keys.join(',')
 
 		if (self.config['int_include_unpublished'] === 1) {
 			url += "&advanced_published=0"
@@ -381,26 +384,9 @@ function Crouton(config) {
 		callback();
 	};
 
-	self.getFormats = function (callback) {
-		var getAllIds = arrayColumn(self.meetingData, 'format_shared_id_list');
-		var joinIds = getAllIds.join(',');
-		var idsArray = joinIds.split(',');
-		var uniqueIds = arrayUnique(idsArray);
-		jQuery.getJSON(self.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=' + self.config['short_language'] + '&callback=?', function (data) {
-			var formats = [];
-			for (var i = 0; i < data.length; i++) {
-				var format = data[i];
-				if (inArray(format['id'], uniqueIds)) {
-					formats.push(format);
-				}
-			}
-
-			callback(formats.sortByKey('name_string'));
-		});
-	};
-
-	self.getServiceBodies = function (callback) {
-		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&callback=?', callback);
+	self.getServiceBodies = function (service_bodies_id, callback) {
+		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
+			+ getServiceBodiesQueryString(service_bodies_id) + '&callback=?', callback);
 	};
 
 	self.showLocation = function(position) {
@@ -631,7 +617,7 @@ Crouton.prototype.render = function(callback) {
 			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
 		};
 		if (callback !== undefined) callback();
-		self.getServiceBodies(function (service_bodies) {
+		self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
 			var active_service_bodies = [];
 			for (var i = 0; i < service_bodies.length; i++) {
 				for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
@@ -642,171 +628,169 @@ Crouton.prototype.render = function(callback) {
 			}
 
 			self.uniqueData['areas'] = active_service_bodies.sortByKey('name');
-			self.getFormats(function (data) {
-				self.formatsData = data;
-				self.uniqueData['formats'] = data;
-				self.uniqueData['languages'] = [];
+			self.formatsData = self.formatsData.sortByKey('name_string');
+			self.uniqueData['formats'] = self.formatsData;
+			self.uniqueData['languages'] = [];
 
-				for (var l = 0; l < data.length; l++) {
-					var format = data[l];
-					if (format['format_type_enum'] === "LANG") {
-						self.uniqueData['languages'].push(data[l]);
-					}
+			for (var l = 0; l < self.formatsData.length; l++) {
+				var format = self.formatsData[l];
+				if (format['format_type_enum'] === "LANG") {
+					self.uniqueData['languages'].push(data[l]);
 				}
+			}
 
-				var weekdaysData = [];
-				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+			var weekdaysData = [];
+			var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
-				enrichedMeetingData.sort(function (a, b) {
-					return a['start_time_raw'] - b['start_time_raw'];
+			enrichedMeetingData.sort(function (a, b) {
+				return a['start_time_raw'] - b['start_time_raw'];
+			});
+
+			var day_counter = 0;
+			var byDayData = [];
+			var buttonFiltersData = {};
+			while (day_counter < 7) {
+				var day = self.config.day_sequence[day_counter];
+				var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
+				weekdaysData.push({
+					"day": day,
+					"meetings": daysOfTheWeekMeetings
 				});
 
-				var day_counter = 0;
-				var byDayData = [];
-				var buttonFiltersData = {};
-				while (day_counter < 7) {
-					var day = self.config.day_sequence[day_counter];
-					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
-					weekdaysData.push({
-						"day": day,
-						"meetings": daysOfTheWeekMeetings
-					});
+				byDayData.push({
+					"day": self.localization.getDayOfTheWeekWord(day),
+					"meetings": daysOfTheWeekMeetings
+				});
 
-					byDayData.push({
-						"day": self.localization.getDayOfTheWeekWord(day),
-						"meetings": daysOfTheWeekMeetings
-					});
-
-					for (var f = 0; f < self.config.button_filters.length; f++) {
-						var groupByName = self.config.button_filters[f]['field'];
-						var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
-						for (var i = 0; i < groupByData.length; i++) {
-							var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
-							if (buttonFiltersData.hasOwnProperty(groupByName) && buttonFiltersData[groupByName].hasOwnProperty(groupByData[i])) {
-								buttonFiltersData[groupByName][groupByData[i]] = buttonFiltersData[groupByName][groupByData[i]].concat(groupByMeetings);
-							} else if (buttonFiltersData.hasOwnProperty(groupByName)) {
-								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
-							} else {
-								buttonFiltersData[groupByName] = {};
-								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
-							}
-
+				for (var f = 0; f < self.config.button_filters.length; f++) {
+					var groupByName = self.config.button_filters[f]['field'];
+					var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
+					for (var i = 0; i < groupByData.length; i++) {
+						var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
+						if (buttonFiltersData.hasOwnProperty(groupByName) && buttonFiltersData[groupByName].hasOwnProperty(groupByData[i])) {
+							buttonFiltersData[groupByName][groupByData[i]] = buttonFiltersData[groupByName][groupByData[i]].concat(groupByMeetings);
+						} else if (buttonFiltersData.hasOwnProperty(groupByName)) {
+							buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
+						} else {
+							buttonFiltersData[groupByName] = {};
+							buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
 						}
-					}
 
-					day_counter++;
-				}
-
-				var buttonFiltersDataSorted = {};
-				for (var b = 0; b < self.config.button_filters.length; b++) {
-					var sortKey = [];
-					var groupByName = self.config.button_filters[b]['field'];
-					for (var buttonFiltersDataItem in buttonFiltersData[groupByName]) {
-						sortKey.push(buttonFiltersDataItem);
-					}
-
-					sortKey.sort();
-
-					buttonFiltersDataSorted[groupByName] = {};
-					for (var s = 0; s < sortKey.length; s++) {
-						buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
 					}
 				}
 
-				self.renderView("#" + self.config['placeholder_id'], {
-					"config": self.config,
-					"meetings": {
-						"weekdays": weekdaysData,
-						"buttonFilters": buttonFiltersDataSorted,
-						"bydays": byDayData
-					},
-					"uniqueData": self.uniqueData
-				}, function () {
-					if (self.config['map_search'] != null || self.config['show_map']) {
-						jQuery(".bmlt-data-row").css({cursor: "pointer"});
-						jQuery(".bmlt-data-row").click(function () {
-							self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
-						});
-					}
+				day_counter++;
+			}
 
-					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
-					jQuery(".crouton-select").select2({
-						dropdownAutoWidth: true,
-						allowClear: false,
-						width: "resolve",
-						minimumResultsForSearch: 1,
-						dropdownCssClass: 'bmlt-drop'
+			var buttonFiltersDataSorted = {};
+			for (var b = 0; b < self.config.button_filters.length; b++) {
+				var sortKey = [];
+				var groupByName = self.config.button_filters[b]['field'];
+				for (var buttonFiltersDataItem in buttonFiltersData[groupByName]) {
+					sortKey.push(buttonFiltersDataItem);
+				}
+
+				sortKey.sort();
+
+				buttonFiltersDataSorted[groupByName] = {};
+				for (var s = 0; s < sortKey.length; s++) {
+					buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
+				}
+			}
+
+			self.renderView("#" + self.config['placeholder_id'], {
+				"config": self.config,
+				"meetings": {
+					"weekdays": weekdaysData,
+					"buttonFilters": buttonFiltersDataSorted,
+					"bydays": byDayData
+				},
+				"uniqueData": self.uniqueData
+			}, function () {
+				if (self.config['map_search'] != null || self.config['show_map']) {
+					jQuery(".bmlt-data-row").css({cursor: "pointer"});
+					jQuery(".bmlt-data-row").click(function () {
+						self.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
 					});
+				}
 
-					jQuery('[data-toggle="popover"]').popover();
-					jQuery('html').on('click', function (e) {
-						if (jQuery(e.target).data('toggle') !== 'popover') {
-							jQuery('[data-toggle="popover"]').popover('hide');
-						}
-					});
+				jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
+				jQuery(".crouton-select").select2({
+					dropdownAutoWidth: true,
+					allowClear: false,
+					width: "resolve",
+					minimumResultsForSearch: 1,
+					dropdownCssClass: 'bmlt-drop'
+				});
 
-					jQuery('.filter-dropdown').on('select2:select', function (e) {
-						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
-
-						var val = jQuery(this).val();
-						jQuery('.bmlt-page').each(function () {
-							self.hidePage(this);
-							self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
-							return;
-						});
-					});
-
-					jQuery("#day").on('click', function () {
-						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
-					});
-					jQuery(".filterButton").on('click', function (e) {
-						self.filteredView(e.target.attributes['data-field'].value);
-					});
-
-					jQuery('.custom-ul').on('click', 'a', function (event) {
-						jQuery('.bmlt-page').each(function (index) {
-							self.hidePage("#" + this.id);
-							self.showPage("#" + event.target.id);
-							return;
-						});
-					});
-
-					if (self.config['has_tabs']) {
-						jQuery('.nav-tabs a').on('click', function (e) {
-							e.preventDefault();
-							jQuery(this).tab('show');
-						});
-
-						var d = new Date();
-						var n = d.getDay();
-						n++;
-						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-						jQuery('#tab' + n).show();
-					}
-
-					self.showPage(".bmlt-header");
-					self.showPage(".bmlt-tabs");
-					self.showView(self.config['view_by']);
-
-					if (self.config['default_filter_dropdown'] !== "") {
-						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
-						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
-					}
-
-					if (self.config['show_distance']) {
-						self.getCurrentLocation(self.showLocation);
-					}
-
-					if (self.config['show_map']) {
-						self.loadGapi('crouton.initMap');
-					}
-
-					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
-						self.config['on_complete']();
+				jQuery('[data-toggle="popover"]').popover();
+				jQuery('html').on('click', function (e) {
+					if (jQuery(e.target).data('toggle') !== 'popover') {
+						jQuery('[data-toggle="popover"]').popover('hide');
 					}
 				});
-			})
-		});
+
+				jQuery('.filter-dropdown').on('select2:select', function (e) {
+					jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
+
+					var val = jQuery(this).val();
+					jQuery('.bmlt-page').each(function () {
+						self.hidePage(this);
+						self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+						return;
+					});
+				});
+
+				jQuery("#day").on('click', function () {
+					self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+				});
+				jQuery(".filterButton").on('click', function (e) {
+					self.filteredView(e.target.attributes['data-field'].value);
+				});
+
+				jQuery('.custom-ul').on('click', 'a', function (event) {
+					jQuery('.bmlt-page').each(function (index) {
+						self.hidePage("#" + this.id);
+						self.showPage("#" + event.target.id);
+						return;
+					});
+				});
+
+				if (self.config['has_tabs']) {
+					jQuery('.nav-tabs a').on('click', function (e) {
+						e.preventDefault();
+						jQuery(this).tab('show');
+					});
+
+					var d = new Date();
+					var n = d.getDay();
+					n++;
+					jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+					jQuery('#tab' + n).show();
+				}
+
+				self.showPage(".bmlt-header");
+				self.showPage(".bmlt-tabs");
+				self.showView(self.config['view_by']);
+
+				if (self.config['default_filter_dropdown'] !== "") {
+					var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
+					jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
+				}
+
+				if (self.config['show_distance']) {
+					self.getCurrentLocation(self.showLocation);
+				}
+
+				if (self.config['show_map']) {
+					self.loadGapi('crouton.initMap');
+				}
+
+				if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
+					self.config['on_complete']();
+				}
+			});
+		})
 	});
 };
 
@@ -1223,6 +1207,14 @@ function inArray(needle, haystack) {
 
 function isFunction(functionToCheck) {
 	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+}
+
+function getServiceBodiesQueryString(service_bodies_id) {
+	var service_bodies_query = "";
+	for (var x = 0; x < service_bodies_id.length; x++) {
+		service_bodies_query += "&services[]=" + service_bodies_id[x];
+	}
+	return service_bodies_query;
 }
 
 Array.prototype.filterByObjectKeyValue = function(key, value) {
