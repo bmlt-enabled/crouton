@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.0 =
+* Custom query support for [crouton_map]. [#242]
 * Queries optimized, eliminated one. [#238]
 
 = 3.10.1 =
