@@ -37,6 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.0 =
+* Added `custom_query` support for [crouton_map]. [#242]
+* Clear dropdown filter feature.
 * Queries optimized, eliminated one. [#238]
 
 = 3.10.1 =
