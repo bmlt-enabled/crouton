@@ -1055,34 +1055,30 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 });
 
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	var fnTrue = options.fn;
-	var fnFalse = options.inverse;
-
 	return ((inArray('HY', data['formats'].split(",")) && !inArray('TC', data['formats'].split(",")))
 		|| inArray('VM', data['formats'].split(",")))
-	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
+	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	var fnTrue = options.fn;
-	var fnFalse = options.inverse;
-
 	return inArray('HY', data['formats'].split(","))
-	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? fnTrue(this): fnFalse(this);
+	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
-crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-	var fnTrue = options.fn;
-	var fnFalse = options.inverse;
+function getTrueResult(options, ctx) {
+	return options.fn !== undefined ? options.fn(ctx) : true;
+}
 
-	return inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
+function getFalseResult(options, ctx) {
+	return options.inverse !== undefined ? options.inverse(ctx) : false;
+}
+
+crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
+	return inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-	var fnTrue = options.fn;
-	var fnFalse = options.inverse;
-
-	return !inArray('TC', data['formats'].split(",")) ? fnTrue(this): fnFalse(this)
+	return !inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
