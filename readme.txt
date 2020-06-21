@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 = 3.11.0 =
 * Custom query support for [crouton_map]. [#242]
 * Queries optimized, eliminated one. [#238]
+* Support for if/else operators on custom handlebars helpers [#245]
 
 = 3.10.1 =
 * Fixes for hybrid meetings to not include logic with VM + TC.
