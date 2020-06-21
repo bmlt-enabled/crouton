@@ -1081,6 +1081,17 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
 	return !inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
+	var allFound = false;
+	var formatsResponse = data['formats'].split(",")
+	var formatsParam = formats.split(",");
+	for (var i = 0; i < formatsParam.length; i++) {
+		allFound = inArray(formatsParam[i], formatsResponse);
+	}
+
+	return allFound ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
 	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC') !== undefined) {
 		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC')['description'];
