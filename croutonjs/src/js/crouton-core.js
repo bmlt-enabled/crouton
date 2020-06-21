@@ -1042,6 +1042,14 @@ Crouton.prototype.initMap = function(callback) {
 	if (callback !== undefined && isFunction(callback)) callback();
 };
 
+function getTrueResult(options, ctx) {
+	return options.fn !== undefined ? options.fn(ctx) : true;
+}
+
+function getFalseResult(options, ctx) {
+	return options.inverse !== undefined ? options.inverse(ctx) : false;
+}
+
 crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
 });
@@ -1064,14 +1072,6 @@ crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
 	return inArray('HY', data['formats'].split(","))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
-
-function getTrueResult(options, ctx) {
-	return options.fn !== undefined ? options.fn(ctx) : true;
-}
-
-function getFalseResult(options, ctx) {
-	return options.inverse !== undefined ? options.inverse(ctx) : false;
-}
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
 	return inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
