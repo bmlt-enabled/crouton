@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 * Custom query support for [crouton_map]. [#242]
 * Queries optimized, eliminated one. [#238]
 * Support for if/else operators on custom handlebars helpers [#245]
+* Support for VM only meetings through metadata template enhancement [#249]
 * Added hasFormats custom helper.
 
 = 3.10.1 =
