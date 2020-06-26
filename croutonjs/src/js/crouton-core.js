@@ -154,8 +154,9 @@ function Crouton(config) {
 
 	self.getMeetings = function(url, callback) {
 		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
-			if (data === null || JSON.stringify(data) === "{}") {
-				console.error("Could not find any meetings for the criteria specified.");
+			if (data === null || JSON.stringify(data['meetings']) === "{}") {
+				var fullUrl = self.config['root_server'] + url
+				jQuery('#' + self.config['placeholder_id']).html("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 				return;
 			}
 			data['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
