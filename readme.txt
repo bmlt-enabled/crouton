@@ -42,6 +42,7 @@ https://demo.bmlt.app/crouton
 * Support for if/else operators on custom handlebars helpers. [#245]
 * Support for VM only meetings through metadata template enhancement. [#249]
 * Added hasFormats custom helper.
+* Better no query results messaging. [#251]
 
 = 3.10.1 =
 * Fixes for hybrid meetings to not include logic with VM + TC.
