@@ -30,6 +30,14 @@ jobs:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
     - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
     deploy:
+      - provider: npm
+        email: "$NPM_EMAIL"
+        tag: "$TRAVIS_TAG"
+        api_key: "$NPM_TOKEN"
+        on:
+          tags: true
+          repo: bmlt-enabled/crouton
+          branch: master
       - provider: s3
         access_key_id: AKIAI7JHYFA6DI3WYP5A
         secret_access_key:
