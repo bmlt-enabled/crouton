@@ -32,9 +32,10 @@ jobs:
     deploy:
       - provider: npm
         email: "$NPM_EMAIL"
-        tag: stable
+        tag: next
         api_key: "$NPM_TOKEN"
-        src: croutonjs/dist
+        src: ./croutonjs/dist
+        access: public
         on:
           tags: true
           repo: bmlt-enabled/crouton
