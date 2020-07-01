@@ -34,7 +34,6 @@ jobs:
         email: "$NPM_EMAIL"
         tag: next
         api_key: "$NPM_TOKEN"
-        src: ./croutonjs/dist
         access: public
         on:
           tags: true
