@@ -34,10 +34,12 @@ jobs:
         email: "$NPM_EMAIL"
         tag: "$TRAVIS_TAG"
         api_key: "$NPM_TOKEN"
+        src: croutonjs/dist
         on:
           tags: true
           repo: bmlt-enabled/crouton
           branch: master
+        edge: true
       - provider: s3
         access_key_id: AKIAI7JHYFA6DI3WYP5A
         secret_access_key:
