@@ -24,7 +24,7 @@ jobs:
     - S3_KEY=croutonjs
     script:
     - DISABLE_NOTIFIER=true make deploy
-    - cd croutonjs/dist && zip -r ${ZIP_FILENAME} *
+    - cd croutonjs/dist && npm version ${TRAVIS_TAG} && zip -r ${ZIP_FILENAME} *
     - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
@@ -32,7 +32,7 @@ jobs:
     deploy:
       - provider: npm
         email: "$NPM_EMAIL"
-        tag: "$TRAVIS_TAG"
+        tag: stable
         api_key: "$NPM_TOKEN"
         src: croutonjs/dist
         on:

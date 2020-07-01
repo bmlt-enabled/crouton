@@ -1,6 +1,6 @@
 {
   "name": "@bmlt-enabled/croutonjs",
-  "version": "3.11.1",
+  "version": "$VERSION",
   "description": "Shows BMLT information is a customizable tabbed web view.",
   "main": "crouton.js",
   "directories": {
