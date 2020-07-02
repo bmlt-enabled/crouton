@@ -32,7 +32,8 @@ jobs:
     deploy:
       - provider: npm
         email: "$NPM_EMAIL"
-        api_key: "$NPM_TOKEN"
+        api_key:
+          secure: bvTCtNVof7NfqdRAxqlE0NROo2HLKO+Ub8Q8nSL4pmrXI5qtedffgFoQ1ZR7FeP7Gvri19BSLOhL3P6kfE0PhJceDaPBTHsQJWTi/45clYO8E1ZFz/PHKl32mQyimYue0Ig6g63FXe3zv1J51zbAJHecS4Un7e7NV8szoCca17eqEmE4gL71y8DHoaHNX/9KP0D/FMeMszISjtaa9gSWs2hlBK5Wci6Bdmtq4IlzPZ5r163AP8DjSPLqPkiCBduy/uyDtA5VDqUzS/2AIPttU1al9s5768x01l8D7EByLels3e5xkuZMqnsR1X0HGSizDSQgJG+/yvyVcVN1NC/OxDeXdkT2gEhZZKPqMlx1v2gGqeMCSEmnuUwHzm/Bf3z6CvsRS9bk5kywl2t7vOqyHH5l9i8VrCho+FENMwwhjmZdIjnErZpEF5/C/QL4KBCQm5cO/jvEoBzrMNtM1welEChDSMxLlkJhTMj9BAlQxv1/gk9da+Cql7wJ4uG/QV3Ay9U9H1AfECFNWoQIMkycm1/2IHoo3quhV9sx81TD2sQMs/yx8NyTqmE+Hcq5kOlMFujMpbkVY3ggIuQM7r5f4ONgzugbQNOM64P5kuTkOUiMqs0mxQX9mDaPPlwcOQQiBSaiBc2lTTmEvf3M1b0fAt4ROxHm2qHxgGz4YFxzGlY=
         tag: next
         access: public
         edge: true
