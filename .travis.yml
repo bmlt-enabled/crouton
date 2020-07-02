@@ -1,5 +1,4 @@
 language: php
-
 php:
 - '7.1'
 env:
@@ -7,13 +6,13 @@ env:
   - S3_BUCKET=archives.bmlt.app
 jobs:
   include:
-
   - stage: lint
     install:
     - composer install
     script:
     - find . -name "*.php" ! -path '*/vendor/*' -print0 | xargs -0 -n1 -P8 php -l
-    - vendor/squizlabs/php_codesniffer/bin/phpcs --warning-severity=6 --standard=PSR2 --ignore=vendor --extensions=php ./
+    - vendor/squizlabs/php_codesniffer/bin/phpcs --warning-severity=6 --standard=PSR2
+      --ignore=vendor --extensions=php ./
   - stage: croutonjs zip file
     env:
     - BUILD_DIR=build
@@ -30,69 +29,67 @@ jobs:
     - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
     - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
     deploy:
-      - provider: npm
-        email: "$NPM_EMAIL"
-        api_key:
-          secure: bvTCtNVof7NfqdRAxqlE0NROo2HLKO+Ub8Q8nSL4pmrXI5qtedffgFoQ1ZR7FeP7Gvri19BSLOhL3P6kfE0PhJceDaPBTHsQJWTi/45clYO8E1ZFz/PHKl32mQyimYue0Ig6g63FXe3zv1J51zbAJHecS4Un7e7NV8szoCca17eqEmE4gL71y8DHoaHNX/9KP0D/FMeMszISjtaa9gSWs2hlBK5Wci6Bdmtq4IlzPZ5r163AP8DjSPLqPkiCBduy/uyDtA5VDqUzS/2AIPttU1al9s5768x01l8D7EByLels3e5xkuZMqnsR1X0HGSizDSQgJG+/yvyVcVN1NC/OxDeXdkT2gEhZZKPqMlx1v2gGqeMCSEmnuUwHzm/Bf3z6CvsRS9bk5kywl2t7vOqyHH5l9i8VrCho+FENMwwhjmZdIjnErZpEF5/C/QL4KBCQm5cO/jvEoBzrMNtM1welEChDSMxLlkJhTMj9BAlQxv1/gk9da+Cql7wJ4uG/QV3Ay9U9H1AfECFNWoQIMkycm1/2IHoo3quhV9sx81TD2sQMs/yx8NyTqmE+Hcq5kOlMFujMpbkVY3ggIuQM7r5f4ONgzugbQNOM64P5kuTkOUiMqs0mxQX9mDaPPlwcOQQiBSaiBc2lTTmEvf3M1b0fAt4ROxHm2qHxgGz4YFxzGlY=
-        tag: next
-        access: public
-        edge: true
-        auth_method: auth
-        on:
-          tags: true
-          repo: bmlt-enabled/crouton
-          branch: master
-      - provider: s3
-        access_key_id: AKIAI7JHYFA6DI3WYP5A
-        secret_access_key:
-          secure: jAFBLyw5GIGl7lit4lcMkNWiYpsGGIdIzGeubdj6eLR8/impcTpwynj+V50bY19ttqq1gUkv6siFcRCUXgbNeonfNM8VCxFYUiE4pGhtiU/nl1X3YQDREoSDu1HK9nCTOBxdtdUpHzpDu535e/bN+i/pc0FgDAdh3QtzIEeZQ2G7QHbXQ2ydS7O03ZOPOlR4GYP4lf9O+uVwuzdAeJs2RT+empStg94xFxyTSi08SAUGMuPt6jGn8LC8YGSr7DDwwRiNdf4Hwr5ZeBSkbXDMdvt8TuVGKBxae/lN3swL9gcLPf/9LCUL+qD3ELHEh6Hx6mrWYtVysuNAEqhH8w062xfxLuD9tKquG4R99l6r4EZjZ6t2qOJzFg2SNLKXvZduBNTEI2Z1i2Maw8pd14O3Ok3Ue8d8RhWN03E7FlDuth3J4yQ6hAKXnM5UCKelhzEJRLJeTqBbxRaDreLlxX6veHFXRBV6i9lPn0M5x+0/jmh8L/I9xcPemF+2i4eRlGxLMHee0k/xLxdezja1u4QPTFrvPqhJZgos2oxLP4pN5Vol6XxIVJ/CrCYG77+59ZhFLbKno6bjLIdMiY24U7o0DqWLsmaUQteDMmskPl+IiHYkREASIxpfgrJN7suc9KMVpKYVSMl/OZvFJIZzrymhAEIH5nFWdAuVvjuvJj/DfoA=
-        bucket: "$S3_BUCKET"
-        local_dir: "$DIST_DIR_S3"
-        upload-dir: "$S3_KEY"
-        skip_cleanup: true
-        on:
-          all_branches: true
-      - provider: releases
-        api_key:
-          secure: tJsVlhVaYjlA7frFEFIGN+DjUxSo1y8MIq6DX/NmIq8rB5r+b6eIfosDi58ON3cwqfLRk1Mw3uVqozGlWhw73NErUeGzkvof3IL3/sSe258o5Jq6RDdZXuhUddFhTnoJvQvBYcyxinl729QmQCzaPObVy254bmpXrJvbLuAU6ns/6dvF3RBDMiVzDSy2+IYDmTFwGdUo1/FyW23nmFMEs26aLivZy/UnLZ5D7qOevvRRPUxHKZFsMPXxI5RI11XQkA7dCeLKQawuBsiwg+eyvzlS1ZYw+js53fCv758jPYcFpg/2/b6jfMql0tPSIYxO4mnyW5FOpMhmqT5XWmgLF4NelF81av2g6Rif2I+O8UB7wHnv0gEDIbhTzp7RK7fcjxjGfME89EKfjVohuD2FMfNukjgWIg0TUfQ4zsPYbcbT3yIppDi8CkcGmd3VuTC8qUac7FLdd6ZO7+9yohWfiCqHwzzzyh94In5QXH0rNSPV0eOkpvlSGY+S8T2qwcMaapGBWCmsGHZfjxrpJTskNTmm7eRkxNp6aCBw1S0nDY1/JMhGixu0Gk0yomn7d7QkTdxksfSRkTnhiLyKVfeYwu4ybi1DAUXG+sHvLofKUv6ZKP10t3REr0GIjnv/xv0B80op5yv/YP8QZYR7UC5EJdY303sWi4Am1s5DwM940hs=
-        file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
-        skip_cleanup: true
-        name: "$TRAVIS_TAG"
-        on:
-          tags: true
-          condition: $TRAVIS_TAG != *beta*
-      - provider: releases
-        api_key:
-          secure: tJsVlhVaYjlA7frFEFIGN+DjUxSo1y8MIq6DX/NmIq8rB5r+b6eIfosDi58ON3cwqfLRk1Mw3uVqozGlWhw73NErUeGzkvof3IL3/sSe258o5Jq6RDdZXuhUddFhTnoJvQvBYcyxinl729QmQCzaPObVy254bmpXrJvbLuAU6ns/6dvF3RBDMiVzDSy2+IYDmTFwGdUo1/FyW23nmFMEs26aLivZy/UnLZ5D7qOevvRRPUxHKZFsMPXxI5RI11XQkA7dCeLKQawuBsiwg+eyvzlS1ZYw+js53fCv758jPYcFpg/2/b6jfMql0tPSIYxO4mnyW5FOpMhmqT5XWmgLF4NelF81av2g6Rif2I+O8UB7wHnv0gEDIbhTzp7RK7fcjxjGfME89EKfjVohuD2FMfNukjgWIg0TUfQ4zsPYbcbT3yIppDi8CkcGmd3VuTC8qUac7FLdd6ZO7+9yohWfiCqHwzzzyh94In5QXH0rNSPV0eOkpvlSGY+S8T2qwcMaapGBWCmsGHZfjxrpJTskNTmm7eRkxNp6aCBw1S0nDY1/JMhGixu0Gk0yomn7d7QkTdxksfSRkTnhiLyKVfeYwu4ybi1DAUXG+sHvLofKUv6ZKP10t3REr0GIjnv/xv0B80op5yv/YP8QZYR7UC5EJdY303sWi4Am1s5DwM940hs=
-        file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
-        skip_cleanup: true
-        name: "$TRAVIS_TAG"
-        prerelease: true
-        on:
-          tags: true
-          condition: $TRAVIS_TAG =~ "beta"
+    - provider: npm
+      email: "$NPM_EMAIL"
+      tag: next
+      api_key:
+        secure: iz+qbhYujSLi3vDrXw7T1o+4oteMRbecCib41hE6kGprEDZ8cB4bhGyNEukmb4nFTQmyRG0B6Z1L0dabuhEr6qFFPKetcyRI5NvZB9aM3wPrzG2tSPkZueueJsz3Ruiz+LcmHYuOamNldED9rWjw8sWux9tOFUaSChVr3sqHmPlz18WbQTzjL0Eaobcc8hQOYGr9ADlKZobXBHUDCnCmcs8gxh50QmNhDNm+2ddeocMwbfgP5Dvdi4IcOATQ2rhjzYWxtvpcfAhoTLQ7+G4Vgq4W2ikEqpHvyNnX3aSgsFc3bSwqfCdv0Um4+DSosdjIFl3NUPkf1Lb7gA2jtTMOKf1v+PtuJTVK+xGfNWfNEx2BHkkg6u4GN8dMDsjZ5YGVNND073ErCiXP8afNKd3Us3SCCegQ0PmhM3Brw9o0ri32AaBYAPawau6rQNGU8NUrhehRrrbSVelix6NOjpn/957AOqlxk7iMwOifhkwK3+hwnGvshch00aVowMVDKMMu+tIxUgXQvBcCSW76t8hqyqgtbJo2YBxuDEzgdZKLHOP5HChQguTm2b006HZPELjTzdnJQV9vw2C4F4pmj4xzj0IRI8CdD9paVICLKxf0QHOYbSa3iH25+dQkiID/F+m8Eln2eNSp1rae1pafY3+bkc5PXCxTSucoCDvWm91AOUk=
+      on:
+        tags: true
+        branch: master
+        repo: bmlt-enabled/crouton
+      skip_cleanup: 'true'
+    - provider: s3
+      access_key_id: AKIAI7JHYFA6DI3WYP5A
+      secret_access_key:
+        secure: jAFBLyw5GIGl7lit4lcMkNWiYpsGGIdIzGeubdj6eLR8/impcTpwynj+V50bY19ttqq1gUkv6siFcRCUXgbNeonfNM8VCxFYUiE4pGhtiU/nl1X3YQDREoSDu1HK9nCTOBxdtdUpHzpDu535e/bN+i/pc0FgDAdh3QtzIEeZQ2G7QHbXQ2ydS7O03ZOPOlR4GYP4lf9O+uVwuzdAeJs2RT+empStg94xFxyTSi08SAUGMuPt6jGn8LC8YGSr7DDwwRiNdf4Hwr5ZeBSkbXDMdvt8TuVGKBxae/lN3swL9gcLPf/9LCUL+qD3ELHEh6Hx6mrWYtVysuNAEqhH8w062xfxLuD9tKquG4R99l6r4EZjZ6t2qOJzFg2SNLKXvZduBNTEI2Z1i2Maw8pd14O3Ok3Ue8d8RhWN03E7FlDuth3J4yQ6hAKXnM5UCKelhzEJRLJeTqBbxRaDreLlxX6veHFXRBV6i9lPn0M5x+0/jmh8L/I9xcPemF+2i4eRlGxLMHee0k/xLxdezja1u4QPTFrvPqhJZgos2oxLP4pN5Vol6XxIVJ/CrCYG77+59ZhFLbKno6bjLIdMiY24U7o0DqWLsmaUQteDMmskPl+IiHYkREASIxpfgrJN7suc9KMVpKYVSMl/OZvFJIZzrymhAEIH5nFWdAuVvjuvJj/DfoA=
+      bucket: "$S3_BUCKET"
+      local_dir: "$DIST_DIR_S3"
+      upload-dir: "$S3_KEY"
+      skip_cleanup: true
+      on:
+        all_branches: true
+    - provider: releases
+      api_key:
+        secure: tJsVlhVaYjlA7frFEFIGN+DjUxSo1y8MIq6DX/NmIq8rB5r+b6eIfosDi58ON3cwqfLRk1Mw3uVqozGlWhw73NErUeGzkvof3IL3/sSe258o5Jq6RDdZXuhUddFhTnoJvQvBYcyxinl729QmQCzaPObVy254bmpXrJvbLuAU6ns/6dvF3RBDMiVzDSy2+IYDmTFwGdUo1/FyW23nmFMEs26aLivZy/UnLZ5D7qOevvRRPUxHKZFsMPXxI5RI11XQkA7dCeLKQawuBsiwg+eyvzlS1ZYw+js53fCv758jPYcFpg/2/b6jfMql0tPSIYxO4mnyW5FOpMhmqT5XWmgLF4NelF81av2g6Rif2I+O8UB7wHnv0gEDIbhTzp7RK7fcjxjGfME89EKfjVohuD2FMfNukjgWIg0TUfQ4zsPYbcbT3yIppDi8CkcGmd3VuTC8qUac7FLdd6ZO7+9yohWfiCqHwzzzyh94In5QXH0rNSPV0eOkpvlSGY+S8T2qwcMaapGBWCmsGHZfjxrpJTskNTmm7eRkxNp6aCBw1S0nDY1/JMhGixu0Gk0yomn7d7QkTdxksfSRkTnhiLyKVfeYwu4ybi1DAUXG+sHvLofKUv6ZKP10t3REr0GIjnv/xv0B80op5yv/YP8QZYR7UC5EJdY303sWi4Am1s5DwM940hs=
+      file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
+      skip_cleanup: true
+      name: "$TRAVIS_TAG"
+      on:
+        tags: true
+        condition: "$TRAVIS_TAG != *beta*"
+    - provider: releases
+      api_key:
+        secure: tJsVlhVaYjlA7frFEFIGN+DjUxSo1y8MIq6DX/NmIq8rB5r+b6eIfosDi58ON3cwqfLRk1Mw3uVqozGlWhw73NErUeGzkvof3IL3/sSe258o5Jq6RDdZXuhUddFhTnoJvQvBYcyxinl729QmQCzaPObVy254bmpXrJvbLuAU6ns/6dvF3RBDMiVzDSy2+IYDmTFwGdUo1/FyW23nmFMEs26aLivZy/UnLZ5D7qOevvRRPUxHKZFsMPXxI5RI11XQkA7dCeLKQawuBsiwg+eyvzlS1ZYw+js53fCv758jPYcFpg/2/b6jfMql0tPSIYxO4mnyW5FOpMhmqT5XWmgLF4NelF81av2g6Rif2I+O8UB7wHnv0gEDIbhTzp7RK7fcjxjGfME89EKfjVohuD2FMfNukjgWIg0TUfQ4zsPYbcbT3yIppDi8CkcGmd3VuTC8qUac7FLdd6ZO7+9yohWfiCqHwzzzyh94In5QXH0rNSPV0eOkpvlSGY+S8T2qwcMaapGBWCmsGHZfjxrpJTskNTmm7eRkxNp6aCBw1S0nDY1/JMhGixu0Gk0yomn7d7QkTdxksfSRkTnhiLyKVfeYwu4ybi1DAUXG+sHvLofKUv6ZKP10t3REr0GIjnv/xv0B80op5yv/YP8QZYR7UC5EJdY303sWi4Am1s5DwM940hs=
+      file: "$DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME"
+      skip_cleanup: true
+      name: "$TRAVIS_TAG"
+      prerelease: true
+      on:
+        tags: true
+        condition: $TRAVIS_TAG =~ "beta"
   - stage: wordpress-plugin zip file
     env:
-      - BUILD_DIR=build
-      - DIST_DIR_S3=dist/s3
-      - DIST_DIR_GITHUB=dist/github
-      - GITHUB_RELEASE_FILENAME=crouton.zip
-      - PLUGIN="crouton"
-      - MAINFILE="crouton.php"
-      - ZIP_FILENAME=crouton-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
-      - S3_KEY=crouton
+    - BUILD_DIR=build
+    - DIST_DIR_S3=dist/s3
+    - DIST_DIR_GITHUB=dist/github
+    - GITHUB_RELEASE_FILENAME=crouton.zip
+    - PLUGIN="crouton"
+    - MAINFILE="crouton.php"
+    - ZIP_FILENAME=crouton-build${TRAVIS_BUILD_NUMBER}-${TRAVIS_COMMIT}.zip
+    - S3_KEY=crouton
     script:
-      - find ./ -type d | xargs chmod 755
-      - find ./ -name '*.php' | xargs chmod 644
-      - git archive --format=zip --output=${ZIP_FILENAME} ${TRAVIS_COMMIT}
-      - DISABLE_NOTIFIER=true make deploy
-      - zip -r ${ZIP_FILENAME} croutonjs/dist/*
-      - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
+    - find ./ -type d | xargs chmod 755
+    - find ./ -name '*.php' | xargs chmod 644
+    - git archive --format=zip --output=${ZIP_FILENAME} ${TRAVIS_COMMIT}
+    - DISABLE_NOTIFIER=true make deploy
+    - zip -r ${ZIP_FILENAME} croutonjs/dist/*
+    - mkdir -p $BUILD_DIR && mv $ZIP_FILENAME $BUILD_DIR/
     before_deploy:
-      - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
-      - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
-      - curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
-      - chmod +x deploy-wordpress.sh
+    - mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
+    - mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
+    - curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
+    - chmod +x deploy-wordpress.sh
     deploy:
     - provider: s3
       access_key_id: AKIAI7JHYFA6DI3WYP5A
@@ -112,7 +109,7 @@ jobs:
       name: "$TRAVIS_TAG"
       on:
         tags: true
-        condition: $TRAVIS_TAG != *beta*
+        condition: "$TRAVIS_TAG != *beta*"
     - provider: releases
       api_key:
         secure: tJsVlhVaYjlA7frFEFIGN+DjUxSo1y8MIq6DX/NmIq8rB5r+b6eIfosDi58ON3cwqfLRk1Mw3uVqozGlWhw73NErUeGzkvof3IL3/sSe258o5Jq6RDdZXuhUddFhTnoJvQvBYcyxinl729QmQCzaPObVy254bmpXrJvbLuAU6ns/6dvF3RBDMiVzDSy2+IYDmTFwGdUo1/FyW23nmFMEs26aLivZy/UnLZ5D7qOevvRRPUxHKZFsMPXxI5RI11XQkA7dCeLKQawuBsiwg+eyvzlS1ZYw+js53fCv758jPYcFpg/2/b6jfMql0tPSIYxO4mnyW5FOpMhmqT5XWmgLF4NelF81av2g6Rif2I+O8UB7wHnv0gEDIbhTzp7RK7fcjxjGfME89EKfjVohuD2FMfNukjgWIg0TUfQ4zsPYbcbT3yIppDi8CkcGmd3VuTC8qUac7FLdd6ZO7+9yohWfiCqHwzzzyh94In5QXH0rNSPV0eOkpvlSGY+S8T2qwcMaapGBWCmsGHZfjxrpJTskNTmm7eRkxNp6aCBw1S0nDY1/JMhGixu0Gk0yomn7d7QkTdxksfSRkTnhiLyKVfeYwu4ybi1DAUXG+sHvLofKUv6ZKP10t3REr0GIjnv/xv0B80op5yv/YP8QZYR7UC5EJdY303sWi4Am1s5DwM940hs=
@@ -124,11 +121,11 @@ jobs:
         tags: true
         condition: $TRAVIS_TAG =~ "beta"
     - provider: script
-      script: ./deploy-wordpress.sh
+      script: "./deploy-wordpress.sh"
       skip_cleanup: true
       on:
         tags: true
-        condition: $TRAVIS_TAG != *beta*
+        condition: "$TRAVIS_TAG != *beta*"
 notifications:
   slack:
     rooms:
