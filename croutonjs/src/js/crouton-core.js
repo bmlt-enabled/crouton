@@ -380,7 +380,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
-		var template = hbs_Crouton.templates['master'];
+		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
 	};
