@@ -92,7 +92,7 @@
 		<p>1 = display meetings with tabs (default)</p>
 		<p><em>Hiding weekday tabs is useful for smaller service bodies.</em></p>
 	</div>
-    <h3 class="help-accordian"><strong>Filter Tabss</strong></h3>
+    <h3 class="help-accordian"><strong>Filter Tabs</strong></h3>
     <div>
         <p>With this parameter you can keep weekday tabs on dropdown filtering.</p>
         <p><strong>[bmlt_tabs filter_tabs="0|1"]</strong></p>
