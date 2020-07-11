@@ -38,9 +38,10 @@ https://demo.bmlt.app/crouton
 
 = 3.11.3 =
 * Add field virtual_meeting_additional_info to Meeting Data Template. This is intended to hold information such as a meeting ID and password (requires root server 2.15.4).
+* Added observer fields. [#268]
 
 = 3.11.2 =
-* Bug fix for handling long URLs in 3rd column [#231]
+* Bug fix for handling long URLs in 3rd column. [#231]
 
 = 3.11.1 =
 * Bug fix with multi-lingual support. [#254]
