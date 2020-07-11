@@ -31,7 +31,7 @@ jobs:
     deploy:
     - provider: npm
       email: "$NPM_EMAIL"
-      tag: next
+      tag: "$TRAVIS_TAG"
       api_key:
         secure: iz+qbhYujSLi3vDrXw7T1o+4oteMRbecCib41hE6kGprEDZ8cB4bhGyNEukmb4nFTQmyRG0B6Z1L0dabuhEr6qFFPKetcyRI5NvZB9aM3wPrzG2tSPkZueueJsz3Ruiz+LcmHYuOamNldED9rWjw8sWux9tOFUaSChVr3sqHmPlz18WbQTzjL0Eaobcc8hQOYGr9ADlKZobXBHUDCnCmcs8gxh50QmNhDNm+2ddeocMwbfgP5Dvdi4IcOATQ2rhjzYWxtvpcfAhoTLQ7+G4Vgq4W2ikEqpHvyNnX3aSgsFc3bSwqfCdv0Um4+DSosdjIFl3NUPkf1Lb7gA2jtTMOKf1v+PtuJTVK+xGfNWfNEx2BHkkg6u4GN8dMDsjZ5YGVNND073ErCiXP8afNKd3Us3SCCegQ0PmhM3Brw9o0ri32AaBYAPawau6rQNGU8NUrhehRrrbSVelix6NOjpn/957AOqlxk7iMwOifhkwK3+hwnGvshch00aVowMVDKMMu+tIxUgXQvBcCSW76t8hqyqgtbJo2YBxuDEzgdZKLHOP5HChQguTm2b006HZPELjTzdnJQV9vw2C4F4pmj4xzj0IRI8CdD9paVICLKxf0QHOYbSa3iH25+dQkiID/F+m8Eln2eNSp1rae1pafY3+bkc5PXCxTSucoCDvWm91AOUk=
       on:
