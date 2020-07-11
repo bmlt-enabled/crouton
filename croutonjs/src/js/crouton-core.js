@@ -54,7 +54,8 @@ function Crouton(config) {
 		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>{{#if this.virtual_meeting_additional_info}}<div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>{{/if}}",
-		metadata_template: "{{#isVirtual this}}{{#isHybrid this}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud-upload'></span> {{meetsHybrid this}}</div>{{else}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud'></span> {{meetsVirtually this}}</div>{{/isHybrid}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}{{#unless (hasFormats 'VM' this)}}<div><a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a></div><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/unless}}{{/isNotTemporarilyClosed}}"
+		metadata_template: "{{#isVirtual this}}{{#isHybrid this}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud-upload'></span> {{meetsHybrid this}}</div>{{else}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud'></span> {{meetsVirtually this}}</div>{{/isHybrid}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.virtual_meeting_additional_info}}<div>{{this.virtual_meeting_additional_info}}</div>{{/if}}{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}{{#unless (hasFormats 'VM' this)}}<div><a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a></div><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/unless}}{{/isNotTemporarilyClosed}}",
+		observer_template: "<div class='observerLine'>{{this.contact_name_1}} {{this.contact_phone_1}} {{this.contact_email_1}}</div><div class='observerLine'>{{this.contact_name_2}} {{this.contact_phone_2}} {{this.contact_email_2}}</div>"
 	};
 
 	self.setConfig(config);
@@ -206,11 +207,14 @@ function Crouton(config) {
 			'id_bigint',
 		];
 
-		var extra_fields_regex = /this\.([A-Za-z_]*)}}/gi;
+		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
 		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
 			data_field_keys.push(arr[1]);
 		}
 		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
+			data_field_keys.push(arr[1]);
+		}
+		while (arr = extra_fields_regex.exec(self.config['observer_template'])) {
 			data_field_keys.push(arr[1]);
 		}
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
@@ -449,6 +453,7 @@ function Crouton(config) {
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
+		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -497,7 +502,7 @@ function Crouton(config) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
 					if (meetingData[m][k].indexOf('#@-@#') !== -1) {
 						var split = meetingData[m][k].split('#@-@#');
-						meetingData[m][k] = split[1];
+						meetingData[m][k] = split[split.length - 1];
 					}
 				}
 			}

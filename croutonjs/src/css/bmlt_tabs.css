@@ -465,6 +465,16 @@ table.tablesaw {
 	height: 400px;
 }
 
+.bmlt-observer {
+	font-size: 14px;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.observerLine {
+	margin-top: 10px;
+}
+
 /* Mobile first styles: Begin with the stacked presentation at narrow widths */
 @media only all {
 	/* Show the table cells as a block level element */
