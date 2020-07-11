@@ -595,3 +595,9 @@ table.tablesaw {
 	text-transform: uppercase;
 	font-weight: bold;
 }
+
+.meeting-additional-info {
+	font-weight: 700;
+	font-size: 14px;
+	color: rgba(0,0,0,0.67);
+}

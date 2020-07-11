@@ -1,6 +1,6 @@
 === crouton ===
 
-Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N, Alan B
+Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
@@ -37,7 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.3 =
-* Add field for Virtual Meeting Additional Info to metadata template
+* Add field virtual_meeting_additional_info to Meeting Data Template. This is intended to hold information such as a meeting ID and password (requires root server 2.15.4).
 
 = 3.11.2 =
 * Bug fix for handling long URLs in 3rd column [#231]
