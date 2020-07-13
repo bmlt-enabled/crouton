@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.4.1
-Stable tag: 3.11.3
+Stable tag: 3.11.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.11.4 =
+* New theme asheboro to match root server aesthetic.
 
 = 3.11.3 =
 * Add field virtual_meeting_additional_info to Meeting Data Template. This is intended to hold information such as a meeting ID and password (requires root server 2.15.4).
