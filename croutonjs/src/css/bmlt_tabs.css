@@ -607,7 +607,6 @@ table.tablesaw {
 }
 
 .meeting-additional-info {
-	font-weight: 700;
+	font-weight: bold;
 	font-size: 14px;
-	color: rgba(0,0,0,0.67);
 }

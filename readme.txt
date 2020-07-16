@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.11.5 =
+* Changed meeting-additional-info css to work better with darker themes.
+
 = 3.11.4 =
 * New theme asheboro to match root server aesthetic.
 
