@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.11.6 =
+* Additional Polish (pl-PL) translations. [#283]
+
 = 3.11.5 =
 * Changed meeting-additional-info css to work better with darker themes.
 
