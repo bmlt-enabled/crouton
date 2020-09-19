@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.11.5 =
 * Changed meeting-additional-info css to work better with darker themes.
+* Additional Polish (pl-PL) translations. [#283]
 
 = 3.11.4 =
 * New theme asheboro to match root server aesthetic.
