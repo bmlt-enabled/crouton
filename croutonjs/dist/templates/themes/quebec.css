@@ -1,0 +1,52 @@
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+    background-color: #005a87;
+}
+#bmlt-tabs .nav-tabs > li > a {
+    background-color: #01d2d6;
+}
+#bmlt-formats.btn-xs,#map-button.btn-xs {
+    background-color: #01d2d6;
+}
+#bmlt-tabs .rowHighlight {
+    background-color: #db4865;
+    color: black;
+}
+#bmlt.tabs.table #nav-days.bmlt-tabs.show #ul.nac.nav-tabs{
+    background-color:#005a87;
+}
+#bmlt-tabs tr.meeting-header td {
+    background-color: #005a87;
+}
+#bmlt-tabs #day {
+    background-color: #005a87;
+}
+#bmlt-tabs #city {
+    background-color: #01d2d6;
+}
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: #01d2d6;
+}
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: #005a87; color: #fff;
+}
+#bmlt-tabs #city.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: #01d2d6;
+}
+#bmlt-tabs #city.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: #005a87;color: #fff;
+}
+#bmlt-tabs #bmlt-header #tabs-content {
+    background-color:#005a87;
+}
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: #005a87;color: #fff;
+}
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: #01d2d6;
+}
+#bmlt-tabs .bmlt-page {
+    background-color: #005a87;
+}
+#bmlt-tabs .bmlt-header {
+    background-color: #005a87;
+}
