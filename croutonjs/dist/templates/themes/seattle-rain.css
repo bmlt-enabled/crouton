@@ -1,0 +1,149 @@
+#bmlt-tabs {
+    color: #555;
+}
+
+#bmlt-tabs .meeting-name {
+    color: #555;
+}
+
+#bmlt-tabs .bmlt-day {
+    color: #555;
+}
+
+#bmlt-tabs .bmlt-time-2 {
+    color: #555;
+}
+
+#bmlt-tabs .bmlt-header {
+    background-color: #444;
+}
+
+#bmlt-tabs .bmlt-page {
+    background-color: #444;
+}
+
+#bmlt-tabs .nav-tabs {
+    background-color: #444;
+}
+
+#bmlt-tabs td {
+    border-color: #444;
+}
+
+#bmlt-tabs tr:nth-child(odd) {
+    background-color: #F5F5F5;
+}
+
+#bmlt-tabs .nav-tabs>li.active>a {
+    background-color: #444;
+    color: #F5F5F5;
+}
+
+#bmlt-tabs .nav-tabs>li.active>a {
+    border-color: #777;
+}
+
+.select2-selection {
+    background-color: #777;
+    border-color: #777;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #3C2A5C;
+}
+
+.bootstrap-bmlt .table>tbody+tbody {
+    border-color: #1BA3B0;
+}
+
+.select2-container--default .select2-selection--single{
+    background-color: #EEE;
+    border-color: #EEE;
+}
+
+.select2-search {
+    background-color: #EEE;
+    border-color: #EEE;
+}
+
+.select2-search input {
+    background-color: #EEE;
+    color: #F5F5F5;
+    border-color: #EEE;
+}
+
+.select2-results {
+    background-color: #EEE;
+    color: #3C2A5C;
+    border-color: #EEE;
+}
+
+#bmlt-tabs tr:nth-child(even) {
+    background-color: #FFF;
+}
+
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+    background-color: rebeccapurple;
+}
+
+#bmlt-tabs .nav-tabs > li > a {
+    background-color: 1BA3B0;
+}
+
+#bmlt-formats.btn-xs,#map-button.btn-xs {
+    background-color: 1BA3B0;
+}
+
+#bmlt-tabs tr.meeting-header td {
+    background-color: 1BA3B0;
+}
+
+#bmlt-tabs #day {
+    background-color: 29994D;
+}
+
+#bmlt-tabs .filterButton {
+    background-color: 1BA3B0;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: rebeccapurple;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: 1BA3B0;
+}
+
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: 1BA3B0;
+}
+
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: 1BA3B0;
+
+}
+
+#bmlt-tabs .rowHighlight {
+    background-color: rebeccapurple;
+    color: #000;
+}
+
+#bmlt-formats.btn-xs, #map-button.btn-xs {
+    color: #FFF;
+    border-color: 1BA3B0;
+}
+
+#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover {
+    color: #AAA;
+    background-color: #444;
+    border-color: 1BA3B0;
+}
+
+.bootstrap-bmlt a {
+    color: 1BA3B0;
+}
+
+.bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
+    color: 1BA3B0;
+    text-decoration: underline;
+}

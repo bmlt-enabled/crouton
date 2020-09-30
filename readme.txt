@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.6 =
+* New theme seattle-rain
 * Added support for upcoming root server time_zone field, primarly for use with virtual-na.org
 
 = 3.11.5 =

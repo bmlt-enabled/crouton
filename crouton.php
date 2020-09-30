@@ -31,6 +31,7 @@ if (!class_exists("Crouton")) {
             "one-nine",
             "orange-monster",
             "patrick",
+            "seattle-rain",
             "sezf",
             "truth"
         ];
