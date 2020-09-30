@@ -187,6 +187,7 @@ function Crouton(config) {
 			'location_postal_code_1',
 			'duration_time',
 			'start_time',
+			'time_zone',
 			'weekday_tinyint',
 			'service_body_bigint',
 			'longitude',
@@ -458,14 +459,22 @@ function Crouton(config) {
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
-			meetingData[m]['start_time_raw'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time']);
+			// convert from bmlt day to iso day
+			meetingData[m]['start_time_raw'] = this.getAdjustedDateTime(
+				parseInt(meetingData[m]['weekday_tinyint']) === 1 ? 7 : parseInt(meetingData[m]['weekday_tinyint']) - 1,
+				meetingData[m]['start_time'],
+				meetingData[m]['time_zone']
+			);
 			meetingData[m]['start_time_formatted'] = meetingData[m]['start_time_raw'].format(self.config['time_format']);
-			meetingData[m]['end_time_formatted'] = this.getNextInstanceOfDay(meetingData[m]['weekday_tinyint'] - 1, meetingData[m]['start_time'])
+			meetingData[m]['end_time_formatted'] = meetingData[m]['start_time_raw']
+				.clone()
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
 				.format(self.config['time_format']);
-			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].get('day') + 1;
-			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['start_time_raw'].get('day') + 1);
+
+			// back to bmlt day
+			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].isoWeekday() === 7 ? 1 : meetingData[m]['start_time_raw'].isoWeekday() + 1;
+			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['day_of_the_week']);
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
@@ -649,7 +658,15 @@ Crouton.prototype.render = function(callback) {
 			var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
 			enrichedMeetingData.sort(function (a, b) {
-				return a['start_time_raw'] - b['start_time_raw'];
+				if (a['start_time_raw'] < b['start_time_raw']) {
+					return -1;
+				}
+
+				if (a['start_time_raw'] > b['start_time_raw']) {
+					return 1;
+				}
+
+				return 0;
 			});
 
 			var day_counter = 0;
@@ -1189,22 +1206,36 @@ function getUniqueValuesOfKey(array, key){
 	}, []);
 }
 
-Crouton.prototype.getNextInstanceOfDay = function(day_id, time_stamp) {
-	if (this.config['base_tz'] != null) {
-		moment.tz.setDefault(this.config['base_tz']);
-	}
+Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
+	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
+	var meeting_date_time_obj;
+	if (timeZoneAware) {
+		if (!meeting_time_zone) {
+			meeting_time_zone = "UTC";
+		}
+    	// Get an object that represents the meeting in its time zone
+    	meeting_date_time_obj = moment.tz(meeting_time_zone).set({
+    		hour: meeting_time.split(":")[0],
+    		minute: meeting_time.split(":")[1],
+    		second: 0
+    	}).isoWeekday(meeting_day);
 
-	var today = moment().isoWeekday();
-	var time = moment(time_stamp, "HH:mm");
-	var date_stamp = today <= day_id ? moment().isoWeekday(day_id) : moment().add(1, 'weeks').isoWeekday(day_id);
-
-	if (this.config['auto_tz_adjust']) {
-		var guessed_time_zone_date_stamp = date_stamp.set({hour: time.get('hour'), minute: time.get('minute')}).tz(moment.tz.guess());
-		return moment() > guessed_time_zone_date_stamp
-			&& today !== guessed_time_zone_date_stamp.isoWeekday() ? guessed_time_zone_date_stamp.add(1, 'weeks') : guessed_time_zone_date_stamp;
+    	// Convert meeting to target (local) time zone
+    	meeting_date_time_obj = meeting_date_time_obj.clone().tz(moment.tz.guess());
 	} else {
-		return date_stamp.set({hour: time.get('hour'), minute: time.get('minute')});
+    	meeting_date_time_obj = moment().set({
+    		hour: meeting_time.split(":")[0],
+    		minute: meeting_time.split(":")[1],
+    		second: 0
+    	}).isoWeekday(meeting_day);
 	}
+
+	var now = timeZoneAware ? moment.tz(moment.tz.guess()) : moment();
+	if (now > meeting_date_time_obj) {
+		meeting_date_time_obj.add(1, 'weeks');
+	}
+
+	return meeting_date_time_obj;
 };
 
 function arrayUnique(a, b, c) {
