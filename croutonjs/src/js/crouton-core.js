@@ -1231,7 +1231,9 @@ Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meet
 	}
 
 	var now = timeZoneAware ? moment.tz(moment.tz.guess()) : moment();
-	if (now > meeting_date_time_obj || now.isoWeekday() == meeting_date_time_obj.isoWeekday()) {
+	if (now > meeting_date_time_obj) {
+		meeting_date_time_obj.add(1, 'weeks');
+	} else if (now.isoWeekday() == meeting_date_time_obj.isoWeekday() && meeting_date_time_obj.diff(now, 'days') == 0) {
 		meeting_date_time_obj.add(1, 'weeks');
 	}
 
