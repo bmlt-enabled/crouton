@@ -384,6 +384,7 @@ span.bmlt_tabs_group_count {
 		vertical-align: top;
 		border: 0;
 		padding-bottom: 0;
+		height: auto;
 	}
 
 	#bmlt-tabs .bmlt-column2 {
@@ -392,6 +393,7 @@ span.bmlt_tabs_group_count {
 		vertical-align: top;
 		border: 0;
 		padding-bottom: 0;
+		height: auto;
 	}
 
 	#bmlt-tabs .bmlt-column3 {
@@ -399,6 +401,7 @@ span.bmlt_tabs_group_count {
 		vertical-align: top !important;
 		width: 100%;
 		border: 0;
+		height: auto;
 	}
 
 	#bmlt-formats.btn-xs,#map-button.btn-xs {
