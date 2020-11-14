@@ -643,7 +643,9 @@ Crouton.prototype.render = function(callback) {
 			}
 
 			self.uniqueData['areas'] = active_service_bodies.sortByKey('name');
-			self.formatsData = self.formatsData.sortByKey('name_string');
+			if (!jQuery.isEmptyObject(self.formatsData)) {
+				self.formatsData = self.formatsData.sortByKey('name_string');
+			}
 			self.uniqueData['formats'] = self.formatsData;
 			self.uniqueData['languages'] = [];
 

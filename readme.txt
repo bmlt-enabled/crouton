@@ -37,7 +37,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.9 =
+* Gracefully handle scenarios when there are no format descriptions returned for a specific language.
 * Responsive overflow fixes on some elements.
+* Added support `croutonjsdebug=1` querystring parameter for disabling minification for croutonjs.
 
 = 3.11.8 =
 * Fixed another edge case where meetings on the current day could be sorted incorrectly.
