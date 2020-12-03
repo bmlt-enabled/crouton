@@ -1,0 +1,88 @@
+#bmlt-tabs .bmlt-header,
+#bmlt-tabs .bmlt-page {
+    background-color: #1a3965;
+}
+
+#bmlt-tabs .select2-container--default .select2-selection--single,
+#bmlt-tabs #day,
+#bmlt-tabs a#filterButton_location_municipality,
+#bmlt-tabs .bootstrap-bmlt .btn-xs {
+    border-radius: 0;
+}
+
+#bmlt-tabs .bmlt-dropdown-container .select2-container--default .select2-selection--single {
+    background-color: #f2e6be;
+}
+
+#bmlt-tabs .nav-tabs>li.active>a,
+#bmlt-tabs .nav-tabs>li.active>a:hover,
+#bmlt-tabs .nav-tabs>li.active>a:focus {
+    background-color: #d6732d;
+}
+
+#bmlt-tabs .nav-tabs>li>a {
+    background-color: #6fb0dd;
+    border-radius: 0;
+}
+
+#bmlt-formats.btn-xs,
+#map-button.btn-xs {
+    background-color: #6fb0dd;
+}
+
+#bmlt-tabs tr.meeting-header td {
+    background-color: #d6732d;
+    border: 1px solid #d6732d;
+}
+
+#bmlt-tabs #day {
+    background-color: #6fb0dd;
+}
+
+#bmlt-tabs .filterButton {
+    background-color: #6fb0dd;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: #d6732d;
+}
+
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: #6fb0dd;
+}
+
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
+    background-color: #d6732d;
+}
+
+#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
+    background-color: #6fb0dd;
+}
+
+#bmlt-tabs .rowHighlight {
+    background-color: #d6732d;
+    color: #fff;
+}
+
+#bmlt-tabs tr.meeting-header td {
+    color: #fff;
+}
+
+#bmlt-tabs .meetsVirtually {
+    text-transform: capitalize;
+}
+
+#bmlt-tabs .bmlt-time-2,
+#bmlt-tabs .location-information {
+    color: #f33700;
+}
+
+#bmlt-tabs span.glyphicon.glyphicon-cloud,
+#bmlt-tabs span.glyphicon.glyphicon-globe {
+    color: #d6732d;
+}
+
+#bmlt-tabs .meeting-name,
+#bmlt-tabs .bmlt-day {
+    font-size: 16px;
+}
