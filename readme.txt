@@ -37,7 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.10 =
-* New theme: gold-coast.
+* New theme: gold-coast. [#304]
 
 = 3.11.9 =
 * Gracefully handle scenarios when there are no format descriptions returned for a specific language.
