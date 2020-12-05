@@ -9,6 +9,7 @@ function Crouton(config) {
 	self.map_clusters = [];
 	self.oms = null;
 	self.markerClusterer = null;
+	self.masterFormatCodes = [];
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
@@ -395,6 +396,13 @@ function Crouton(config) {
 			+ getServiceBodiesQueryString(service_bodies_id) + '&callback=?', callback);
 	};
 
+	self.getMasterFormats = function (callback) {
+		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&callback=?', function(masterFormats) {
+			self.masterFormatCodes = masterFormats;
+			callback();
+		});
+	}
+
 	self.showLocation = function(position) {
 		var latitude = position.coords.latitude;
 		var longitude = position.coords.longitude;
@@ -632,7 +640,8 @@ Crouton.prototype.render = function(callback) {
 			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
 		};
 		if (callback !== undefined) callback();
-		self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
+		self.getMasterFormats(function() {
+			self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
 			var active_service_bodies = [];
 			for (var i = 0; i < service_bodies.length; i++) {
 				for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
@@ -816,6 +825,7 @@ Crouton.prototype.render = function(callback) {
 				}
 			});
 		})
+		});
 	});
 };
 
@@ -1075,6 +1085,15 @@ function getFalseResult(options, ctx) {
 	return options.inverse !== undefined ? options.inverse(ctx) : false;
 }
 
+function getMasterFormatId(code) {
+	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
+		var format = crouton.masterFormatCodes[f];
+		if (format['key_string'] === code) {
+			return format['id'];
+		}
+	}
+}
+
 crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
 });
@@ -1088,22 +1107,22 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 });
 
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((inArray('HY', data['formats'].split(",")) && !inArray('TC', data['formats'].split(",")))
-		|| inArray('VM', data['formats'].split(",")))
+	return ((inArray(getMasterFormatId('HY'), data['format_shared_id_list'].split(",")) && !inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")))
+		|| inArray(getMasterFormatId('VM'), data['format_shared_id_list'].split(",")))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return inArray('HY', data['formats'].split(","))
+	return inArray(getMasterFormatId('HY'), data['format_shared_id_list'].split(","))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-	return inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-	return !inArray('TC', data['formats'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return !inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
@@ -1118,24 +1137,24 @@ crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options)
 });
 
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC') !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'TC')['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC')) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC'))['description'];
 	} else {
 		return "FACILITY IS TEMPORARILY CLOSED";
 	}
 });
 
 crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'VM') !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'VM')['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM')) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM'))['description'];
 	} else {
 		return "MEETS VIRTUALLY";
 	}
 });
 
 crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'HY') !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('key', 'HY')['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY')) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY'))['description'];
 	} else {
 		return "MEETS VIRTUALLY AND IN PERSON";
 	}
