@@ -1,6 +1,9 @@
 {
   "require-dev": {
     "squizlabs/php_codesniffer": "3.*"
-  }
+  },
+  "name": "bmlt-enabled/crouton",
+  "description": "dependencies for crouton",
+  "license": "MIT"
 }
 
