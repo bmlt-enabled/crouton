@@ -1086,10 +1086,10 @@ function getFalseResult(options, ctx) {
 	return options.inverse !== undefined ? options.inverse(ctx) : false;
 }
 
-function getMasterFormatId(code) {
+function getMasterFormatId(code, data) {
 	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
 		var format = crouton.masterFormatCodes[f];
-		if (format['key_string'] === code) {
+		if (format['key_string'] === code && format['root_server_uri'] === data['root_server_uri']) {
 			return format['id'];
 		}
 	}
@@ -1113,22 +1113,22 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 });
 
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((inArray(getMasterFormatId('HY'), getFormats(data)) && !inArray(getMasterFormatId('TC'), getFormats(data)))
-		|| inArray(getMasterFormatId('VM'), getFormats(data)))
+	return ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
+		|| inArray(getMasterFormatId('VM', data), getFormats(data)))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return inArray(getMasterFormatId('HY'), getFormats(data))
+	return inArray(getMasterFormatId('HY', data), getFormats(data))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-	return inArray(getMasterFormatId('TC'), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-	return !inArray(getMasterFormatId('TC'), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return !inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
@@ -1143,24 +1143,24 @@ crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options)
 });
 
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC')) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC'))['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
 	} else {
 		return "FACILITY IS TEMPORARILY CLOSED";
 	}
 });
 
 crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM')) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM'))['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data)) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data))['description'];
 	} else {
 		return "MEETS VIRTUALLY";
 	}
 });
 
 crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY')) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY'))['description'];
+	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data)) !== undefined) {
+		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data))['description'];
 	} else {
 		return "MEETS VIRTUALLY AND IN PERSON";
 	}
