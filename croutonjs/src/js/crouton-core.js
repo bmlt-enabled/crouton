@@ -491,6 +491,7 @@ function Crouton(config) {
 					if (formats[f] === self.formatsData[g]['key_string']) {
 						formats_expanded.push(
 							{
+								"id": self.formatsData[g]['id'],
 								"key": formats[f],
 								"name": self.formatsData[g]['name_string'],
 								"description": self.formatsData[g]['description_string']
