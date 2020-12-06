@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.11.10 =
+* Allow for different codes for VM, TC, and HY in non-English languages.
 * New theme: gold-coast. [#304]
 
 = 3.11.9 =
