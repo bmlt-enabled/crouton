@@ -1094,6 +1094,11 @@ function getMasterFormatId(code) {
 	}
 }
 
+// TODO: Change this logic when https://github.com/bmlt-enabled/bmlt-root-server/issues/353 is released and rolled out everywhere.
+function getFormats(data) {
+	return data['formats'] !== "" ? data['format_shared_id_list'].split(",") : [];
+}
+
 crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
 });
@@ -1107,22 +1112,22 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 });
 
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((inArray(getMasterFormatId('HY'), data['format_shared_id_list'].split(",")) && !inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")))
-		|| inArray(getMasterFormatId('VM'), data['format_shared_id_list'].split(",")))
+	return ((inArray(getMasterFormatId('HY'), getFormats(data)) && !inArray(getMasterFormatId('TC'), getFormats(data)))
+		|| inArray(getMasterFormatId('VM'), getFormats(data)))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return inArray(getMasterFormatId('HY'), data['format_shared_id_list'].split(","))
+	return inArray(getMasterFormatId('HY'), getFormats(data))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-	return inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('TC'), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-	return !inArray(getMasterFormatId('TC'), data['format_shared_id_list'].split(",")) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return !inArray(getMasterFormatId('TC'), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
