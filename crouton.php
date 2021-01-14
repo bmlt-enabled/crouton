@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.11.13
+Version: 3.11.14
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -133,6 +133,10 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "groupCount"
                 ));
+                add_shortcode('service_body_names', array(
+                    &$this,
+                    "serviceBodyNames"
+                ));
             }
             // Content filter
             add_filter('the_content', array(
@@ -159,6 +163,9 @@ if (!class_exists("Crouton")) {
                 return true;
             }
             if (stripos($post_to_check->post_content, '[group_count') !== false) {
+                return true;
+            }
+            if (stripos($post_to_check->post_content, '[service_body_names') !== false) {
                 return true;
             }
             return false;
@@ -375,6 +382,12 @@ if (!class_exists("Crouton")) {
         {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
+        }
+
+        public function serviceBodyNames($atts)
+        {
+            $random_id = rand(10000, 99999);
+            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
 
         /**

@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.11.14 =
+* Add support for [service_body_names] shortcode
+* Improve documentation of how shortcode parameters interact [#265]
+
 = 3.11.13 =
 * Fix for regressions of descriptions with tomato.
 
