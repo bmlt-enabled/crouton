@@ -1,14 +1,41 @@
 <h2><a id="config-documentation" class="anchor"></a>Documentation</h2>
 <div id="accordion">
+    <h3 class="help-accordian"><strong>Crouton Shortcode Usage</strong></h3>
+    <div>
+        <p>Crouton defines the following shortcodes.</p>
+        <ul>
+            <li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
+            <li><code>[crouton_map]</code> -- generates a map-based interface (see "Map Search" below for details)</li>
+            <li><code>[meeting_count]</code></li>
+            <li><code>[group_count]</code></li>
+            <li><code>[service_body_names]</code></li>
+        </ul>
+        <p>Example: <code>There are currently [group_count] groups, offering a total of [meeting_count] meetings per week.</code></p>
+        <p><strong>Hints:</strong> you can only have one occurrence of <code>[bmlt_tabs]</code> on a page -- if you want two lists,
+            use two different pages. The <code>[service_body_names]</code> shortcode is useful for generating tabbed UIs for multiple
+            service bodies (see the "URL Parameters" section).</p>
+        <p>Detailed instructions for the shortcode parameters follow.</p>
+        <p><strong>Caution!</strong> The parameters supplied to the first shortcode on a page apply to all other shortcodes on that
+            page as well. In particular, if the first shortcode has no parameters, then any parameters on subsequent shortcodes on
+            that page will be silently ignored. To avoid confusion, good practice is to use the same parameters for all of them.</p>
+    </div>
 	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
 	<div>
-		<p>This feature will provide the capability to re-use one page to generate a Tabbed UI for unlimited service bodies.</p>
-		<p>Example: A Region would have separate pages for each Area with a Tabbed UI.</p>
+		<p>This feature will provide the capability to re-use one page to generate a Tabbed UI that can be used by multiple service bodies.</p>
+		<p>Example: without this feature, a Region might have separate pages for each Area with a Tabbed UI.</p>
 		<p>Instead: One page can be used to display a Tabbed UI for all Areas.</p>
-		<p>1. Insert the [bmlt_tabs] into a page.</p>
-		<p>2. Link to that page using parameters as described below.</p>
+        <p>This can also be used to provide a reusable meetings page on a regional or zonal site that can be called from area websites that for
+            some reason are having trouble implementing crouton on their own sites.</p>
+        <ol>
+        <li>Use <code>[service_body_names]</code> as part of the page's heading, to say which meetings are listed.</li>
+        <li>Use <code>[group_count]</code> and/or <code>[meeting_count]</code> if desired.</li>
+        <li>Then insert <code>[bmlt_tabs]</code>.</li>
+		<li>Link to that page using parameters as described below, either from another page on the same website or from a different website.</li>
+        </ol>
 		<p>You can override any shortcode value.
-		<p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
+		<p>Please study the following URLs to get acquainted with the URL parameter structure. (Note: the URL parameters <code>this_title</code>,
+            <code>meeting_count</code>, and <code>group_count</code> parameters currently don't work correctly -- the information
+            is displayed but gets overwritten by the tabbed meeting display. The other parameters do work correctly.)</p>
 		<p><strong>Meetings for One Area.</strong></p>
 		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body=44&this_title=Crossroads%20Area%20Meetings&meeting_count=1&group_count=1">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44&<span style="color:red;">this_title</span>=Crossroads%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
 		<p><strong>Meetings for Two (or more) Areas.</strong></p>
@@ -32,15 +59,6 @@
         <p><strong>[bmlt_tabs int_start_day_id="1"]</strong></p>
         <p>1 is the default which is Sunday.  2 is Monday and so on.</p>
     </div>
-	<h3 class="help-accordian"><strong>crouton Shortcode Usage</strong></h3>
-	<div>
-		<p>Insert the following shortcodes into a page.</p>
-		<p><strong>[bmlt_tabs]</strong></p>
-		<p><strong>[meeting_count]</strong></p>
-		<p><strong>[group_count]</strong></p>
-		<p><strong>Example: We now have [group_count] groups with [meeting_count] per week.</strong></p>
-		<p><em>Detailed instructions for each shortcode are provided as follows.</em></p>
-	</div>
 
 	<h3 class="help-accordian"><strong>Service Body Parameter</strong></h3>
 	<div>

@@ -616,6 +616,35 @@ Crouton.prototype.groupCount = function(callback) {
 	});
 };
 
+Crouton.prototype.serviceBodyNames = function(callback) {
+	var self = this;
+	self.lock(function() {
+		var ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint');
+		self.getServiceBodies(ids, function (service_bodies) {
+			var n = service_bodies.length;
+			var names = [];
+			for (var i = 0; i < n; i++) {
+				names.push(service_bodies[i]['name']);
+			}
+			names.sort();
+			if (n==1) {
+				callback(names[0]);
+			}
+			else if (n==2) {
+				callback(names[0] + ' and ' + names[1]);
+			}
+			else {
+				var str = '';
+				for (var i = 0; i < n-1; i++) {
+					str += names[i];
+					str += ', ';
+				}
+				callback(str + ' and ' + names[n-1]);
+			}
+		});
+	});
+};
+
 Crouton.prototype.render = function(callback) {
 	var self = this;
 	self.lock(function() {
