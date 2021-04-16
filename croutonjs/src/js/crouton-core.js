@@ -501,6 +501,7 @@ function Crouton(config) {
 				}
 			}
 
+			meetingData[m]['venue_type'] = getVenueType(meetingData[m]);
 			meetingData[m]['formats_expanded'] = formats_expanded;
 			var addressParts = [
 				meetingData[m]['location_street'],
@@ -667,7 +668,8 @@ Crouton.prototype.render = function(callback) {
 			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
+			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort(),
+			'venue_types': ["In Person", "Virtual", "Virtual (Temp)", "Hybrid"].sort()
 		};
 		if (callback !== undefined) callback();
 		self.getMasterFormats(function() {
@@ -1124,6 +1126,31 @@ function getMasterFormatId(code, data) {
 	}
 }
 
+const venueType = {
+	IN_PERSON: "In-Person",
+	VIRTUAL: "Virtual",
+	VIRTUAL_TEMP: "Virtual (Temp)",
+	HYBRID: "Hybrid"
+}
+
+function getVenueType(data) {
+	if (inArray(getMasterFormatId('HY', data), getFormats(data))
+		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
+		&& !inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return venueType.HYBRID;
+	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
+		&& inArray(getMasterFormatId('TC', data), getFormats(data))
+		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return venueType.VIRTUAL_TC;
+	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
+		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
+		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return venueType.VIRTUAL;
+	} else {
+		return venueType.IN_PERSON;
+	}
+}
+
 // TODO: Change this logic when https://github.com/bmlt-enabled/bmlt-root-server/issues/353 is released and rolled out everywhere.
 function getFormats(data) {
 	return data['formats'] !== "" ? data['format_shared_id_list'].split(",") : [];
@@ -1243,7 +1270,7 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 });
 
 function convertToPunyCode(str) {
-	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
+	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
 
 function arrayColumn(input, columnKey) {
