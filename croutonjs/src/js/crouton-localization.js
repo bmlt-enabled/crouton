@@ -22,6 +22,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -42,6 +43,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -62,6 +64,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -82,6 +85,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -102,6 +106,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -122,6 +127,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -142,6 +148,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -162,6 +169,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -182,6 +190,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -202,6 +211,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -222,6 +232,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -242,6 +253,7 @@ function CroutonLocalization(language) {
 			"click_search": "Klik om te zoeken",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Talen",
+			"venue_types": "Venue Types",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -262,6 +274,7 @@ function CroutonLocalization(language) {
 			"click_search": "Kliknij na mapie",
 			"pan_and_zoom": "Przesuń powiększ",
 			"languages": "Języki",
+			"venue_types": "Venue Types",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -282,6 +295,7 @@ function CroutonLocalization(language) {
 			"click_search": "Clique no local",
 			"pan_and_zoom": "Panorâmico + Zoom",
 			"languages": "Languages",
+			"venue_types": "Venue Types",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -302,6 +316,7 @@ function CroutonLocalization(language) {
 			"click_search": "Sök",
 			"pan_and_zoom": "Panorera + Zooma",
 			"languages": "Språk",
+			"venue_types": "Venue Types",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -321,7 +336,8 @@ function CroutonLocalization(language) {
 			"text_search": "Поиск текста",
 			"click_search": "Нажмите Поиск",
 			"pan_and_zoom": "Pan + Zoom",
-			"languages": "Языки"
+			"languages": "Языки",
+			"venue_types": "Venue Types",
 		}
 	};
 }
