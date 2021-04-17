@@ -39,7 +39,7 @@ function Crouton(config) {
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
 		has_languages: false,		  // Shows the language dropdown
-		has_venues: false,		      // Shows the venue types dropdown
+		has_venues: true,		      // Shows the venue types dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
