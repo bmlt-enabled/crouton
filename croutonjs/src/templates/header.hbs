@@ -28,6 +28,7 @@
         </div>
     {{/if}}
 
+	{{#if this.config.has_venues}}
 	<div class="bmlt-dropdown-container">
 		<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'venue_types'}}" data-pointer="VenueType" id="filter-dropdown-groups">
 			<option></option>
@@ -36,6 +37,7 @@
 			{{/each}}
 		</select>
 	</div>
+	{{/if}}
 
     {{#if this.config.has_areas}}
         <div class="bmlt-dropdown-container">
