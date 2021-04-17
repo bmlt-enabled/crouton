@@ -670,7 +670,7 @@ Crouton.prototype.render = function(callback) {
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
 			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort(),
-			'venue_types': ["In Person", "Virtual", "Virtual (Temp)", "Hybrid"].sort()
+			'venue_types': crouton.localization.getWord("venue_type_choices").sort()
 		};
 		if (callback !== undefined) callback();
 		self.getMasterFormats(function() {
@@ -1128,27 +1128,27 @@ function getMasterFormatId(code, data) {
 }
 
 const venueType = {
-	IN_PERSON: "In-Person",
-	VIRTUAL: "Virtual",
-	VIRTUAL_TEMP: "Virtual (Temp)",
-	HYBRID: "Hybrid"
+	IN_PERSON: 0,
+	VIRTUAL_TEMP: 1,
+	VIRTUAL: 2,
+	HYBRID: 3
 }
 
 function getVenueType(data) {
 	if (inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& !inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return venueType.HYBRID;
+		return crouton.localization.getVenueType(venueType.HYBRID);
 	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return venueType.VIRTUAL_TC;
+		return crouton.localization.getVenueType(venueType.VIRTUAL_TEMP);
 	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return venueType.VIRTUAL;
+		return crouton.localization.getVenueType(venueType.VIRTUAL);
 	} else {
-		return venueType.IN_PERSON;
+		return crouton.localization.getVenueType(venueType.IN_PERSON);
 	}
 }
 

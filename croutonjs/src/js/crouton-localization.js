@@ -23,6 +23,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -44,6 +45,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -65,6 +67,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -86,6 +89,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -107,6 +111,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -128,6 +133,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -170,6 +176,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -191,6 +198,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -212,6 +220,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -233,6 +242,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -254,6 +264,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Talen",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -275,6 +286,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Przesuń powiększ",
 			"languages": "Języki",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -296,6 +308,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Panorâmico + Zoom",
 			"languages": "Languages",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -317,6 +330,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Panorera + Zooma",
 			"languages": "Språk",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -338,6 +352,7 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Языки",
 			"venue_types": "Venue Types",
+			"venue_type_choices": ["In Person", "Virtual", "Virtual (temporarily replacing an in-person)", "Hybrid (both in-person and virtual)"],
 		}
 	};
 }
@@ -349,3 +364,7 @@ CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
 CroutonLocalization.prototype.getWord = function(word) {
 	return words[this.language][word.toLowerCase()];
 };
+
+CroutonLocalization.prototype.getVenueType = function(index) {
+	return words[this.language]['venue_type_choices'][index]
+}
