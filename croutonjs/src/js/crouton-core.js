@@ -670,7 +670,7 @@ Crouton.prototype.render = function(callback) {
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
 			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort(),
-			'venue_types': crouton.localization.getWord("venue_type_choices").sort()
+			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
 		};
 		if (callback !== undefined) callback();
 		self.getMasterFormats(function() {
@@ -1128,27 +1128,25 @@ function getMasterFormatId(code, data) {
 }
 
 const venueType = {
-	IN_PERSON: 0,
-	VIRTUAL_TEMP: 1,
-	VIRTUAL: 2,
-	HYBRID: 3
+	IN_PERSON: "IN_PERSON",
+	VIRTUAL: "VIRTUAL",
 }
 
 function getVenueType(data) {
 	if (inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& !inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return crouton.localization.getVenueType(venueType.HYBRID);
+		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
 	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return crouton.localization.getVenueType(venueType.VIRTUAL_TEMP);
+		return [crouton.localization.getVenueType(venueType.VIRTUAL)].join(" ");
 	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
 		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
 		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return crouton.localization.getVenueType(venueType.VIRTUAL);
+		return [crouton.localization.getVenueType(venueType.VIRTUAL)].join(" ");
 	} else {
-		return crouton.localization.getVenueType(venueType.IN_PERSON);
+		return [crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
 	}
 }
 
@@ -1271,7 +1269,12 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 });
 
 function convertToPunyCode(str) {
-	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
+	try {
+		return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
+	} catch (e) {
+		console.log(str)
+		console.log(e)
+	}
 }
 
 function arrayColumn(input, columnKey) {
@@ -1288,6 +1291,17 @@ function getUniqueValuesOfKey(array, key){
 		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
 		return carry;
 	}, []);
+}
+
+function getValuesFromObject(o) {
+	var arr = [];
+	for (key in o) {
+		if (o.hasOwnProperty(key)) {
+			arr.push(o[key]);
+		}
+	}
+
+	return arr;
 }
 
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
