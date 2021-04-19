@@ -1269,12 +1269,7 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 });
 
 function convertToPunyCode(str) {
-	try {
-		return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
-	} catch (e) {
-		console.log(str)
-		console.log(e)
-	}
+	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
 
 function arrayColumn(input, columnKey) {
