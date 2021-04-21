@@ -1133,17 +1133,9 @@ const venueType = {
 }
 
 function getVenueType(data) {
-	if (inArray(getMasterFormatId('HY', data), getFormats(data))
-		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
-		&& !inArray(getMasterFormatId('VM', data), getFormats(data))) {
+	if (inArray(getMasterFormatId('HY', data), getFormats(data))) {
 		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
-	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
-		&& inArray(getMasterFormatId('TC', data), getFormats(data))
-		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL)].join(" ");
-	} else if (!inArray(getMasterFormatId('HY', data), getFormats(data))
-		&& !inArray(getMasterFormatId('TC', data), getFormats(data))
-		&& inArray(getMasterFormatId('VM', data), getFormats(data))) {
+	} else if (inArray(getMasterFormatId('VM', data), getFormats(data))) {
 		return [crouton.localization.getVenueType(venueType.VIRTUAL)].join(" ");
 	} else {
 		return [crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
