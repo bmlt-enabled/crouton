@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.0 =
-* Venue Type Dropdown Filter [#327]
+* Venue Type Dropdown Filter. [#327]
+* Fixed blog link for Google API for maps. [#330]
 
 = 3.11.15 =
 * Added support for Dutch. [#324]
