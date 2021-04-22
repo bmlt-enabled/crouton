@@ -229,7 +229,7 @@
         <p>1 = display map</p>
         <p>You can specify the maximum zoom level at which clustering is enabled, 15 is the default. This may be desirable with smaller data sets in which you don't want to cluster at all.</p>
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
-        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></em></p>
+        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>
@@ -242,7 +242,7 @@
         <p><strong>[crouton_map map_search_latitude="0" map_search_longitude="0"]</strong> - specifies the starting latitude and longitude in the map view (default: 0, 0).</p>
         <p><strong>[crouton_map map_search_zoom="10"]</strong> - specifies the starting zoom level on the map (default: 10).</p>
         <p><strong>[crouton_map map_search_width="-50"]</strong> - specifies how many meetings to return, a positive integer means how many miles or kilometers to search.  A negative integer indicates the closest number of meetings from that point with no distance limits. (default: -50 [the fifty closest meetings to the point selected]).</p>
-        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></em></p>
+        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
     </div>
     <h3 class="help-accordian"><strong>Multilingual Support</strong></h3>
     <div>
