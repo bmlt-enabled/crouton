@@ -352,7 +352,7 @@ function Crouton(config) {
 	self.filteredPage = function (dataType, dataValue) {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats" && dataType !== "languages") {
+		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
@@ -811,6 +811,7 @@ Crouton.prototype.render = function(callback) {
 					jQuery("#day").on('click', function () {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 					});
+
 					jQuery(".filterButton").on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value);
 					});
@@ -1134,11 +1135,11 @@ const venueType = {
 
 function getVenueType(data) {
 	if (inArray(getMasterFormatId('HY', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
+		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)];
 	} else if (inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL)].join(" ");
+		return [crouton.localization.getVenueType(venueType.VIRTUAL)];
 	} else {
-		return [crouton.localization.getVenueType(venueType.IN_PERSON)].join(" ");
+		return [crouton.localization.getVenueType(venueType.IN_PERSON)];
 	}
 }
 
@@ -1215,6 +1216,15 @@ crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
 
 crouton_Handlebars.registerHelper('qrCode', function(link, options) {
 	return new crouton_Handlebars.SafeString("<img alt='qrcode' src='https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8&chld=L|0'>");
+});
+
+crouton_Handlebars.registerHelper('formatDataFromArray', function(arr) {
+	var finalValues = [];
+	for (var i = 0; i < arr.length; i++) {
+		finalValues.push(convertToPunyCode(arr[i]));
+	}
+
+	return finalValues.join(" ");
 });
 
 crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
