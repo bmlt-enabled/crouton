@@ -4,8 +4,8 @@ Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N, alanb27
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.7.0
-Stable tag: 3.11.15
+Tested up to: 5.7.1
+Stable tag: 3.12.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -36,8 +36,12 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.12.0 =
+* Venue Type Dropdown Filter. [#327]
+* Fixed blog link for Google API for maps. [#330]
+
 = 3.11.15 =
-* Added support for Dutch.
+* Added support for Dutch. [#324]
 
 = 3.11.14 =
 * Add support for [service_body_names] shortcode

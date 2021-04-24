@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.11.15
+Version: 3.12.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -59,6 +59,7 @@ if (!class_exists("Crouton")) {
             "has_neighborhoods" => '0',
             "has_states" => '0',
             "has_languages" => '0',
+            "has_venues" => '1',
             "include_city_button" => '1',
             "include_weekday_button" => '1',
             "include_unpublished" => '0',
@@ -663,7 +664,7 @@ if (!class_exists("Crouton")) {
                                 <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
                             </li>
                         </ul>
-                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-maps-api-keys-and-geolocation-issues/">https://bmlt.app/google-maps-api-keys-and-geolocation-issues/</a></p>
+                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
                     </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>

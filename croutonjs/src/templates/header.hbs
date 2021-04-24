@@ -28,6 +28,17 @@
         </div>
     {{/if}}
 
+	{{#if this.config.has_venues}}
+	<div class="bmlt-dropdown-container">
+		<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'venue_types'}}" data-pointer="Venues" id="filter-dropdown-venues">
+			<option></option>
+			{{#each this.uniqueData.venue_types}}
+				<option value="a-{{formatDataPointer this}}">{{this}}</option>
+			{{/each}}
+		</select>
+	</div>
+	{{/if}}
+
     {{#if this.config.has_areas}}
         <div class="bmlt-dropdown-container">
             <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="filter-dropdown-areas">

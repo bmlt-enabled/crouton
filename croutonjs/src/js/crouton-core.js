@@ -39,6 +39,7 @@ function Crouton(config) {
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
 		has_languages: false,		  // Shows the language dropdown
+		has_venues: true,		      // Shows the venue types dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
@@ -351,7 +352,7 @@ function Crouton(config) {
 	self.filteredPage = function (dataType, dataValue) {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats" && dataType !== "languages") {
+		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
@@ -501,6 +502,7 @@ function Crouton(config) {
 				}
 			}
 
+			meetingData[m]['venue_type'] = getVenueType(meetingData[m]);
 			meetingData[m]['formats_expanded'] = formats_expanded;
 			var addressParts = [
 				meetingData[m]['location_street'],
@@ -667,7 +669,8 @@ Crouton.prototype.render = function(callback) {
 			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort()
+			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort(),
+			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
 		};
 		if (callback !== undefined) callback();
 		self.getMasterFormats(function() {
@@ -808,6 +811,7 @@ Crouton.prototype.render = function(callback) {
 					jQuery("#day").on('click', function () {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 					});
+
 					jQuery(".filterButton").on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value);
 					});
@@ -1124,6 +1128,21 @@ function getMasterFormatId(code, data) {
 	}
 }
 
+const venueType = {
+	IN_PERSON: "IN_PERSON",
+	VIRTUAL: "VIRTUAL",
+}
+
+function getVenueType(data) {
+	if (inArray(getMasterFormatId('HY', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)];
+	} else if (inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(venueType.VIRTUAL)];
+	} else {
+		return [crouton.localization.getVenueType(venueType.IN_PERSON)];
+	}
+}
+
 // TODO: Change this logic when https://github.com/bmlt-enabled/bmlt-root-server/issues/353 is released and rolled out everywhere.
 function getFormats(data) {
 	return data['formats'] !== "" ? data['format_shared_id_list'].split(",") : [];
@@ -1199,6 +1218,15 @@ crouton_Handlebars.registerHelper('qrCode', function(link, options) {
 	return new crouton_Handlebars.SafeString("<img alt='qrcode' src='https://chart.googleapis.com/chart?chs=100x100&cht=qr&chl=" + link + "&choe=UTF-8&chld=L|0'>");
 });
 
+crouton_Handlebars.registerHelper('formatDataFromArray', function(arr) {
+	var finalValues = [];
+	for (var i = 0; i < arr.length; i++) {
+		finalValues.push(convertToPunyCode(arr[i]));
+	}
+
+	return finalValues.join(" ");
+});
+
 crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
 	var finalFormats = [];
 	for (var i = 0; i < formatsExpanded.length; i++) {
@@ -1243,7 +1271,7 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 });
 
 function convertToPunyCode(str) {
-	return punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-")
+	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
 
 function arrayColumn(input, columnKey) {
@@ -1260,6 +1288,17 @@ function getUniqueValuesOfKey(array, key){
 		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
 		return carry;
 	}, []);
+}
+
+function getValuesFromObject(o) {
+	var arr = [];
+	for (key in o) {
+		if (o.hasOwnProperty(key)) {
+			arr.push(o[key]);
+		}
+	}
+
+	return arr;
 }
 
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
