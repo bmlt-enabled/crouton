@@ -629,16 +629,16 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 				names.push(service_bodies[i]['name']);
 			}
 			names.sort();
-			if (n==1) {
+			if (n===1) {
 				callback(names[0]);
 			}
-			else if (n==2) {
+			else if (n===2) {
 				callback(names[0] + ' and ' + names[1]);
 			}
 			else {
 				var str = '';
-				for (var i = 0; i < n-1; i++) {
-					str += names[i];
+				for (var j = 0; j < n-1; j++) {
+					str += names[j];
 					str += ', ';
 				}
 				callback(str + ' and ' + names[n-1]);
@@ -725,6 +725,7 @@ Crouton.prototype.render = function(callback) {
 					});
 
 					byDayData.push({
+						"hide": self.config["hide_byday_headers"],
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": daysOfTheWeekMeetings
 					});
@@ -1261,6 +1262,14 @@ crouton_Handlebars.registerHelper('phoneLinkify', function(text) {
 
 crouton_Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 	return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
+});
+
+crouton_Handlebars.registerHelper('greaterThan', function (arg1, arg2, options) {
+	return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
+});
+
+crouton_Handlebars.registerHelper('lessThan', function (arg1, arg2, options) {
+	return (arg1 < arg2) ? options.fn(this) : options.inverse(this);
 });
 
 crouton_Handlebars.registerHelper('times', function(n, block) {
