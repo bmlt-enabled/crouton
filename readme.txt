@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.7.1
-Stable tag: 3.12.0
+Stable tag: 3.12.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,10 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.12.1 =
+* Added a new feature to hide Weekday headers when filtering  `hide_byday_headers="true"`.
+* Fixes issue with Weekday headers on filtered view which showing days of the week where there is no data. [#332]
 
 = 3.12.0 =
 * Venue Type Dropdown Filter. [#327]

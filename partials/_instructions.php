@@ -125,6 +125,13 @@
 		<p>0 = do not display the header</p>
 		<p>1 = display the header (default)</p>
 	</div>
+    <h3 class="help-accordian"><strong>Hide By Day Filtered Headers</strong></h3>
+    <div>
+        <p>This feature will hide the Weekday headers that are shown if filtering.</p>
+        <p><strong>[bmlt_tabs hide_byday_headers="0|1"]</strong></p>
+        <p>0 = do not display the headers</p>
+        <p>1 = display the headers (default)</p>
+    </div>
 	<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 	<div>
 		<p>With this parameter you can show or hide the dropdowns.</p>
