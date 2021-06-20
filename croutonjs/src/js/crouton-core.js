@@ -1371,16 +1371,6 @@ function inArray(needle, haystack) {
 	return haystack.indexOf(needle) !== -1;
 }
 
-function inArrayMultiples(needles, haystack) {
-	var allExist = false;
-	for (var x = 0; x < needles.length; x++) {
-		var needle = needles[x];
-		allExist = haystack.indexOf(needle) !== -1;
-	}
-
-	return allExist;
-}
-
 function isFunction(functionToCheck) {
 	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
