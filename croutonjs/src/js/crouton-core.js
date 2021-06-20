@@ -1180,6 +1180,22 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
 	return !inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
+	return !inArray(getMasterFormatId('TC', data), getFormats(data))
+	&& !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+
+crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
+	return !inArray(getMasterFormatId('TC', data), getFormats(data))
+	&& !inArray(getMasterFormatId('VM', data), getFormats(data))
+	&& !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+
+crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
+	return inArray(getMasterFormatId('VM', data), getFormats(data))
+	|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+
 crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
 	var allFound = false;
 	var formatsResponse = data['formats'].split(",")
@@ -1353,6 +1369,16 @@ function arrayUnique(a, b, c) {
 
 function inArray(needle, haystack) {
 	return haystack.indexOf(needle) !== -1;
+}
+
+function inArrayMultiples(needles, haystack) {
+	var allExist = false;
+	for (var x = 0; x < needles.length; x++) {
+		var needle = needles[x];
+		allExist = haystack.indexOf(needle) !== -1;
+	}
+
+	return allExist;
 }
 
 function isFunction(functionToCheck) {
