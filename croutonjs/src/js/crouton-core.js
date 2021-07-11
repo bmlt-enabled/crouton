@@ -1171,18 +1171,18 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 });
 
 crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
-	return !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * @deprecated Since version 2.16.2, will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
-	return !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
@@ -1199,8 +1199,7 @@ crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) 
 });
 
 crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
-	return !inArray(getMasterFormatId('TC', data), getFormats(data))
-	&& !inArray(getMasterFormatId('VM', data), getFormats(data))
+	return !inArray(getMasterFormatId('VM', data), getFormats(data))
 	&& !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
