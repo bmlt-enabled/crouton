@@ -1170,6 +1170,9 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+/**
+ * Works with versions of root server 2.16.0 or greater
+ */
 crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
 	return inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
@@ -1181,6 +1184,9 @@ crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
 	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+/**
+ * Works with versions of root server 2.16.0 or greater
+ */
 crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
 	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
@@ -1193,16 +1199,25 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
 	return !inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+/**
+ * Works with versions of root server 2.16.0 or greater
+ */
 crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
 	return !inArray(getMasterFormatId('TC', data), getFormats(data))
 	&& !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+/**
+ * Works with versions of root server 2.16.0 or greater
+ */
 crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
 	return !inArray(getMasterFormatId('VM', data), getFormats(data))
 	&& !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+/**
+ * Works with versions of root server 2.16.0 or greater
+ */
 crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
 	return inArray(getMasterFormatId('VM', data), getFormats(data))
 	|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
