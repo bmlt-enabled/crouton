@@ -13,12 +13,12 @@
 		data-venues="{{formatDataFromArray this.venue_type}}"
 		data-languages="{{formatDataPointerFormats this.formats_expanded}}">
 		<td class="bmlt-column1">
-			<div class="bmlt-day">{{this.formatted_day}}</div>
-			<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
+			<div tabindex="0" class="bmlt-day">{{this.formatted_day}}</div>
+			<div tabindex="0" class="bmlt-time-2" role="timer">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
 			{{#if this.formats}}
 				<a id="bmlt-formats"
 				   class="btn btn-primary btn-xs"
-				   title=""
+				   title="{{getWord "formats"}}"
 				   data-html="true"
 				   tabindex="0"
 				   data-trigger="focus"
@@ -28,22 +28,22 @@
 				   data-content="
                         <table class='bmlt_a_format table-bordered'>
                         {{#each this.formats_expanded}}
-                        <tr>
-                            <td class='formats_key'>{{key}}</td>
-                            <td class='formats_name'>{{name}}</td>
-                            <td class='formats_description'>{{description}}</td>
-                        </tr>
+                        <div class='formats_popup'>
+                            <div class='formats_key'>{{key}}</div>
+                            <div class='formats_name'>{{name}}</div>
+                            <div class='formats_description'>{{description}}</div>
+                        </div>
                         {{/each}}
                     </table>">
-                    <span class="glyphicon glyphicon-search"
-						  aria-hidden="true"
-						  data-toggle="popover"
-						  data-trigger="focus"
-						  data-html="true"
-						  role="button"></span>{{ this.formats }}
+                 <span class="glyphicon glyphicon-search"
+					   aria-hidden="true"
+					   data-toggle="popover"
+					   data-trigger="focus"
+					   data-html="true"
+					   aria-label="{{getWord "formats"}}"></span>{{ this.formats }}
 				</a>
 			{{/if}}
-			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
+			<div tabindex="0" class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
 			<div class="bmlt-observer">{{> observerTemplate }}</div>
 		</td>
 		<td class="bmlt-column2">

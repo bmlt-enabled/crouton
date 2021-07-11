@@ -613,3 +613,7 @@ table.tablesaw {
 	font-weight: bold;
 	font-size: 14px;
 }
+
+.formats_popup {
+	border-bottom: lightgrey 1px solid;
+}

@@ -389,6 +389,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
+		jQuery(".meeting-data-template").children().attr("tabindex", "0")
 		callback();
 	};
 
