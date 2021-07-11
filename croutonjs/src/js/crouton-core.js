@@ -1203,8 +1203,7 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
  * Works with versions of root server 2.16.0 or greater
  */
 crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
-	return !inArray(getMasterFormatId('TC', data), getFormats(data))
-	&& !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
