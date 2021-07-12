@@ -27,6 +27,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -52,6 +53,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "Präsens-Meetings",
 				VIRTUAL: "Online-Meetings",
 			},
+			"share": "share",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -77,6 +79,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -102,6 +105,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -127,6 +131,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -152,6 +157,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -177,6 +183,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -202,6 +209,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -227,6 +235,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -252,6 +261,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -302,6 +312,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "Fysiek",
 				VIRTUAL: "Online",
 			},
+			"share": "share",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -327,6 +338,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -352,6 +364,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -377,6 +390,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -402,6 +416,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "share",
 		}
 	};
 }

@@ -517,6 +517,7 @@ function Crouton(config) {
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
+			meetingData[m]['share_word'] = self.localization.getWord('share').toUpperCase();
 			meetingData[m]['show_qrcode'] = self.config['show_qrcode'];
 			for (var k in meetingData[m]) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
@@ -1158,7 +1159,11 @@ crouton_Handlebars.registerHelper('getWord', function(word) {
 });
 
 crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
-	return convertToPunyCode(str)
+	return convertToPunyCode(str);
+});
+
+crouton_Handlebars.registerHelper('canShare', function(data, options) {
+	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**

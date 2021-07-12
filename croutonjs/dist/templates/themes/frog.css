@@ -128,12 +128,12 @@
     color: #000;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs {
+#bmlt-formats.btn-xs, #map-button.btn-xs,#share-button.btn-xs {
     color: #555;
     border-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover {
+#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover,#share-button.btn-xs {
     color: #AAA;
     background-color: #444;
     border-color: lightseagreen;

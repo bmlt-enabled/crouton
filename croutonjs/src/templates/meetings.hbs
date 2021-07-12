@@ -51,10 +51,9 @@
 		</td>
 		<td class="bmlt-column3">
 			{{> metaDataTemplate }}
-			<button id="bmlt-share-{{this.id_bigint}}" class="btn btn-small"  onclick="navigator.share({
-					url: '{{#isVirtualOrHybrid this}}{{#if this.virtual_meeting_link}}{{webLinkify this.virtual_meeting_link}}{{/if}}{{#if this.phone_meeting_number}}{{phoneLinkify this.phone_meeting_number}}{{/if}}{{/isVirtualOrHybrid}}{{#isInPersonOrHybrid}}https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}{{/isInPersonOrHybrid}}',
-					text: '{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}} {{this.meeting_name}} {{this.location_text}} {{this.formatted_address}} {{this.formatted_location_info}}{{#if this.virtual_meeting_additional_info}} {{this.virtual_meeting_additional_info}}{{/if}}'
-			})">Share</button>
+			{{#canShare this}}
+				<a href="javascript:void(0);" id="share-button" class="btn btn-primary btn-xs"  onclick="navigator.share({ text: '{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}} {{this.meeting_name}} {{this.location_text}} {{this.formatted_address}} {{this.formatted_location_info}}{{#if this.virtual_meeting_additional_info}} {{this.virtual_meeting_additional_info}}{{/if}}', url: '{{#isVirtualOrHybrid this}}{{#if this.virtual_meeting_link}}{{this.virtual_meeting_link}}{{/if}}{{#if this.phone_meeting_number}}{{this.phone_meeting_number}}{{/if}}{{/isVirtualOrHybrid}}{{#isInPersonOrHybrid this}} https://www.google.com/maps/search/?api=1&amp;query={{this.latitude}},{{this.longitude}}&amp;q={{this.latitude}},{{this.longitude}}{{/isInPersonOrHybrid}}'})"><span class="glyphicon glyphicon-share"></span>  {{this.share_word}}</a>
+			{{/canShare}}
 		</td>
 	</tr>
 {{/each}}

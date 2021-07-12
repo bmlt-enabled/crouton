@@ -4,7 +4,7 @@
 #bmlt-tabs .nav-tabs > li > a {
     background-color: #01d2d6;
 }
-#bmlt-formats.btn-xs,#map-button.btn-xs {
+#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
     background-color: #01d2d6;
 }
 #bmlt-tabs .rowHighlight {
