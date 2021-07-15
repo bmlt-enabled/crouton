@@ -1171,7 +1171,7 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 });
 
 /**
- * Works with versions of root server 2.16.0 or greater
+ * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
 	return inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
@@ -1185,7 +1185,7 @@ crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
 });
 
 /**
- * Works with versions of root server 2.16.0 or greater
+ * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
 	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
@@ -1200,14 +1200,14 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
 });
 
 /**
- * Works with versions of root server 2.16.0 or greater
+ * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
 	return !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
- * Works with versions of root server 2.16.0 or greater
+ * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
 	return !inArray(getMasterFormatId('VM', data), getFormats(data))
@@ -1215,7 +1215,7 @@ crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
 });
 
 /**
- * Works with versions of root server 2.16.0 or greater
+ * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
 	return inArray(getMasterFormatId('VM', data), getFormats(data))
