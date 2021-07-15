@@ -1162,7 +1162,7 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 });
 
 /**
- * @deprecated Since version 2.16.2, will be removed in a future version.
+ * @deprecated Since version 3.12.2, will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 	return ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
@@ -1178,7 +1178,7 @@ crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
 });
 
 /**
- * @deprecated Since version 2.16.2, will be removed in a future version.
+ * @deprecated Since version 3.12.2 will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
 	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
