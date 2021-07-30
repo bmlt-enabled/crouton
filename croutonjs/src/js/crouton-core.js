@@ -1167,7 +1167,7 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
 	return ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
 		|| inArray(getMasterFormatId('VM', data), getFormats(data)))
-	&& (data['virtual_meeting_link'] || data['phone_meeting_number']) ? getTrueResult(options, this) : getFalseResult(options, this);
+	&& (data['virtual_meeting_link'] || data['phone_meeting_number'] || data['virtual_meeting_additional_info']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
