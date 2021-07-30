@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.2 =
-* Added additional Dutch and German translations, fixed missing item for Italian
+* Added additional Dutch and German translations, fixed missing item for Italian.
+* Additional helper functions for templating for venue types added.  `isInPersonOrHybrid`, `isInPersonOnly`, `isVirtualOrHybrid`.
 
 = 3.12.1 =
 * Added a new feature to hide Weekday headers when filtering  `hide_byday_headers="true"`.
