@@ -90,7 +90,7 @@
     background-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs,#map-button.btn-xs {
+#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
     background-color: lightseagreen;
 }
 
@@ -133,7 +133,7 @@
     border-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover,#share-button.btn-xs {
+#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover, #share-button.btn-xs:hover {
     color: #AAA;
     background-color: #444;
     border-color: lightseagreen;
