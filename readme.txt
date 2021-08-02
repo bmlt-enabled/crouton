@@ -4,7 +4,7 @@ Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N, alanb27
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
-Tested up to: 5.7.1
+Tested up to: 5.8.0
 Stable tag: 3.12.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.2 =
+* Share button
 * Added additional Dutch and German translations, fixed missing item for Italian.
 * Additional helper functions for templating for venue types added.  `isInPersonOrHybrid`, `isInPersonOnly`, `isVirtualOrHybrid`.
 

@@ -87,23 +87,23 @@
 }
 
 #bmlt-tabs .nav-tabs > li > a {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 }
 
-#bmlt-formats.btn-xs,#map-button.btn-xs {
-    background-color: 1BA3B0;
+#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
+    background-color: #1BA3B0;
 }
 
 #bmlt-tabs tr.meeting-header td {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 }
 
 #bmlt-tabs #day {
-    background-color: 29994D;
+    background-color: #29994D;
 }
 
 #bmlt-tabs .filterButton {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
@@ -111,15 +111,15 @@
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: 1BA3B0;
+    background-color: #1BA3B0;
 
 }
 
@@ -128,22 +128,22 @@
     color: #000;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs {
+#bmlt-formats.btn-xs, #map-button.btn-xs, #share-button.btn-xs {
     color: #FFF;
-    border-color: 1BA3B0;
+    border-color: #1BA3B0;
 }
 
-#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover {
+#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover, #share-button.btn-xs:hover {
     color: #AAA;
     background-color: #444;
-    border-color: 1BA3B0;
+    border-color: #1BA3B0;
 }
 
 .bootstrap-bmlt a {
-    color: 1BA3B0;
+    color: #1BA3B0;
 }
 
 .bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
-    color: 1BA3B0;
+    color: #1BA3B0;
     text-decoration: underline;
 }
