@@ -53,7 +53,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "Präsens-Meetings",
 				VIRTUAL: "Online-Meetings",
 			},
-			"share": "share",
+			"share": "Teilen",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
