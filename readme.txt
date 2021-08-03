@@ -37,8 +37,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.2 =
-* Share button
-* Added additional Dutch and German translations, fixed missing item for Italian.
+* Share button. [#302]
+* Better no meeting message for when no results could be found, actual query is in the javascript console. [#318]
+* Added additional Dutch and German translations, fixed missing item for Italian. [#324]
 * Additional helper functions for templating for venue types added.  `isInPersonOrHybrid`, `isInPersonOnly`, `isVirtualOrHybrid`.
 
 = 3.12.1 =
