@@ -317,13 +317,6 @@ if (!class_exists("Crouton")) {
                 $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
             }
 
-            if (isset($_GET['meeting_count'])) {
-                $output .= '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
-            }
-
-            if (isset($_GET['group_count'])) {
-                $output .= '<span class="bmlt_tabs_group_count">Groups: ' . $this->groupCount($atts) . '</span>';
-            }
             return $output;
         }
 
