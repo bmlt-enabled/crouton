@@ -37,8 +37,6 @@ if (!class_exists("Crouton")) {
             "sezf",
             "truth"
         ];
-        public $default_template = "{{#isTemporarilyClosed this}}<div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>{{/isTemporarilyClosed}}<div class='meeting-name'>{{this.meeting_name}}</div><div class='location-text'>{{this.location_text}}</div><div class='meeting-address'>{{this.formatted_address}}</div><div class='location-information'>{{this.formatted_location_info}}</div>{{#if this.virtual_meeting_additional_info}}<div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>{{/if}}";
-        public $default_metadata_template = "{{#isVirtual this}}{{#isHybrid this}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud-upload'></span> {{meetsHybrid this}}</div>{{else}}<div class='meetsVirtually'><span class='glyphicon glyphicon-cloud'></span> {{meetsVirtually this}}</div>{{/isHybrid}}{{#if this.virtual_meeting_link}}<div><span class='glyphicon glyphicon-globe'></span> {{webLinkify this.virtual_meeting_link}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.virtual_meeting_link}}</div>{{/if}}{{/if}}{{#if this.phone_meeting_number}}<div><span class='glyphicon glyphicon-earphone'></span> {{phoneLinkify this.phone_meeting_number}}</div>{{#if this.show_qrcode}}<div class='qrcode'>{{qrCode this.phone_meeting_number}}</div>{{/if}}{{/if}}{{/isVirtual}}{{#isNotTemporarilyClosed this}}{{#unless (hasFormats 'VM' this)}}<div><a id='map-button' class='btn btn-primary btn-xs' href='https://www.google.com/maps/search/?api=1&query={{this.latitude}},{{this.longitude}}&q={{this.latitude}},{{this.longitude}}' target='_blank' rel='noopener noreferrer'><span class='glyphicon glyphicon-map-marker'></span> {{this.map_word}}</a></div><div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>{{/unless}}{{/isNotTemporarilyClosed}}";
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
                 'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
@@ -218,6 +216,7 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script("tooltipster", plugin_dir_url(__FILE__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
                 wp_enqueue_script('jquery-ui-accordion');
+                wp_enqueue_script("crouton-default-templates", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-default-templates.js"), true);
             }
         }
 
@@ -605,7 +604,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_meeting_data_template").click(function() {
-                                jQuery('#meeting_data_template').val("<?php echo $this->default_template?>");
+                                jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
                             });
                         </script>
                     </div>
@@ -622,7 +621,7 @@ if (!class_exists("Crouton")) {
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_metadata_template").click(function() {
-                                jQuery('#metadata_template').val("<?php echo $this->default_metadata_template?>");
+                                jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
                             });
                         </script>
                     </div>

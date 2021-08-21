@@ -17,6 +17,7 @@ let jsFilesNoJQuery = [
 	'moment-timezone.js',
 	'crouton-localization.js',
 	'templates.js',
+	'crouton-default-templates.js',
 	'crouton-core.js',
 	'punycode.1.4.1.js',
 	'markerclusterer.js',
