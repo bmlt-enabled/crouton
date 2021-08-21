@@ -47,7 +47,7 @@
 		<p><strong>[bmlt_tabs time_format="HH:mm"]</strong></p>
 		<p>"HH:mm" = 24 Hour Time Format (14:00)</p>
 		<p>"h:mm a" = 12 Hour Time Format (2:00 PM) (Default)</p>
-		<p><em>Default is 12 Hour Time Fomat</em></p>
+		<p><em>Default is 12 Hour Time Format</em></p>
 		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='http://momentjs.com/docs/#/displaying/'>Moment.JS Date</a> function for other ways to configure the time.
 	</div>
     <h3 class="help-accordian"><strong>Start of Week</strong></h3>
@@ -208,7 +208,7 @@
         <p>1 = adjust timezone relative to `base_tz` parameter</p>
         <p><strong>[bmlt_tabs base_tz="UTC"]</strong></p>
         <p>If no option is set, timezone will be assumed to the local PC time.</p>
-        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjuction with auto_tz_adjust parameter, time will be shown relative to that.</p>
+        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjunction with auto_tz_adjust parameter, time will be shown relative to that.</p>
     </div>
     <h3 class="help-accordian"><strong>Include Unpublished Meetings</strong></h3>
     <div>
