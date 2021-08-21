@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.13.3 =
 * Updates for pt-BR translations.
+* Fix for querystring parameters not working on some sites (`this_title`, `sub_title`, `meeting_count`, `group_count`). [#317]
 
 = 3.12.2 =
 * Share button. [#302]

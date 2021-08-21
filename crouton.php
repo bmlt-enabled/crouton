@@ -329,12 +329,12 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderTable($atts) . '</div><script>document.getElementById("please-wait").style.display = "none";</script>';
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
 
         public function croutonMap($atts, $content = null)
         {
-            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderMap($atts) . '</div>';
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
 
         public function getInitializeCroutonBlock($config = array())
