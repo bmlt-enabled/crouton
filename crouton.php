@@ -316,24 +316,17 @@ if (!class_exists("Crouton")) {
                 $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
             }
 
-            if (isset($_GET['meeting_count'])) {
-                $output .= '<span class="bmlt_tabs_meeting_count">Meeting Weekly: ' . $this->meetingCount($atts) . '</span>';
-            }
-
-            if (isset($_GET['group_count'])) {
-                $output .= '<span class="bmlt_tabs_group_count">Groups: ' . $this->groupCount($atts) . '</span>';
-            }
             return $output;
         }
 
         public function tabbedUi($atts, $content = null)
         {
-            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderTable($atts) . '</div><script>document.getElementById("please-wait").style.display = "none";</script>';
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
 
         public function croutonMap($atts, $content = null)
         {
-            return '<div id="bmlt-tabs" class="bmlt-tabs hide">' . $this->sharedRender() . $this->renderMap($atts) . '</div>';
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
 
         public function getInitializeCroutonBlock($config = array())

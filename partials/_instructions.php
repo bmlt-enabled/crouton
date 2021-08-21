@@ -28,20 +28,17 @@
             some reason are having trouble implementing crouton on their own sites.</p>
         <ol>
         <li>Use <code>[service_body_names]</code> as part of the page's heading, to say which meetings are listed.</li>
-        <li>Use <code>[group_count]</code> and/or <code>[meeting_count]</code> if desired.</li>
         <li>Then insert <code>[bmlt_tabs]</code>.</li>
 		<li>Link to that page using parameters as described below, either from another page on the same website or from a different website.</li>
         </ol>
-		<p>You can override any shortcode value.
-		<p>Please study the following URLs to get acquainted with the URL parameter structure. (Note: the URL parameters <code>this_title</code>,
-            <code>meeting_count</code>, and <code>group_count</code> parameters currently don't work correctly -- the information
-            is displayed but gets overwritten by the tabbed meeting display. The other parameters do work correctly.)</p>
+		<p>You can override any shortcode value.  You can also use two special values `this_title` and `sub_title` to set titles on your querystring to reuse a page easily.  Note: this only works for Wordpress based crouton, not croutonjs.
+        <p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
 		<p><strong>Meetings for One Area.</strong></p>
-		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body=44&this_title=Crossroads%20Area%20Meetings&meeting_count=1&group_count=1">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44&<span style="color:red;">this_title</span>=Crossroads%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body=44&this_title=Crossroads%20Area%20Meetings">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44&<span style="color:red;">this_title</span>=Crossroads%20Area%20Meetings</a></p>
 		<p><strong>Meetings for Two (or more) Areas.</strong></p>
-		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body=44,45&this_title=Crossroads%20Area%20and%20Down%20East%20Area&meeting_count=1&group_count=1">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44,45&<span style="color:red;">this_title</span>=Crossroads%20Area%20and%20Down%20East%20Area%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body=44,45&this_title=Crossroads%20Area%20and%20Down%20East%20Area">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body</span>=44,45&<span style="color:red;">this_title</span>=Crossroads%20Area%20and%20Down%20East%20Area%20Meetings</a></p>
 		<p><strong>Meetings for One Region.</strong></p>
-		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body_parent=43&this_title=North%20Carolina%20Region%20Meetings&meeting_count=1&group_count=1">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body_parent</span>=43&<span style="color:red;">this_title</span>=North%20Carolina%2-Region%20Meetings&<span style="color:red;">meeting_count</span>=1&<span style="color:red;">group_count</span>=1</a></p>
+		<p><a target="_blank" href="https://bmlt.app/crouton-sample/?root_server=https://bmlt.sezf.org/main_server&service_body_parent=43&this_title=North%20Carolina%20Region%20Meetings">https://bmlt.app/crouton-sample/?<span style="color:red;">root_server</span>=https://bmlt.sezf.org/main_server&<span style="color:red;">service_body_parent</span>=43&<span style="color:red;">this_title</span>=North%20Carolina%2-Region%20Meetings</a></p>
 		<p><em>Title, meeting and group count have unique CSS classes that can be used for custom styling.</em></p>
 	</div>
 	<h3 class="help-accordian"><strong>Time Format</strong></h3>
@@ -50,7 +47,7 @@
 		<p><strong>[bmlt_tabs time_format="HH:mm"]</strong></p>
 		<p>"HH:mm" = 24 Hour Time Format (14:00)</p>
 		<p>"h:mm a" = 12 Hour Time Format (2:00 PM) (Default)</p>
-		<p><em>Default is 12 Hour Time Fomat</em></p>
+		<p><em>Default is 12 Hour Time Format</em></p>
 		<p>Refer to the <a style='color:#0073aa;' target='_blank' href='http://momentjs.com/docs/#/displaying/'>Moment.JS Date</a> function for other ways to configure the time.
 	</div>
     <h3 class="help-accordian"><strong>Start of Week</strong></h3>
@@ -211,7 +208,7 @@
         <p>1 = adjust timezone relative to `base_tz` parameter</p>
         <p><strong>[bmlt_tabs base_tz="UTC"]</strong></p>
         <p>If no option is set, timezone will be assumed to the local PC time.</p>
-        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjuction with auto_tz_adjust parameter, time will be shown relative to that.</p>
+        <p>In the example above, setting to UTC will inform the browser that each time is in UTC.  In conjunction with auto_tz_adjust parameter, time will be shown relative to that.</p>
     </div>
     <h3 class="help-accordian"><strong>Include Unpublished Meetings</strong></h3>
     <div>
