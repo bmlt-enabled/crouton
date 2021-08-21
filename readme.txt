@@ -36,7 +36,7 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
-= 3.13.3 =
+= 3.12.3 =
 * Updates for pt-BR translations.
 * Fix for querystring parameters not working on some sites (`this_title`, `sub_title`).  `meeting_count`, `group_count` have been retired. [#317]
 
