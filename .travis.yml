@@ -33,9 +33,9 @@ jobs:
         repo: bmlt-enabled/crouton
       skip_cleanup: 'true'
     - provider: s3
-      access_key_id: AKIAI7JHYFA6DI3WYP5A
+      access_key_id: AKIA3EWZC3OHKYCL5SIY
       secret_access_key:
-        secure: jAFBLyw5GIGl7lit4lcMkNWiYpsGGIdIzGeubdj6eLR8/impcTpwynj+V50bY19ttqq1gUkv6siFcRCUXgbNeonfNM8VCxFYUiE4pGhtiU/nl1X3YQDREoSDu1HK9nCTOBxdtdUpHzpDu535e/bN+i/pc0FgDAdh3QtzIEeZQ2G7QHbXQ2ydS7O03ZOPOlR4GYP4lf9O+uVwuzdAeJs2RT+empStg94xFxyTSi08SAUGMuPt6jGn8LC8YGSr7DDwwRiNdf4Hwr5ZeBSkbXDMdvt8TuVGKBxae/lN3swL9gcLPf/9LCUL+qD3ELHEh6Hx6mrWYtVysuNAEqhH8w062xfxLuD9tKquG4R99l6r4EZjZ6t2qOJzFg2SNLKXvZduBNTEI2Z1i2Maw8pd14O3Ok3Ue8d8RhWN03E7FlDuth3J4yQ6hAKXnM5UCKelhzEJRLJeTqBbxRaDreLlxX6veHFXRBV6i9lPn0M5x+0/jmh8L/I9xcPemF+2i4eRlGxLMHee0k/xLxdezja1u4QPTFrvPqhJZgos2oxLP4pN5Vol6XxIVJ/CrCYG77+59ZhFLbKno6bjLIdMiY24U7o0DqWLsmaUQteDMmskPl+IiHYkREASIxpfgrJN7suc9KMVpKYVSMl/OZvFJIZzrymhAEIH5nFWdAuVvjuvJj/DfoA=
+        secure: Oih/yNSOVzX87zM0bceWPxSHwBLdcNRJBz1rF/hwq1hOUYlQV8IcKnjJO7oDoitqTo6nY9BuT/ya7V6fTVNPbj/5laOj3sfR3rXQocVAYyKBkv+1gb9ca52sB9ywqO4u6EtmyZqApZzA9ofDfqTiP+n6YsAPN1bBB482WgY0yrdPY3ognZbG7yJ1ON4tmkAxkdryCmvkEfR1s6E1zUWCEJwSu8YU+mU28J4NB9FCzJWx9SB7cFh9tC3iJEtCSpDagtNUfjgVhAr2lJ3DNZEm/1U6PRYnWQKtBn1EcAhe/Yl5ZeSoKeMcivIIyvIU19uyrE+74guBsq8BPJUI5tVysaMIKQP/BH2vyUy431rcT9NY9pr92bcirSCsgQACNzf10TZ0jBIDfRYnio0r+6F3KVa4isIJO46ttiZN/F8AO92nHbZCn3x6zX+ikvyOwRkUr68ANn4tO8iv93urKX4tTyk4XPmWZ1SJpeeH9J9TXPYsXg5llouJWJ755IcXlTMVaCmKSFWtINojbpvq4jVit4lmVjrQidUukgo2z5wOV1jyy0d3hG/wEiz4/9yUgXhEeugHNhFBw6N9WQdJUVptXLpKB03VB5Gy03AzRlU9VUbUA+dO3VjBqb9x4PCTsddWUtRLYnbMviwIFMbDkocxYcrqglVBT0hw6Zu8HIus3M4=
       bucket: "$S3_BUCKET"
       local_dir: "$DIST_DIR_S3"
       upload-dir: "$S3_KEY"
@@ -85,9 +85,9 @@ jobs:
     - chmod +x deploy-wordpress.sh
     deploy:
     - provider: s3
-      access_key_id: AKIAI7JHYFA6DI3WYP5A
+      access_key_id: AKIA3EWZC3OHKYCL5SIY
       secret_access_key:
-        secure: jAFBLyw5GIGl7lit4lcMkNWiYpsGGIdIzGeubdj6eLR8/impcTpwynj+V50bY19ttqq1gUkv6siFcRCUXgbNeonfNM8VCxFYUiE4pGhtiU/nl1X3YQDREoSDu1HK9nCTOBxdtdUpHzpDu535e/bN+i/pc0FgDAdh3QtzIEeZQ2G7QHbXQ2ydS7O03ZOPOlR4GYP4lf9O+uVwuzdAeJs2RT+empStg94xFxyTSi08SAUGMuPt6jGn8LC8YGSr7DDwwRiNdf4Hwr5ZeBSkbXDMdvt8TuVGKBxae/lN3swL9gcLPf/9LCUL+qD3ELHEh6Hx6mrWYtVysuNAEqhH8w062xfxLuD9tKquG4R99l6r4EZjZ6t2qOJzFg2SNLKXvZduBNTEI2Z1i2Maw8pd14O3Ok3Ue8d8RhWN03E7FlDuth3J4yQ6hAKXnM5UCKelhzEJRLJeTqBbxRaDreLlxX6veHFXRBV6i9lPn0M5x+0/jmh8L/I9xcPemF+2i4eRlGxLMHee0k/xLxdezja1u4QPTFrvPqhJZgos2oxLP4pN5Vol6XxIVJ/CrCYG77+59ZhFLbKno6bjLIdMiY24U7o0DqWLsmaUQteDMmskPl+IiHYkREASIxpfgrJN7suc9KMVpKYVSMl/OZvFJIZzrymhAEIH5nFWdAuVvjuvJj/DfoA=
+        secure: Oih/yNSOVzX87zM0bceWPxSHwBLdcNRJBz1rF/hwq1hOUYlQV8IcKnjJO7oDoitqTo6nY9BuT/ya7V6fTVNPbj/5laOj3sfR3rXQocVAYyKBkv+1gb9ca52sB9ywqO4u6EtmyZqApZzA9ofDfqTiP+n6YsAPN1bBB482WgY0yrdPY3ognZbG7yJ1ON4tmkAxkdryCmvkEfR1s6E1zUWCEJwSu8YU+mU28J4NB9FCzJWx9SB7cFh9tC3iJEtCSpDagtNUfjgVhAr2lJ3DNZEm/1U6PRYnWQKtBn1EcAhe/Yl5ZeSoKeMcivIIyvIU19uyrE+74guBsq8BPJUI5tVysaMIKQP/BH2vyUy431rcT9NY9pr92bcirSCsgQACNzf10TZ0jBIDfRYnio0r+6F3KVa4isIJO46ttiZN/F8AO92nHbZCn3x6zX+ikvyOwRkUr68ANn4tO8iv93urKX4tTyk4XPmWZ1SJpeeH9J9TXPYsXg5llouJWJ755IcXlTMVaCmKSFWtINojbpvq4jVit4lmVjrQidUukgo2z5wOV1jyy0d3hG/wEiz4/9yUgXhEeugHNhFBw6N9WQdJUVptXLpKB03VB5Gy03AzRlU9VUbUA+dO3VjBqb9x4PCTsddWUtRLYnbMviwIFMbDkocxYcrqglVBT0hw6Zu8HIus3M4=
       bucket: "$S3_BUCKET"
       local_dir: "$DIST_DIR_S3"
       upload-dir: "$S3_KEY"
