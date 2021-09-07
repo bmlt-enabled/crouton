@@ -287,6 +287,7 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"share": "Condividi"
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
