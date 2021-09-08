@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.4 =
-* Format Meeting Data Template, Metadata Template, and Observer Template to make them easier to modify and extend
+* Format Meeting Data Template, Metadata Template, and Observer Template to make them easier to modify and extend.
+* Fixing missing localization for `it-IT` for the `share` word. [#351]
 
 = 3.12.3 =
 * Updates for pt-BR translations.
