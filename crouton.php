@@ -596,7 +596,10 @@ if (!class_exists("Crouton")) {
                             </li>
                         </ul>
                         <script type="text/javascript">
-                            jQuery("#meeting_data_template").replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template)
+                            jQuery("document").ready(function() {
+                                var meeting_data_template = jQuery("#meeting_data_template").val();
+                                jQuery("#meeting_data_template").val(meeting_data_template.replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template));
+                            });
 
                             jQuery("#reset_meeting_data_template").click(function() {
                                 jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
@@ -615,7 +618,10 @@ if (!class_exists("Crouton")) {
                             </li>
                         </ul>
                         <script type="text/javascript">
-                            jQuery("#metadata_template").replace("___DEFAULT___", croutonDefaultTemplates.metadata_template)
+                            jQuery("document").ready(function() {
+                                var metadata_template = jQuery("#metadata_template").val();
+                                jQuery("#metadata_template").val(metadata_template.replace("___DEFAULT___", croutonDefaultTemplates.metadata_template));
+                            });
 
                             jQuery("#reset_metadata_template").click(function() {
                                 jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
