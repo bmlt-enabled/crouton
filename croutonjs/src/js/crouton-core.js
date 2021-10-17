@@ -528,6 +528,13 @@ function Crouton(config) {
 					}
 				}
 			}
+
+			var serviceBodyInfo = self.getServiceBodyDetails(meetingData[m]['service_body_bigint'])
+			meetingData[m]['serviceBodyUrl'] = serviceBodyInfo["url"];
+			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
+			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
+			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
+
 			meetings.push(meetingData[m])
 		}
 
@@ -651,6 +658,16 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 	});
 };
 
+Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
+	var self = this;
+	for (var s = 0; s < self.active_service_bodies.length; s++) {
+		var service_body = self.active_service_bodies[s];
+		if (self.active_service_bodies[s]['id'] === serviceBodyId) {
+			return self.active_service_bodies[s];
+		}
+	}
+}
+
 Crouton.prototype.render = function(callback) {
 	var self = this;
 	self.lock(function() {
@@ -679,16 +696,16 @@ Crouton.prototype.render = function(callback) {
 		if (callback !== undefined) callback();
 		self.getMasterFormats(function() {
 			self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
-				var active_service_bodies = [];
+				self.active_service_bodies = [];
 				for (var i = 0; i < service_bodies.length; i++) {
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
-							active_service_bodies.push(service_bodies[i]);
+							self.active_service_bodies.push(service_bodies[i]);
 						}
 					}
 				}
 
-				self.uniqueData['areas'] = active_service_bodies.sortByKey('name');
+				self.uniqueData['areas'] = self.active_service_bodies.sortByKey('name');
 				if (!jQuery.isEmptyObject(self.formatsData)) {
 					self.formatsData = self.formatsData.sortByKey('name_string');
 				}
