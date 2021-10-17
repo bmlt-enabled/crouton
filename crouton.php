@@ -589,13 +589,15 @@ if (!class_exists("Crouton")) {
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : $this->default_template; ?></textarea>
+                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
+                            jQuery("#meeting_data_template").replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template)
+
                             jQuery("#reset_meeting_data_template").click(function() {
                                 jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
                             });
@@ -606,13 +608,15 @@ if (!class_exists("Crouton")) {
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : $this->default_metadata_template; ?></textarea>
+                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
+                            jQuery("#metadata_template").replace("___DEFAULT___", croutonDefaultTemplates.metadata_template)
+
                             jQuery("#reset_metadata_template").click(function() {
                                 jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
                             });
