@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.12.5 =
+* Added capability to include service body details in templates.
 * Fix for empty template issue.
 
 = 3.12.4 =
