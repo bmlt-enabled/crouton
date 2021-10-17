@@ -209,6 +209,9 @@ function Crouton(config) {
 			'worldid_mixed',
 			'root_server_uri',
 			'id_bigint',
+			'serviceBodyName',
+			'serviceBodyUrl',
+			'serviceBodyPhone',
 		];
 
 		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
@@ -682,6 +685,13 @@ Crouton.prototype.render = function(callback) {
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
 							active_service_bodies.push(service_bodies[i]);
+							for (var s = 0; s < self.meetingData.length; s++) {
+								if (service_bodies[i]["id"] == self.meetingData[s]['service_body_bigint']) {
+									self.meetingData[s]['serviceBodyUrl'] = service_bodies[i]["url"];
+									self.meetingData[s]['serviceBodyPhone'] = service_bodies[i]["helpline"];
+									self.meetingData[s]['serviceBodyName'] = service_bodies[i]["name"];
+								}
+							}
 						}
 					}
 				}
