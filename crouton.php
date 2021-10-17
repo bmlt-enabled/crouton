@@ -803,8 +803,6 @@ if (!class_exists("Crouton")) {
 
             if (isset($atts['meeting_data_template']) && $atts['meeting_data_template'] !== null && $atts['meeting_data_template'] !== "") {
                 $meeting_data_template = $atts['meeting_data_template'];
-            } else if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
-                $meeting_data_template = $this->default_template;
             } else {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
@@ -812,8 +810,6 @@ if (!class_exists("Crouton")) {
 
             if (isset($atts['metadata_template']) && $atts['metadata_template'] !== null && $atts['metadata_template'] !== "") {
                 $metadata_template = $atts['metadata_template'];
-            } else if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
-                $metadata_template = $this->default_metadata_template;
             } else {
                 $metadata_template = $this->options['metadata_template'];
             }
