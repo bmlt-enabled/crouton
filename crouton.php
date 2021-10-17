@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.12.4
+Version: 3.12.5
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -589,13 +589,18 @@ if (!class_exists("Crouton")) {
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : $this->default_template; ?></textarea>
+                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
+                            jQuery("document").ready(function() {
+                                var meeting_data_template = jQuery("#meeting_data_template").val();
+                                jQuery("#meeting_data_template").val(meeting_data_template.replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template));
+                            });
+
                             jQuery("#reset_meeting_data_template").click(function() {
                                 jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
                             });
@@ -606,13 +611,18 @@ if (!class_exists("Crouton")) {
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : $this->default_metadata_template; ?></textarea>
+                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
+                            jQuery("document").ready(function() {
+                                var metadata_template = jQuery("#metadata_template").val();
+                                jQuery("#metadata_template").val(metadata_template.replace("___DEFAULT___", croutonDefaultTemplates.metadata_template));
+                            });
+
                             jQuery("#reset_metadata_template").click(function() {
                                 jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
                             });
@@ -799,8 +809,6 @@ if (!class_exists("Crouton")) {
 
             if (isset($atts['meeting_data_template']) && $atts['meeting_data_template'] !== null && $atts['meeting_data_template'] !== "") {
                 $meeting_data_template = $atts['meeting_data_template'];
-            } else if (!isset($this->options['meeting_data_template']) || $this->options['meeting_data_template'] == "") {
-                $meeting_data_template = $this->default_template;
             } else {
                 $meeting_data_template = $this->options['meeting_data_template'];
             }
@@ -808,8 +816,6 @@ if (!class_exists("Crouton")) {
 
             if (isset($atts['metadata_template']) && $atts['metadata_template'] !== null && $atts['metadata_template'] !== "") {
                 $metadata_template = $atts['metadata_template'];
-            } else if (!isset($this->options['metadata_template']) || $this->options['metadata_template'] == "") {
-                $metadata_template = $this->default_metadata_template;
             } else {
                 $metadata_template = $this->options['metadata_template'];
             }

@@ -551,7 +551,9 @@ function Crouton(config) {
 Crouton.prototype.setConfig = function(config) {
 	var self = this;
 	for (var propertyName in config) {
-		if (propertyName.indexOf("int_") === -1) {
+		if (propertyName.indexOf("_template") > 0 && config[propertyName] === "") {
+			continue;
+		} else if (propertyName.indexOf("int_") === -1) {
 			if (config[propertyName] === "1" || config[propertyName] === 1) {
 				self.config[propertyName] = true;
 			} else if (config[propertyName] === "0" || config[propertyName] === 0) {
