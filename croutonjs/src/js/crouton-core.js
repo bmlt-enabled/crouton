@@ -548,6 +548,8 @@ function Crouton(config) {
 					meetingData[m]['parentBodyType'] = "Region";
 				else if (parentBodyInfo["type"] === "ZF")
 					meetingData[m]['parentBodyType'] = "Zone";
+				else if (parentBodyInfo["type"] === "MA")
+					meetingData[m]['parentBodyType'] = "Metro";
 				else
 					meetingData[m]['parentBodyType'] = parentBodyInfo["type"];
 			}
