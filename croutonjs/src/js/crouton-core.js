@@ -555,10 +555,12 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
 
 			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
-			meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
-			meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
-			meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
-			meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
+			if (parentBodyInfo !== undefined) {
+				meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
+				meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
+				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
+				meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
+			}
 
 			meetings.push(meetingData[m])
 		}
