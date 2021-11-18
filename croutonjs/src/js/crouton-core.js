@@ -408,7 +408,7 @@ function Crouton(config) {
 	};
 
 	self.getServiceBodies = function (service_bodies_id) {
-		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies' + getServiceBodiesQueryString(service_bodies_id);
+		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&parents=1' + getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
 			.then(function(response) {
 				return response.json();
@@ -554,6 +554,12 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
 
+			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
+			meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
+			meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
+			meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
+			meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
+
 			meetings.push(meetingData[m])
 		}
 
@@ -577,7 +583,7 @@ function Crouton(config) {
 Crouton.prototype.setConfig = function(config) {
 	var self = this;
 	for (var propertyName in config) {
-		if (propertyName.indexOf("_template") > 0 && config[propertyName] === "") {
+		if (propertyName.indexOf("_template") > 0 && config[propertyName].trim() === "") {
 			continue;
 		} else if (propertyName.indexOf("int_") === -1) {
 			if (config[propertyName] === "1" || config[propertyName] === 1) {
@@ -679,10 +685,10 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 
 Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 	var self = this;
-	for (var s = 0; s < self.active_service_bodies.length; s++) {
-		var service_body = self.active_service_bodies[s];
-		if (self.active_service_bodies[s]['id'] === serviceBodyId) {
-			return self.active_service_bodies[s];
+	for (var s = 0; s < self.all_service_bodies.length; s++) {
+		var service_body = self.all_service_bodies[s];
+		if (service_body['id'] === serviceBodyId) {
+			return service_body;
 		}
 	}
 }
