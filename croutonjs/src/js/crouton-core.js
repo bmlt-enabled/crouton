@@ -553,6 +553,7 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
+			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
 
 			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
 			if (parentBodyInfo !== undefined) {
@@ -560,6 +561,7 @@ function Crouton(config) {
 				meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
 				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
 				meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
+				meetingData[m]['parentServiceBodyType'] = self.localization.getServiceBodyType(parentBodyInfo["type"]);
 			}
 
 			meetings.push(meetingData[m])
