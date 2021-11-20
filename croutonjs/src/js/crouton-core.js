@@ -395,8 +395,7 @@ function Crouton(config) {
 	};
 
 	self.getServiceBodies = function (service_bodies_id) {
-		return getJSONP(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
-			+ getServiceBodiesQueryString(service_bodies_id));
+		return getJSONP(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies' + getServiceBodiesQueryString(service_bodies_id));
 	};
 
 	self.getMasterFormats = function() {
