@@ -394,27 +394,16 @@ function Crouton(config) {
 		callback();
 	};
 
-	self.getServiceBodies = function (service_bodies_id, callback) {
-		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
-			+ getServiceBodiesQueryString(service_bodies_id) + '&callback=?', callback);
+	self.getServiceBodies = function (service_bodies_id) {
+		return getJSONP(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
+			+ getServiceBodiesQueryString(service_bodies_id));
 	};
 
-	// Retire after root server 2.16.4 is rolled out everywhere.
-	self.hasNativeVenueTypeSupport = function() {
-		// TODO: returning false always for now, until we sort out how to reduce this as a call.
-		return false; //self.meetingData[0].hasOwnProperty('venue_type');
-	}
-
-	// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
-	self.getMasterFormats = function(callback) {
-		if (!self.hasNativeVenueTypeSupport()) {
-			jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&callback=?', function (masterFormats) {
+	self.getMasterFormats = function() {
+		return getJSONP(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&key_strings[]=TC&key_strings[]=VM&key_strings[]=HY')
+			.then(function(masterFormats) {
 				self.masterFormatCodes = masterFormats;
-				callback();
-			});
-		} else {
-			callback();
-		}
+			})
 	}
 
 	self.showLocation = function(position) {
@@ -707,9 +696,12 @@ Crouton.prototype.render = function(callback) {
 			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
 		};
 		if (callback !== undefined) callback();
-		self.getMasterFormats(function() {
-			self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
+		Promise.all([
+			self.getMasterFormats(),
+			self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'])
+		]).then(function(data) {
 				self.active_service_bodies = [];
+				var service_bodies = data[1];
 				for (var i = 0; i < service_bodies.length; i++) {
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
@@ -895,7 +887,6 @@ Crouton.prototype.render = function(callback) {
 				});
 			});
 		});
-	});
 };
 
 Crouton.prototype.mapSearchClickMode = function() {
@@ -1454,6 +1445,23 @@ function getServiceBodiesQueryString(service_bodies_id) {
 	}
 	return service_bodies_query;
 }
+
+function getJSONP(url, success) {
+	return new Promise(function(resolve, reject){
+		var ud = '_' + +new Date,
+			script = document.createElement('script'),
+			head = document.getElementsByTagName('head')[0] || document.documentElement;
+
+		window[ud] = function(data) {
+			// head.removeChild(script);
+			resolve(data);
+		};
+
+		url += (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + ud;
+		script.src = url;
+		head.appendChild(script);
+	});
+};
 
 Array.prototype.filterByObjectKeyValue = function(key, value) {
 	var ret = [];
