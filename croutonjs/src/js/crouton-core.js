@@ -209,6 +209,7 @@ function Crouton(config) {
 			'worldid_mixed',
 			'root_server_uri',
 			'id_bigint',
+			'venue_type',
 		];
 
 		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
@@ -398,11 +399,22 @@ function Crouton(config) {
 			+ getServiceBodiesQueryString(service_bodies_id) + '&callback=?', callback);
 	};
 
-	self.getMasterFormats = function (callback) {
-		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&callback=?', function(masterFormats) {
-			self.masterFormatCodes = masterFormats;
+	// Retire after root server 2.16.4 is rolled out everywhere.
+	self.hasNativeVenueTypeSupport = function() {
+		// TODO: returning false always for now, until we sort out how to reduce this as a call.
+		return false; //self.meetingData[0].hasOwnProperty('venue_type');
+	}
+
+	// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
+	self.getMasterFormats = function(callback) {
+		if (!self.hasNativeVenueTypeSupport()) {
+			jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&callback=?', function (masterFormats) {
+				self.masterFormatCodes = masterFormats;
+				callback();
+			});
+		} else {
 			callback();
-		});
+		}
 	}
 
 	self.showLocation = function(position) {
@@ -503,7 +515,8 @@ function Crouton(config) {
 				}
 			}
 
-			meetingData[m]['venue_type'] = getVenueType(meetingData[m]);
+			meetingData[m]['venue_type'] = parseInt(meetingData[m]['venue_type']);
+			meetingData[m]['venue_type_name'] = getVenueTypeName(meetingData[m]);
 			meetingData[m]['formats_expanded'] = formats_expanded;
 			var addressParts = [
 				meetingData[m]['location_street'],
@@ -1141,6 +1154,7 @@ function getFalseResult(options, ctx) {
 	return options.inverse !== undefined ? options.inverse(ctx) : false;
 }
 
+// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
 function getMasterFormatId(code, data) {
 	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
 		var format = crouton.masterFormatCodes[f];
@@ -1150,18 +1164,25 @@ function getMasterFormatId(code, data) {
 	}
 }
 
-const venueType = {
+// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
+const masterFormatVenueType = {
 	IN_PERSON: "IN_PERSON",
 	VIRTUAL: "VIRTUAL",
 }
 
-function getVenueType(data) {
-	if (inArray(getMasterFormatId('HY', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)];
-	} else if (inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL)];
+const venueType = {
+	IN_PERSON: 1,
+	VIRTUAL: 2,
+	HYBRID: 3,
+}
+
+function getVenueTypeName(data) {
+	if (data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL), crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
+	} else if (data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL)];
 	} else {
-		return [crouton.localization.getVenueType(venueType.IN_PERSON)];
+		return [crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
 	}
 }
 
@@ -1190,8 +1211,8 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
  * @deprecated Since version 3.12.2, will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
-		|| inArray(getMasterFormatId('VM', data), getFormats(data)))
+	return ((data['venue_type'] === venueType.HYBRID || data['venue_type'] === venueType.VIRTUAL) || ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
+		|| inArray(getMasterFormatId('VM', data), getFormats(data))))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number'] || data['virtual_meeting_additional_info']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
@@ -1199,21 +1220,21 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
-	return inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * @deprecated Since version 3.12.2 will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
-	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
@@ -1228,22 +1249,22 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
-	return !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] !== venueType.VIRTUAL && !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
-	return !inArray(getMasterFormatId('VM', data), getFormats(data))
-	&& !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.IN_PERSON || (!inArray(getMasterFormatId('VM', data), getFormats(data))
+	&& !inArray(getMasterFormatId('HY', data), getFormats(data))) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
-	return inArray(getMasterFormatId('VM', data), getFormats(data))
+	return (data['venue_type'] === venueType.VIRTUAL || data['venue_type'] === venueType.HYBRID) || inArray(getMasterFormatId('VM', data), getFormats(data))
 	|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
