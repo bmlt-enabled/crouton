@@ -82,13 +82,14 @@ function Crouton(config) {
 
 		self.config['custom_query'] = self.config['custom_query'] + "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
-		self.meetingSearch(function() {
-			self.reset();
-			self.render();
-			self.initMap(function() {
-				self.addCurrentLocationPin(latitude, longitude);
+		self.meetingSearch()
+			.then(function() {
+				self.reset();
+				self.render();
+				self.initMap(function() {
+					self.addCurrentLocationPin(latitude, longitude);
+				});
 			});
-		});
 	};
 
 	self.addCurrentLocationPin = function(latitude, longitude) {
@@ -155,37 +156,43 @@ function Crouton(config) {
 		//infoWindow.close();
 	};
 
-	self.getMeetings = function(url, callback) {
-		jQuery.getJSON(this.config['root_server'] + url + '&callback=?', function (data) {
-			if (data === null || JSON.stringify(data['meetings']) === "{}") {
-				var fullUrl = self.config['root_server'] + url
-				console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
-				jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
-				return;
-			}
-			data['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
-			self.meetingData = data['meetings'];
-			self.formatsData = data['formats'];
+	self.getMeetings = function(url) {
+		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
-			if (self.config['extra_meetings'].length > 0) {
-				var extra_meetings_query = "";
-				for (var i = 0; i < self.config['extra_meetings'].length; i++) {
-					extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
-				}
-				jQuery.getJSON(self.config['root_server'] + url + '&callback=?' + extra_meetings_query, function (data) {
-					self.meetingData = self.meetingData.concat(data);
-					self.mutex = false;
-					callback();
-				});
-			} else {
-				self.mutex = false;
-				callback();
+		if (self.config['extra_meetings'].length > 0) {
+			var extra_meetings_query = "";
+			for (var i = 0; i < self.config['extra_meetings'].length; i++) {
+				extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
 			}
-		});
+			promises.push(fetchJsonp(self.config['root_server'] + url + extra_meetings_query).then(function (response) { return response.json(); }));
+		}
+
+		return Promise.all(promises)
+			.then(function(data) {
+				var mainMeetings = data[0];
+				var extraMeetings;
+				if (data.length === 2) {
+					extraMeetings = data[1];
+				}
+				if (JSON.stringify(mainMeetings['meetings']) === "{}") {
+					var fullUrl = self.config['root_server'] + url
+					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
+					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
+					return;
+				}
+				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+				self.meetingData = mainMeetings['meetings'];
+				self.formatsData = mainMeetings['formats'];
+
+				if (extraMeetings) {
+					self.meetingData.concat(extraMeetings['meetings']);
+				}
+				self.mutex = false;
+			});
 	};
 	self.mutex = true;
 
-	self.meetingSearch = function(callback) {
+	self.meetingSearch = function() {
 		var data_field_keys = [
 			'location_postal_code_1',
 			'duration_time',
@@ -209,6 +216,7 @@ function Crouton(config) {
 			'worldid_mixed',
 			'root_server_uri',
 			'id_bigint',
+			'venue_type',
 		];
 
 		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
@@ -222,7 +230,7 @@ function Crouton(config) {
 			data_field_keys.push(arr[1]);
 		}
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
-			'&data_field_key=' + data_field_keys.join(',')
+			'&data_field_key=' + data_field_keys.join(',');
 
 		if (self.config['int_include_unpublished'] === 1) {
 			url += "&advanced_published=0"
@@ -232,18 +240,20 @@ function Crouton(config) {
 
 		if (self.config['distance_search'] !== 0) {
 			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function(position) {
+				return new Promise(function (resolve, reject) {
+					navigator.geolocation.getCurrentPosition(resolve, reject);
+				}).then(function(position) {
 					url += '&lat_val=' + position.coords.latitude
 						+ '&long_val=' + position.coords.longitude
 						+ '&sort_results_by_distance=1';
 
 					url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
-					self.getMeetings(url, callback);
-				}, self.errorHandler);
+					return self.getMeetings(url);
+				});
 			}
 		} else if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
-			self.getMeetings(url, callback);
+			return self.getMeetings(url);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
 				url += '&services[]=' + self.config['service_body'][i];
@@ -255,14 +265,18 @@ function Crouton(config) {
 
 			url += '&sort_keys=' + self.config['sort_keys'];
 
-			self.getMeetings(url, callback);
+			return self.getMeetings(url);
+		} else {
+			return new Promise(function(resolve, reject) {
+				resolve();
+			});
 		}
 	};
 
 	if (self.config['map_search'] !== null) {
 		self.loadGapi('crouton.renderMap');
 	} else {
-		self.meetingSearch(function() {});
+		self.meetingSearch();
 	}
 
 	self.lock = function(callback) {
@@ -393,16 +407,20 @@ function Crouton(config) {
 		callback();
 	};
 
-	self.getServiceBodies = function (service_bodies_id, callback) {
-		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
-			+ getServiceBodiesQueryString(service_bodies_id) + '&callback=?', callback);
+	self.getServiceBodies = function (service_bodies_id) {
+		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies' + getServiceBodiesQueryString(service_bodies_id);
+		return fetchJsonp(url)
+			.then(function(response) {
+				return response.json();
+			});
 	};
 
-	self.getMasterFormats = function (callback) {
-		jQuery.getJSON(this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&callback=?', function(masterFormats) {
-			self.masterFormatCodes = masterFormats;
-			callback();
-		});
+	self.getMasterFormats = function() {
+		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&key_strings[]=TC&key_strings[]=VM&key_strings[]=HY';
+		return fetchJsonp(url)
+			.then(function(response) {
+				return response.json();
+			});
 	}
 
 	self.showLocation = function(position) {
@@ -503,7 +521,8 @@ function Crouton(config) {
 				}
 			}
 
-			meetingData[m]['venue_type'] = getVenueType(meetingData[m]);
+			meetingData[m]['venue_type'] = parseInt(meetingData[m]['venue_type']);
+			meetingData[m]['venue_type_name'] = getVenueTypeName(meetingData[m]);
 			meetingData[m]['formats_expanded'] = formats_expanded;
 			var addressParts = [
 				meetingData[m]['location_street'],
@@ -668,7 +687,7 @@ Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 	}
 }
 
-Crouton.prototype.render = function(callback) {
+Crouton.prototype.render = function() {
 	var self = this;
 	self.lock(function() {
 		var body = jQuery("body");
@@ -682,6 +701,10 @@ Crouton.prototype.render = function(callback) {
 			self.showMessage("No meetings found for parameters specified.");
 			return;
 		}
+
+		var unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
+		var promises = [self.getMasterFormats(), self.getServiceBodies(unique_service_bodies_ids)];
+
 		self.uniqueData = {
 			'groups': getUniqueValuesOfKey(self.meetingData, 'meeting_name').sort(),
 			'cities': getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort(),
@@ -690,13 +713,15 @@ Crouton.prototype.render = function(callback) {
 			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
 			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
 			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort(),
+			'unique_service_bodies_ids': unique_service_bodies_ids,
 			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
 		};
-		if (callback !== undefined) callback();
-		self.getMasterFormats(function() {
-			self.getServiceBodies(self.uniqueData['unique_service_bodies_ids'], function (service_bodies) {
+
+		Promise.all(promises)
+			.then(function(data) {
 				self.active_service_bodies = [];
+				self.masterFormatCodes = data[0];
+				var service_bodies = data[1];
 				for (var i = 0; i < service_bodies.length; i++) {
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
@@ -882,7 +907,6 @@ Crouton.prototype.render = function(callback) {
 				});
 			});
 		});
-	});
 };
 
 Crouton.prototype.mapSearchClickMode = function() {
@@ -1141,6 +1165,7 @@ function getFalseResult(options, ctx) {
 	return options.inverse !== undefined ? options.inverse(ctx) : false;
 }
 
+// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
 function getMasterFormatId(code, data) {
 	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
 		var format = crouton.masterFormatCodes[f];
@@ -1150,18 +1175,25 @@ function getMasterFormatId(code, data) {
 	}
 }
 
-const venueType = {
+// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
+var masterFormatVenueType = {
 	IN_PERSON: "IN_PERSON",
 	VIRTUAL: "VIRTUAL",
 }
 
-function getVenueType(data) {
-	if (inArray(getMasterFormatId('HY', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL), crouton.localization.getVenueType(venueType.IN_PERSON)];
-	} else if (inArray(getMasterFormatId('VM', data), getFormats(data))) {
-		return [crouton.localization.getVenueType(venueType.VIRTUAL)];
+var venueType = {
+	IN_PERSON: 1,
+	VIRTUAL: 2,
+	HYBRID: 3,
+}
+
+function getVenueTypeName(data) {
+	if (data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL), crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
+	} else if (data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data))) {
+		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL)];
 	} else {
-		return [crouton.localization.getVenueType(venueType.IN_PERSON)];
+		return [crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
 	}
 }
 
@@ -1190,8 +1222,8 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
  * @deprecated Since version 3.12.2, will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
-		|| inArray(getMasterFormatId('VM', data), getFormats(data)))
+	return ((data['venue_type'] === venueType.HYBRID || data['venue_type'] === venueType.VIRTUAL) || ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
+		|| inArray(getMasterFormatId('VM', data), getFormats(data))))
 	&& (data['virtual_meeting_link'] || data['phone_meeting_number'] || data['virtual_meeting_additional_info']) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
@@ -1199,21 +1231,21 @@ crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
-	return inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * @deprecated Since version 3.12.2 will be removed in a future version.
  */
 crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
-	return inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
@@ -1228,22 +1260,22 @@ crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, optio
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
-	return !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] !== venueType.VIRTUAL && !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
-	return !inArray(getMasterFormatId('VM', data), getFormats(data))
-	&& !inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+	return data['venue_type'] === venueType.IN_PERSON || (!inArray(getMasterFormatId('VM', data), getFormats(data))
+	&& !inArray(getMasterFormatId('HY', data), getFormats(data))) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
 /**
  * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
  */
 crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
-	return inArray(getMasterFormatId('VM', data), getFormats(data))
+	return (data['venue_type'] === venueType.VIRTUAL || data['venue_type'] === venueType.HYBRID) || inArray(getMasterFormatId('VM', data), getFormats(data))
 	|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 

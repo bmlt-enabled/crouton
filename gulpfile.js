@@ -22,6 +22,8 @@ let jsFilesNoJQuery = [
 	'punycode.1.4.1.js',
 	'markerclusterer.js',
 	'oms-1.0.3.min.js',
+	'fetch-jsonp.js',
+	'promises-polyfill.js',
 ];
 let jsFilesWithJquery = [
 	'jquery-3.4.1.min.js',
