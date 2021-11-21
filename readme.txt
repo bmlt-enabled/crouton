@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.12.6 =
+* Added capability to include parent service body details in templates (requires either Tomato or Root Server version 2.16.4 or greater).
+* Share button fixes for accents in some text details. [#358]
+
 = 3.12.5 =
 * Added capability to include service body details in templates.
 * Fix for empty template issue.
