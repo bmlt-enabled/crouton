@@ -1,0 +1,9 @@
+// .eslintrc
+{
+  "extends": ["plugin:compat/recommended"],
+  "settings": {
+    "polyfills": [
+      "Promise"
+    ]
+  }
+}
