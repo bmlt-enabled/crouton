@@ -1176,12 +1176,12 @@ function getMasterFormatId(code, data) {
 }
 
 // [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
-const masterFormatVenueType = {
+var masterFormatVenueType = {
 	IN_PERSON: "IN_PERSON",
 	VIRTUAL: "VIRTUAL",
 }
 
-const venueType = {
+var venueType = {
 	IN_PERSON: 1,
 	VIRTUAL: 2,
 	HYBRID: 3,

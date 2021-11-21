@@ -1,11 +1,11 @@
-const defaultOptions = {
-	timeout: 30000,
+var defaultOptions = {
+	timeout: 300000,
 	jsonpCallback: 'callback',
 	jsonpCallbackFunction: null,
 };
 
 function generateCallbackFunction() {
-	return `jsonp_${Date.now()}_${Math.ceil(Math.random() * 100000)}`;
+	return 'jsonp_' + Date.now().toString() + '_' + Math.ceil(Math.random() * 100000).toString();
 }
 
 function clearFunction(functionName) {
@@ -19,29 +19,32 @@ function clearFunction(functionName) {
 }
 
 function removeScript(scriptId) {
-	const script = document.getElementById(scriptId);
+	var script = document.getElementById(scriptId);
 	if (script) {
 		document.getElementsByTagName('head')[0].removeChild(script);
 	}
 }
 
-function fetchJsonp(_url, options = {}) {
+function fetchJsonp(_url, options) {
+	if (!options) {
+		options = {};
+	}
 	// to avoid param reassign
-	let url = _url;
-	const timeout = options.timeout || defaultOptions.timeout;
-	const jsonpCallback = options.jsonpCallback || defaultOptions.jsonpCallback;
+	var url = _url;
+	var timeout = options.timeout || defaultOptions.timeout;
+	var jsonpCallback = options.jsonpCallback || defaultOptions.jsonpCallback;
 
-	let timeoutId;
+	var timeoutId;
 
-	return new Promise((resolve, reject) => {
-		const callbackFunction = options.jsonpCallbackFunction || generateCallbackFunction();
-		const scriptId = `${jsonpCallback}_${callbackFunction}`;
+	return new Promise(function (resolve, reject) {
+		var callbackFunction = options.jsonpCallbackFunction || generateCallbackFunction();
+		var scriptId = jsonpCallback + '_' + callbackFunction;
 
-		window[callbackFunction] = (response) => {
+		window[callbackFunction] = function (response) {
 			resolve({
 				ok: true,
 				// keep consistent with fetch API
-				json: () => Promise.resolve(response),
+				json: function () { return Promise.resolve(response); },
 			});
 
 			if (timeoutId) clearTimeout(timeoutId);
@@ -54,8 +57,8 @@ function fetchJsonp(_url, options = {}) {
 		// Check if the user set their own params, and if not add a ? to start a list of params
 		url += (url.indexOf('?') === -1) ? '?' : '&';
 
-		const jsonpScript = document.createElement('script');
-		jsonpScript.setAttribute('src', `${url}${jsonpCallback}=${callbackFunction}`);
+		var jsonpScript = document.createElement('script');
+		jsonpScript.setAttribute('src', url + jsonpCallback + '=' + callbackFunction);
 		if (options.charset) {
 			jsonpScript.setAttribute('charset', options.charset);
 		}
@@ -68,19 +71,19 @@ function fetchJsonp(_url, options = {}) {
 		jsonpScript.id = scriptId;
 		document.getElementsByTagName('head')[0].appendChild(jsonpScript);
 
-		timeoutId = setTimeout(() => {
-			reject(new Error(`JSONP request to ${_url} timed out`));
+		timeoutId = setTimeout(function () {
+			reject(new Error('JSONP request to ' + _url + ' timed out'));
 
 			clearFunction(callbackFunction);
 			removeScript(scriptId);
-			window[callbackFunction] = () => {
+			window[callbackFunction] = function () {
 				clearFunction(callbackFunction);
 			};
 		}, timeout);
 
 		// Caught if got 404/500
-		jsonpScript.onerror = () => {
-			reject(new Error(`JSONP request to ${_url} failed`));
+		jsonpScript.onerror = function () {
+			reject(new Error('JSONP request to ' + _url + ' failed'));
 
 			clearFunction(callbackFunction);
 			removeScript(scriptId);

@@ -4,6 +4,7 @@
   "description": "=== crouton ===",
   "main": "gulpfile.js",
   "devDependencies": {
+    "eslint-plugin-compat": "^4.0.0",
     "gulp": "^4.0.2",
     "gulp-clean-css": "^4.2.0",
     "gulp-concat": "^2.6.1",
@@ -27,5 +28,6 @@
   "bugs": {
     "url": "https://github.com/bmlt-enabled/crouton/issues"
   },
-  "homepage": "https://github.com/bmlt-enabled/crouton#readme"
+  "homepage": "https://github.com/bmlt-enabled/crouton#readme",
+  "browserslist": ["IE 11"]
 }
