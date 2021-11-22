@@ -193,7 +193,7 @@ function Crouton(config) {
 	self.mutex = true;
 
 	self.meetingSearch = function() {
-		var data_field_keys = [
+		var base_data_field_keys = [
 			'location_postal_code_1',
 			'duration_time',
 			'start_time',
@@ -219,18 +219,52 @@ function Crouton(config) {
 			'venue_type',
 		];
 
-		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
-		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
-			data_field_keys.push(arr[1]);
+		var calculated_keys = [
+			"serviceBodyName",
+			"serviceBodyUrl",
+			"serviceBodyPhone",
+			"serviceBodyDescription",
+			"serviceBodyType",
+			"parentServiceBodyName",
+			"parentServiceBodyUrl",
+			"parentServiceBodyPhone",
+			"parentServiceBodyDescription",
+			"parentServiceBodyType",
+			"map_word",
+			"share_word",
+			"show_qrcode",
+			"formatted_day",
+			"formatted_address",
+			"formats_expanded",
+			"formatted_location_info",
+			"end_time_formatted",
+			"start_time_formatted",
+			"formatted_comments",
+			"start_time_raw",
+			"venue_type_name",
+			"day_of_the_week",
+		];
+
+		self.all_data_keys = base_data_field_keys.clone();
+		self.queryable_data_keys = base_data_field_keys.clone();
+
+		self.collectDataKeys = function(template) {
+			var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
+			while (arr = extra_fields_regex.exec(template)) {
+				self.all_data_keys.push(arr[1]);
+				if (!inArray(arr[1], calculated_keys)) {
+					self.queryable_data_keys.push(arr[1]);
+				}
+			}
 		}
-		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
-			data_field_keys.push(arr[1]);
-		}
-		while (arr = extra_fields_regex.exec(self.config['observer_template'])) {
-			data_field_keys.push(arr[1]);
-		}
+
+		self.collectDataKeys(self.config['meeting_data_template']);
+		self.collectDataKeys(self.config['metadata_template']);
+		self.collectDataKeys(self.config['observer_template']);
+
+		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
-			'&data_field_key=' + data_field_keys.join(',');
+			'&data_field_key=' + unique_data_field_keys.join(',');
 
 		if (self.config['int_include_unpublished'] === 1) {
 			url += "&advanced_published=0"
@@ -730,9 +764,11 @@ Crouton.prototype.render = function() {
 		Promise.all(promises)
 			.then(function(data) {
 				self.active_service_bodies = [];
+				self.all_service_bodies = [];
 				self.masterFormatCodes = data[0];
 				var service_bodies = data[1];
 				for (var i = 0; i < service_bodies.length; i++) {
+					self.all_service_bodies.push(service_bodies[i]);
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
 							self.active_service_bodies.push(service_bodies[i]);
@@ -1474,6 +1510,10 @@ function getServiceBodiesQueryString(service_bodies_id) {
 		service_bodies_query += "&services[]=" + service_bodies_id[x];
 	}
 	return service_bodies_query;
+}
+
+Array.prototype.clone = function() {
+	return this.slice();
 }
 
 Array.prototype.filterByObjectKeyValue = function(key, value) {
