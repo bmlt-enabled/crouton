@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 * Added capability to include parent service body details in templates (requires either Tomato or Root Server version 2.16.4 or greater).
 * Share button fixes for accents in some text details. [#358]
 * Implemented new venue type fields in root server versions 2.16.4 and higher.
+* Fix for map search which would not display contact_email_2.
 * Loading performance improvements.
 
 = 3.12.5 =
