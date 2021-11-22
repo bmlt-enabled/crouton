@@ -193,7 +193,7 @@ function Crouton(config) {
 	self.mutex = true;
 
 	self.meetingSearch = function() {
-		var data_field_keys = [
+		var base_data_field_keys = [
 			'location_postal_code_1',
 			'duration_time',
 			'start_time',
@@ -219,18 +219,52 @@ function Crouton(config) {
 			'venue_type',
 		];
 
-		var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
-		while (arr = extra_fields_regex.exec(self.config['meeting_data_template'])) {
-			data_field_keys.push(arr[1]);
+		var calculated_keys = [
+			"serviceBodyName",
+			"serviceBodyUrl",
+			"serviceBodyPhone",
+			"serviceBodyDescription",
+			"serviceBodyType",
+			"parentServiceBodyName",
+			"parentServiceBodyUrl",
+			"parentServiceBodyPhone",
+			"parentServiceBodyDescription",
+			"parentServiceBodyType",
+			"map_word",
+			"share_word",
+			"show_qrcode",
+			"formatted_day",
+			"formatted_address",
+			"formats_expanded",
+			"formatted_location_info",
+			"end_time_formatted",
+			"start_time_formatted",
+			"formatted_comments",
+			"start_time_raw",
+			"venue_type_name",
+			"day_of_the_week",
+		];
+
+		self.all_data_keys = base_data_field_keys.clone();
+		self.queryable_data_keys = base_data_field_keys.clone();
+
+		self.collectDataKeys = function(template) {
+			var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
+			while (arr = extra_fields_regex.exec(template)) {
+				self.all_data_keys.push(arr[1]);
+				if (!inArray(arr[1], calculated_keys)) {
+					self.queryable_data_keys.push(arr[1]);
+				}
+			}
 		}
-		while (arr = extra_fields_regex.exec(self.config['metadata_template'])) {
-			data_field_keys.push(arr[1]);
-		}
-		while (arr = extra_fields_regex.exec(self.config['observer_template'])) {
-			data_field_keys.push(arr[1]);
-		}
+
+		self.collectDataKeys(self.config['meeting_data_template']);
+		self.collectDataKeys(self.config['metadata_template']);
+		self.collectDataKeys(self.config['observer_template']);
+
+		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
-			'&data_field_key=' + data_field_keys.join(',');
+			'&data_field_key=' + unique_data_field_keys.join(',');
 
 		if (self.config['int_include_unpublished'] === 1) {
 			url += "&advanced_published=0"
@@ -407,8 +441,18 @@ function Crouton(config) {
 		callback();
 	};
 
-	self.getServiceBodies = function (service_bodies_id) {
-		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies' + getServiceBodiesQueryString(service_bodies_id);
+	self.getServiceBodies = function(service_bodies_id) {
+		var requires_parents = false;
+		for (var i = 0; i < self.all_data_keys.length; i++) {
+			var data_key = self.all_data_keys[i];
+			if (data_key.indexOf("parentServiceBody") >= 0) {
+				requires_parents = true;
+				break;
+			}
+		}
+
+		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
+			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
 			.then(function(response) {
 				return response.json();
@@ -553,6 +597,16 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
+			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
+
+			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
+			if (parentBodyInfo !== undefined) {
+				meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
+				meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
+				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
+				meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
+				meetingData[m]['parentServiceBodyType'] = self.localization.getServiceBodyType(parentBodyInfo["type"]);
+			}
 
 			meetings.push(meetingData[m])
 		}
@@ -577,7 +631,7 @@ function Crouton(config) {
 Crouton.prototype.setConfig = function(config) {
 	var self = this;
 	for (var propertyName in config) {
-		if (propertyName.indexOf("_template") > 0 && config[propertyName] === "") {
+		if (propertyName.indexOf("_template") > 0 && config[propertyName].trim() === "") {
 			continue;
 		} else if (propertyName.indexOf("int_") === -1) {
 			if (config[propertyName] === "1" || config[propertyName] === 1) {
@@ -679,10 +733,10 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 
 Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 	var self = this;
-	for (var s = 0; s < self.active_service_bodies.length; s++) {
-		var service_body = self.active_service_bodies[s];
-		if (self.active_service_bodies[s]['id'] === serviceBodyId) {
-			return self.active_service_bodies[s];
+	for (var s = 0; s < self.all_service_bodies.length; s++) {
+		var service_body = self.all_service_bodies[s];
+		if (service_body['id'] === serviceBodyId) {
+			return service_body;
 		}
 	}
 }
@@ -720,9 +774,11 @@ Crouton.prototype.render = function() {
 		Promise.all(promises)
 			.then(function(data) {
 				self.active_service_bodies = [];
+				self.all_service_bodies = [];
 				self.masterFormatCodes = data[0];
 				var service_bodies = data[1];
 				for (var i = 0; i < service_bodies.length; i++) {
+					self.all_service_bodies.push(service_bodies[i]);
 					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
 							self.active_service_bodies.push(service_bodies[i]);
@@ -1464,6 +1520,10 @@ function getServiceBodiesQueryString(service_bodies_id) {
 		service_bodies_query += "&services[]=" + service_bodies_id[x];
 	}
 	return service_bodies_query;
+}
+
+Array.prototype.clone = function() {
+	return this.slice();
 }
 
 Array.prototype.filterByObjectKeyValue = function(key, value) {

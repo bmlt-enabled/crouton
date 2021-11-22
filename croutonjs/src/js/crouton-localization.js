@@ -27,6 +27,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"de-DE":{
@@ -52,6 +60,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "Präsens-Meetings",
 				VIRTUAL: "Online-Meetings",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "Teilen",
 		},
@@ -79,6 +95,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"en-CA": {
@@ -104,6 +128,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "share",
 		},
@@ -131,6 +163,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"en-UK": {
@@ -156,6 +196,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "share",
 		},
@@ -183,6 +231,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"es-US": {
@@ -208,6 +264,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "share",
 		},
@@ -235,6 +299,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"fr-CA": {
@@ -260,6 +332,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "share",
 		},
@@ -287,6 +367,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "Condividi"
 		},
 		"nl-NL": {
@@ -312,6 +400,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "Fysiek",
 				VIRTUAL: "Online",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "share",
 		},
@@ -339,6 +435,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"pt-BR": {
@@ -364,6 +468,14 @@ function CroutonLocalization(language) {
 			"venue_type_choices": {
 				IN_PERSON: "Presencial",
 				VIRTUAL: "Virtual",
+			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
 			},
 			"share": "Compartilhar",
 		},
@@ -391,6 +503,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		},
 		"sv-SE": {
@@ -417,6 +537,14 @@ function CroutonLocalization(language) {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
 			},
+			"service_body_types": {
+				AS: "Area Service Committee",
+				RS: "Regional Service Committee",
+				ZF: "Zonal Forum",
+				MA: "Metropolitan Service Committee",
+				LS: "Local Service Forum",
+				GS: "Group Support Forum"
+			},
 			"share": "share",
 		}
 	};
@@ -432,4 +560,8 @@ CroutonLocalization.prototype.getWord = function(word) {
 
 CroutonLocalization.prototype.getVenueType = function(type) {
 	return words[this.language]['venue_type_choices'][type];
+}
+
+CroutonLocalization.prototype.getServiceBodyType = function(type) {
+	return words[this.language]['service_body_types'][type];
 }
