@@ -441,8 +441,18 @@ function Crouton(config) {
 		callback();
 	};
 
-	self.getServiceBodies = function (service_bodies_id) {
-		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies&parents=1' + getServiceBodiesQueryString(service_bodies_id);
+	self.getServiceBodies = function(service_bodies_id) {
+		var requires_parents = false;
+		for (var i = 0; i < self.all_data_keys.length; i++) {
+			var data_key = self.all_data_keys[i];
+			if (data_key.indexOf("parentServiceBody") >= 0) {
+				requires_parents = true;
+				break;
+			}
+		}
+
+		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
+			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
 			.then(function(response) {
 				return response.json();
