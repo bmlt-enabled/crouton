@@ -707,7 +707,7 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 	var self = this;
 	self.lock(function() {
 		var ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint');
-		self.getServiceBodies(ids, function (service_bodies) {
+		self.getServiceBodies(ids).then(function (service_bodies) {
 			var n = service_bodies.length;
 			var names = [];
 			for (var i = 0; i < n; i++) {
