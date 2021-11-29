@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 5.8.1
-Stable tag: 3.12.6
+Stable tag: 3.12.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.12.7 =
+* Fixed an issue with the [service_body_names] shortcode that was introduced in 3.12.6.
 
 = 3.12.6 =
 * Added capability to include parent service body details in templates (requires either Tomato or Root Server version 2.16.4 or greater).
