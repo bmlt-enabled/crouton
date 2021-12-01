@@ -619,3 +619,7 @@ table.tablesaw {
 	font-weight: bold;
 	font-size: 14px;
 }
+
+.gm-svpc div img {
+	position: relative !important;
+}

@@ -147,3 +147,25 @@
     color: lightseagreen;
     text-decoration: underline;
 }
+
+.mapcontrolslabel {
+    background-color: #555;
+    color: #aaa
+}
+
+.mapcontrolcontainer {
+    background-color: #555;
+    border: 2px solid #000;
+}
+
+.mapcontrols {
+    color: #aaa
+}
+
+.mapcontrols input[type=radio] {
+    background-color: lightseagreen;
+}
+
+.mapcontrols input[type=radio]:checked {
+    background-color: mediumvioletred;
+}
