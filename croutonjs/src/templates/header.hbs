@@ -1,14 +1,14 @@
 {{#if this.config.header}}
     {{#if this.config.include_weekday_button}}
-        <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
+        <div tabindex="0" class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm" aria-label="{{getWord 'weekday'}}">{{getWord 'weekday'}}</a></div>
     {{/if}}
     {{#each this.config.button_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+        <div tabindex="0" class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" aria-label="{{getWord this.title}}" class="filterButton btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
 
     {{#if this.config.has_cities}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="filter-dropdown-cities">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" aria-label="{{getWord 'cities'}}" data-pointer="Cities" id="filter-dropdown-cities">
                 <option></option>
                 {{#each this.uniqueData.cities}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -19,7 +19,7 @@
 
     {{#if this.config.has_groups}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" data-pointer="Groups" id="filter-dropdown-groups">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'groups'}}" aria-label="{{getWord 'groups'}}" data-pointer="Groups" id="filter-dropdown-groups">
                 <option></option>
                 {{#each this.uniqueData.groups}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -30,7 +30,7 @@
 
 	{{#if this.config.has_venues}}
 	<div class="bmlt-dropdown-container">
-		<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'venue_types'}}" data-pointer="Venues" id="filter-dropdown-venues">
+		<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'venue_types'}}" aria-label="{{getWord 'venue_types'}}" data-pointer="Venues" id="filter-dropdown-venues">
 			<option></option>
 			{{#each this.uniqueData.venue_types}}
 				<option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -41,7 +41,7 @@
 
     {{#if this.config.has_areas}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" data-pointer="Areas" id="filter-dropdown-areas">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'areas'}}" aria-label="{{getWord 'areas'}}" data-pointer="Areas" id="filter-dropdown-areas">
                 <option></option>
                 {{#each this.uniqueData.areas}}
                     <option value="a-{{this.id}}">{{this.name}}</option>
@@ -52,7 +52,7 @@
 
     {{#if this.config.has_locations}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="filter-dropdown-locations">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" aria-label="{{getWord 'locations'}}" data-pointer="Locations" id="filter-dropdown-locations">
                 <option></option>
                 {{#each this.uniqueData.locations}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -63,7 +63,7 @@
 
     {{#if this.config.has_sub_province}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" data-pointer="Counties" id="filter-dropdown-sub_province">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'counties'}}" aria-label="{{getWord 'counties'}}" data-pointer="Counties" id="filter-dropdown-sub_province">
                 <option></option>
                 {{#each this.uniqueData.sub_provinces}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -74,7 +74,7 @@
 
 	{{#if this.config.has_neighborhoods}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'neighborhood'}}" data-pointer="Neighborhoods" id="filter-dropdown-neighborhoods">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'neighborhood'}}" aria-label="{{getWord 'neighborhood'}}" data-pointer="Neighborhoods" id="filter-dropdown-neighborhoods">
                 <option></option>
 				{{#each this.uniqueData.neighborhoods}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -85,7 +85,7 @@
 
     {{#if this.config.has_states}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" data-pointer="States" id="filter-dropdown-states">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'states'}}" aria-label="{{getWord 'states'}}" data-pointer="States" id="filter-dropdown-states">
                 <option></option>
                 {{#each this.uniqueData.states}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -96,7 +96,7 @@
 
     {{#if this.config.has_zip_codes}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" data-pointer="Zips" id="filter-dropdown-zipcodes">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'postal_codes'}}" aria-label="{{getWord 'postal_codes'}}" data-pointer="Zips" id="filter-dropdown-zipcodes">
                 <option></option>
                 {{#each this.uniqueData.zips}}
                     <option value="a-{{formatDataPointer this}}">{{this}}</option>
@@ -107,7 +107,7 @@
 
     {{#if this.config.has_formats}}
         <div class="bmlt-dropdown-container">
-            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" data-pointer="Formats" id="filter-dropdown-formats">
+            <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'formats'}}" aria-label="{{getWord 'formats'}}" data-pointer="Formats" id="filter-dropdown-formats">
                 <option></option>
                 {{#each this.uniqueData.formats}}
                     <option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
@@ -118,7 +118,7 @@
 
 	{{#if this.config.has_languages}}
 		<div class="bmlt-dropdown-container">
-			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'languages'}}" data-pointer="Languages" id="filter-dropdown-languages">
+			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'languages'}}" aria-label="{{getWord 'languages'}}" data-pointer="Languages" id="filter-dropdown-languages">
 				<option></option>
 				{{#each this.uniqueData.languages}}
 					<option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
@@ -137,7 +137,7 @@
     {{/ifEquals}}
         <ul class="nav nav-tabs">
             {{#each this.config.day_sequence}}
-                <li><a href="#tab{{this}}" data-toggle="tab">{{getDayOfTheWeek this}}</a></li>
+                <li tabindex="0"><a href="#tab{{this}}" data-toggle="tab" aria-label="{{getDayOfTheWeek this}}">{{getDayOfTheWeek this}}</a></li>
             {{/each}}
         </ul>
     </div>
