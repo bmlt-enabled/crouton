@@ -1013,61 +1013,67 @@ Crouton.prototype.mapSearchTextMode = function(location) {
 Crouton.prototype.renderMap = function() {
 	var self = this;
 	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
-
 	self.geocoder = new google.maps.Geocoder();
-	self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
-		zoom: self.config['map_search']['zoom'] || 10,
-		center: {
-			lat: self.config['map_search']['latitude'],
-			lng: self.config['map_search']['longitude'],
-		},
-		mapTypeControl: false,
-	});
+	jQuery.when(jQuery.getJSON(self.config['template_path'] + "/themes/" + self.config['theme'] + ".json").then(
+		function (data, textStatus, jqXHR) {
+			return self.config["theme_js"] = data["google_map_theme"];
+		}
+	)).then(function() {
+		self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
+			zoom: self.config['map_search']['zoom'] || 10,
+			center: {
+				lat: self.config['map_search']['latitude'],
+				lng: self.config['map_search']['longitude'],
+			},
+			mapTypeControl: false,
+			styles: self.config["theme_js"]
+		});
 
-	var controlDiv = document.createElement('div');
+		var controlDiv = document.createElement('div');
 
-	// Set CSS for the control border
-	var controlUI = document.createElement('div');
-	controlUI.className = 'mapcontrolcontainer';
-	controlUI.title = 'Click to recenter the map';
-	controlDiv.appendChild(controlUI);
+		// Set CSS for the control border
+		var controlUI = document.createElement('div');
+		controlUI.className = 'mapcontrolcontainer';
+		controlUI.title = 'Click to recenter the map';
+		controlDiv.appendChild(controlUI);
 
-	// Set CSS for the control interior
-	var clickSearch = document.createElement('div');
-	clickSearch.className = 'mapcontrols';
-	clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> ' + self.localization.getWord('near_me') + '</label><label for="textsearch" class="mapcontrolslabel"><input type="radio" id="textsearch" name="mapcontrols"> ' + self.localization.getWord('text_search') + '</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> ' + self.localization.getWord('click_search') + '</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> ' + self.localization.getWord('pan_and_zoom') + '</label>';
-	controlUI.appendChild(clickSearch);
-	controlDiv.index = 1;
+		// Set CSS for the control interior
+		var clickSearch = document.createElement('div');
+		clickSearch.className = 'mapcontrols';
+		clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> ' + self.localization.getWord('near_me') + '</label><label for="textsearch" class="mapcontrolslabel"><input type="radio" id="textsearch" name="mapcontrols"> ' + self.localization.getWord('text_search') + '</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> ' + self.localization.getWord('click_search') + '</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> ' + self.localization.getWord('pan_and_zoom') + '</label>';
+		controlUI.appendChild(clickSearch);
+		controlDiv.index = 1;
 
-	google.maps.event.addDomListener(clickSearch, 'click', function() {
-		var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
-		if (controlsButtonSelections === "textsearch") {
-			self.mapSearchTextMode(prompt("Enter a location or postal code:"));
-		} else if (controlsButtonSelections === "nearme") {
+		google.maps.event.addDomListener(clickSearch, 'click', function () {
+			var controlsButtonSelections = jQuery("input:radio[name='mapcontrols']:checked").attr("id");
+			if (controlsButtonSelections === "textsearch") {
+				self.mapSearchTextMode(prompt("Enter a location or postal code:"));
+			} else if (controlsButtonSelections === "nearme") {
+				self.mapSearchNearMeMode();
+			} else if (controlsButtonSelections === "clicksearch") {
+				self.mapSearchClickMode();
+			} else if (controlsButtonSelections === "panzoom") {
+				self.mapSearchPanZoomMode();
+			}
+		});
+
+		self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(controlDiv);
+		self.map.addListener('click', function (data) {
+			if (self.mapClickSearchMode) {
+				self.mapSearchPanZoomMode();
+				jQuery("#panzoom").prop("checked", true);
+				self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
+			}
+		});
+
+		if (self.config['map_search']['auto']) {
 			self.mapSearchNearMeMode();
-		} else if (controlsButtonSelections === "clicksearch") {
-			self.mapSearchClickMode();
-		} else if (controlsButtonSelections === "panzoom") {
-			self.mapSearchPanZoomMode();
+		} else if (self.config['map_search']['location'] !== undefined) {
+			self.mapSearchTextMode(self.config['map_search']['location']);
+		} else if (self.config['map_search']['coordinates_search']) {
+			self.searchByCoordinates(self.config['map_search']['latitude'], self.config['map_search']['longitude']);
 		}
-	});
-
-	self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(controlDiv);
-	self.map.addListener('click', function (data) {
-		if (self.mapClickSearchMode) {
-			self.mapSearchPanZoomMode();
-			jQuery("#panzoom").prop("checked", true);
-			self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
-		}
-	});
-
-	if (self.config['map_search']['auto']) {
-		self.mapSearchNearMeMode();
-	} else if (self.config['map_search']['location'] !== undefined) {
-		self.mapSearchTextMode(self.config['map_search']['location']);
-	} else if (self.config['map_search']['coordinates_search']) {
-		self.searchByCoordinates(self.config['map_search']['latitude'], self.config['map_search']['longitude']);
-	}
+	})
 };
 
 Crouton.prototype.initMap = function(callback) {
