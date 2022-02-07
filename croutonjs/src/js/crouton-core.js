@@ -186,7 +186,7 @@ function Crouton(config) {
 				self.formatsData = mainMeetings['formats'];
 
 				if (extraMeetings) {
-					self.meetingData.concat(extraMeetings['meetings']);
+					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
 				self.mutex = false;
 			});
