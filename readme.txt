@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.13.0
-* Make `map_search_auto=true` the default feature for `[crouton_map]` shortcode.
+* Make `map_search_auto=true` the default feature for `[crouton_map]` shortcode. [#374]
+* Pan + Zoom is no longer an option on map mode, as it's implicit. [#373]
 * Theming includes maps now, including dark mode.
 
 = 3.12.8 =
