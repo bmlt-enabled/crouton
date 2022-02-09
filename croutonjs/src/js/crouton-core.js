@@ -989,7 +989,6 @@ Crouton.prototype.mapSearchPanZoomMode = function() {
 Crouton.prototype.mapSearchNearMeMode = function() {
 	var self = this;
 	self.mapSearchPanZoomMode();
-	jQuery("#panzoom").prop("checked", true);
 	self.getCurrentLocation(function(position) {
 		self.searchByCoordinates(position.coords.latitude, position.coords.longitude);
 	});
@@ -998,7 +997,6 @@ Crouton.prototype.mapSearchNearMeMode = function() {
 Crouton.prototype.mapSearchTextMode = function(location) {
 	var self = this;
 	self.mapSearchPanZoomMode();
-	jQuery("#panzoom").prop("checked", true);
 	if (location !== undefined && location !== null && location !== "") {
 		self.geocoder.geocode({'address': location}, function (results, status) {
 			if (status === 'OK') {
@@ -1052,8 +1050,6 @@ Crouton.prototype.renderMap = function() {
 				self.mapSearchNearMeMode();
 			} else if (controlsButtonSelections === "clicksearch") {
 				self.mapSearchClickMode();
-			} else if (controlsButtonSelections === "panzoom") {
-				self.mapSearchPanZoomMode();
 			}
 		});
 
@@ -1061,7 +1057,6 @@ Crouton.prototype.renderMap = function() {
 		self.map.addListener('click', function (data) {
 			if (self.mapClickSearchMode) {
 				self.mapSearchPanZoomMode();
-				jQuery("#panzoom").prop("checked", true);
 				self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
 			}
 		});
