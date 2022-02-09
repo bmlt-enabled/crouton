@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.13.0
-* Themeing includes maps now, including dark mode.
+* Make `map_search_auto=true` the default feature for `[crouton_map]` shortcode.
+* Theming includes maps now, including dark mode.
 
 = 3.12.8 =
 * Fixed an issue with extra meetings not showing up.
