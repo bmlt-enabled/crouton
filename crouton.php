@@ -356,7 +356,7 @@ if (!class_exists("Crouton")) {
                 "width" => $atts['map_search_width'] !== null ? intval($atts['map_search_width']) : $this->shortCodeOptions['map_search_width'],
                 "auto" => $atts['map_search_auto'] !== null ? boolval($atts['map_search_auto']) : $this->shortCodeOptions['map_search_auto'],
                 "location" => $atts['map_search_location'] !== null ? $atts['map_search_location'] : $this->shortCodeOptions['map_search_location'],
-                "coordinates_search" =>$atts['map_search_coordinates_search'] !== null ? boolval($atts['map_search_coordinates_search']) : $this->shortCodeOptions['map_search_coordinates_search']
+                "coordinates_search" => $atts['map_search_coordinates_search'] !== null ? boolval($atts['map_search_coordinates_search']) : $this->shortCodeOptions['map_search_coordinates_search']
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
