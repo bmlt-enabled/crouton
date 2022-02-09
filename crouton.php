@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.12.8
+Version: 3.13.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -87,7 +87,7 @@ if (!class_exists("Crouton")) {
             "map_search_latitude" => 0,
             "map_search_longitude" => 0,
             "map_search_width" => '-50',
-            "map_search_auto" => false,
+            "map_search_auto" => true,
             "map_search_location" => null,
             "map_search_coordinates_search" => false,
             "default_filter_dropdown" => '',
@@ -350,13 +350,13 @@ if (!class_exists("Crouton")) {
                 $atts = array();
             }
             $atts['map_search'] = (object)[
-                "zoom" => intval($atts['map_search_zoom']),
-                "latitude" => intval($atts['map_search_latitude']),
-                "longitude" => intval($atts['map_search_longitude']),
-                "width" => $atts['map_search_width'],
-                "auto" => boolval($atts['map_search_auto']),
-                "location" => $atts['map_search_location'],
-                "coordinates_search" => boolval($atts['map_search_coordinates_search']),
+                "zoom" => $atts['map_search_zoom'] !== null ? intval($atts['map_search_zoom']) : $this->shortCodeOptions['map_search_zoom'],
+                "latitude" => $atts['map_search_latitude'] !== null ? intval($atts['map_search_latitude']) : $this->shortCodeOptions['map_search_latitude'],
+                "longitude" => $atts['map_search_longitude'] !== null ? intval($atts['map_search_longitude']) : $this->shortCodeOptions['map_search_longitude'],
+                "width" => $atts['map_search_width'] !== null ? intval($atts['map_search_width']) : $this->shortCodeOptions['map_search_width'],
+                "auto" => $atts['map_search_auto'] !== null ? boolval($atts['map_search_auto']) : $this->shortCodeOptions['map_search_auto'],
+                "location" => $atts['map_search_location'] !== null ? $atts['map_search_location'] : $this->shortCodeOptions['map_search_location'],
+                "coordinates_search" => $atts['map_search_coordinates_search'] !== null ? boolval($atts['map_search_coordinates_search']) : $this->shortCodeOptions['map_search_coordinates_search']
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
@@ -767,7 +767,6 @@ if (!class_exists("Crouton")) {
                     $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
             }
-
 
             $params['button_filters'] = [];
             if (strlen($params['button_filters_option']) > 0) {
