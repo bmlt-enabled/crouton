@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 * Make `map_search_auto=true` the default feature for `[crouton_map]` shortcode. [#374]
 * Pan + Zoom is no longer an option on map mode, as it's implicit. [#373]
 * Theming includes maps now, including dark mode.
+* Fix for kevin theme on mobile devices [#370]
 
 = 3.12.8 =
 * Fixed an issue with extra meetings not showing up.
