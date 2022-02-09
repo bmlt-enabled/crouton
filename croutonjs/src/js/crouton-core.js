@@ -989,7 +989,6 @@ Crouton.prototype.mapSearchPanZoomMode = function() {
 Crouton.prototype.mapSearchNearMeMode = function() {
 	var self = this;
 	self.mapSearchPanZoomMode();
-	jQuery("#panzoom").prop("checked", true);
 	self.getCurrentLocation(function(position) {
 		self.searchByCoordinates(position.coords.latitude, position.coords.longitude);
 	});
@@ -998,7 +997,6 @@ Crouton.prototype.mapSearchNearMeMode = function() {
 Crouton.prototype.mapSearchTextMode = function(location) {
 	var self = this;
 	self.mapSearchPanZoomMode();
-	jQuery("#panzoom").prop("checked", true);
 	if (location !== undefined && location !== null && location !== "") {
 		self.geocoder.geocode({'address': location}, function (results, status) {
 			if (status === 'OK') {
@@ -1040,7 +1038,7 @@ Crouton.prototype.renderMap = function() {
 		// Set CSS for the control interior
 		var clickSearch = document.createElement('div');
 		clickSearch.className = 'mapcontrols';
-		clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> ' + self.localization.getWord('near_me') + '</label><label for="textsearch" class="mapcontrolslabel"><input type="radio" id="textsearch" name="mapcontrols"> ' + self.localization.getWord('text_search') + '</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> ' + self.localization.getWord('click_search') + '</label><label for="panzoom" class="mapcontrolslabel"><input type="radio" id="panzoom" name="mapcontrols" checked> ' + self.localization.getWord('pan_and_zoom') + '</label>';
+		clickSearch.innerHTML = '<label for="nearme" class="mapcontrolslabel"><input type="radio" id="nearme" name="mapcontrols"> ' + self.localization.getWord('near_me') + '</label><label for="textsearch" class="mapcontrolslabel"><input type="radio" id="textsearch" name="mapcontrols"> ' + self.localization.getWord('text_search') + '</label><label for="clicksearch" class="mapcontrolslabel"><input type="radio" id="clicksearch" name="mapcontrols"> ' + self.localization.getWord('click_search') + '</label>';
 		controlUI.appendChild(clickSearch);
 		controlDiv.index = 1;
 
@@ -1052,8 +1050,6 @@ Crouton.prototype.renderMap = function() {
 				self.mapSearchNearMeMode();
 			} else if (controlsButtonSelections === "clicksearch") {
 				self.mapSearchClickMode();
-			} else if (controlsButtonSelections === "panzoom") {
-				self.mapSearchPanZoomMode();
 			}
 		});
 
@@ -1061,7 +1057,6 @@ Crouton.prototype.renderMap = function() {
 		self.map.addListener('click', function (data) {
 			if (self.mapClickSearchMode) {
 				self.mapSearchPanZoomMode();
-				jQuery("#panzoom").prop("checked", true);
 				self.searchByCoordinates(data.latLng.lat(), data.latLng.lng());
 			}
 		});
