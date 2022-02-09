@@ -237,10 +237,10 @@
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>
-        <p>With this parameter you can have crouton start with a map search with auto radius search and click, pan and zoom.</p>
+        <p>With this shortcode you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
         <p><strong>[crouton_map]</strong></p>
         <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs]</p>
-        <p><strong>[crouton_map map_search_auto="true"]</strong> - specifies if you want to automatically use your current latitude and longitude to find meetings (default: false).</p>
+        <p><strong>[crouton_map map_search_auto="false"]</strong> - specifies you do NOT want to automatically use your current latitude and longitude to find meetings (default: true).</p>
         <p><strong>[crouton_map map_search_location="Greensboro, NC"]</strong> - specifies the starting search location on the map (default: none).</p>
         <p><strong>[crouton_map map_search_coordinates_search="true"]</strong> - specifies the starting search coordinates on the map, will use (and require) the latitude and longitude settings as mentioned here. (default: none).</p>
         <p><strong>[crouton_map map_search_latitude="0" map_search_longitude="0"]</strong> - specifies the starting latitude and longitude in the map view (default: 0, 0).</p>
