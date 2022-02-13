@@ -137,6 +137,7 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "serviceBodyNames"
                 ));
+                add_action("wp_footer", array(&$this, "deregisterBootstrap"));
             }
             // Content filter
             add_filter('the_content', array(
@@ -229,6 +230,17 @@ if (!class_exists("Crouton")) {
                 $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton.nojquery.js" : "crouton.nojquery.min.js");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
+            }
+        }
+
+        public function deregisterBootstrap()
+        {
+            $loaded_scripts = wp_scripts();
+            foreach ($loaded_scripts->registered as $script) {
+                if ((stristr($script->src, 'bootstrap.min.js') !== false ||
+                    stristr($script->src, 'bootstrap.js') != false)) {
+                    wp_dequeue_script($script->handle);
+                }
             }
         }
 
@@ -763,7 +775,7 @@ if (!class_exists("Crouton")) {
                 if ($params['service_body_parent'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body_parent']));
                     $legacy_force_recurse = true;
-                } else if ($params['service_body'] != null) {
+                } elseif ($params['service_body'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
             }
@@ -794,9 +806,9 @@ if (!class_exists("Crouton")) {
 
             if ($legacy_force_recurse) {
                 $params['recurse_service_bodies'] = true;
-            } else if (isset($_GET['recurse_service_bodies'])) {
+            } elseif (isset($_GET['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = filter_var($_GET['recurse_service_bodies'], FILTER_VALIDATE_BOOLEAN);
-            } else if (!isset($atts['recurse_service_bodies'])) {
+            } elseif (!isset($atts['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
             }
 
