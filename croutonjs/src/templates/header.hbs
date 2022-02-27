@@ -1,9 +1,9 @@
 {{#if this.config.header}}
     {{#if this.config.include_weekday_button}}
-        <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
+        <div class="bmlt-button-container"><a id="day" class="ui-button ui-widget ui-corner-all">{{getWord 'weekday'}}</a></div>
     {{/if}}
     {{#each this.config.button_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton ui-button ui-widget ui-corner-all">{{getWord this.title}}</a></div>
     {{/each}}
 
 	{{#if this.config.has_days}}

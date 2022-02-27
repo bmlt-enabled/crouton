@@ -27,6 +27,7 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
+		dropdown_width: "auto",
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_days: false,			  // Shows the days of the week dropdown
@@ -897,7 +898,7 @@ Crouton.prototype.render = function() {
 
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery(".crouton-select").select2({
-						dropdownAutoWidth: true,
+						//dropdownAutoWidth: true,
 						allowClear: false,
 						width: "resolve",
 						minimumResultsForSearch: 1,
@@ -941,6 +942,12 @@ Crouton.prototype.render = function() {
 					if (self.config['has_tabs']) {
 						jQuery('#byday').tabs();
 					}
+
+					jQuery(".bmlt-formats-codes").tooltip({
+						content: function () {
+							return jQuery(this).prop('title');
+						}
+					});
 
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");

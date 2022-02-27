@@ -22,16 +22,8 @@
 			{{/ifEquals}}
 			{{#if this.formats}}
 				<a id="bmlt-formats"
-				   class="btn btn-primary btn-xs"
-				   title=""
-				   data-html="true"
-				   tabindex="0"
-				   data-trigger="focus"
-				   role="button"
-				   data-toggle="popover"
-				   data-original-title=""
-				   data-content="
-                        <table class='bmlt_a_format table-bordered'>
+				   class="bmlt-formats-codes"
+				   title="<table class='bmlt_a_format table-bordered'>
                         {{#each this.formats_expanded}}
                         <tr>
                             <td class='formats_key'>{{key}}</td>
@@ -39,10 +31,13 @@
                             <td class='formats_description'>{{description}}</td>
                         </tr>
                         {{/each}}
-                    </table>">
+                    </table>"
+				   data-html="true"
+				   tabindex="0"
+				   data-trigger="focus"
+				   role="button">
                     <span class="glyphicon glyphicon-search"
 						  aria-hidden="true"
-						  data-toggle="popover"
 						  data-trigger="focus"
 						  data-html="true"
 						  role="button"></span>{{ this.formats }}

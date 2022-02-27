@@ -6,6 +6,10 @@
     background-color: #d0d5db;
 }
 
+#bmlt-tabs .nav-tabs {
+    background-color: #009;
+}
+
 #bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
     background-color: #d0d5db;
 }

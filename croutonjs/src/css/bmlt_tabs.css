@@ -627,3 +627,15 @@ table.tablesaw {
 .ui-tabs .ui-tabs-panel {
 	padding: 0;
 }
+
+.bmlt_a_format {
+	font-size: 14px;
+}
+
+.bmlt-formats-codes {
+	padding: 5px;
+	font-size: 10px;
+	border: 1px solid grey;
+	border-radius: 25px;
+	background-color: #d0d5db;
+}
