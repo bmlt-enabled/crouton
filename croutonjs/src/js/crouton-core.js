@@ -940,16 +940,6 @@ Crouton.prototype.render = function() {
 
 					if (self.config['has_tabs']) {
 						jQuery('#byday').tabs();
-						// jQuery('.nav-tabs a').on('click', function (e) {
-						// 	e.preventDefault();
-						// 	jQuery(this).tab('show');
-						// });
-
-						var d = new Date();
-						var n = d.getDay();
-						n++;
-						//jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-						//jQuery('#tab' + n).show();
 					}
 
 					self.showPage(".bmlt-header");
