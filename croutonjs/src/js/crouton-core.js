@@ -326,9 +326,9 @@ function Crouton(config) {
 	};
 
 	self.dayTab = function(day_id) {
-		self.hideAllPages();
-		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
-		self.showPage("#" + day_id);
+		//self.hideAllPages();
+		//jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		//self.showPage("#" + day_id);
 	};
 
 	self.showPage = function (id) {
@@ -831,11 +831,13 @@ Crouton.prototype.render = function() {
 					var day = self.config.day_sequence[day_counter];
 					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
 					weekdaysData.push({
+						"sequence": day_counter+1,
 						"day": day,
 						"meetings": daysOfTheWeekMeetings
 					});
 
 					byDayData.push({
+						"sequence": day_counter+1,
 						"hide": self.config["hide_byday_headers"],
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": daysOfTheWeekMeetings
@@ -902,12 +904,12 @@ Crouton.prototype.render = function() {
 						dropdownCssClass: 'bmlt-drop'
 					});
 
-					jQuery('[data-toggle="popover"]').popover();
+					/*jQuery('[data-toggle="popover"]').popover();
 					jQuery('html').on('click', function (e) {
 						if (jQuery(e.target).data('toggle') !== 'popover') {
 							jQuery('[data-toggle="popover"]').popover('hide');
 						}
-					});
+					});*/
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
 						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
@@ -937,16 +939,17 @@ Crouton.prototype.render = function() {
 					});
 
 					if (self.config['has_tabs']) {
-						jQuery('.nav-tabs a').on('click', function (e) {
-							e.preventDefault();
-							jQuery(this).tab('show');
-						});
+						jQuery('#byday').tabs();
+						// jQuery('.nav-tabs a').on('click', function (e) {
+						// 	e.preventDefault();
+						// 	jQuery(this).tab('show');
+						// });
 
 						var d = new Date();
 						var n = d.getDay();
 						n++;
-						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-						jQuery('#tab' + n).show();
+						//jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+						//jQuery('#tab' + n).show();
 					}
 
 					self.showPage(".bmlt-header");

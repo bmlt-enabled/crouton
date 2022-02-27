@@ -9,7 +9,7 @@ const declare = require('gulp-declare');
 const notify = require('gulp-notify');
 
 let jsFilesNoJQuery = [
-	'bootstrap.min.js',
+	//'bootstrap.min.js',
 	'select2.full.min.js',
 	'tablesaw.jquery.3.0.9.js',
 	'handlebars-v4.5.3.js',
@@ -30,7 +30,7 @@ let jsFilesWithJquery = [
 ].concat(jsFilesNoJQuery);
 let cssFiles = [
 	'select2.min.css',
-	'bootstrap.min.css',
+	//'bootstrap.min.css',
 	'bmlt_tabs.css',
 ];
 let distDir = 'croutonjs/dist';
