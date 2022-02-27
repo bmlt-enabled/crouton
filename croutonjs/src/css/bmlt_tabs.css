@@ -623,3 +623,7 @@ table.tablesaw {
 .gm-svpc div img {
 	position: relative !important;
 }
+
+.ui-tabs .ui-tabs-panel {
+	padding: 0;
+}

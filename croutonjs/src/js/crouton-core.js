@@ -326,7 +326,7 @@ function Crouton(config) {
 	};
 
 	self.dayTab = function(day_id) {
-		//self.hideAllPages();
+		self.hideAllPages();
 		//jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
 		//self.showPage("#" + day_id);
 	};
