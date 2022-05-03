@@ -1,4 +1,4 @@
-FROM wordpress:5.9.0-php7.3-apache
+FROM wordpress:5.9.3-php7.3-apache
 
 RUN apt-get update && \
 	apt-get install -y  --no-install-recommends ssl-cert && \
