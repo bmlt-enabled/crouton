@@ -14,7 +14,11 @@
 		data-languages="{{formatDataPointerFormats this.formats_expanded}}">
 		<td class="bmlt-column1">
 			<div class="bmlt-day">{{this.formatted_day}}</div>
-			<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
+			{{#ifEquals this.duration_time "24:00:00"}}
+				<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
+			{{else}}
+				<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
+			{{/ifEquals}}
 			{{#if this.formats}}
 				<a id="bmlt-formats"
 				   class="btn btn-primary btn-xs"
