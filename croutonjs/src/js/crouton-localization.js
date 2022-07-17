@@ -36,6 +36,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
@@ -70,6 +71,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Teilen",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -104,6 +106,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -138,6 +141,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -172,6 +176,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -206,6 +211,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -240,6 +246,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -274,6 +281,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -308,6 +316,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -342,6 +351,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -375,7 +385,8 @@ function CroutonLocalization(language) {
 				LS: "Local Service Forum",
 				GS: "Group Support Forum"
 			},
-			"share": "Condividi"
+			"share": "Condividi",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -410,6 +421,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -444,6 +456,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -478,6 +491,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Compartilhar",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -512,6 +526,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -546,6 +561,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			"no_meetings_for_this_day": "No meetings for this day.",
 		}
 	};
 }

@@ -3,8 +3,17 @@
         <div id='tab{{ day }}' class='tab-pane'>
             <div id="bmlt-table-div">
                 <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
-                    <tbody>
-                    {{> meetings this.meetings }}
+                    <tbody class="weekdays.hbs">
+						{{#greaterThan this.meetings.length 0}}
+							{{> meetings this.meetings }}
+						{{/greaterThan}}
+						{{#lessThan this.meetings.length 1}}
+							<tr>
+								<td>
+									{{getWord "no_meetings_for_this_day"}}
+								</td>
+							</tr>
+						{{/lessThan}}
                     </tbody>
                 </table>
             </div>

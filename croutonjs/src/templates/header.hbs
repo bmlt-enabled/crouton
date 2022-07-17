@@ -6,6 +6,17 @@
         <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
 
+	{{#if this.config.has_days}}
+		<div class="bmlt-dropdown-container">
+			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'weekday'}}" data-pointer="Weekdays" id="filter-dropdown-weekdays">
+				<option></option>
+				{{#each this.uniqueData.formatted_days}}
+					<option value="a-{{formatDataPointer this}}">{{this}}</option>
+				{{/each}}
+			</select>
+		</div>
+	{{/if}}
+
     {{#if this.config.has_cities}}
         <div class="bmlt-dropdown-container">
             <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'cities'}}" data-pointer="Cities" id="filter-dropdown-cities">
