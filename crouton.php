@@ -48,6 +48,7 @@ if (!class_exists("Crouton")) {
             "service_body" => '',
             "service_body_parent" => '',
             "has_tabs" => '1',
+            "has_days" => '0',
             "has_groups" => '1',
             "has_areas" => '0',
             "has_cities" => '1',

@@ -36,7 +36,7 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 = 3.15.0
-* Added dropdown for Days of the Week, optionally can be turned off with has_days="0".
+* Added dropdown for Days of the Week, optionally can be turned on with has_days="1".
 * If no meetings are listed for a tabbed view day, a message is shown now indicated so.
 
 = 3.14.0
