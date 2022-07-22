@@ -29,6 +29,7 @@ function Crouton(config) {
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
+		has_days: false,			  // Shows the days of the week dropdown
 		has_cities: true,             // Shows the cities dropdown
 		has_formats: true,            // Shows the formats dropdown
 		has_groups: true,             // Shows the groups dropdown
@@ -804,6 +805,13 @@ Crouton.prototype.render = function() {
 				var weekdaysData = [];
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
+
+				var dayNamesSequenced = [];
+				for (var x = 0; x < crouton.config.day_sequence.length; x++) {
+					dayNamesSequenced.push(crouton.localization.getDayOfTheWeekWord(crouton.config.day_sequence[x]))
+				}
+				self.uniqueData['formatted_days'] = sortListByList(getUniqueValuesOfKey(enrichedMeetingData, "formatted_day"), dayNamesSequenced);
+
 				enrichedMeetingData.sort(function (a, b) {
 					if (a['start_time_raw'] < b['start_time_raw']) {
 						return -1;
@@ -1506,6 +1514,19 @@ function arrayUnique(a, b, c) {
 	while (c = --b)
 		while (c--) a[b] !== a[c] || a.splice(c, 1);
 	return a
+}
+
+function sortListByList(source, truth) {
+	var goal = [];
+	for (var x = 0; x < truth.length; x++) {
+		for (var y = 0; y < source.length; y++) {
+			if (truth[x] === source[y]) {
+				goal.push(source[y])
+			}
+		}
+	}
+
+	return goal;
 }
 
 function inArray(needle, haystack) {
