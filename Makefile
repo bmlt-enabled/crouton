@@ -2,7 +2,7 @@
 
 bundle-deps:
 	npm install
-	npm install -g gulp-cli
+	npm list gulp || npm install -g gulp-cli
 
 bundle:
 	gulp
