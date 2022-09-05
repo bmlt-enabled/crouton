@@ -173,10 +173,11 @@ function Crouton(config) {
 			.then(function(data) {
 				var mainMeetings = data[0];
 				var extraMeetings;
+				var jsonMeetings = JSON.stringify(mainMeetings['meetings']);
 				if (data.length === 2) {
 					extraMeetings = data[1];
 				}
-				if (JSON.stringify(mainMeetings['meetings']) === "{}") {
+				if (jsonMeetings === "{}" || jsonMeetings === "[]") {
 					var fullUrl = self.config['root_server'] + url
 					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
