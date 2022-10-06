@@ -282,18 +282,16 @@ if (!class_exists("Crouton")) {
                     'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0 +crouton'
                 )
             );
-            $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
+            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServerInfo", $args);
             $httpcode = wp_remote_retrieve_response_code($results);
             $response_message = wp_remote_retrieve_response_message($results);
             if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
                 //echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
                 return false;
             };
-            $results = simplexml_load_string(wp_remote_retrieve_body($results));
-            $results = json_encode($results);
-            $results = json_decode($results, true);
-            $results = $results['serverVersion']['readableString'];
-            return $results;
+
+            $results = json_decode(wp_remote_retrieve_body($results), true);
+            return $results[0]["version"];
         }
 
         public function doQuit($message = '')
