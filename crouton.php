@@ -39,7 +39,7 @@ if (!class_exists("Crouton")) {
         ];
         const HTTP_RETRIEVE_ARGS = array(
             'headers' => array(
-                'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
+                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0 +crouton'
             ),
             'timeout' => 60
         );
@@ -279,7 +279,7 @@ if (!class_exists("Crouton")) {
             $args = array(
                 'timeout' => '10',
                 'headers' => array(
-                    'User-Agent' => 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0) +crouton'
+                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0 +crouton'
                 )
             );
             $results = wp_remote_get("$root_server/client_interface/serverInfo.xml", $args);
