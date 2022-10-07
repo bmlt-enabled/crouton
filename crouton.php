@@ -807,7 +807,7 @@ if (!class_exists("Crouton")) {
             }*/
 
             $params['service_body'] = $service_body;
-            $params['exclude_zip_codes'] = ($params['exclude_zip_codes'] != null ? explode(",", $params['exclude_zip_codes']) : array());
+            $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
             $params['root_server'] = $params['root_server'] != '' ? $params['root_server'] : $this->options['root_server'];
 
             if ($legacy_force_recurse) {
