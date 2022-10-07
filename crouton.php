@@ -355,31 +355,24 @@ if (!class_exists("Crouton")) {
             }
             $atts['map_search'] = (object)[
                 "zoom" => isset($atts['map_search_zoom'])
-                    && $atts['map_search_zoom'] !== null
                     ? intval($atts['map_search_zoom'])
                     : $this->shortCodeOptions['map_search_zoom'],
                 "latitude" => isset($atts['map_search_latitude'])
-                    && $atts['map_search_latitude'] !== null
                     ? intval($atts['map_search_latitude'])
                     : $this->shortCodeOptions['map_search_latitude'],
                 "longitude" => isset($atts['map_search_longitude'])
-                    && $atts['map_search_longitude'] !== null
                     ? intval($atts['map_search_longitude'])
                     : $this->shortCodeOptions['map_search_longitude'],
                 "width" => isset($atts['map_search_width'])
-                    && $atts['map_search_width'] !== null
                     ? intval($atts['map_search_width'])
                     : $this->shortCodeOptions['map_search_width'],
                 "auto" => isset($atts['map_search_auto'])
-                    && $atts['map_search_auto'] !== null
                     ? boolval($atts['map_search_auto'])
                     : $this->shortCodeOptions['map_search_auto'],
                 "location" => isset($atts['map_search_location'])
-                    && $atts['map_search_location'] !== null
                     ? $atts['map_search_location']
                     : $this->shortCodeOptions['map_search_location'],
                 "coordinates_search" => isset($atts['map_search_coordinates_search'])
-                    && $atts['map_search_coordinates_search'] !== null
                     ? boolval($atts['map_search_coordinates_search'])
                     : $this->shortCodeOptions['map_search_coordinates_search']
             ];
