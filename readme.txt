@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 6.0.1
-Stable tag: 3.15.0
+Stable tag: 3.15.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,14 +35,19 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
-= 3.15.0
+
+= 3.15.1 =
+* Fixed issue with user agent [#396].
+* Fixed various PHP warnings.
+
+= 3.15.0 =
 * Added dropdown for Days of the Week, optionally can be turned on with has_days="1".
 * If no meetings are listed for a tabbed view day, a message is shown now indicated so.
 
-= 3.14.0
+= 3.14.0 =
 * Fixes issue with end times when duration is open-ended. [#385]
 
-= 3.13.0
+= 3.13.0 =
 * Make `map_search_auto=true` the default feature for `[crouton_map]` shortcode. [#374]
 * Pan + Zoom is no longer an option on map mode, as it's implicit. [#373]
 * Theming includes maps now, including dark mode.
