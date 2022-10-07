@@ -291,7 +291,12 @@ if (!class_exists("Crouton")) {
             };
 
             $results = json_decode(wp_remote_retrieve_body($results), true);
-            return $results[0]["version"] ?? '';
+
+            if (is_array($results) && !empty($results)) {
+                return $results[0]['version'] ?? '';
+            }
+
+            return '';
         }
 
         public function doQuit($message = '')
