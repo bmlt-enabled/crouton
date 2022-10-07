@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.15.0
+Version: 3.15.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -291,7 +291,7 @@ if (!class_exists("Crouton")) {
             };
 
             $results = json_decode(wp_remote_retrieve_body($results), true);
-            return $results[0]["version"];
+            return $results[0]["version"] ?? '';
         }
 
         public function doQuit($message = '')
@@ -349,13 +349,34 @@ if (!class_exists("Crouton")) {
                 $atts = array();
             }
             $atts['map_search'] = (object)[
-                "zoom" => $atts['map_search_zoom'] !== null ? intval($atts['map_search_zoom']) : $this->shortCodeOptions['map_search_zoom'],
-                "latitude" => $atts['map_search_latitude'] !== null ? intval($atts['map_search_latitude']) : $this->shortCodeOptions['map_search_latitude'],
-                "longitude" => $atts['map_search_longitude'] !== null ? intval($atts['map_search_longitude']) : $this->shortCodeOptions['map_search_longitude'],
-                "width" => $atts['map_search_width'] !== null ? intval($atts['map_search_width']) : $this->shortCodeOptions['map_search_width'],
-                "auto" => $atts['map_search_auto'] !== null ? boolval($atts['map_search_auto']) : $this->shortCodeOptions['map_search_auto'],
-                "location" => $atts['map_search_location'] !== null ? $atts['map_search_location'] : $this->shortCodeOptions['map_search_location'],
-                "coordinates_search" => $atts['map_search_coordinates_search'] !== null ? boolval($atts['map_search_coordinates_search']) : $this->shortCodeOptions['map_search_coordinates_search']
+                "zoom" => isset($atts['map_search_zoom'])
+                    && $atts['map_search_zoom'] !== null
+                    ? intval($atts['map_search_zoom'])
+                    : $this->shortCodeOptions['map_search_zoom'],
+                "latitude" => isset($atts['map_search_latitude'])
+                    && $atts['map_search_latitude'] !== null
+                    ? intval($atts['map_search_latitude'])
+                    : $this->shortCodeOptions['map_search_latitude'],
+                "longitude" => isset($atts['map_search_longitude'])
+                    && $atts['map_search_longitude'] !== null
+                    ? intval($atts['map_search_longitude'])
+                    : $this->shortCodeOptions['map_search_longitude'],
+                "width" => isset($atts['map_search_width'])
+                    && $atts['map_search_width'] !== null
+                    ? intval($atts['map_search_width'])
+                    : $this->shortCodeOptions['map_search_width'],
+                "auto" => isset($atts['map_search_auto'])
+                    && $atts['map_search_auto'] !== null
+                    ? boolval($atts['map_search_auto'])
+                    : $this->shortCodeOptions['map_search_auto'],
+                "location" => isset($atts['map_search_location'])
+                    && $atts['map_search_location'] !== null
+                    ? $atts['map_search_location']
+                    : $this->shortCodeOptions['map_search_location'],
+                "coordinates_search" => isset($atts['map_search_coordinates_search'])
+                    && $atts['map_search_coordinates_search'] !== null
+                    ? boolval($atts['map_search_coordinates_search'])
+                    : $this->shortCodeOptions['map_search_coordinates_search']
             ];
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
         }
@@ -762,7 +783,7 @@ if (!class_exists("Crouton")) {
                 if ($params['service_body_parent'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body_parent']));
                     $legacy_force_recurse = true;
-                } else if ($params['service_body'] != null) {
+                } elseif ($params['service_body'] != null) {
                     $service_body = array_map('trim', explode(",", $params['service_body']));
                 }
             }
@@ -793,9 +814,9 @@ if (!class_exists("Crouton")) {
 
             if ($legacy_force_recurse) {
                 $params['recurse_service_bodies'] = true;
-            } else if (isset($_GET['recurse_service_bodies'])) {
+            } elseif (isset($_GET['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = filter_var($_GET['recurse_service_bodies'], FILTER_VALIDATE_BOOLEAN);
-            } else if (!isset($atts['recurse_service_bodies'])) {
+            } elseif (!isset($atts['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
             }
 
