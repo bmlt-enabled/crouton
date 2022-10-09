@@ -13,3 +13,4 @@ package.json export-ignore
 package-lock.json export-ignore
 /.github export-ignore
 /assets export-ignore
+.phpcs.xml export-ignore
