@@ -1,3 +1,7 @@
+help:  ## Print the help documentation
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+
 .PHONY: bundle bundle-deps serve
 
 bundle-deps:
@@ -20,6 +24,11 @@ serve-static:
 	gulp watch &
 	python -m SimpleHTTPServer
 
-lint:
+.PHONY: lint
+lint:  ## PHP Lint
 	find . -name "*.php" ! -path '*/vendor/*' -print0 | xargs -0 -n1 -P8 php -l
-	vendor/squizlabs/php_codesniffer/bin/phpcs --warning-severity=6 --standard=PSR2 --ignore=vendor --extensions=php ./
+	vendor/squizlabs/php_codesniffer/bin/phpcs
+
+.PHONY: lint-fix
+lint-fix:  ## PHP Lint Fix
+	vendor/squizlabs/php_codesniffer/bin/phpcbf
