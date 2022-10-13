@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.15.1
+Version: 3.15.2
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -149,24 +149,25 @@ if (!class_exists("Crouton")) {
         public function hasShortcode()
         {
             $post_to_check = get_post(get_the_ID());
+            $post_content = $post_to_check->post_content ?? '';
             // check the post content for the short code
-            if (stripos($post_to_check->post_content, '[bmlt_tabs') !== false) {
+            if (stripos($post_content, '[bmlt_tabs') !== false) {
                 echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[crouton_map') !== false) {
+            if (stripos($post_content, '[crouton_map') !== false) {
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[bmlt_count') !== false) {
+            if (stripos($post_content, '[bmlt_count') !== false) {
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[meeting_count') !== false) {
+            if (stripos($post_content, '[meeting_count') !== false) {
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[group_count') !== false) {
+            if (stripos($post_content, '[group_count') !== false) {
                 return true;
             }
-            if (stripos($post_to_check->post_content, '[service_body_names') !== false) {
+            if (stripos($post_content, '[service_body_names') !== false) {
                 return true;
             }
             return false;
