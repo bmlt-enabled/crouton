@@ -26,7 +26,7 @@ jobs:
       PLUGIN: crouton
       MAINFILE: crouton.php
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         id: code-checkout
 
       - name: Prepare crouton zip file
@@ -57,13 +57,14 @@ jobs:
           chmod +x gh-release-notes.sh
           ./gh-release-notes.sh readme.txt "wp"
 
+
       - name: Prepare artifact metadata
         id: prepare_artifact_metadata
         run: |
-          echo ::set-output name=ARTIFACT_PATH_JS::./${GITHUB_RELEASE_PATH_JS}
-          echo ::set-output name=ARTIFACT_NAME_JS::${GITHUB_RELEASE_FILENAME_JS}
-          echo ::set-output name=ARTIFACT_PATH::./${GITHUB_RELEASE_PATH}
-          echo ::set-output name=ARTIFACT_NAME::${GITHUB_RELEASE_FILENAME}
+          echo "ARTIFACT_PATH_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
+          echo "ARTIFACT_PATH=./${GITHUB_RELEASE_PATH}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${GITHUB_RELEASE_FILENAME}" >> $GITHUB_ENV
 
       - name: Release beta
         if: contains(github.ref, 'beta')
@@ -143,6 +144,23 @@ jobs:
         id: publish-release-wp
         run: |
           ./deploy-wordpress.sh
+
+      - name: Setup Node
+        if: "!contains(github.ref, 'beta')"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish package on NPM 📦
+        if: "!contains(github.ref, 'beta')"
+        run: |
+          cp croutonjs/README.md croutonjs/dist
+          cd croutonjs/dist
+          npm --no-git-tag-version version $GITHUB_REF_NAME
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - uses: act10ns/slack@v1
         with:
