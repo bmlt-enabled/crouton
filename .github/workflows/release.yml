@@ -57,13 +57,14 @@ jobs:
           chmod +x gh-release-notes.sh
           ./gh-release-notes.sh readme.txt "wp"
 
+
       - name: Prepare artifact metadata
         id: prepare_artifact_metadata
         run: |
-          echo ::set-output name=ARTIFACT_PATH_JS::./${GITHUB_RELEASE_PATH_JS}
-          echo ::set-output name=ARTIFACT_NAME_JS::${GITHUB_RELEASE_FILENAME_JS}
-          echo ::set-output name=ARTIFACT_PATH::./${GITHUB_RELEASE_PATH}
-          echo ::set-output name=ARTIFACT_NAME::${GITHUB_RELEASE_FILENAME}
+          echo "ARTIFACT_PATH_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
+          echo "ARTIFACT_PATH=./${GITHUB_RELEASE_PATH}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=${GITHUB_RELEASE_FILENAME}" >> $GITHUB_ENV
 
       - name: Release beta
         if: contains(github.ref, 'beta')
@@ -134,7 +135,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Install dependencies and build 🔧
         if: "!contains(github.ref, 'beta')"
-        run: cd croutonjs/dist && npm version ${{ github.ref }}
+        run: cd croutonjs/dist && npm --no-git-tag-version version $GITHUB_REF_NAME
       - name: Publish package on NPM 📦
         if: "!contains(github.ref, 'beta')"
         run: npm publish
