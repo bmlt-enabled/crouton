@@ -127,21 +127,6 @@ jobs:
           asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME_JS }}
           asset_content_type: application/zip
 
-      - name: Setup Node
-        if: "!contains(github.ref, 'beta')"
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16.x'
-          registry-url: 'https://registry.npmjs.org'
-      - name: Install dependencies and build 🔧
-        if: "!contains(github.ref, 'beta')"
-        run: cd croutonjs/dist && npm --no-git-tag-version version $GITHUB_REF_NAME
-      - name: Publish package on NPM 📦
-        if: "!contains(github.ref, 'beta')"
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Upload Stable Asset WP
         if: "!contains(github.ref, 'beta')"
         id: stable-release-asset-wp
@@ -159,6 +144,23 @@ jobs:
         id: publish-release-wp
         run: |
           ./deploy-wordpress.sh
+
+      - name: Setup Node
+        if: "!contains(github.ref, 'beta')"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish package on NPM 📦
+        if: "!contains(github.ref, 'beta')"
+        run: |
+          cp croutonjs/README.md croutonjs/dist
+          cd croutonjs/dist
+          npm --no-git-tag-version version $GITHUB_REF_NAME
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - uses: act10ns/slack@v1
         with:

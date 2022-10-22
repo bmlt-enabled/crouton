@@ -22,7 +22,7 @@ jobs:
       S3_KEY_JS: croutonjs
       S3_KEY: crouton
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         id: code-checkout
 
       - name: Prepare crouton zip file
@@ -45,7 +45,7 @@ jobs:
           mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions/gh-ci-s3-artifact
           role-session-name: gh-actions-crouton
