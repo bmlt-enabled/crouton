@@ -26,7 +26,7 @@ jobs:
       PLUGIN: crouton
       MAINFILE: crouton.php
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         id: code-checkout
 
       - name: Prepare crouton zip file
@@ -125,6 +125,21 @@ jobs:
           asset_path: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_PATH_JS }}
           asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME_JS }}
           asset_content_type: application/zip
+
+      - name: Setup Node
+        if: "!contains(github.ref, 'beta')"
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install dependencies and build 🔧
+        if: "!contains(github.ref, 'beta')"
+        run: cd croutonjs/dist && npm version ${{ github.ref }}
+      - name: Publish package on NPM 📦
+        if: "!contains(github.ref, 'beta')"
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Upload Stable Asset WP
         if: "!contains(github.ref, 'beta')"
