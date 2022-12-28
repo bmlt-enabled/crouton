@@ -61,6 +61,17 @@
         </div>
     {{/if}}
 
+	{{#if this.config.has_regions}}
+		<div class="bmlt-dropdown-container">
+			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'regions'}}" data-pointer="Regions" id="filter-dropdown-regions">
+				<option></option>
+				{{#each this.uniqueData.regions}}
+					<option value="a-{{formatDataPointer this.name}}">{{this.name}}</option>
+				{{/each}}
+			</select>
+		</div>
+	{{/if}}
+
     {{#if this.config.has_locations}}
         <div class="bmlt-dropdown-container">
             <select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'locations'}}" data-pointer="Locations" id="filter-dropdown-locations">
