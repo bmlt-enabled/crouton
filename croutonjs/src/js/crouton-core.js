@@ -36,6 +36,7 @@ function Crouton(config) {
 		has_locations: true,          // Shows the locations dropdown
 		has_zip_codes: true,          // Shows the zip codes dropdown
 		has_areas: false,             // Shows the areas dropdown
+		has_regions: false,			  // Shows the regions dropdown
 		has_states: false,            // Shows the states dropdown
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
@@ -448,7 +449,7 @@ function Crouton(config) {
 		var requires_parents = false;
 		for (var i = 0; i < self.all_data_keys.length; i++) {
 			var data_key = self.all_data_keys[i];
-			if (data_key.indexOf("parentServiceBody") >= 0) {
+			if (data_key.indexOf("parentServiceBody") >= 0 || self.config.has_regions) {
 				requires_parents = true;
 				break;
 			}
@@ -786,6 +787,14 @@ Crouton.prototype.render = function() {
 						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
 							self.active_service_bodies.push(service_bodies[i]);
 						}
+					}
+				}
+
+				self.uniqueData['regions'] = [];
+				for (var i = 0; i < self.all_service_bodies.length; i++) {
+					var service_body = self.all_service_bodies[i];
+					if (service_body.type === 'RS') {
+						self.uniqueData['regions'].push(service_body)
 					}
 				}
 
