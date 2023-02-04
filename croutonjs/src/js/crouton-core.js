@@ -27,6 +27,7 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
+		dropdown_width: "auto",
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_days: false,			  // Shows the days of the week dropdown
@@ -329,8 +330,8 @@ function Crouton(config) {
 
 	self.dayTab = function(day_id) {
 		self.hideAllPages();
-		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
-		self.showPage("#" + day_id);
+		//jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		//self.showPage("#" + day_id);
 	};
 
 	self.showPage = function (id) {
@@ -841,11 +842,13 @@ Crouton.prototype.render = function() {
 					var day = self.config.day_sequence[day_counter];
 					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
 					weekdaysData.push({
+						"sequence": day_counter+1,
 						"day": day,
 						"meetings": daysOfTheWeekMeetings
 					});
 
 					byDayData.push({
+						"sequence": day_counter+1,
 						"hide": self.config["hide_byday_headers"],
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": daysOfTheWeekMeetings
@@ -905,19 +908,19 @@ Crouton.prototype.render = function() {
 
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery(".crouton-select").select2({
-						dropdownAutoWidth: true,
+						//dropdownAutoWidth: true,
 						allowClear: false,
 						width: "resolve",
 						minimumResultsForSearch: 1,
 						dropdownCssClass: 'bmlt-drop'
 					});
 
-					jQuery('[data-toggle="popover"]').popover();
+					/*jQuery('[data-toggle="popover"]').popover();
 					jQuery('html').on('click', function (e) {
 						if (jQuery(e.target).data('toggle') !== 'popover') {
 							jQuery('[data-toggle="popover"]').popover('hide');
 						}
-					});
+					});*/
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
 						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
@@ -947,17 +950,14 @@ Crouton.prototype.render = function() {
 					});
 
 					if (self.config['has_tabs']) {
-						jQuery('.nav-tabs a').on('click', function (e) {
-							e.preventDefault();
-							jQuery(this).tab('show');
-						});
-
-						var d = new Date();
-						var n = d.getDay();
-						n++;
-						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
-						jQuery('#tab' + n).show();
+						jQuery('#byday').tabs();
 					}
+
+					jQuery(".bmlt-formats-codes").tooltip({
+						content: function () {
+							return jQuery(this).prop('title');
+						}
+					});
 
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
