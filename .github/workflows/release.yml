@@ -60,7 +60,7 @@ jobs:
         id: prepare_artifact_metadata
         run: |
           echo "ARTIFACT_PATH_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
-          echo "ARTIFACT_NAME_JS=./${GITHUB_RELEASE_PATH_JS}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME_JS=${GITHUB_RELEASE_FILENAME_JS}" >> $GITHUB_ENV
           echo "ARTIFACT_PATH=./${GITHUB_RELEASE_PATH}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${GITHUB_RELEASE_FILENAME}" >> $GITHUB_ENV
 
