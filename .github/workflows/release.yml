@@ -51,8 +51,6 @@ jobs:
           mkdir -p $DIST_DIR_GITHUB_JS && cp $BUILD_DIR/$ZIP_FILENAME_JS $DIST_DIR_GITHUB_JS/$GITHUB_RELEASE_FILENAME_JS
           mkdir -p $DIST_DIR_S3 && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_S3/$ZIP_FILENAME
           mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
-          curl -sLO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
-          chmod +x deploy-wordpress.sh
           curl -sLO https://raw.githubusercontent.com/bmlt-enabled/release-notes-tool/master/gh-release-notes.sh
           chmod +x gh-release-notes.sh
           ./gh-release-notes.sh readme.txt "wp"
@@ -86,8 +84,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.beta_release.outputs.upload_url }}
-          asset_path: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_PATH_JS }}
-          asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME_JS }}
+          asset_path: ${{ env.ARTIFACT_PATH_JS }}
+          asset_name: ${{ env.ARTIFACT_NAME_JS }}
           asset_content_type: application/zip
 
       - name: Upload Beta Asset WP
@@ -98,8 +96,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.beta_release.outputs.upload_url }}
-          asset_path: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_PATH }}
-          asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME }}
+          asset_path: ${{ env.ARTIFACT_PATH }}
+          asset_name: ${{ env.ARTIFACT_NAME }}
           asset_content_type: application/zip
 
       - name: Release stable
@@ -123,8 +121,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.stable_release.outputs.upload_url }}
-          asset_path: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_PATH_JS }}
-          asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME_JS }}
+          asset_path: ${{ env.ARTIFACT_PATH_JS }}
+          asset_name: ${{ env.ARTIFACT_NAME_JS }}
           asset_content_type: application/zip
 
       - name: Upload Stable Asset WP
@@ -135,14 +133,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.stable_release.outputs.upload_url }}
-          asset_path: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_PATH }}
-          asset_name: ${{ steps.prepare_artifact_metadata.outputs.ARTIFACT_NAME }}
+          asset_path: ${{ env.ARTIFACT_PATH }}
+          asset_name: ${{ env.ARTIFACT_NAME }}
           asset_content_type: application/zip
 
       - name: Publish Release to WP
         if: "!contains(github.ref, 'beta')"
         id: publish-release-wp
         run: |
+          curl -sLO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/master/deploy-wordpress.sh
+          chmod +x deploy-wordpress.sh
           ./deploy-wordpress.sh
 
       - name: Setup Node
