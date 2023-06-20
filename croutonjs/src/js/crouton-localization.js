@@ -40,7 +40,7 @@ function CroutonLocalization(language) {
 			"no_meetings_for_this_day": "No meetings for this day.",
 		},
 		"de-DE":{
-			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Frietag", "Samstag"],
+			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
 			"weekday": 'Wochentag',
 			"city": "Stadt",
 			"cities": "Städte",
