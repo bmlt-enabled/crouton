@@ -45,7 +45,7 @@ jobs:
           mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions/gh-ci-s3-artifact
           role-session-name: gh-actions-crouton
@@ -58,7 +58,7 @@ jobs:
 
       - name: Publish Release to Latest WP
         id: publish_latest
-        uses: bmlt-enabled/wordpress-releases-github-action@v1
+        uses: bmlt-enabled/wordpress-releases-github-action@v1.2
         with:
           file: ${{ env.DIST_DIR_S3 }}/${{ env.ZIP_FILENAME }}
           aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
