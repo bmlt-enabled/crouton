@@ -23,6 +23,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"special_interests": "Special Interest",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -59,6 +60,7 @@ function CroutonLocalization(language) {
 			"click_search": "Klicksuche",
 			"pan_and_zoom": "Schwenken + Zoomen",
 			"languages": "Sprachen",
+			"special_interests": "Special Interest",
 			"venue_types": "Treffpunktarten",
 			"venue_type_choices": {
 				IN_PERSON: "Präsens-Meetings",
@@ -73,7 +75,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Teilen",
-			"no_meetings_for_this_day": "No meetings for this day.",
+			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -95,6 +97,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"special_interests": "Special Interest",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -131,6 +134,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"special_interests": "Special Interest",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -167,6 +171,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"special_interests": "Special Interest",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -203,6 +208,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"special_interests": "Special Interest",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",

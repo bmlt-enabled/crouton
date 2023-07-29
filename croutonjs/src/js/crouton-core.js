@@ -1,5 +1,8 @@
 var crouton_Handlebars = Handlebars.noConflict();
-
+// These are extension points
+crouton_Handlebars.registerHelper("startup", function() {return '';});
+crouton_Handlebars.registerHelper("enrich", function() {return '';});
+crouton_Handlebars.registerHelper('selectFormatPopup', function() {return "formatPopup";});
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -41,6 +44,7 @@ function Crouton(config) {
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
 		has_languages: false,		  // Shows the language dropdown
+		has_special_interests: false, // Shows the special interest dropdown
 		has_venues: true,		      // Shows the venue types dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
@@ -405,7 +409,7 @@ function Crouton(config) {
 	self.filteredPage = function (dataType, dataValue) {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues") {
+		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "special_interests") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
@@ -440,6 +444,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
+		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
 		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
@@ -562,7 +567,8 @@ function Crouton(config) {
 								"id": self.formatsData[g]['id'],
 								"key": formats[f],
 								"name": self.formatsData[g]['name_string'],
-								"description": self.formatsData[g]['description_string']
+								"description": self.formatsData[g]['description_string'],
+								"type": self.formatsData[g]['format_type_enum'],
 							}
 						)
 					}
@@ -804,11 +810,15 @@ Crouton.prototype.render = function() {
 				}
 				self.uniqueData['formats'] = self.formatsData;
 				self.uniqueData['languages'] = [];
+				self.uniqueData['special_interests'] = [];
 
 				for (var l = 0; l < self.formatsData.length; l++) {
 					var format = self.formatsData[l];
 					if (format['format_type_enum'] === "LANG") {
 						self.uniqueData['languages'].push(format);
+					}
+					if (format['format_type_enum'] === "FC3") {
+						self.uniqueData['special_interests'].push(format);
 					}
 				}
 
