@@ -7,6 +7,11 @@
 			{{> byfields this }}
 		</div>
 	{{/each}}
+    {{#each this.meetings.buttonFormatFilters}}
+		<div id="byfield_{{ @key }}" class="bmlt-page hide">
+			{{> byfields this }}
+		</div>
+	{{/each}}
     <div id="byday" class="bmlt-page hide">
         {{> bydays this.meetings.bydays}}
     </div>
