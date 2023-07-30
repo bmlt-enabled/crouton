@@ -100,6 +100,7 @@ if (!class_exists("Crouton")) {
             "filter_tabs" => false,
             "show_qrcode" => false,
             "hide_byday_headers" => false,
+            "native_lang" => ''
         );
 
         public function __construct()

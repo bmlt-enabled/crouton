@@ -281,6 +281,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -317,6 +318,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -353,6 +355,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -389,6 +392,7 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -425,6 +429,7 @@ function CroutonLocalization(language) {
 			"click_search": "Klik om te zoeken",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Talen",
+			"common_needs": "Common Needs",
 			"venue_types": "Soorten locaties",
 			"venue_type_choices": {
 				IN_PERSON: "Fysiek",
@@ -461,6 +466,7 @@ function CroutonLocalization(language) {
 			"click_search": "Kliknij na mapie",
 			"pan_and_zoom": "Przesuń powiększ",
 			"languages": "Języki",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -497,6 +503,7 @@ function CroutonLocalization(language) {
 			"click_search": "Clique no local",
 			"pan_and_zoom": "Panorâmico + Zoom",
 			"languages": "Idiomas",
+			"common_needs": "Common Needs",
 			"venue_types": "tipos de reunião",
 			"venue_type_choices": {
 				IN_PERSON: "Presencial",
@@ -533,6 +540,7 @@ function CroutonLocalization(language) {
 			"click_search": "Нажмите Поиск",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Языки",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -569,6 +577,7 @@ function CroutonLocalization(language) {
 			"click_search": "Sök",
 			"pan_and_zoom": "Panorera + Zooma",
 			"languages": "Språk",
+			"common_needs": "Common Needs",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",

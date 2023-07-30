@@ -1,8 +1,8 @@
 var crouton_Handlebars = Handlebars.noConflict();
 // These are extension points
-crouton_Handlebars.registerHelper("startup", function() {return '';});
-crouton_Handlebars.registerHelper("enrich", function() {return '';});
-crouton_Handlebars.registerHelper('selectFormatPopup', function() {return "formatPopup";});
+crouton_Handlebars.registerHelper("startup", () => '');
+crouton_Handlebars.registerHelper("enrich", () => '');
+crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -53,6 +53,7 @@ function Crouton(config) {
 		service_body: [],             // Array of service bodies to return data for.
 		exclude_zip_codes: [],        // List of zip codes to exclude
 		extra_meetings: [],           // List of id_bigint of meetings to include
+		native_lang: '',				  // The implied language of meetings with no explicit language specied.  May be there as second language, but it still doesn't make sense to search for it.
 		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
 		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 		custom_query: null,			  // Enables overriding the services related queries for a custom one
@@ -816,7 +817,9 @@ Crouton.prototype.render = function() {
 				for (var l = 0; l < self.formatsData.length; l++) {
 					var format = self.formatsData[l];
 					if (format['format_type_enum'] === "LANG") {
-						self.uniqueData['languages'].push(format);
+						if (self.config.native_lang != format.key_string) {
+							self.uniqueData['languages'].push(format);
+						}
 					}
 					if (format['format_type_enum'] === "FC3") {
 						self.uniqueData['common_needs'].push(format);
@@ -883,6 +886,9 @@ Crouton.prototype.render = function() {
 					for (var f = 0; f < self.config.button_format_filters.length; f++) {
 						var groupByName = self.config.button_format_filters[f]['field'];
 						var groupByData = getUniqueFormatsOfType(daysOfTheWeekMeetings, groupByName);
+						if (groupByName=='LANG' && self.config.native_lang && self.config.native_lang.length > 0) {
+							groupByData = groupByData.filter((f) => f.key != self.config.native_lang);
+						}
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filter((item) => item.formats_expanded.map(f => f.key).indexOf(groupByData[i].key) >= 0);
 							if (buttonFormatFiltersData.hasOwnProperty(groupByName) && buttonFormatFiltersData[groupByName].hasOwnProperty(groupByData[i].description)) {
@@ -1311,7 +1317,10 @@ crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 });
 
 crouton_Handlebars.registerHelper('getWord', function(word) {
-	return hbs_Crouton.localization.getWord(word);
+	var translation = hbs_Crouton.localization.getWord(word);
+	if (translation) return translation;
+	// if none found, return the untranslated - better than nothing.
+	return word;
 });
 
 crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
