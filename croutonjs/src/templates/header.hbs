@@ -153,11 +153,11 @@
 		</div>
 	{{/if}}
 
-    {{#if this.config.has_special_interests}}
+    {{#if this.config.has_common_needs}}
 		<div class="bmlt-dropdown-container">
-			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'special_interests'}}" data-pointer="Languages" id="filter-dropdown-languages">
+			<select class="crouton-select filter-dropdown" style="width:{{this.config.dropdown_width}};" data-placeholder="{{getWord 'common_needs'}}" data-pointer="Languages" id="filter-dropdown-languages">
 				<option></option>
-				{{#each this.uniqueData.special_interests}}
+				{{#each this.uniqueData.common_needs}}
 					<option value="a-{{formatDataPointer name_string}}">{{name_string}}</option>
 				{{/each}}
 			</select>

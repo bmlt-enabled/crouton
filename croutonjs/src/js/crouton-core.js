@@ -29,10 +29,7 @@ function Crouton(config) {
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
 		],
-		button_format_filters: [
-			{'title': 'Languages', 'field': 'LANG'},
-			{'title': 'Special Interests', 'field': 'FC3'},
-		],
+		button_format_filters: [],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
@@ -48,7 +45,7 @@ function Crouton(config) {
 		has_sub_province: false,      // Shows the sub province dropdown (counties)
 		has_neighborhoods: false,     // Shows the neighborhood dropdown
 		has_languages: false,		  // Shows the language dropdown
-		has_special_interests: false, // Shows the special interest dropdown
+		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
@@ -413,7 +410,7 @@ function Crouton(config) {
 	self.filteredPage = function (dataType, dataValue) {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "special_interests") {
+		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
@@ -814,7 +811,7 @@ Crouton.prototype.render = function() {
 				}
 				self.uniqueData['formats'] = self.formatsData;
 				self.uniqueData['languages'] = [];
-				self.uniqueData['special_interests'] = [];
+				self.uniqueData['common_needs'] = [];
 
 				for (var l = 0; l < self.formatsData.length; l++) {
 					var format = self.formatsData[l];
@@ -822,7 +819,7 @@ Crouton.prototype.render = function() {
 						self.uniqueData['languages'].push(format);
 					}
 					if (format['format_type_enum'] === "FC3") {
-						self.uniqueData['special_interests'].push(format);
+						self.uniqueData['common_needs'].push(format);
 					}
 				}
 
