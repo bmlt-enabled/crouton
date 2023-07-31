@@ -47,6 +47,7 @@ function Crouton(config) {
 		has_languages: false,		  // Shows the language dropdown
 		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
+		has_meeting_count: false,	  // Shows the meeting count
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
@@ -65,7 +66,8 @@ function Crouton(config) {
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
-		observer_template: croutonDefaultTemplates.observer_template
+		observer_template: croutonDefaultTemplates.observer_template,
+		meeting_count_template: croutonDefaultTemplates.meeting_count_template
 	};
 
 	self.setConfig(config);
@@ -538,6 +540,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
 		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
+		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -926,7 +929,8 @@ Crouton.prototype.render = function() {
 						"weekdays": weekdaysData,
 						"buttonFilters": buttonFiltersDataSorted,
 						"buttonFormatFilters": buttonFormatFiltersData,
-						"bydays": byDayData
+						"bydays": byDayData,
+						"meetingCount": self.meetingData.length
 					},
 					"uniqueData": self.uniqueData
 				}, function () {
