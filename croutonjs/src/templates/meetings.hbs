@@ -42,7 +42,7 @@
 				</a>
 			{{/if}}
 			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
-			<div class="bmlt-observer">{{> observerTemplate }}</div>
+			<div class="bmlt-observer">{{> (selectObserver) }}</div>
 		</td>
 		<td class="bmlt-column2">
 			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>

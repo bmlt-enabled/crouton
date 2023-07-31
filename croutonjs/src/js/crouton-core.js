@@ -3,6 +3,7 @@ var crouton_Handlebars = Handlebars.noConflict();
 crouton_Handlebars.registerHelper("startup", () => '');
 crouton_Handlebars.registerHelper("enrich", () => '');
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
+crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
