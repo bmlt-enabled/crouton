@@ -53,6 +53,8 @@ function Crouton(config) {
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
+		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
+		venue_types: '',			  // Return only meetings with this venue type (1, 2 or 3)
 		exclude_zip_codes: [],        // List of zip codes to exclude
 		extra_meetings: [],           // List of id_bigint of meetings to include
 		native_lang: '',				  // The implied language of meetings with no explicit language specied.  May be there as second language, but it still doesn't make sense to search for it.
@@ -279,6 +281,16 @@ function Crouton(config) {
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
 			'&data_field_key=' + unique_data_field_keys.join(',');
 
+		if (self.config['formats']) {
+			url += self.config['formats'].reduce(function(prev,id) {
+				return prev +'&formats[]='+id;
+			}, '');
+		}
+		if (self.config['venue_types']) {
+			url += self.config['venue_types'].reduce(function(prev,id) {
+				return prev +'&venue_types[]='+id;
+			}, '');
+		}
 		if (self.config['int_include_unpublished'] === 1) {
 			url += "&advanced_published=0"
 		} else if (self.config['int_include_unpublished'] === -1) {
