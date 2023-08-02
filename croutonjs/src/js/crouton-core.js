@@ -833,7 +833,7 @@ Crouton.prototype.render = function() {
 				for (var l = 0; l < self.formatsData.length; l++) {
 					var format = self.formatsData[l];
 					if (format['format_type_enum'] === "LANG") {
-						if (self.config.native_lang != format.key_string) {
+						if (self.config.native_lang !== format.key_string) {
 							self.uniqueData['languages'].push(format);
 						}
 					}
