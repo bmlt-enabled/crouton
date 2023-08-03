@@ -49,6 +49,12 @@ var croutonDefaultTemplates = {
 	observer_template: [
 		"<div class='observerLine'>{{this.contact_name_1}} {{this.contact_phone_1}} {{this.contact_email_1}}</div>",
 		"<div class='observerLine'>{{this.contact_name_2}} {{this.contact_phone_2}} {{this.contact_email_2}}</div>"
+	].join('\n'),
+
+	meeting_count_template: [
+		"{{#if this.config.has_meeting_count}}",
+		"<span class='bmlt_tabs_meeting_count'>{{getWord 'meeting_count'}} {{this.meetings.meetingCount}}</span>",
+		"{{/if}}"
 	].join('\n')
 
 }

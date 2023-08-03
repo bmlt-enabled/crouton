@@ -23,6 +23,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -59,6 +61,8 @@ function CroutonLocalization(language) {
 			"click_search": "Klicksuche",
 			"pan_and_zoom": "Schwenken + Zoomen",
 			"languages": "Sprachen",
+			"common_needs": "Common Needs",
+			"meeting_count": "Wöchentliche Meetings:",
 			"venue_types": "Treffpunktarten",
 			"venue_type_choices": {
 				IN_PERSON: "Präsens-Meetings",
@@ -73,7 +77,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Teilen",
-			"no_meetings_for_this_day": "No meetings for this day.",
+			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -95,6 +99,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -131,6 +137,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -167,6 +175,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -203,6 +213,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -239,6 +251,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -275,6 +289,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -311,6 +327,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -347,6 +365,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -383,6 +403,8 @@ function CroutonLocalization(language) {
 			"click_search": "Click Search",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -419,6 +441,8 @@ function CroutonLocalization(language) {
 			"click_search": "Klik om te zoeken",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Talen",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Soorten locaties",
 			"venue_type_choices": {
 				IN_PERSON: "Fysiek",
@@ -455,6 +479,8 @@ function CroutonLocalization(language) {
 			"click_search": "Kliknij na mapie",
 			"pan_and_zoom": "Przesuń powiększ",
 			"languages": "Języki",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -491,6 +517,8 @@ function CroutonLocalization(language) {
 			"click_search": "Clique no local",
 			"pan_and_zoom": "Panorâmico + Zoom",
 			"languages": "Idiomas",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "tipos de reunião",
 			"venue_type_choices": {
 				IN_PERSON: "Presencial",
@@ -527,6 +555,8 @@ function CroutonLocalization(language) {
 			"click_search": "Нажмите Поиск",
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Языки",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
@@ -563,6 +593,8 @@ function CroutonLocalization(language) {
 			"click_search": "Sök",
 			"pan_and_zoom": "Panorera + Zooma",
 			"languages": "Språk",
+			"common_needs": "Common Needs",
+			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",

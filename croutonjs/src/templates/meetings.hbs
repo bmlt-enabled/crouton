@@ -1,4 +1,5 @@
 {{#each this}}
+	{{enrich this}}
 	<tr class="bmlt-data-row"
 		id="meeting-data-row-{{this.id_bigint}}"
 		data-cities="{{formatDataPointer this.location_municipality}}"
@@ -31,16 +32,7 @@
 				   role="button"
 				   data-toggle="popover"
 				   data-original-title=""
-				   data-content="
-                        <table class='bmlt_a_format table-bordered'>
-                        {{#each this.formats_expanded}}
-                        <tr>
-                            <td class='formats_key'>{{key}}</td>
-                            <td class='formats_name'>{{name}}</td>
-                            <td class='formats_description'>{{description}}</td>
-                        </tr>
-                        {{/each}}
-                    </table>">
+				   data-content="{{> (selectFormatPopup) }}">
                     <span class="glyphicon glyphicon-search"
 						  aria-hidden="true"
 						  data-toggle="popover"
@@ -50,7 +42,7 @@
 				</a>
 			{{/if}}
 			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
-			<div class="bmlt-observer">{{> observerTemplate }}</div>
+			<div class="bmlt-observer">{{> (selectObserver) }}</div>
 		</td>
 		<td class="bmlt-column2">
 			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>

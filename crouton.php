@@ -29,6 +29,7 @@ if (!class_exists("Crouton")) {
             "jack",
             "kevin",
             "lucy",
+            "none",
             "one-nine",
             "orange-monster",
             "patrick",
@@ -47,6 +48,8 @@ if (!class_exists("Crouton")) {
             "root_server" => '',
             "service_body" => '',
             "service_body_parent" => '',
+            "venue_types" => '',
+            "formats" => '',
             "has_tabs" => '1',
             "has_days" => '0',
             "has_groups" => '1',
@@ -59,11 +62,13 @@ if (!class_exists("Crouton")) {
             "has_neighborhoods" => '0',
             "has_states" => '0',
             "has_languages" => '0',
+            "has_common_needs" => '0',
             "has_venues" => '1',
             "include_city_button" => '1',
             "include_weekday_button" => '1',
             "include_unpublished" => '0',
             "button_filters_option" => "City:location_municipality",
+            "button_format_filters_option" => "",
             "view_by" => 'weekday',
             "dropdown_width" => 'auto',
             "has_zip_codes" => '1',
@@ -98,6 +103,8 @@ if (!class_exists("Crouton")) {
             "filter_tabs" => false,
             "show_qrcode" => false,
             "hide_byday_headers" => false,
+            "native_lang" => '',
+            "has_meeting_count" => false
         );
 
         public function __construct()
@@ -245,7 +252,6 @@ if (!class_exists("Crouton")) {
                 }
             }
         }
-
         public function getMeetingsJson($url)
         {
             $results = wp_remote_get($url, Crouton::HTTP_RETRIEVE_ARGS);
@@ -796,6 +802,29 @@ if (!class_exists("Crouton")) {
                         continue;
                     }
                     array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
+                }
+            }
+            $tmp_formats = [];
+            if (strlen($params['formats']) > 0) {
+                foreach (explode(",", $params['formats']) as $item) {
+                    array_push($tmp_formats, $item);
+                }
+            }
+            $params['formats'] = $tmp_formats;
+
+            $tmp_venue = [];
+            if (strlen($params['venue_types']) > 0) {
+                foreach (explode(",", $params['venue_types']) as $item) {
+                    array_push($tmp_venue, $item);
+                }
+            }
+            $params['venue_types'] = $tmp_venue;
+
+            $params['button_format_filters'] = [];
+            if (strlen($params['button_format_filters_option']) > 0) {
+                foreach (explode(",", $params['button_format_filters_option']) as $item) {
+                    $setting = explode(":", $item);
+                    array_push($params['button_format_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
                 }
             }
 
