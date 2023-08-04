@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.15.3
+Version: 3.16.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -21,6 +21,7 @@ if (!class_exists("Crouton")) {
         public $options = array();
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
+        public $has_handlebars = false;
         public $themes = [
             "asheboro",
             "florida-nights",
@@ -145,6 +146,10 @@ if (!class_exists("Crouton")) {
                 add_shortcode('service_body_names', array(
                     &$this,
                     "serviceBodyNames"
+                ));
+                add_shortcode('bmlt_handlebar', array(
+                    &$this,
+                    "bmlt_handlebar"
                 ));
             }
             // Content filter
@@ -335,7 +340,14 @@ if (!class_exists("Crouton")) {
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
-
+        public function bmlt_handlebar($atts, $template = null)
+        {
+            if (!$this->has_handlebars) {
+                add_action("wp_footer",[$this,'handlebar_footer']);
+            }
+            $this->has_handlebars = true;
+            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>',$template);
+        }
         public function croutonMap($atts, $content = null)
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
@@ -409,7 +421,21 @@ if (!class_exists("Crouton")) {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
+        public function handlebar_footer()
+        {
+            $attr = ['custom_query' => '&meeting_ids[]=10376'];
+            $config = $this->getCroutonJsConfig($attr);
+;?>
+<script type='text/javascript'>
+var crouton;
 
+jQuery(document).ready(function() { 
+    crouton = new Crouton(<?php echo $config; ?>);
+    crouton.doHandlebars();
+});
+</script>
+<?php
+        }
         /**
          * @desc Adds the options sub-panel
          */

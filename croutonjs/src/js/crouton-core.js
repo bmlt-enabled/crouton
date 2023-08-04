@@ -769,6 +769,29 @@ Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 	}
 }
 
+Crouton.prototype.doHandlebars = function() {
+	var self = this;
+	self.lock(function() {
+		if (self.isEmpty(self.meetingData)) {
+			self.showMessage("No meetings found for parameters specified.");
+			return;
+		}
+		var promises = [self.getServiceBodies(self.meetingData[0]['service_body_bigint'])];
+		Promise.all(promises)
+			.then(function(data) {
+				self.active_service_bodies = [];
+				self.all_service_bodies = [];
+				var service_body = data[0][0];
+				self.all_service_bodies.push(service_body);
+				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				var customEnrichTemplate = crouton_Handlebars.compile('{{#each this}}{{log this}}{{enrich this}}{{/each}}');
+				customEnrichTemplate(enrichedMeetingData);
+				console.log(enrichedMeetingData);
+			});
+	});
+
+};
+
 Crouton.prototype.render = function() {
 	var self = this;
 	self.lock(function() {
