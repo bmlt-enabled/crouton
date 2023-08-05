@@ -55,6 +55,13 @@ var croutonDefaultTemplates = {
 		"{{#if this.config.has_meeting_count}}",
 		"<span class='bmlt_tabs_meeting_count'>{{getWord 'meeting_count'}} {{this.meetings.meetingCount}}</span>",
 		"{{/if}}"
-	].join('\n')
+	].join('\n'),
 
+	meeting_link_template: [
+		"{{#if this.meeting_details_url}}",
+			"<a href='{{{this.meeting_details_url}}}'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
+		"{{else}}",
+			"{{this.meeting_name}}",
+		"{{/if}}"
+	].join('\n')
 }

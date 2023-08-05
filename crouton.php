@@ -84,6 +84,9 @@ if (!class_exists("Crouton")) {
             "show_map" => '0',
             "max_zoom_level" => 15,
             "language" => 'en-US',
+            'strict_datafields' => false,
+            'meeting_details_href' => '',
+            'virtual_meeting_details_href' => '',
             "auto_tz_adjust" => '0',
             "base_tz" => null,
             "sort_keys" => 'start_time',
@@ -423,9 +426,23 @@ if (!class_exists("Crouton")) {
         }
         public function handlebar_footer()
         {
-            $attr = ['custom_query' => '&meeting_ids[]=10376'];
+            if (!isset($_GET['meeting_id']))
+            {
+                return;
+            }
+            $meetingId = $_GET['meeting_id'];
+            $attr = ['custom_query' => '&meeting_ids[]='+$meetingId,
+                     'strict_datafields' => false];
+            if (isset($_GET['language']))
+            {
+                $attr['language'] = $_GET['language'];
+            }
+            if (isset($_GET['time_format']))
+            {
+                $attr['time_format'] = $_GET['time_format'];
+            }
             $config = $this->getCroutonJsConfig($attr);
-;?>
+?>
 <script type='text/javascript'>
 var crouton;
 
