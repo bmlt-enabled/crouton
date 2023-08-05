@@ -9,6 +9,7 @@
             <li><code>[meeting_count]</code></li>
             <li><code>[group_count]</code></li>
             <li><code>[service_body_names]</code></li>
+			<li><code>[bmlt_handlebar]</code></li>
         </ul>
         <p>Example: <code>There are currently [group_count] groups, offering a total of [meeting_count] meetings per week.</code></p>
         <p><strong>Hints:</strong> you can only have one occurrence of <code>[bmlt_tabs]</code> on a page -- if you want two lists,
@@ -85,6 +86,13 @@
 		<p>weekday = view meetings by Weekdays (default)</p>
         <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
 	</div>
+	<h3 class="help-accordian"><strong>View By Language or Common Need</strong></h3>
+	<div>
+		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the button_filters_option was added ahead of time.</p>
+		<p><strong>[bmlt_tabs view_by="weekday"]</strong></p>
+		<p>weekday = view meetings by Weekdays (default)</p>
+        <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
+	</div>
 	<h3 class="help-accordian"><strong>Exclude City Button</strong></h3>
 	<div>
 		<p>With this parameter you can exclude the City button.</p>
@@ -97,6 +105,13 @@
 	<div>
 		<p>With this parameter you can include specific buttons.</p>
 		<p><strong>[bmlt_tabs button_filters_option="City:location_municipality"]</strong></p>
+        <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
+	</div>
+	<h3 class="help-accordian"><strong>Show Format Filter Buttons</strong></h3>
+	<div>
+		<p>With this parameter you can include specific buttons.</p>
+		<p><strong>[bmlt_tabs button_format_filters_option="Common Needs:FC3"]</strong></p>
+		<p><strong>[bmlt_tabs button_format_filters_option="Languages:LANG"]</strong></p>
         <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Tabs or No Tabs</strong></h3>
@@ -132,9 +147,9 @@
 	<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 	<div>
 		<p>With this parameter you can show or hide the dropdowns.</p>
-		<p><strong>[bmlt_tabs has_days='0|1' has_cities='0|1' has_groups='0|1' has_areas='0|1' has_regions='0|1' has_locations='0|1' has_sub_province='0|1' has_states='0|1' has_zip_codes='0|1' has_formats='0|1' has_neighborhoods='0|1' has_venues='0|1']</strong></p>
-		<p>0 = hide dropdown<p>
-		<p>1 = show dropdown (default)<p>
+		<p><strong>[bmlt_tabs has_days='0|1' has_cities='0|1' has_groups='0|1' has_areas='0|1' has_regions='0|1' has_locations='0|1' has_sub_province='0|1' has_states='0|1' has_zip_codes='0|1' has_formats='0|1' has_neighborhoods='0|1' has_venues='0|1' has_languages='0|1' has_common_needs='0|1']</strong></p>
+		<p>0 = hide dropdown (default, for <strong>has_languages</strong> and <strong>has_common_needs</strong>)<p>
+		<p>1 = show dropdown (default, for all options other than <strong>has_languages</strong> and <strong>has_common_needs</strong>)<p>
 	</div>
     <h3 class="help-accordian"><strong>Dropdown Filters</strong></h3>
     <div>
@@ -225,6 +240,20 @@
         <p>Multiple formats require the use of brackets `[]` which can break shortcodes.  Replace brackets with `%5B%5D`.</p>
 		<p><em>This can be overridden using a querystring parameter as well, but use must URL encode the query.  Example: <a target="_blank" href="about:blank">http://localhost:8080/?page_id=5&custom_query=%26meeting_key%3Dlocation_sub_province%26meeting_key_value%3DSampson</a></em></p>
 	</div>
+	<h3 class="help-accordian"><strong>Query: Select by venue type</strong></h3>
+	<div>
+		<p>With this parameter you can add restrictions to root server query, as an alternative to specifying a custom query.
+		<p><strong>[bmlt_tabs venues="1|2|3"]</strong></p>
+		<p>Where<ul><li>1 = In-Person Meetings</li><li>2 = Virtual Meetings</li><li>3 = Hybrid Meetings</li></ul>
+		<p>The values can also be negative, which means that the venue type should be excluded from the results. To specify more the one type, use a comma separated list.</p>
+	</div>
+	<h3 class="help-accordian"><strong>Query: Select by format</strong></h3>
+	<div>
+		<p>With this parameter you can add restrictions to root server query, as an alternative to specifying a custom query.
+		<p><strong>[bmlt_tabs formats="123"]</strong></p>
+		<p>Where the number specified is the shared id code for the format.  Use the semantic workshop to look up format codes.
+		<p>The values can also be negative, which means that the meetings with that format should be excluded from the results. To specify more the one format, use a comma separated list.</p>
+	</div>
     <h3 class="help-accordian"><strong>Companion Map</strong></h3>
     <div>
         <p>With this parameter you can have crouton display a companion map of all the meetings.</p>
@@ -247,6 +276,17 @@
         <p><strong>[crouton_map map_search_zoom="10"]</strong> - specifies the starting zoom level on the map (default: 10).</p>
         <p><strong>[crouton_map map_search_width="-50"]</strong> - specifies how many meetings to return, a positive integer means how many miles or kilometers to search.  A negative integer indicates the closest number of meetings from that point with no distance limits. (default: -50 [the fifty closest meetings to the point selected]).</p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
+    </div>
+	<h3 class="help-accordian"><strong>Create Meeting-Detail Pages</strong></h3>
+    <div>
+        <p>With this shortcode you can insert a HandlebarJS template into your page. 
+        <p><strong>[bmlt_handlebar]</strong></p>
+        <p> If the page is called with a query string including "meeting-id=<em>your meeting here</em>"
+			the default BMLT root server will be accessed to obtain the meeting information used when evaluation the template.  The Meeting Data template, and all other templates and helpers
+			used by Crouton are also available for use within the [bmlt-handlebar] tag.</p>
+			<p>For instance, to put the meeting name as the title of the page, you could have
+				<code>[bmlt_handlebar]&lt;H1&gt;{{this.meeting_name}}&lt;/H1&gt;[/bmlt_handlebar]</code>
+			</p>
     </div>
     <h3 class="help-accordian"><strong>Multilingual Support</strong></h3>
     <div>
