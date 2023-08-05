@@ -770,6 +770,11 @@ Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 }
 
 Crouton.prototype.doHandlebars = function() {
+	var elements = document.getElementsByTagName('bmlt-handlebar');
+	if (elements.length === 0) {
+		self.showMessage('No <bmlt-handlebar> tags found');
+		return;
+	};
 	var self = this;
 	self.lock(function() {
 		if (self.isEmpty(self.meetingData)) {
@@ -784,9 +789,67 @@ Crouton.prototype.doHandlebars = function() {
 				var service_body = data[0][0];
 				self.all_service_bodies.push(service_body);
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
-				var customEnrichTemplate = crouton_Handlebars.compile('{{#each this}}{{log this}}{{enrich this}}{{/each}}');
-				customEnrichTemplate(enrichedMeetingData);
-				console.log(enrichedMeetingData);
+				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
+				customStartupTemplate(enrichedMeetingData);
+				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}{{console this}}');
+				customEnrichTemplate(enrichedMeetingData[0]);
+				var parser = new DOMParser();
+
+				while (elements.length > 0) {
+					var element = elements.item(0);
+					if (!element.firstChild) {
+						self.showMessage('<bmlt-handlebar> tag must have at least one child');
+						element.remove();
+						continue;
+					}
+					var templateString = '';
+					if (element.firstChild.nodeType === 1) {
+						if (!element.firstChild.firstChild || element.firstChild.firstChild.nodeType !== 3) {
+							self.showMessage('<bmlt-handlebar> tag: cannot find textnode');
+							element.remove();
+							continue;
+						}
+						templateString = element.firstChild.firstChild.textContent;
+					} else if (element.firstChild.nodeType === 3) {
+						if (!element.firstChild.nodeType !== 3) {
+							self.showMessage('<bmlt-handlebar> tag: cannot find textnode');
+							element.remove();
+							continue;
+						}
+						templateString = element.firstChild.textContent;
+					}
+					console.log("string="+templateString);
+					var htmlDecode = parser.parseFromString('<body>'+templateString+'</body>', "text/html");
+					console.log(htmlDecode);
+					console.log(htmlDecode.body.firstChild);
+					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
+						self.showMessage('<bmlt-handlebar> tag: could not parse');
+						element.remove();
+						continue;
+					}
+					templateString = htmlDecode.body.firstChild.textContent;
+					console.log("after decode: "+templateString);
+
+					var template = crouton_Handlebars.compile(templateString);
+					var handlebarResult = template(enrichedMeetingData[0]);
+					var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
+					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
+						self.showMessage('<bmlt-handlebar> tag: could not parse the Handlebars result');
+						element.remove();
+						continue;
+					}
+					var firstPart = htmlDecode.body.firstChild;
+					var brothers = [];
+					var thisPart = firstPart;
+					var nextPart = null;
+					while (nextPart = thisPart.nextSibling) {
+						thisPart = nextPart;
+						brothers.push(thisPart);
+					}
+					element.replaceWith(firstPart);
+					console.log(brothers);
+					if (brothers) firstPart.after(...brothers);
+				}
 			});
 	});
 

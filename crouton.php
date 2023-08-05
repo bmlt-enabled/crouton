@@ -346,7 +346,7 @@ if (!class_exists("Crouton")) {
                 add_action("wp_footer",[$this,'handlebar_footer']);
             }
             $this->has_handlebars = true;
-            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>',$template);
+            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>',htmlspecialchars($template));
         }
         public function croutonMap($atts, $content = null)
         {
