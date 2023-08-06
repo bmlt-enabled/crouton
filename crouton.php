@@ -914,6 +914,9 @@ jQuery(document).ready(function() {
             }
 
             $params['extra_meetings'] = $extra_meetings_array;
+
+            $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
+            // TODO add default language and root_server
             return json_encode($params);
         }
     }

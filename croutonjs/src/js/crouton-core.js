@@ -69,6 +69,9 @@ function Crouton(config) {
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
 		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
+		force_rootserver_in_querystring: true, // Set to false to shorten generated meeting detail query strings
+		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
+		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
@@ -656,8 +659,9 @@ function Crouton(config) {
 					meetingData[m]['meeting_details_url'] = self.config.virtual_meeting_details_href;
 				}
 				meetingData[m]['meeting_details_url'] += '?meeting-id=' + meetingData[m]['id_bigint']
-													   + '&language=' + self.config.language
-													   + '&time_format=' + self.config.time_format
+													   + self.config.force_language_in_querystring   ? '&language=' + self.config.language : ''
+													   + self.config.force_timeformat_in_querystring ? '&time_format=' + encodeURIComponent(self.config.time_format) : ''
+													   + self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : ''
 													   ; 
 			}
 
