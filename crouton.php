@@ -152,7 +152,7 @@ if (!class_exists("Crouton")) {
                 ));
                 add_shortcode('bmlt_handlebar', array(
                     &$this,
-                    "bmlt_handlebar"
+                    "bmltHandlebar"
                 ));
             }
             // Content filter
@@ -343,10 +343,10 @@ if (!class_exists("Crouton")) {
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
-        public function bmlt_handlebar($atts, $template = null)
+        public function bmltHandlebar($atts, $template = null)
         {
             if (!$this->has_handlebars) {
-                add_action("wp_footer", [$this,'handlebar_footer']);
+                add_action("wp_footer", [$this,'handlebarFooter']);
             }
             $this->has_handlebars = true;
             return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
@@ -424,7 +424,7 @@ if (!class_exists("Crouton")) {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
-        public function handlebar_footer()
+        public function handlebarFooter()
         {
             if (!isset($_GET['meeting-id'])) {
                 return;
