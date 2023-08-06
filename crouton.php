@@ -346,10 +346,10 @@ if (!class_exists("Crouton")) {
         public function bmlt_handlebar($atts, $template = null)
         {
             if (!$this->has_handlebars) {
-                add_action("wp_footer",[$this,'handlebar_footer']);
+                add_action("wp_footer", [$this,'handlebar_footer']);
             }
             $this->has_handlebars = true;
-            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>',htmlspecialchars($template));
+            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
         }
         public function croutonMap($atts, $content = null)
         {
@@ -426,15 +426,14 @@ if (!class_exists("Crouton")) {
         }
         public function handlebar_footer()
         {
-            if (!isset($_GET['meeting-id']))
-            {
+            if (!isset($_GET['meeting-id'])) {
                 return;
             }
             $meetingId = $_GET['meeting-id'];
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
             $config = $this->getCroutonJsConfig($attr);
-?>
+            ?>
 <script type='text/javascript'>
 var crouton;
 
@@ -443,7 +442,7 @@ jQuery(document).ready(function() {
     crouton.doHandlebars();
 });
 </script>
-<?php
+            <?php
         }
         /**
          * @desc Adds the options sub-panel
