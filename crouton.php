@@ -426,21 +426,13 @@ if (!class_exists("Crouton")) {
         }
         public function handlebar_footer()
         {
-            if (!isset($_GET['meeting_id']))
+            if (!isset($_GET['meeting-id']))
             {
                 return;
             }
-            $meetingId = $_GET['meeting_id'];
-            $attr = ['custom_query' => '&meeting_ids[]='+$meetingId,
+            $meetingId = $_GET['meeting-id'];
+            $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
-            if (isset($_GET['language']))
-            {
-                $attr['language'] = $_GET['language'];
-            }
-            if (isset($_GET['time_format']))
-            {
-                $attr['time_format'] = $_GET['time_format'];
-            }
             $config = $this->getCroutonJsConfig($attr);
 ?>
 <script type='text/javascript'>

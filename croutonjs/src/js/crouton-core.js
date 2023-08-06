@@ -211,7 +211,7 @@ function Crouton(config) {
 	};
 	self.addDatafieldsToQuery = function() {
 		if (!self.config.strict_datafields) {
-			self.all_data_keys = ["parentServiceBody"];
+			self.all_data_keys = [];
 			self.queryable_data_keys = [];
 			return '';
 		}
@@ -823,39 +823,32 @@ Crouton.prototype.doHandlebars = function() {
 				while (elements.length > 0) {
 					var element = elements.item(0);
 					if (!element.firstChild) {
-						self.showMessage('<bmlt-handlebar> tag must have at least one child');
+						console.log('<bmlt-handlebar> tag must have at least one child');
 						element.remove();
 						continue;
 					}
 					var templateString = '';
 					if (element.firstChild.nodeType === 1) {
 						if (!element.firstChild.firstChild || element.firstChild.firstChild.nodeType !== 3) {
-							self.showMessage('<bmlt-handlebar> tag: cannot find textnode');
+							console.log('<bmlt-handlebar> tag: cannot find textnode');
 							element.remove();
 							continue;
 						}
 						templateString = element.firstChild.firstChild.textContent;
 					} else if (element.firstChild.nodeType === 3) {
 						if (!element.firstChild.nodeType !== 3) {
-							self.showMessage('<bmlt-handlebar> tag: cannot find textnode');
+							console.log('<bmlt-handlebar> tag: cannot find textnode');
 							element.remove();
 							continue;
 						}
 						templateString = element.firstChild.textContent;
 					}
-					var htmlDecode = parser.parseFromString('<body>'+templateString+'</body>', "text/html");
-					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
-						self.showMessage('<bmlt-handlebar> tag: could not parse');
-						element.remove();
-						continue;
-					}
-					templateString = htmlDecode.body.firstChild.textContent;
 
 					var template = crouton_Handlebars.compile(templateString);
 					var handlebarResult = template(enrichedMeetingData[0]);
 					var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
 					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
-						self.showMessage('<bmlt-handlebar> tag: could not parse the Handlebars result');
+						console.log('<bmlt-handlebar> tag: could not parse the Handlebars result');
 						element.remove();
 						continue;
 					}
