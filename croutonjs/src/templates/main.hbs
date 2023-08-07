@@ -1,9 +1,9 @@
 <div id="bmlt-tabs-table">
-    <div id="bmlt-header" class="bmlt-header hide">
+    <div id="bmlt-header" class="bmlt-header hide" {{{getWord 'css-textAlign'}}}>
         {{> header}}
     </div>
 	{{#each this.meetings.buttonFilters}}
-		<div id="byfield_{{ @key }}" class="bmlt-page hide">
+		<div id="byfield_{{ @key }}" class="bmlt-page hide" >
 			{{> byfields this }}
 		</div>
 	{{/each}}

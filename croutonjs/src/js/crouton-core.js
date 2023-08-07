@@ -561,7 +561,11 @@ function Crouton(config) {
 			}
 		}
 	};
-
+	self.toFarsinNumber = function( n ) {
+		const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+		
+		return n.replace(/\d/g, x => farsiDigits[x]);
+	}
 	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
 
@@ -586,6 +590,10 @@ function Crouton(config) {
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
 				.format(self.config['time_format']);
+			if (self.config.language === 'fa-IR') {
+				meetingData[m]['start_time_formatted'] = self.toFarsinNumber(meetingData[m]['start_time_formatted']);
+				meetingData[m]['end_time_formatted'] = self.toFarsinNumber(meetingData[m]['end_time_formatted']);				
+			}
 
 			// back to bmlt day
 			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].isoWeekday() === 7 ? 1 : meetingData[m]['start_time_raw'].isoWeekday() + 1;
