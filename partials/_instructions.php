@@ -282,10 +282,16 @@
         <p>With this shortcode you can insert a HandlebarJS template into your page. 
         <p><strong>[bmlt_handlebar]</strong></p>
         <p> If the page is called with a query string including "meeting-id=<em>your meeting here</em>"
-			the default BMLT root server will be accessed to obtain the meeting information used when evaluation the template.  The Meeting Data template, and all other templates and helpers
+			the default BMLT root server will be accessed to obtain the meeting information used when evaluating the template.  The Meeting Data template, and all other templates and helpers
 			used by Crouton are also available for use within the [bmlt-handlebar] tag.</p>
 			<p>For instance, to put the meeting name as the title of the page, you could have
 				<code>[bmlt_handlebar]&lt;H1&gt;{{this.meeting_name}}&lt;/H1&gt;[/bmlt_handlebar]</code>
+			</p>
+    </div>
+	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
+    <div>
+        <p>Handlebars is the template system used by Crouton.  You can add Helpers and Partials to Handlebars, and use 
+			them in your templates, or to modify meeting data.  An sample for doing this is available <a href="https://github.com/otrok7/CroutonExtensionsTemplate">here</a>.
 			</p>
     </div>
     <h3 class="help-accordian"><strong>Multilingual Support</strong></h3>

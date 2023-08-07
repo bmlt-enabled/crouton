@@ -641,6 +641,7 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
+			meetingData[m]['serviceBodyContactEmail'] = serviceBodyInfo["contact_email"];
 			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
 
 			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
@@ -658,11 +659,11 @@ function Crouton(config) {
 				if (meetingData[m]['venue_type'] === 2 && self.config.virtual_meeting_details_href ) {
 					meetingData[m]['meeting_details_url'] = self.config.virtual_meeting_details_href;
 				}
-				meetingData[m]['meeting_details_url'] += '?meeting-id=' + meetingData[m]['id_bigint']
-													   + self.config.force_language_in_querystring   ? '&language=' + self.config.language : ''
-													   + self.config.force_timeformat_in_querystring ? '&time_format=' + encodeURIComponent(self.config.time_format) : ''
-													   + self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : ''
-													   ; 
+				meetingData[m]['meeting_details_url'] += ('?meeting-id=' + meetingData[m]['id_bigint']
+													   + '&language=' + self.config.language
+													   + '&time_format=' + encodeURIComponent(self.config.time_format) 
+													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
+													); 
 			}
 
 			meetings.push(meetingData[m])
