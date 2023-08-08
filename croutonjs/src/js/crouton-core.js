@@ -822,6 +822,7 @@ Crouton.prototype.doHandlebars = function() {
 		var promises = [self.getServiceBodies(self.meetingData[0]['service_body_bigint'])];
 		Promise.all(promises)
 			.then(function(data) {
+				hbs_Crouton['localization'] = self.localization;
 				self.active_service_bodies = [];
 				self.all_service_bodies = [];
 				var service_body = data[0][0];
