@@ -830,7 +830,7 @@ Crouton.prototype.doHandlebars = function() {
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
 				customStartupTemplate(enrichedMeetingData);
-				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}{{console this}}');
+				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
 				customEnrichTemplate(enrichedMeetingData[0]);
 				var parser = new DOMParser();
 
