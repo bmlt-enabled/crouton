@@ -287,6 +287,33 @@
 			<p>For instance, to put the meeting name as the title of the page, you could have
 				<code>[bmlt_handlebar]&lt;H1&gt;{{this.meeting_name}}&lt;/H1&gt;[/bmlt_handlebar]</code>
 			</p>
+		</p>
+		<p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
+		<ul style="list-style:disc; padding-inline-start: 20px;">
+    <li>start_time_formatted</li>
+    <li>end_time_formatted</li>
+    <li>formatted_day</li>
+    <li>formats_expanded - which contains:
+        <ul style="padding-inline-start: 20px;">
+            <li>id</li>
+            <li>key</li>
+            <li>name</li>
+            <li>description</li>
+            <li>type</li>
+        </ul>
+    </li>
+    <li>venue_type</li>
+    <li>venue_type_name</li>  
+    <li>formatted_address</li>
+    <li>formatted_location_info</li>
+    <li>serviceBodyUrl</li>
+    <li>serviceBodyPhone</li>
+    <li>serviceBodyName</li>
+    <li>serviceBodyDescription</li>
+    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
+    <li>serviceBodyType</li>
+</ul>
+		</p>
     </div>
 	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
     <div>
