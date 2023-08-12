@@ -15,6 +15,7 @@ function Crouton(config) {
 	self.markerClusterer = null;
 	self.masterFormatCodes = [];
 	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
+	self.handlebarMapOptions = [];
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
@@ -832,6 +833,15 @@ Crouton.prototype.doHandlebars = function() {
 				customStartupTemplate(enrichedMeetingData);
 				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
 				customEnrichTemplate(enrichedMeetingData[0]);
+				var mustDoMap = false;
+				crouton_Handlebars.registerHelper('crouton_map', function(options) {
+					mustDoMap = true;
+					self.handlebarMapOptions = options.hash;
+					if (!self.handlebarMapOptions.zoom) self.handlebarMapOptions.zoom = 14;
+					self.handlebarMapOptions.lat = parseFloat(enrichedMeetingData[0].latitude);
+					self.handlebarMapOptions.lng = parseFloat(enrichedMeetingData[0].longitude);
+					return "<div id='bmlt-map' class='bmlt-map'></div>"
+				});
 				var parser = new DOMParser();
 
 				while (elements.length > 0) {
@@ -876,6 +886,10 @@ Crouton.prototype.doHandlebars = function() {
 					}
 					element.replaceWith(firstPart);
 					if (brothers) firstPart.after(...brothers);
+				}
+				if (mustDoMap) {
+					self.meetingData = enrichedMeetingData;
+					self.loadGapi('crouton.initMap');
 				}
 			});
 	});
@@ -1252,17 +1266,7 @@ Crouton.prototype.renderMap = function() {
 		}
 	})
 };
-
-Crouton.prototype.initMap = function(callback) {
-	var self = this;
-	if (self.map == null) {
-		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
-		self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
-			zoom: 3,
-		});
-	}
-
- 	jQuery("#bmlt-map").removeClass("hide");
+calculateBounds = function() {
 	var bounds = new google.maps.LatLngBounds();
 	// We go through all the results, and get the "spread" from them.
 	for (var c = 0; c < self.meetingData.length; c++) {
@@ -1274,6 +1278,22 @@ Crouton.prototype.initMap = function(callback) {
 	// We now have the full rectangle of our meeting search results. Scale the map to fit them.
 	self.map.fitBounds(bounds);
 
+}
+Crouton.prototype.initMap = function(callback) {
+	var self = this;
+	if (self.map == null) {
+		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+		var mapOpt = { zoom: 3 };
+		if (self.handlebarMapOptions) mapOpt = {
+			center: new google.maps.LatLng(self.handlebarMapOptions.lat, self.handlebarMapOptions.lng),
+			zoom: self.handlebarMapOptions.zoom,
+			mapTypeId:google.maps.MapTypeId.ROADMAP
+		};
+		self.map = new google.maps.Map(document.getElementById('bmlt-map'), mapOpt );
+	}
+
+ 	jQuery("#bmlt-map").removeClass("hide");
+	if (!self.handlebarMapOptions) self.calculateBounds();
 	var infoWindow = new google.maps.InfoWindow();
 
 	// Create OverlappingMarkerSpiderfier instance
