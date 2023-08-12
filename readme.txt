@@ -43,6 +43,7 @@ https://demo.bmlt.app/crouton
   allowed on the page.  These pages can be used to provide a detailed web presence for the meeting.
 * New partial "> meetingLink" will generate a link to the meeting details page.  The next for the link is the 
   meeting name.
+* A map can be added to the meeting detail pages by using the {{{crouton_map}}} helper function.
 * Am API has been added for creating custom partials and helpers for use in Handlebars templates, or to customise
   the enrichment of meeting data.
 * Special-Interest Dropdown.  This is basically just a filter of the formats dropdown, but because there are so many formats, the formats dropdown is pretty unusable.
