@@ -5,7 +5,7 @@
 			{{#unless this.hide}}
 				{{#greaterThan this.meetings.length 0}}
 					<tr class="meeting-header">
-						<td colspan="3">{{this.day}}</td>
+						<td colspan="3" {{{getWord 'css-textAlign'}}}>{{this.day}}</td>
 					</tr>
 				{{/greaterThan}}
 			{{/unless}}

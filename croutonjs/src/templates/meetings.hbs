@@ -15,7 +15,7 @@
 		data-venues="{{formatDataFromArray this.venue_type_name}}"
 		data-languages="{{formatDataPointerFormats this.formats_expanded}}"
 		data-weekdays="{{formatDataPointer this.formatted_day}}">
-		<td class="bmlt-column1">
+		<td class="bmlt-column1" {{{getWord 'css-textAlign'}}}>
 			<div class="bmlt-day">{{this.formatted_day}}</div>
 			{{#ifEquals this.duration_time "24:00:00"}}
 				<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
@@ -44,7 +44,7 @@
 			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
 			<div class="bmlt-observer">{{> (selectObserver) }}</div>
 		</td>
-		<td class="bmlt-column2">
+		<td class="bmlt-column2" {{{getWord 'css-textAlign'}}}>
 			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>
 		</td>
 		<td class="bmlt-column3">

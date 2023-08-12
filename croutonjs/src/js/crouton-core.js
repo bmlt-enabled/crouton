@@ -55,6 +55,9 @@ function Crouton(config) {
 		service_body: [],             // Array of service bodies to return data for.
 		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
 		venue_types: '',			  // Return only meetings with this venue type (1, 2 or 3)
+		strict_datafields: true,	  // Only get the datafields that are mentioned in the templates
+		meeting_details_href: '',	  // Link to the meeting details page
+		virtual_meeting_details_href: '', // Link to the virtual meeting details page
 		exclude_zip_codes: [],        // List of zip codes to exclude
 		extra_meetings: [],           // List of id_bigint of meetings to include
 		native_lang: '',				  // The implied language of meetings with no explicit language specied.  May be there as second language, but it still doesn't make sense to search for it.
@@ -66,11 +69,15 @@ function Crouton(config) {
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
 		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
+		force_rootserver_in_querystring: true, // Set to false to shorten generated meeting detail query strings
+		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
+		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
 		observer_template: croutonDefaultTemplates.observer_template,
-		meeting_count_template: croutonDefaultTemplates.meeting_count_template
+		meeting_count_template: croutonDefaultTemplates.meeting_count_template,
+		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
 	};
 
 	self.setConfig(config);
@@ -205,9 +212,12 @@ function Crouton(config) {
 				self.mutex = false;
 			});
 	};
-	self.mutex = true;
-
-	self.meetingSearch = function() {
+	self.addDatafieldsToQuery = function() {
+		if (!self.config.strict_datafields) {
+			self.all_data_keys = [];
+			self.queryable_data_keys = [];
+			return '';
+		}
 		var base_data_field_keys = [
 			'location_postal_code_1',
 			'duration_time',
@@ -278,8 +288,13 @@ function Crouton(config) {
 		self.collectDataKeys(self.config['observer_template']);
 
 		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
+		return '&data_field_key=' + unique_data_field_keys.join(',');
+	}
+	self.mutex = true;
+
+	self.meetingSearch = function() {
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
-			'&data_field_key=' + unique_data_field_keys.join(',');
+			self.addDatafieldsToQuery();
 
 		if (self.config['formats']) {
 			url += self.config['formats'].reduce(function(prev,id) {
@@ -546,7 +561,11 @@ function Crouton(config) {
 			}
 		}
 	};
-
+	self.toFarsinNumber = function( n ) {
+		const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+		
+		return n.replace(/\d/g, x => farsiDigits[x]);
+	}
 	self.enrichMeetings = function (meetingData, filter) {
 		var meetings = [];
 
@@ -554,6 +573,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
 		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
 		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
+		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -570,6 +590,10 @@ function Crouton(config) {
 				.add(duration[0], 'hours')
 				.add(duration[1], 'minutes')
 				.format(self.config['time_format']);
+			if (self.config.language === 'fa-IR') {
+				meetingData[m]['start_time_formatted'] = self.toFarsinNumber(meetingData[m]['start_time_formatted']);
+				meetingData[m]['end_time_formatted'] = self.toFarsinNumber(meetingData[m]['end_time_formatted']);				
+			}
 
 			// back to bmlt day
 			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].isoWeekday() === 7 ? 1 : meetingData[m]['start_time_raw'].isoWeekday() + 1;
@@ -625,6 +649,7 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
+			meetingData[m]['serviceBodyContactEmail'] = serviceBodyInfo["contact_email"];
 			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
 
 			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
@@ -634,6 +659,19 @@ function Crouton(config) {
 				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
 				meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
 				meetingData[m]['parentServiceBodyType'] = self.localization.getServiceBodyType(parentBodyInfo["type"]);
+			}
+
+			meetingData[m]['meeting_details_url'] = '';
+			if (self.config.meeting_details_href) {
+				meetingData[m]['meeting_details_url'] = self.config.meeting_details_href;
+				if (meetingData[m]['venue_type'] === 2 && self.config.virtual_meeting_details_href ) {
+					meetingData[m]['meeting_details_url'] = self.config.virtual_meeting_details_href;
+				}
+				meetingData[m]['meeting_details_url'] += ('?meeting-id=' + meetingData[m]['id_bigint']
+													   + '&language=' + self.config.language
+													   + '&time_format=' + encodeURIComponent(self.config.time_format) 
+													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
+													); 
 			}
 
 			meetings.push(meetingData[m])
@@ -768,6 +806,81 @@ Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 		}
 	}
 }
+
+Crouton.prototype.doHandlebars = function() {
+	var elements = document.getElementsByTagName('bmlt-handlebar');
+	if (elements.length === 0) {
+		self.showMessage('No <bmlt-handlebar> tags found');
+		return;
+	};
+	var self = this;
+	self.lock(function() {
+		if (self.isEmpty(self.meetingData)) {
+			self.showMessage("No meetings found for parameters specified.");
+			return;
+		}
+		var promises = [self.getServiceBodies(self.meetingData[0]['service_body_bigint'])];
+		Promise.all(promises)
+			.then(function(data) {
+				hbs_Crouton['localization'] = self.localization;
+				self.active_service_bodies = [];
+				self.all_service_bodies = [];
+				var service_body = data[0][0];
+				self.all_service_bodies.push(service_body);
+				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
+				customStartupTemplate(enrichedMeetingData);
+				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
+				customEnrichTemplate(enrichedMeetingData[0]);
+				var parser = new DOMParser();
+
+				while (elements.length > 0) {
+					var element = elements.item(0);
+					if (!element.firstChild) {
+						console.log('<bmlt-handlebar> tag must have at least one child');
+						element.remove();
+						continue;
+					}
+					var templateString = '';
+					if (element.firstChild.nodeType === 1) {
+						if (!element.firstChild.firstChild || element.firstChild.firstChild.nodeType !== 3) {
+							console.log('<bmlt-handlebar> tag: cannot find textnode');
+							element.remove();
+							continue;
+						}
+						templateString = element.firstChild.firstChild.textContent;
+					} else if (element.firstChild.nodeType === 3) {
+						if (!element.firstChild.nodeType !== 3) {
+							console.log('<bmlt-handlebar> tag: cannot find textnode');
+							element.remove();
+							continue;
+						}
+						templateString = element.firstChild.textContent;
+					}
+
+					var template = crouton_Handlebars.compile(templateString);
+					var handlebarResult = template(enrichedMeetingData[0]);
+					var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
+					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
+						console.log('<bmlt-handlebar> tag: could not parse the Handlebars result');
+						element.remove();
+						continue;
+					}
+					var firstPart = htmlDecode.body.firstChild;
+					var brothers = [];
+					var thisPart = firstPart;
+					var nextPart = null;
+					while (nextPart = thisPart.nextSibling) {
+						thisPart = nextPart;
+						brothers.push(thisPart);
+					}
+					element.replaceWith(firstPart);
+					if (brothers) firstPart.after(...brothers);
+				}
+			});
+	});
+
+};
 
 Crouton.prototype.render = function() {
 	var self = this;

@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.15.3
+Version: 3.16.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -21,6 +21,7 @@ if (!class_exists("Crouton")) {
         public $options = array();
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
+        public $has_handlebars = false;
         public $themes = [
             "asheboro",
             "florida-nights",
@@ -83,6 +84,9 @@ if (!class_exists("Crouton")) {
             "show_map" => '0',
             "max_zoom_level" => 15,
             "language" => 'en-US',
+            'strict_datafields' => false,
+            'meeting_details_href' => '',
+            'virtual_meeting_details_href' => '',
             "auto_tz_adjust" => '0',
             "base_tz" => null,
             "sort_keys" => 'start_time',
@@ -145,6 +149,10 @@ if (!class_exists("Crouton")) {
                 add_shortcode('service_body_names', array(
                     &$this,
                     "serviceBodyNames"
+                ));
+                add_shortcode('bmlt_handlebar', array(
+                    &$this,
+                    "bmltHandlebar"
                 ));
             }
             // Content filter
@@ -335,7 +343,14 @@ if (!class_exists("Crouton")) {
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
-
+        public function bmltHandlebar($atts, $template = null)
+        {
+            if (!$this->has_handlebars) {
+                add_action("wp_footer", [$this,'handlebarFooter']);
+            }
+            $this->has_handlebars = true;
+            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
+        }
         public function croutonMap($atts, $content = null)
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
@@ -409,7 +424,26 @@ if (!class_exists("Crouton")) {
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
+        public function handlebarFooter()
+        {
+            if (!isset($_GET['meeting-id'])) {
+                return;
+            }
+            $meetingId = $_GET['meeting-id'];
+            $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
+                     'strict_datafields' => false];
+            $config = $this->getCroutonJsConfig($attr);
+            ?>
+<script type='text/javascript'>
+var crouton;
 
+jQuery(document).ready(function() { 
+    crouton = new Crouton(<?php echo $config; ?>);
+    crouton.doHandlebars();
+});
+</script>
+            <?php
+        }
         /**
          * @desc Adds the options sub-panel
          */
@@ -469,6 +503,13 @@ if (!class_exists("Crouton")) {
                 }
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
+                $this->options['time_format'] = $_POST['time_format'];
+                $this->options['language'] = $_POST['language'];
+                $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
+                $this->options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
+                $this->options['native_lang'] = trim($_POST['native_lang']);
+                $this->options['meeting_details_href'] = trim($_POST['meeting_details_href']);
+                $this->options['virtual_meeting_details_href'] = trim($_POST['virtual_meeting_details_href']);
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
@@ -481,7 +522,24 @@ if (!class_exists("Crouton")) {
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
-
+            if (!isset($this->options['time_format']) || strlen(trim($this->options['time_format'])) == 0) {
+                $this->options['time_format'] = 'h:mm a';
+            }
+            if (!isset($this->options['language']) || strlen(trim($this->options['language'])) == 0) {
+                $this->options['language'] = 'en-US';
+            }
+            if (!isset($this->options['native_lang'])) {
+                $this->options['native_lang'] = '';
+            }
+            if (!isset($this->options['meeting_details_href'])) {
+                $this->options['meeting_details_href'] = '';
+            }
+            if (!isset($this->options['virtual_meeting_details_href'])) {
+                $this->options['virtual_meeting_details_href'] = '';
+            }
+            if (!isset($this->options['strict_datafields'])) {
+                $this->options['strict_datafields'] = true;
+            }
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
                 $this->options['extra_meetings_enabled'] = 0;
             }
@@ -569,6 +627,62 @@ if (!class_exists("Crouton")) {
                                 <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo (isset($this->options['recurse_service_bodies']) && $this->options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
                                 <label for="recurse_service_bodies">Recurse Service Bodies</label>
                             </li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                        <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
+                        <p>These values will be used when the attributes are not defined in the shortcode</p>
+                        <ul>
+                            <li>
+                                <label for="language">Default language of Crouton UI: </label>
+                                <input id="language" type="text" size="5" name="language" value="<?php echo $this->options['language']; ?>" />
+                            </li>
+                            <li>
+                                <label for="native_lang">Default language of meetings (format code): </label>
+                                <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo $this->options['native_lang']; ?>" />
+                            </li>
+                            <li>
+                                <label for="time_format">Default time format: </label>
+                                <input id="time_format" type="text" size="10" name="time_format" value="<?php echo $this->options['time_format']; ?>" />
+                            </li>
+                            <li>
+                                <?php
+                                if (!isset($this->options["int_start_day_id"])) {
+                                    $this->options["int_start_day_id"] = 1;
+                                }
+                                ?>
+                                <label for="int_start_day_id">Which day does the week start on:</label>
+                                <select name="int_start_day_id" id="int_start_day_id">
+                                    <option value="1" <?php echo ($this->options["int_start_day_id"] == 1) ? 'selected' : ''; ?>>Sunday</option>
+                                    <option value="2" <?php echo ($this->options["int_start_day_id"] == 2) ? 'selected' : ''; ?>>Monday</option>
+                                    <option value="3" <?php echo ($this->options["int_start_day_id"] == 3) ? 'selected' : ''; ?>>Tuesday</option>
+                                    <option value="4" <?php echo ($this->options["int_start_day_id"] == 4) ? 'selected' : ''; ?>>Wedsday</option>
+                                    <option value="5" <?php echo ($this->options["int_start_day_id"] == 5) ? 'selected' : ''; ?>>Thursday</option>
+                                    <option value="6" <?php echo ($this->options["int_start_day_id"] == 6) ? 'selected' : ''; ?>>Friday</option>
+                                    <option value="7" <?php echo ($this->options["int_start_day_id"] == 7) ? 'selected' : ''; ?>>Saturday</option>
+                                </select>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $this->options['strict_datafields'] ? "checked" : '' ?>/>
+                                <label for="strict_datafields">Retrieve only those fields that are directly accessed in the templates</label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-details-href" class="anchor"></a>Meeting Detail Pages</h3>
+                        <p>Link to pages where the [bmlt_handlebar] tag is used to insert information about a particular meeting, in more detail and in an
+                            easier to read format than is possible in the crouton table.  Use the partial {{> meetingLink this}} to insert into a template.
+                        </p>
+                        <ul>
+                            <li>
+                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" />
+                            </li>
+                            <li>
+                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
+                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" />
+                            </li>
+                            <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
@@ -768,7 +882,12 @@ if (!class_exists("Crouton")) {
 
         public function getCroutonJsConfig($atts)
         {
-            $params = shortcode_atts($this->shortCodeOptions, $atts);
+            // Pulling simple values from options
+            $defaults = $this->shortCodeOptions;
+            foreach ($defaults as $key => $value) {
+                $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
+            }
+            $params = shortcode_atts($defaults, $atts);
 
             // Pulling from querystring
             foreach ($params as $key => $value) {
@@ -839,7 +958,6 @@ if (!class_exists("Crouton")) {
 
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
-            $params['root_server'] = $params['root_server'] != '' ? $params['root_server'] : $this->options['root_server'];
 
             if ($legacy_force_recurse) {
                 $params['recurse_service_bodies'] = true;
@@ -879,6 +997,9 @@ if (!class_exists("Crouton")) {
             }
 
             $params['extra_meetings'] = $extra_meetings_array;
+
+            $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
+            // TODO add default language and root_server
             return json_encode($params);
         }
     }

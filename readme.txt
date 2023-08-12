@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 6.2.2
-Stable tag: 3.15.3
+Stable tag: 3.16.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,20 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.16.0 =
+* New shortcode [bmlt_handlebar]:  the contents of the shortcode are interpreted as a handlebarjs template.
+  The meeting that will be used when executing the template is determined from the page's query_string, eg,
+  query string "?meeting-id=123" means that meeting 123 will supply the data.  Multiple uses of the shortcode are
+  allowed on the page.  These pages can be used to provide a detailed web presence for the meeting.
+* New partial "> meetingLink" will generate a link to the meeting details page.  The next for the link is the 
+  meeting name.
+* Am API has been added for creating custom partials and helpers for use in Handlebars templates, or to customise
+  the enrichment of meeting data.
+* Special-Interest Dropdown.  This is basically just a filter of the formats dropdown, but because there are so many formats, the formats dropdown is pretty unusable.
+* View-By Language and View-By Special-Interest buttons.  Like the view-by city option, but for these format codes.
+* 'has_meeting_count' flag, adding a meeting count to the table without the use of an additional [meeting_count] shortcode.
+* 'venue_type' added to the [bmlt_tabs] shortcode, to allow for easy filtering of meetings without needing a custom query.
 
 = 3.15.3 =
 * Fixed German translation for Friday.

@@ -40,6 +40,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -78,6 +80,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "Teilen",
 			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -116,6 +120,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -154,6 +160,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -192,6 +200,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -230,6 +240,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -268,6 +280,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -306,6 +320,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -344,6 +360,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': 'style="text-align:right;"',
+			'css-floatdirection': 'style="float:right;"'
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -382,6 +400,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -420,6 +440,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "Condividi",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -458,6 +480,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -496,6 +520,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -534,6 +560,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "Compartilhar",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -572,6 +600,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -610,6 +640,8 @@ function CroutonLocalization(language) {
 			},
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
+			'css-textalign': '',
+			'css-floatdirection': ''
 		}
 	};
 }

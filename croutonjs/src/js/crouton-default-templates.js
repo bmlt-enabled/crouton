@@ -4,7 +4,7 @@ var croutonDefaultTemplates = {
 		"{{#isTemporarilyClosed this}}",
 		"    <div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>",
 		"{{/isTemporarilyClosed}}",
-		"<div class='meeting-name'>{{this.meeting_name}}</div>",
+		"<div class='meeting-name'>{{> meetingLink this}}</div>",
 		"<div class='location-text'>{{this.location_text}}</div>",
 		"<div class='meeting-address'>{{this.formatted_address}}</div>",
 		"<div class='location-information'>{{this.formatted_location_info}}</div>",
@@ -55,6 +55,13 @@ var croutonDefaultTemplates = {
 		"{{#if this.config.has_meeting_count}}",
 		"<span class='bmlt_tabs_meeting_count'>{{getWord 'meeting_count'}} {{this.meetings.meetingCount}}</span>",
 		"{{/if}}"
-	].join('\n')
+	].join('\n'),
 
+	meeting_link_template: [
+		"{{#if this.meeting_details_url}}",
+			"<a href='{{{this.meeting_details_url}}}'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
+		"{{else}}",
+			"{{this.meeting_name}}",
+		"{{/if}}"
+	].join('\n')
 }
