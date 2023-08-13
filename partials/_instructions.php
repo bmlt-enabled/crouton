@@ -314,6 +314,9 @@
     <li>serviceBodyType</li>
 </ul>
 		</p>
+		<p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+			Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
+		</p>
     </div>
 	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
     <div>
