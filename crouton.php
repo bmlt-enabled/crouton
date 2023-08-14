@@ -345,6 +345,12 @@ if (!class_exists("Crouton")) {
         }
         public function bmltHandlebar($atts, $template = null)
         {
+            if (!isset($_GET['meeting-id'])) {
+                return "Meeting-ID not set in query-string";
+            }
+            if ($template == null || trim($template) == '') {
+                return '';
+            }
             if (!$this->has_handlebars) {
                 add_action("wp_footer", [$this,'handlebarFooter']);
             }
@@ -548,6 +554,29 @@ jQuery(document).ready(function() {
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
             }
+            $could_not_create_message = '';
+            if (strlen($this->options['meeting_details_href']) > 0 &&
+                !url_to_postid($this->options['meeting_details_href'])) {
+                    $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
+                    $slug = basename(parse_url($this->options['meeting_details_href'], PHP_URL_PATH));
+                    $post_details = array(
+                        'post_title'    => 'Meeting Details',
+                        'post_name'     => $slug,
+                        'post_content'  => $contents,
+                        'post_status'   => 'publish',
+                        'post_author'   => get_current_user_id(),
+                        'post_type' => 'page'
+                    );
+                    $new_id = wp_insert_post($post_details);
+                    if (is_wp_error($new_id)) {
+                        $could_not_create_message = '<div class="page-insert-error">Could not create default meeting details page:<br/>'
+                            .$new_id->get_error_message().'</div>';
+                    } else {
+                        $new = get_post($new_id);
+                        $this->options['meeting_details_href'] = rtrim(parse_url($new->guid)['path'], '/');
+                    }
+            }
+
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
@@ -677,6 +706,9 @@ jQuery(document).ready(function() {
                             <li>
                                 <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
                                 <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" />
+                                <?php if ($could_not_create_message) {
+                                    echo $could_not_create_message;
+                                } ?>
                             </li>
                             <li>
                                 <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
