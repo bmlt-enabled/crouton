@@ -186,6 +186,9 @@ if (!class_exists("Crouton")) {
             if (stripos($post_content, '[service_body_names') !== false) {
                 return true;
             }
+            if (stripos($post_content, '[bmlt_handlebar') !== false) {
+                return true;
+            }
             return false;
         }
 
