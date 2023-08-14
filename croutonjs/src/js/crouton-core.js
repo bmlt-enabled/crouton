@@ -820,7 +820,7 @@ Crouton.prototype.doHandlebars = function() {
 			self.showMessage("No meetings found for parameters specified.");
 			return;
 		}
-		var promises = [self.getServiceBodies(self.meetingData[0]['service_body_bigint'])];
+		var promises = [self.getServiceBodies([self.meetingData[0]['service_body_bigint']])];
 		Promise.all(promises)
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
