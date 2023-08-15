@@ -160,6 +160,8 @@ if (!class_exists("Crouton")) {
                 &$this,
                 'filterContent'
             ), 0);
+
+            add_action('the_post', array( $this, 'thePost' ));
         }
 
         public function hasShortcode()
@@ -550,6 +552,7 @@ jQuery(document).ready(function() {
                             $new = get_post($new_id);
                             $this->options['meeting_details_href'] = rtrim(parse_url($new->guid)['path'], '/');
                             $create_message = '<div class="page-insert-ok">Meeting details page created</div>';
+                            update_post_meta($new_id, '_crouton_disable_wpautop', 1);
                         }
                 }
                 $this->saveAdminOptions();
@@ -1040,6 +1043,12 @@ jQuery(document).ready(function() {
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             // TODO add default language and root_server
             return json_encode($params);
+        }
+        public function thePost($post)
+        {
+            if (get_post_meta($post->ID, '_crouton_disable_wpautop', true)) {
+                @remove_filter('the_content', 'wpautop');
+            }
         }
     }
     //End Class Crouton
