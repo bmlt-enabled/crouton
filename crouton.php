@@ -503,6 +503,7 @@ jQuery(document).ready(function() {
          */
         public function adminOptionsPage()
         {
+            $create_message = '';
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
@@ -528,6 +529,29 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
+                if (isset($_POST['create_default_page']) &&
+                    strlen($this->options['meeting_details_href']) > 0 &&
+                    !url_to_postid($this->options['meeting_details_href'])) {
+                        $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
+                        $slug = basename(parse_url($this->options['meeting_details_href'], PHP_URL_PATH));
+                        $post_details = array(
+                            'post_title'    => 'Meeting Details',
+                            'post_name'     => $slug,
+                            'post_content'  => $contents,
+                            'post_status'   => 'publish',
+                            'post_author'   => get_current_user_id(),
+                            'post_type' => 'page'
+                        );
+                        $new_id = wp_insert_post($post_details);
+                        if (is_wp_error($new_id)) {
+                            $create_message = '<div class="page-insert-error">Could not create default meeting details page:<br/>'
+                                .$new_id->get_error_message().'</div>';
+                        } else {
+                            $new = get_post($new_id);
+                            $this->options['meeting_details_href'] = rtrim(parse_url($new->guid)['path'], '/');
+                            $create_message = '<div class="page-insert-ok">Meeting details page created</div>';
+                        }
+                }
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
@@ -556,28 +580,6 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
-            }
-            $could_not_create_message = '';
-            if (strlen($this->options['meeting_details_href']) > 0 &&
-                !url_to_postid($this->options['meeting_details_href'])) {
-                    $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
-                    $slug = basename(parse_url($this->options['meeting_details_href'], PHP_URL_PATH));
-                    $post_details = array(
-                        'post_title'    => 'Meeting Details',
-                        'post_name'     => $slug,
-                        'post_content'  => $contents,
-                        'post_status'   => 'publish',
-                        'post_author'   => get_current_user_id(),
-                        'post_type' => 'page'
-                    );
-                    $new_id = wp_insert_post($post_details);
-                    if (is_wp_error($new_id)) {
-                        $could_not_create_message = '<div class="page-insert-error">Could not create default meeting details page:<br/>'
-                            .$new_id->get_error_message().'</div>';
-                    } else {
-                        $new = get_post($new_id);
-                        $this->options['meeting_details_href'] = rtrim(parse_url($new->guid)['path'], '/');
-                    }
             }
 
             ?>
@@ -708,10 +710,12 @@ jQuery(document).ready(function() {
                         <ul>
                             <li>
                                 <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
-                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" />
-                                <?php if ($could_not_create_message) {
-                                    echo $could_not_create_message;
-                                } ?>
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <div id="meeting_details_options">
+                                    <?php if ($create_message) {
+                                        echo $create_message;
+                                    } ?>
+                                </div>
                             </li>
                             <li>
                                 <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
