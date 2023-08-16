@@ -882,7 +882,7 @@ Crouton.prototype.doHandlebars = function() {
 					var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
 					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
 						console.log('<bmlt-handlebar> tag: could not parse the Handlebars result');
-						element.remove();
+						element.replaceWith('<bmlt-handlebar> tag: could not parse the Handlebars result');
 						continue;
 					}
 					var firstPart = htmlDecode.body.firstChild;
