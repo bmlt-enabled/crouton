@@ -1,7 +1,7 @@
 [bmlt_handlebar]
 <h1>{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}}: {{this.meeting_name}}</h1>
 {{{comments}}}
-
+<br/>
 {{#isInPersonOrHybrid this}}
 	{{{crouton_map}}}
 	<h4>Location:</h4>
@@ -11,6 +11,7 @@
 	<div class="location-text">{{{this.location_text}}}</div>
 	<div class="meeting-address">{{this.formatted_address}}</div>
 	<div class="location-information">{{{this.formatted_location_info}}}</div>
+	<br/>
 {{/isInPersonOrHybrid}}
 
 {{#isVirtualOrHybrid this}}
@@ -30,6 +31,7 @@
 	{{#if this.virtual_meeting_additional_info}}
 		{{this.virtual_meeting_additional_info}}
 	{{/if}}
+	<br/>
 {{/isVirtualOrHybrid}}
 
 {{#if formats_expanded}}
@@ -39,6 +41,7 @@
 		<li>{{description}}</li>
 	{{/each}}
 	</ul>
+	<br/>
 {{/if}}
 <h4>Kontakt:</h4>
 This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a>

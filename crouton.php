@@ -119,6 +119,7 @@ if (!class_exists("Crouton")) {
                 add_action("admin_notices", array(&$this, "isRootServerMissing"));
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
+                add_filter('wp_editor_settings', array(&$this, "disableTinyMCE"), 100, 2);
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -154,14 +155,8 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "bmltHandlebar"
                 ));
+                add_filter('the_content', array(&$this, "disableWpautop"), 0);
             }
-            // Content filter
-            add_filter('the_content', array(
-                &$this,
-                'filterContent'
-            ), 0);
-
-            add_action('the_post', array( $this, 'thePost' ));
         }
 
         public function hasShortcode()
@@ -215,12 +210,23 @@ if (!class_exists("Crouton")) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
             $this->__construct();
         }
-
-        public function filterContent($content)
+        public function disableTinyMCE($settings, $editor_id)
         {
+            if ($editor_id === 'content' && get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE', true)) {
+                $settings['tinymce']   = false;
+                $settings['quicktags'] = false;
+                $settings['media_buttons'] = false;
+            }
+        
+            return $settings;
+        }
+        public function disableWpautop($content)
+        {
+            if (get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE')) {
+                remove_filter('the_content', 'wpautop');
+            }
             return $content;
         }
-
         public function includeToString($file)
         {
             ob_start();
@@ -354,7 +360,11 @@ if (!class_exists("Crouton")) {
                 return "Meeting-ID not set in query-string";
             }
             if ($template == null || trim($template) == '') {
-                return '';
+                if (isset($atts['template']) && strlen(trim($atts['template'])) > 0) {
+                    $template = trim($atts['template']);
+                } else {
+                    return '';
+                }
             }
             if (!$this->has_handlebars) {
                 add_action("wp_footer", [$this,'handlebarFooter']);
@@ -529,10 +539,10 @@ jQuery(document).ready(function() {
                 }
             }
             if ($meeting_details_id > 0) {
-                if (isset($_POST['disable_wpautop'])) {
-                    update_post_meta($meeting_details_id, '_crouton_disable_wpautop', 1);
+                if (isset($_POST['disable_tinyMCE'])) {
+                    update_post_meta($meeting_details_id, '_crouton_disable_tinyMCE', 1);
                 } else {
-                    delete_post_meta($meeting_details_id, '_crouton_disable_wpautop');
+                    delete_post_meta($meeting_details_id, '_crouton_disable_tinyMCE');
                 }
             }
             return $create_message;
@@ -543,7 +553,6 @@ jQuery(document).ready(function() {
         public function adminOptionsPage()
         {
             $create_message = '';
-            $this->options['disable_wpautop'] = false;
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
@@ -570,7 +579,7 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->options['google_api_key'] = $_POST['google_api_key'];
-                $this->options['disable_wpautop'] = isset($_POST['disable_wpautop']);
+                $this->options['disable_tinyMCE'] = isset($_POST['disable_tinyMCE']);
                 $create_message = $this->createMeetingDetailsPage('meeting_details_href', "Meeting Details");
                 $create_message .= $this->createMeetingDetailsPage('virtual_meeting_details_href', "Virtual_Meeting Details");
                 $this->saveAdminOptions();
@@ -602,7 +611,9 @@ jQuery(document).ready(function() {
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
             }
-
+            if (!isset($this->options['disable_tinyMCE'])) {
+                $this->options['disable_tinyMCE'] = false;
+            }
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
@@ -744,8 +755,8 @@ jQuery(document).ready(function() {
                                         echo $create_message;
                                     } ?>
                                 </div>
-                                <input type="checkbox" id="disable_wpautop" name="disable_wpautop" <?php echo ($this->options['disable_wpautop']) ? 'checked': ''; ?>>
-                                <label for="disable_wpautop">Stop Wordpress block editor from 'correcting' your edits to details page. (recommended).</label>
+                                <input type="checkbox" id="disable_tinyMCE" name="disable_tinyMCE" <?php echo ($this->options['disable_tinyMCE']) ? 'checked': ''; ?>>
+                                <label for="disable_tinyMCE">Disable visual (WYSIWYG) editor when editing template. (recommended).</label>
                             </li>
                         </ul>
                     </div>
@@ -1065,12 +1076,6 @@ jQuery(document).ready(function() {
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             // TODO add default language and root_server
             return json_encode($params);
-        }
-        public function thePost($post)
-        {
-            if (get_post_meta($post->ID, '_crouton_disable_wpautop', true)) {
-                @remove_filter('the_content', 'wpautop');
-            }
         }
     }
     //End Class Crouton
