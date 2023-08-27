@@ -119,6 +119,7 @@ if (!class_exists("Crouton")) {
                 add_action("admin_notices", array(&$this, "isRootServerMissing"));
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
+                add_filter('wp_editor_settings', array(&$this, "disableTinyMCE"), 100, 2);
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -154,12 +155,8 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "bmltHandlebar"
                 ));
+                add_filter('the_content', array(&$this, "disableWpautop"), 0);
             }
-            // Content filter
-            add_filter('the_content', array(
-                &$this,
-                'filterContent'
-            ), 0);
         }
 
         public function hasShortcode()
@@ -213,12 +210,23 @@ if (!class_exists("Crouton")) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
             $this->__construct();
         }
-
-        public function filterContent($content)
+        public function disableTinyMCE($settings, $editor_id)
         {
+            if ($editor_id === 'content' && get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE', true)) {
+                $settings['tinymce']   = false;
+                $settings['quicktags'] = false;
+                $settings['media_buttons'] = false;
+            }
+        
+            return $settings;
+        }
+        public function disableWpautop($content)
+        {
+            if (get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE')) {
+                remove_filter('the_content', 'wpautop');
+            }
             return $content;
         }
-
         public function includeToString($file)
         {
             ob_start();
@@ -348,6 +356,16 @@ if (!class_exists("Crouton")) {
         }
         public function bmltHandlebar($atts, $template = null)
         {
+            if (!isset($_GET['meeting-id'])) {
+                return "Meeting-ID not set in query-string";
+            }
+            if ($template == null || trim($template) == '') {
+                if (isset($atts['template']) && strlen(trim($atts['template'])) > 0) {
+                    $template = trim($atts['template']);
+                } else {
+                    return '';
+                }
+            }
             if (!$this->has_handlebars) {
                 add_action("wp_footer", [$this,'handlebarFooter']);
             }
@@ -492,11 +510,49 @@ jQuery(document).ready(function() {
                 'filterPluginActions'
             ), 10, 2);
         }
+        public function createMeetingDetailsPage($page, $title = "Meeting Details")
+        {
+            $create_message = '';
+            $meeting_details_id = (strlen($this->options[$page]) > 0)  ? url_to_postid($this->options[$page]) : 0;
+            if (strlen($this->options[$page]) > 0 && $meeting_details_id === 0) {
+                if (isset($_POST['create_default_page'])) {
+                    $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
+                    $slug = basename(parse_url($this->options[$page], PHP_URL_PATH));
+                    $post_details = array(
+                        'post_title'    => $title,
+                        'post_name'     => $slug,
+                        'post_content'  => $contents,
+                        'post_status'   => 'publish',
+                        'post_author'   => get_current_user_id(),
+                        'post_type' => 'page'
+                    );
+                    $res = wp_insert_post($post_details);
+                    if (is_wp_error($res)) {
+                        $create_message = "<div class='page-insert-error'>Could not create default $title page:<br/>"
+                            .$res->get_error_message().'</div>';
+                    } else {
+                        $meeting_details_id = $res;
+                        $new = get_post($meeting_details_id);
+                        $this->options[$page] = rtrim(parse_url($new->guid)['path'], '/');
+                        $create_message = "<div class='page-insert-ok'>$title page created</div>";
+                    }
+                }
+            }
+            if ($meeting_details_id > 0) {
+                if (isset($_POST['disable_tinyMCE'])) {
+                    update_post_meta($meeting_details_id, '_crouton_disable_tinyMCE', 1);
+                } else {
+                    delete_post_meta($meeting_details_id, '_crouton_disable_tinyMCE');
+                }
+            }
+            return $create_message;
+        }
         /**
          * Adds settings/options page
          */
         public function adminOptionsPage()
         {
+            $create_message = '';
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
@@ -522,6 +578,10 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
+                $this->options['google_api_key'] = $_POST['google_api_key'];
+                $this->options['disable_tinyMCE'] = isset($_POST['disable_tinyMCE']);
+                $create_message = $this->createMeetingDetailsPage('meeting_details_href', "Meeting Details");
+                $create_message .= $this->createMeetingDetailsPage('virtual_meeting_details_href', "Virtual_Meeting Details");
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
@@ -550,6 +610,9 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
+            }
+            if (!isset($this->options['disable_tinyMCE'])) {
+                $this->options['disable_tinyMCE'] = false;
             }
             ?>
             <div class="wrap">
@@ -679,13 +742,22 @@ jQuery(document).ready(function() {
                         <ul>
                             <li>
                                 <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
-                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" />
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
                             </li>
                             <li>
                                 <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
-                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" />
+                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
                             </li>
-                            <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
+                            <li>
+                                <div id="meeting_details_options" style="margin-bottom:5px;">
+                                    <?php if ($create_message) {
+                                        echo $create_message;
+                                    } ?>
+                                </div>
+                                <input type="checkbox" id="disable_tinyMCE" name="disable_tinyMCE" <?php echo ($this->options['disable_tinyMCE']) ? 'checked': ''; ?>>
+                                <label for="disable_tinyMCE">Disable visual (WYSIWYG) editor when editing template. (recommended).</label>
+                            </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">

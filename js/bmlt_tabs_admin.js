@@ -99,3 +99,13 @@ jQuery(document).ready(function($) {
 		trigger: 'click'
 	});
 });
+function show_create_detail_option(me) {
+	if (me.value && me.value.trim().length > 0) {
+		document.getElementById('meeting_details_options').innerHTML =
+			'<input type="checkbox" id="create_default_page" name="create_default_page">' +
+			'<label for="create_default_page">If page doesn\'t exist, create it.</label>'
+		;
+	} else {
+		document.getElementById('meeting_details_options').innerHTML = '';
+	}
+}

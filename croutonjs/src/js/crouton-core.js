@@ -201,6 +201,7 @@ function Crouton(config) {
 					var fullUrl = self.config['root_server'] + url
 					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
+					self.mutex = false;
 					return;
 				}
 				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
@@ -811,13 +812,16 @@ Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 Crouton.prototype.doHandlebars = function() {
 	var elements = document.getElementsByTagName('bmlt-handlebar');
 	if (elements.length === 0) {
-		self.showMessage('No <bmlt-handlebar> tags found');
+		console.log('No <bmlt-handlebar> tags found');
 		return;
 	};
 	var self = this;
 	self.lock(function() {
 		if (self.isEmpty(self.meetingData)) {
-			self.showMessage("No meetings found for parameters specified.");
+			for (let i = 0; i < elements.length; i++) {
+				var element = elements.item(i);
+				element.innerHTML = "Meeting not found!";
+			}
 			return;
 		}
 		var promises = [self.getServiceBodies([self.meetingData[0]['service_body_bigint']])];
@@ -867,13 +871,18 @@ Crouton.prototype.doHandlebars = function() {
 						}
 						templateString = element.firstChild.textContent;
 					}
-
-					var template = crouton_Handlebars.compile(templateString);
-					var handlebarResult = template(enrichedMeetingData[0]);
+					var handlebarResult;
+					try { 
+						var template = crouton_Handlebars.compile(templateString);
+						handlebarResult = template(enrichedMeetingData[0]);
+					} catch (e) {
+						console.log(e);
+						handlebarResult = e.message;
+					}
 					var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
 					if (!htmlDecode.body || !htmlDecode.body.firstChild) {
 						console.log('<bmlt-handlebar> tag: could not parse the Handlebars result');
-						element.remove();
+						element.replaceWith('<bmlt-handlebar> tag: could not parse the Handlebars result');
 						continue;
 					}
 					var firstPart = htmlDecode.body.firstChild;
