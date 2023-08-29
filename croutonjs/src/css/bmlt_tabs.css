@@ -85,7 +85,12 @@ span.bmlt_tabs_group_count {
 #bmlt-tabs tr:nth-child(odd) {
 	background: #FFF;
 }
-
+#bmlt-tabs #byday .evenRow {
+    background: #F2F2F2;
+}
+#bmlt-tabs #byday .oddRow {
+	background: #FFF;
+}
 #bmlt-tabs td {
 /* border-top: 0; */
 	padding: .8em;
@@ -345,22 +350,18 @@ span.bmlt_tabs_group_count {
 		width: 100% !important;
 	}
 
-	#bmlt-tabs .meeting-name,#bmlt-tabs .bmlt-time-2 {
-	/* font-weight: 100; */
-	}
-
 	#bmlt-tabs .bmlt-time-2 {
 		color: #DB4865;
 	}
 
 	#bmlt-tabs a#bmlt-formats,#bmlt-tabs a#map-button {
-		background-color: #fff !important;
+		background-color: #fff;
 		color: #000;
 		border-radius: 0;
 	}
 
 	#bmlt-tabs a#bmlt-formats,#bmlt-tabs a#share-button {
-		background-color: #fff !important;
+		background-color: #fff;
 		color: #000;
 		border-radius: 0;
 	}
