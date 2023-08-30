@@ -33,7 +33,9 @@
 #bmlt-tabs tr:nth-child(odd) {
     background-color: #F5F5F5;
 }
-
+#bmlt-tabs #byday .oddRow {
+	background-color: #F5F5F5;
+}
 #bmlt-tabs .nav-tabs>li.active>a {
     background-color: #444;
     color: #F5F5F5;
@@ -81,7 +83,9 @@
 #bmlt-tabs tr:nth-child(even) {
     background-color: #FFF;
 }
-
+#bmlt-tabs tr:nth-child(even) {
+    background-color: #FFF;
+}
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
     background-color: rebeccapurple;
 }

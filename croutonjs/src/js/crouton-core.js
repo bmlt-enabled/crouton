@@ -448,7 +448,9 @@ function Crouton(config) {
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 		}
-
+		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
+			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+		});
 		if (self.config['filter_tabs']) {
 			self.showPage("#nav-days");
 			self.showPage("#tabs-content");
@@ -469,6 +471,8 @@ function Crouton(config) {
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
+		jQuery(".evenRow").removeClass("evenRow");
+		jQuery(".oddRow").removeClass("oddRow");
 	};
 
 	self.renderView = function (selector, context, callback) {
