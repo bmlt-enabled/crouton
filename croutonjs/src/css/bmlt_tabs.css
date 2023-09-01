@@ -350,19 +350,11 @@ span.bmlt_tabs_group_count {
 		width: 100% !important;
 	}
 
-	#bmlt-tabs .bmlt-time-2 {
-		color: #DB4865;
-	}
-
 	#bmlt-tabs a#bmlt-formats,#bmlt-tabs a#map-button {
-		background-color: #fff;
-		color: #000;
 		border-radius: 0;
 	}
 
 	#bmlt-tabs a#bmlt-formats,#bmlt-tabs a#share-button {
-		background-color: #fff;
-		color: #000;
 		border-radius: 0;
 	}
 
