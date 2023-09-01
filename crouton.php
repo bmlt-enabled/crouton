@@ -532,8 +532,7 @@ jQuery(document).ready(function() {
                             .$res->get_error_message().'</div>';
                     } else {
                         $meeting_details_id = $res;
-                        $new = get_post($meeting_details_id);
-                        $this->options[$page] = rtrim(parse_url($new->guid)['path'], '/');
+                        $this->options[$page] = rtrim(parse_url(get_permalink($meeting_details_id))['path'], '/');
                         $create_message = "<div class='page-insert-ok'>$title page created</div>";
                     }
                 }
@@ -1075,6 +1074,7 @@ jQuery(document).ready(function() {
 
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             // TODO add default language and root_server
+            $params = apply_filters('crouton_configuration', $params);
             return json_encode($params);
         }
     }
