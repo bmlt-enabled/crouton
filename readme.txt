@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.16.1 =
 * Fix problem with zebra-striping of filtered views.
+* Fix some problems with Bootstrap by including transition.js
 
 = 3.16.0 =
 * New shortcode [bmlt_handlebar]:  the contents of the shortcode are interpreted as a handlebarjs template.
