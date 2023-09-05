@@ -1279,7 +1279,20 @@ Crouton.prototype.renderMap = function() {
 		}
 	})
 };
-calculateBounds = function() {
+Crouton.prototype.initMap = function(callback) {
+	var self = this;
+	if (self.map == null) {
+		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+		var mapOpt = { zoom: 3 };
+		if (self.handlebarMapOptions.length > 0) mapOpt = {
+			center: new google.maps.LatLng(self.handlebarMapOptions.lat, self.handlebarMapOptions.lng),
+			zoom: self.handlebarMapOptions.zoom,
+			mapTypeId:google.maps.MapTypeId.ROADMAP
+		};
+		self.map = new google.maps.Map(document.getElementById('bmlt-map'), mapOpt );
+	}
+
+ 	jQuery("#bmlt-map").removeClass("hide");
 	var bounds = new google.maps.LatLngBounds();
 	// We go through all the results, and get the "spread" from them.
 	for (var c = 0; c < self.meetingData.length; c++) {
@@ -1290,23 +1303,6 @@ calculateBounds = function() {
 	}
 	// We now have the full rectangle of our meeting search results. Scale the map to fit them.
 	self.map.fitBounds(bounds);
-
-}
-Crouton.prototype.initMap = function(callback) {
-	var self = this;
-	if (self.map == null) {
-		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
-		var mapOpt = { zoom: 3 };
-		if (self.handlebarMapOptions) mapOpt = {
-			center: new google.maps.LatLng(self.handlebarMapOptions.lat, self.handlebarMapOptions.lng),
-			zoom: self.handlebarMapOptions.zoom,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
-		self.map = new google.maps.Map(document.getElementById('bmlt-map'), mapOpt );
-	}
-
- 	jQuery("#bmlt-map").removeClass("hide");
-	if (!self.handlebarMapOptions) self.calculateBounds();
 	var infoWindow = new google.maps.InfoWindow();
 
 	// Create OverlappingMarkerSpiderfier instance
