@@ -145,6 +145,7 @@ function Crouton(config) {
 
 	self.rowClick = function(id) {
 		var map_marker = self.findMarkerById(id);
+		if (!map_marker) return;
 		self.map.setCenter(map_marker.getPosition());
 		self.map.setZoom(17);
 		google.maps.event.trigger(map_marker, "click");
@@ -1103,7 +1104,7 @@ Crouton.prototype.render = function() {
 						dropdownCssClass: 'bmlt-drop'
 					});
 
-					jQuery('[data-toggle="popover"]').popover();
+					jQuery('[data-toggle="popover"]').popover().click(function(e) {e.preventDefault(); e.stopPropagation()});
 					jQuery('html').on('click', function (e) {
 						if (jQuery(e.target).data('toggle') !== 'popover') {
 							jQuery('[data-toggle="popover"]').popover('hide');
@@ -1296,6 +1297,7 @@ Crouton.prototype.initMap = function(callback) {
 	var bounds = new google.maps.LatLngBounds();
 	// We go through all the results, and get the "spread" from them.
 	for (var c = 0; c < self.meetingData.length; c++) {
+		if (self.meetingData[c].venue_type == venueType.VIRTUAL) continue;
 		var lat = self.meetingData[c].latitude;
 		var lng = self.meetingData[c].longitude;
 		// We will set our minimum and maximum bounds.
@@ -1351,6 +1353,7 @@ Crouton.prototype.initMap = function(callback) {
 	// create an array of markers based on a given "locations" array.
 	// The map() method here has nothing to do with the Google Maps API.
 	self.meetingData.map(function (location, i) {
+		if (location.venue_type == venueType.VIRTUAL) return;
 		var marker_html = '<dl><dt><strong>';
 		marker_html += location.meeting_name;
 		marker_html += '</strong></dt>';
