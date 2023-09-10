@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.16.3 =
+* Fix problem causing format popover to close immediately whenever show_map option is on
+* Do not include virtual meetings in map.
+
 = 3.16.2 =
 * Fix problem map initialization.
 
