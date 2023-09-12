@@ -60,7 +60,7 @@ https://demo.bmlt.app/crouton
 * Special-Interest Dropdown.  This is basically just a filter of the formats dropdown, but because there are so many formats, the formats dropdown is pretty unusable.
 * View-By Language and View-By Special-Interest buttons.  Like the view-by city option, but for these format codes.
 * 'has_meeting_count' flag, adding a meeting count to the table without the use of an additional [meeting_count] shortcode.
-* 'venue_type' added to the [bmlt_tabs] shortcode, to allow for easy filtering of meetings without needing a custom query.
+* 'venue_type' added to the [bmlt_tabs] shortcode, to allow for easy filtering of meetings without needing a custom query.
 
 = 3.15.3 =
 * Fixed German translation for Friday.

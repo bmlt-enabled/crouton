@@ -37,7 +37,7 @@ function numbersonly(myfield, e, dec)
 };
 
 jQuery(document).ready(function($) {
-	var tomato = "https://tomato.bmltenabled.org/main_server";
+	var aggregator = "https://aggregator.bmltenabled.org/main_server";
 	$("#accordion").accordion({
 		heightStyle: "content",
 		active: false,
@@ -64,13 +64,13 @@ jQuery(document).ready(function($) {
 		$(".ctrl_key").hide();
 	});
 	$(window).on("load", function () {
-		if($('#use_tomato').is(':checked')) {
+		if($('#use_aggregator').is(':checked')) {
 			$("#root_server").prop("readonly", true);
 		}
 	});
-	$('#use_tomato').click(function() {
+	$('#use_aggregator').click(function() {
 		if($(this).is(':checked')) {
-			$("#root_server").val(tomato);
+			$("#root_server").val(aggregator);
 			$("#root_server").prop("readonly", true);
 		} else {
 			$("#root_server").val("");
@@ -78,8 +78,8 @@ jQuery(document).ready(function($) {
 		}
 	});
 	var rootServerValue = $('#root_server').val();
-	if(~rootServerValue.indexOf(tomato)) {
-		$("#use_tomato").prop("checked", true);
+	if(~rootServerValue.indexOf(aggregator)) {
+		$("#use_aggregator").prop("checked", true);
 	}
 	$('.tooltip').tooltipster({
 		animation: 'grow',
