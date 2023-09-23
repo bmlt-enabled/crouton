@@ -187,6 +187,8 @@ function Crouton(config) {
 			for (var i = 0; i < self.config['extra_meetings'].length; i++) {
 				extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
 			}
+			const regex = /&services\[\]=\d+/;
+			url = url.replace(regex, '');
 			promises.push(fetchJsonp(self.config['root_server'] + url + extra_meetings_query).then(function (response) { return response.json(); }));
 		}
 
