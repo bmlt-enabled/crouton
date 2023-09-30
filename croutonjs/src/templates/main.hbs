@@ -12,6 +12,10 @@
 			{{> byfields this }}
 		</div>
 	{{/each}}
+    {{#if this.config.map_page }}
+    	<div id="byfield_embeddedMapPage" class="bmlt-page hide">
+		</div>
+    {{/if}}
     <div id="byday" class="bmlt-page hide">
         {{> bydays this.meetings.bydays}}
     </div>

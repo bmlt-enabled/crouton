@@ -4,11 +4,15 @@
         <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
     {{/if}}
     {{#each this.config.button_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
     {{#each this.config.button_format_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton btn btn-primary btn-sm">{{this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
     {{/each}}
+    {{#if this.config.map_page}}
+        <div class="bmlt-button-container"><a id="filterButton_embeddedMapPage" data-field="embeddedMapPage" class="filterButton displayTypeLogic btn btn-primary btn-sm">{{getWord 'mapPage'}}</a></div>
+        <div class="bmlt-button-container"><a id="displayTypeButton_tablePages" data-field="tablePages" class="filterButton displayTypeLogic btn btn-primary btn-sm hide">{{getWord 'tablePages'}}</a></div>
+    {{/if}}
 
 	{{#if this.config.has_days}}
 		<div class="bmlt-dropdown-container">

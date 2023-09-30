@@ -8,6 +8,7 @@ function Crouton(config) {
 	var self = this;
 	self.mutex = false;
 	self.map = null;
+	self.filtering = false;
 	self.geocoder = null;
 	self.map_objects = [];
 	self.map_clusters = [];
@@ -32,6 +33,7 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		button_format_filters: [],
+		map_page: true,
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
@@ -215,6 +217,13 @@ function Crouton(config) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
 				self.mutex = false;
+				const meetingsLoadedEvent = new CustomEvent('meetingsLoaded', {
+					detail: {
+						meetingData : self.meetingData,
+						formatData : self.formatsData
+					 }
+				});
+				document.dispatchEvent(meetingsLoadedEvent);
 			});
 	};
 	self.addDatafieldsToQuery = function() {
@@ -415,8 +424,8 @@ function Crouton(config) {
 		});
 	};
 
-	self.filteredView = function (field) {
-		self.resetFilter();
+	self.filteredView = function (field, resetFilters=true) {
+		if (resetFilters) self.resetFilter();
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#filterButton_" + field);
@@ -451,9 +460,26 @@ function Crouton(config) {
 		} else {
 			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 		}
+		var showingNow = [];
 		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+			const rowId = value.id.split("-");
+			showingNow.push(rowId[rowId.length-1]);
 		});
+		if (self.config.map_page) {
+			self.clearAllMapObjects();
+			self.clearAllMapClusters();
+			this.mapPage(null, showingNow);
+			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+				jQuery('#displayTypeButton_tablePages').removeClass('hide');
+			}
+		}
+		if (jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+			self.showFilteredMeetingsAsTable();
+		}
+		self.filtering = true;
+	};
+	self.showFilteredMeetingsAsTable = function () {
 		if (self.config['filter_tabs']) {
 			self.showPage("#nav-days");
 			self.showPage("#tabs-content");
@@ -468,9 +494,12 @@ function Crouton(config) {
 				}
 			});
 		}
-	};
-
+	}
 	self.resetFilter = function () {
+		self.filtering = false;
+		if (self.map && self.config.map_page) {
+			self.mapPage(null);
+		}
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
@@ -1117,7 +1146,7 @@ Crouton.prototype.render = function() {
 						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
 
 						var val = jQuery(this).val();
-						jQuery('.bmlt-page').each(function () {
+						jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
 							self.hidePage(this);
 							self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
 							return;
@@ -1128,10 +1157,24 @@ Crouton.prototype.render = function() {
 						self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 					});
 
-					jQuery(".filterButton").on('click', function (e) {
+					jQuery(".filterButtonLogic").on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value);
 					});
-
+					jQuery(".displayTypeLogic").on('click', function (e) {
+						if (self.filtering) {
+							jQuery(".displayTypeLogic").each(function() {
+								if (e.target == this) jQuery(this).addClass("hide");
+								else jQuery(this).removeClass("hide");
+							})
+						}
+					});
+					jQuery('#displayTypeButton_tablePages').on('click', function (e) {
+						self.hidePage('#byfield_embeddedMapPage');
+						self.showFilteredMeetingsAsTable();
+					});
+					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
+						self.filteredView(e.target.attributes['data-field'].value, false);
+					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
 							self.hidePage("#" + this.id);
@@ -1168,6 +1211,10 @@ Crouton.prototype.render = function() {
 
 					if (self.config['show_map']) {
 						self.loadGapi('crouton.initMap');
+					}
+
+					if (self.config['map_page']) {
+						self.loadGapi('crouton.mapPage');
 					}
 
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
@@ -1296,15 +1343,23 @@ Crouton.prototype.initMap = function(callback) {
 	}
 
  	jQuery("#bmlt-map").removeClass("hide");
-	var bounds = new google.maps.LatLngBounds();
-	// We go through all the results, and get the "spread" from them.
-	for (var c = 0; c < self.meetingData.length; c++) {
-		if (self.meetingData[c].venue_type == venueType.VIRTUAL) continue;
-		var lat = self.meetingData[c].latitude;
-		var lng = self.meetingData[c].longitude;
-		// We will set our minimum and maximum bounds.
-		bounds.extend(new google.maps.LatLng(lat, lng));
+	self.fillMap(callback);
+}
+Crouton.prototype.mapPage = function(callback, filteredIds) {
+	var self = this;
+	if (self.map == null) {
+		self.map = new google.maps.Map(document.getElementById('byfield_embeddedMapPage'), { zoom: 3 } );
 	}
+	self.fillMap(callback, filteredIds);
+}
+Crouton.prototype.fillMap = function(callback, filteredIds=null) {
+	var self = this;
+	const filteredMeetings = self.meetingData.filter(m => m.venue_type != venueType.VIRTUAL)
+		.filter((m) => (filteredIds===null) || filteredIds.includes(m.id_bigint));
+	const bounds = filteredMeetings.reduce(
+		function (bounds, m) {
+			return bounds.extend(new google.maps.LatLng(m.latitude, m.longitude))
+		}, new google.maps.LatLngBounds());
 	// We now have the full rectangle of our meeting search results. Scale the map to fit them.
 	self.map.fitBounds(bounds);
 	var infoWindow = new google.maps.InfoWindow();
@@ -1354,8 +1409,7 @@ Crouton.prototype.initMap = function(callback) {
 	// Note: The code uses the JavaScript Array.prototype.map() method to
 	// create an array of markers based on a given "locations" array.
 	// The map() method here has nothing to do with the Google Maps API.
-	self.meetingData.map(function (location, i) {
-		if (location.venue_type == venueType.VIRTUAL) return;
+	filteredMeetings.map(function (location, i) {
 		var marker_html = '<dl><dt><strong>';
 		marker_html += location.meeting_name;
 		marker_html += '</strong></dt>';
