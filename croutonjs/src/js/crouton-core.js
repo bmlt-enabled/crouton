@@ -425,7 +425,9 @@ function Crouton(config) {
 	};
 
 	self.filteredView = function (field, resetFilters=true) {
-		if (resetFilters) self.resetFilter();
+		if (resetFilters) {
+			self.resetFilter();
+		}
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#filterButton_" + field);
@@ -467,11 +469,10 @@ function Crouton(config) {
 			showingNow.push(rowId[rowId.length-1]);
 		});
 		if (self.config.map_page) {
-			self.clearAllMapObjects();
-			self.clearAllMapClusters();
-			this.mapPage(null, showingNow);
+			this.fillMap(null, showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 				jQuery('#displayTypeButton_tablePages').removeClass('hide');
+				jQuery('#filterButton_embeddedMapPage').addClass('hide');
 			}
 		}
 		if (jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
@@ -497,8 +498,10 @@ function Crouton(config) {
 	}
 	self.resetFilter = function () {
 		self.filtering = false;
-		if (self.map && self.config.map_page) {
-			self.mapPage(null);
+		if (self.config.map_page) {
+			self.fillMap(null);
+			jQuery('#displayTypeButton_tablePages').addClass('hide');
+			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
 		}
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
@@ -1345,17 +1348,21 @@ Crouton.prototype.initMap = function(callback) {
  	jQuery("#bmlt-map").removeClass("hide");
 	self.fillMap(callback);
 }
-Crouton.prototype.mapPage = function(callback, filteredIds) {
+Crouton.prototype.mapPage = function(callback) {
 	var self = this;
 	if (self.map == null) {
 		self.map = new google.maps.Map(document.getElementById('byfield_embeddedMapPage'), { zoom: 3 } );
 	}
-	self.fillMap(callback, filteredIds);
+	self.fillMap(callback);
 }
 Crouton.prototype.fillMap = function(callback, filteredIds=null) {
 	var self = this;
-	const filteredMeetings = self.meetingData.filter(m => m.venue_type != venueType.VIRTUAL)
-		.filter((m) => (filteredIds===null) || filteredIds.includes(m.id_bigint));
+	if (self.map == null) return;
+	self.clearAllMapObjects();
+	self.clearAllMapClusters();
+	const physicalMeetings = self.meetingData.filter(m => m.venue_type != venueType.VIRTUAL)
+	const filteredMeetings = (filteredIds===null) ? physicalMeetings
+		: physicalMeetings.filter((m) => filteredIds.includes(m.id_bigint));
 	const bounds = filteredMeetings.reduce(
 		function (bounds, m) {
 			return bounds.extend(new google.maps.LatLng(m.latitude, m.longitude))
