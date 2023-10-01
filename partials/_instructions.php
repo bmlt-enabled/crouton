@@ -257,9 +257,10 @@
     <h3 class="help-accordian"><strong>Companion Map</strong></h3>
     <div>
         <p>With this parameter you can have crouton display a companion map of all the meetings.</p>
-        <p><strong>[bmlt_tabs show_map="0|1"]</strong></p>
+        <p><strong>[bmlt_tabs show_map="0|1|embed"]</strong></p>
         <p>0 = don't display map (default)</p>
-        <p>1 = display map</p>
+        <p>1 = display map in a seperate window</p>
+		<p>embed = display map in a pane, and have it listen for filtering requests.</p>
         <p>You can specify the maximum zoom level at which clustering is enabled, 15 is the default. This may be desirable with smaller data sets in which you don't want to cluster at all.</p>
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>

@@ -33,7 +33,6 @@ function Crouton(config) {
 			{'title': 'City', 'field': 'location_municipality'},
 		],
 		button_format_filters: [],
-		map_page: true,
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: false,              // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
@@ -752,7 +751,10 @@ Crouton.prototype.setConfig = function(config) {
 			self.config[propertyName] = parseInt(config[propertyName] || 0);
 		}
 	}
-
+	if (self.config.show_map === "embed") {
+		self.config.show_map = false;
+		self.config.map_page = true;
+	}
 	self.config["distance_search"] = parseInt(self.config["distance_search"] || 0);
 	self.config["day_sequence"] = [];
 	self.config.day_sequence.push(self.config.int_start_day_id);
@@ -1351,7 +1353,7 @@ Crouton.prototype.initMap = function(callback) {
 Crouton.prototype.mapPage = function(callback) {
 	var self = this;
 	if (self.map == null) {
-		self.map = new google.maps.Map(document.getElementById('byfield_embeddedMapPage'), { zoom: 3 } );
+		self.map = new google.maps.Map(document.getElementById('byfield_embeddedMapPage'), { zoom: 3, maxZoom: 17 } );
 	}
 	self.fillMap(callback);
 }
