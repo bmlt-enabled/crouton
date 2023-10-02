@@ -453,13 +453,24 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 
-	self.filteredPage = function (dataType, dataValue) {
+	self.filteredPage = function () {
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
-			jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
-		} else {
-			jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
+		var filteringDropdown = false;
+		jQuery(".filter-dropdown").each(function(index, filter) {
+			const dataValue = filter.value.replace("a-", "");
+			if (dataValue === "") return;
+			filteringDropdown = true;
+			const dataType = filter.getAttribute("data-pointer").toLowerCase();
+			if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
+				jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
+			} else {
+				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
+			}
+		});
+		if (!filteringDropdown) {
+			self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+			return;
 		}
 		var showingNow = [];
 		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
@@ -1148,8 +1159,6 @@ Crouton.prototype.render = function() {
 					});
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
-						jQuery(this).parent().siblings().children(".filter-dropdown").val(null).trigger('change');
-
 						var val = jQuery(this).val();
 						jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
 							self.hidePage(this);
