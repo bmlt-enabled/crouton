@@ -1162,7 +1162,7 @@ Crouton.prototype.render = function() {
 						var val = jQuery(this).val();
 						jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
 							self.hidePage(this);
-							self.filteredPage(e.target.getAttribute("data-pointer").toLowerCase(), val.replace("a-", ""));
+							self.filteredPage();
 							return;
 						});
 					});
