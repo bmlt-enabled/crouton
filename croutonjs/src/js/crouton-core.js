@@ -1219,7 +1219,19 @@ Crouton.prototype.render = function() {
 					}
 
 					if (self.config['map_page']) {
-						self.loadGapi('crouton.mapPage');
+						if (typeof c_mm === 'undefined')
+							self.loadGapi('crouton.mapPage');
+						else {
+							c_mm.loadMapExt(document.getElementById('byfield_embeddedMapPage'), self.meetingData, self.formatsData);
+							const attrObserver = new MutationObserver((mutations) => {
+								const showList = mutations.filter(mu => { 
+								  	return mu.type === "attributes" && mu.attributeName == "class" 
+										&& mu.target.classList.contains("show");
+								});
+								if (showList.length > 0) c_mm.showMapExt();
+							});
+							attrObserver.observe(document.getElementById('byfield_embeddedMapPage'), {attributes: true});
+						}
 					}
 
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
@@ -1358,11 +1370,15 @@ Crouton.prototype.mapPage = function(callback) {
 	self.fillMap(callback);
 }
 Crouton.prototype.fillMap = function(callback, filteredIds=null) {
+	if (typeof c_mm !== 'undefined') {
+		c_mm.filterFromCrouton(filteredIds);
+		return;
+	}
 	var self = this;
 	if (self.map == null) return;
 	self.clearAllMapObjects();
 	self.clearAllMapClusters();
-	const physicalMeetings = self.meetingData.filter(m => m.venue_type != venueType.VIRTUAL)
+	const physicalMeetings = self.meetingData.filter(m => m.venue_type != venueType.VIRTUAL);
 	const filteredMeetings = (filteredIds===null) ? physicalMeetings
 		: physicalMeetings.filter((m) => filteredIds.includes(m.id_bigint));
 	const bounds = filteredMeetings.reduce(

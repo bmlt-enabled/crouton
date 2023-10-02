@@ -258,6 +258,7 @@ if (!class_exists("Crouton")) {
                 $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton.nojquery.js" : "crouton.nojquery.min.js");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
+                do_action('crouton_map_enqueue_scripts');
             }
         }
 
@@ -381,7 +382,8 @@ if (!class_exists("Crouton")) {
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); });</script>";
+                $externalMap = apply_filters("crouton_map_create_control", "", isset($config['language']) ? substr($config['language'], 0, 2) : 'en');
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config);$externalMap });</script>";
             } else {
                 return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
             }
