@@ -45,6 +45,7 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
+        private $embeddedMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -163,30 +164,28 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            // check the post content for the short code
-            if (stripos($post_content, '[bmlt_tabs') !== false) {
-                echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
-                return true;
+            $tags = ['bmlt_tabs', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
+            if (empty($matches)) {
+                return false;
             }
-            if (stripos($post_content, '[crouton_map') !== false) {
-                return true;
+    
+            foreach ($matches as $shortcode) {
+                if ($shortcode[2] === 'bmlt_tabs') {
+                    // This is a bad-smell.  It is a side effect.
+                    // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
+                    echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
+                    $split = explode("show_map", $shortcode[3]);
+                    if (count($split) > 1) {
+                        $split = explode('=', $split[1]);
+                        if ((count($split) > 1) && (trim($split[1]) === 'embed')) {
+                            $this->embeddedMap = true;
+                        }
+                    }
+                }
             }
-            if (stripos($post_content, '[bmlt_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[meeting_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[group_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[service_body_names') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[bmlt_handlebar') !== false) {
-                return true;
-            }
-            return false;
+
+            return true;
         }
 
         public function isRootServerMissing()
@@ -258,7 +257,9 @@ if (!class_exists("Crouton")) {
                 $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton.nojquery.js" : "crouton.nojquery.min.js");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
-                do_action('crouton_map_enqueue_scripts');
+                if ($this->embeddedMap) {
+                    do_action('crouton_map_enqueue_scripts');
+                }
             }
         }
 
@@ -382,7 +383,10 @@ if (!class_exists("Crouton")) {
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                $externalMap = apply_filters("crouton_map_create_control", "", isset($config['language']) ? substr($config['language'], 0, 2) : 'en');
+                $externalMap = "";
+                if ($this->embeddedMap) {
+                    $externalMap = apply_filters("crouton_map_create_control", "", isset($config['language']) ? substr($config['language'], 0, 2) : 'en');
+                }
                 return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config);$externalMap });</script>";
             } else {
                 return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
@@ -1075,8 +1079,9 @@ jQuery(document).ready(function() {
             $params['extra_meetings'] = $extra_meetings_array;
 
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            // TODO add default language and root_server
-            $params = apply_filters('crouton_configuration', $params);
+            if ($this->embeddedMap) {
+                $params = apply_filters('crouton_configuration', $params);
+            }
             return json_encode($params);
         }
     }

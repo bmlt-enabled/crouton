@@ -485,7 +485,7 @@ function Crouton(config) {
 				jQuery('#filterButton_embeddedMapPage').addClass('hide');
 			}
 		}
-		if (jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
 		}
 		self.filtering = true;
@@ -507,12 +507,12 @@ function Crouton(config) {
 		}
 	}
 	self.resetFilter = function () {
-		self.filtering = false;
 		if (self.config.map_page) {
-			self.fillMap(null);
+			if (self.filtering) self.fillMap(null);
 			jQuery('#displayTypeButton_tablePages').addClass('hide');
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
 		}
+		self.filtering = false;
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
