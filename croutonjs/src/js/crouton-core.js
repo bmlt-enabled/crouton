@@ -216,12 +216,6 @@ function Crouton(config) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
 				self.mutex = false;
-				const meetingsLoadedEvent = new CustomEvent('meetingsLoaded', {
-					detail: {
-						meetingData : self.meetingData,
-						formatData : self.formatsData
-					 }
-				});
 				document.dispatchEvent(meetingsLoadedEvent);
 			});
 	};
@@ -484,7 +478,8 @@ function Crouton(config) {
 				jQuery('#displayTypeButton_tablePages').removeClass('hide');
 				jQuery('#filterButton_embeddedMapPage').addClass('hide');
 			}
-		}
+		} else if (self.config.show_map) this.fillMap(null, showingNow);
+
 		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
 		}
@@ -511,7 +506,7 @@ function Crouton(config) {
 			if (self.filtering) self.fillMap(null);
 			jQuery('#displayTypeButton_tablePages').addClass('hide');
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
-		}
+		} else if (self.config.show_map && self.filtering) self.fillMap(null);
 		self.filtering = false;
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
@@ -1228,16 +1223,16 @@ Crouton.prototype.render = function() {
 					}
 
 					if (self.config['map_page']) {
-						if (typeof c_mm === 'undefined')
+						if (typeof crouton_external_map === 'undefined')
 							self.loadGapi('crouton.mapPage');
 						else {
-							c_mm.loadMapExt(document.getElementById('byfield_embeddedMapPage'), self.meetingData, self.formatsData);
+							crouton_external_map.loadMapExt(document.getElementById('byfield_embeddedMapPage'), self.meetingData, self.formatsData);
 							const attrObserver = new MutationObserver((mutations) => {
 								const showList = mutations.filter(mu => { 
 								  	return mu.type === "attributes" && mu.attributeName == "class" 
 										&& mu.target.classList.contains("show");
 								});
-								if (showList.length > 0) c_mm.showMapExt();
+								if (showList.length > 0) crouton_external_map.showMapExt();
 							});
 							attrObserver.observe(document.getElementById('byfield_embeddedMapPage'), {attributes: true});
 						}
@@ -1379,8 +1374,8 @@ Crouton.prototype.mapPage = function(callback) {
 	self.fillMap(callback);
 }
 Crouton.prototype.fillMap = function(callback, filteredIds=null) {
-	if (typeof c_mm !== 'undefined') {
-		c_mm.filterFromCrouton(filteredIds);
+	if (typeof crouton_external_map !== 'undefined') {
+		crouton_external_map.filterFromCrouton(filteredIds);
 		return;
 	}
 	var self = this;

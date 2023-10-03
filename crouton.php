@@ -385,7 +385,12 @@ if (!class_exists("Crouton")) {
                 $this->croutonBlockInitialized = true;
                 $externalMap = "";
                 if ($this->embeddedMap) {
-                    $externalMap = apply_filters("crouton_map_create_control", "", isset($config['language']) ? substr($config['language'], 0, 2) : 'en');
+                    $externalMap = apply_filters(
+                        "crouton_map_create_control",
+                        "",
+                        isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
+                        "crouton_external_map"
+                    );
                 }
                 return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config);$externalMap });</script>";
             } else {
