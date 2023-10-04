@@ -258,7 +258,15 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
                 if ($this->embeddedMap) {
-                    do_action('crouton_map_enqueue_scripts');
+                    if (has_action('crouton_map_enqueue_scripts')) {
+                        do_action('crouton_map_enqueue_scripts');
+                    } else {
+                        $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
+                        wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
+                    }
+                } else {
+                    $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
+                    wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
                 }
             }
         }
@@ -379,15 +387,15 @@ if (!class_exists("Crouton")) {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
 
-        public function getInitializeCroutonBlock($config = array())
+        public function getInitializeCroutonBlock($config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                $externalMap = "";
+                $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
                 if ($this->embeddedMap) {
                     $externalMap = apply_filters(
                         "crouton_map_create_control",
-                        "",
+                        $externalMap,
                         isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
                         "crouton_external_map"
                     );
@@ -400,7 +408,7 @@ if (!class_exists("Crouton")) {
 
         public function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
         public function renderMap($atts)
@@ -431,30 +439,30 @@ if (!class_exists("Crouton")) {
                     ? boolval($atts['map_search_coordinates_search'])
                     : $this->shortCodeOptions['map_search_coordinates_search']
             ];
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
         }
 
         public function groupCount($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
         }
 
         public function serviceBodyNames($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
         public function handlebarFooter()
         {
@@ -470,7 +478,7 @@ if (!class_exists("Crouton")) {
 var crouton;
 
 jQuery(document).ready(function() { 
-    crouton = new Crouton(<?php echo $config; ?>);
+    crouton = new Crouton(<?php echo $config[0]; ?>);
     crouton.doHandlebars();
 });
 </script>
@@ -587,7 +595,6 @@ jQuery(document).ready(function() {
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
-                $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->options['google_api_key'] = $_POST['google_api_key'];
                 $this->options['disable_tinyMCE'] = isset($_POST['disable_tinyMCE']);
                 $create_message = $this->createMeetingDetailsPage('meeting_details_href', "Meeting Details");
@@ -964,9 +971,12 @@ jQuery(document).ready(function() {
             }
             return $all_meetings;
         }
-
         public function getCroutonJsConfig($atts)
         {
+            $mapParams = [];
+            if (isset($atts['map_search'])) {
+                $mapParams['map_search'] = $atts['map_search'];
+            }
             // Pulling simple values from options
             $defaults = $this->shortCodeOptions;
             foreach ($defaults as $key => $value) {
@@ -1072,7 +1082,8 @@ jQuery(document).ready(function() {
             }
             $params['metadata_template'] = html_entity_decode($metadata_template);
 
-            $params['google_api_key'] = $this->options['google_api_key'];
+            $mapParams['google_api_key'] = $this->options['google_api_key'];
+            $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
@@ -1087,7 +1098,7 @@ jQuery(document).ready(function() {
             if ($this->embeddedMap) {
                 $params = apply_filters('crouton_configuration', $params);
             }
-            return json_encode($params);
+            return [json_encode($params), json_encode($mapParams)];
         }
     }
     //End Class Crouton

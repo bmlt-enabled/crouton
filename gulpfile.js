@@ -21,14 +21,17 @@ let jsFilesNoJQuery = [
 	'crouton-default-templates.js',
 	'crouton-core.js',
 	'punycode.1.4.1.js',
-	'markerclusterer.js',
-	'oms-1.0.3.min.js',
 	'fetch-jsonp.js',
 	'promises-polyfill.js',
 ];
 let jsFilesWithJquery = [
 	'jquery-3.4.1.min.js',
 ].concat(jsFilesNoJQuery);
+let jsFilesCroutonMap = [
+	'crouton-map.js',
+	'markerclusterer.js',
+	'oms-1.0.3.min.js',
+];
 let cssFiles = [
 	'select2.min.css',
 	'bootstrap.min.css',
@@ -52,6 +55,24 @@ task('js-files-nojquery', () => {
 		}))
 		.pipe(dest(distDir))
 		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
+});
+
+task('jsFilesCroutonMap', () => {
+	let jsFilesWithFullPath = [];
+	for (let jsFile of jsFilesCroutonMap) {
+		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
+	}
+
+	return src(jsFilesWithFullPath)
+		.pipe(concat('crouton-map.js'))
+		.pipe(dest(distDir))
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message:"jsFilesCroutonMap complete", wait: true}));
 });
 
 task('js-files', () => {
@@ -102,7 +123,7 @@ task('css-files', () => {
 		.pipe(notify({message: "css-files complete", wait: true}));
 });
 
-task('default', series('templates', 'js-files', 'js-files-nojquery', 'css-files'));
+task('default', series('templates', 'js-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'css-files'));
 
 task('watch', () => {
 	watch([
