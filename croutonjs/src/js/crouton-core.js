@@ -216,7 +216,6 @@ function Crouton(config) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
 				self.mutex = false;
-				document.dispatchEvent(meetingsLoadedEvent);
 			});
 	};
 	self.addDatafieldsToQuery = function() {
@@ -472,6 +471,7 @@ function Crouton(config) {
 			const rowId = value.id.split("-");
 			showingNow.push(rowId[rowId.length-1]);
 		});
+		showingNow = [...new Set(showingNow)];
 		if (self.config.map_page) {
 			this.fillMap(null, showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
@@ -612,7 +612,7 @@ function Crouton(config) {
 		
 		return n.replace(/\d/g, x => farsiDigits[x]);
 	}
-	self.enrichMeetings = function (meetingData, filter) {
+	self.enrichMeetings = function (meetingData) {
 		var meetings = [];
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
