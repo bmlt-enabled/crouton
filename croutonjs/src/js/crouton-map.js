@@ -11,6 +11,7 @@ function CroutonMap(config) {
     self.map_clusters = [];
     self.oms = null;
     self.markerClusterer = null;
+	self.handlebarMapOptions = null;
 	self.loadGapi = function(callbackFunctionName) {
 		var tag = document.createElement('script');
 		tag.src = "https://maps.googleapis.com/maps/api/js?key=" + self.config['google_api_key'] + "&callback=" + callbackFunctionName;
@@ -101,10 +102,6 @@ CroutonMap.prototype.mapSearchClickMode = function() {
 		gestureHandling: 'none'
 	});
 };
-CroutonMap.prototype.reset = function() {
-	//self.clearAllMapObjects();
-	//self.clearAllMapClusters();
-}
 CroutonMap.prototype.mapSearchPanZoomMode = function() {
 	var self = this;
 	self.mapClickSearchMode = false;
@@ -137,16 +134,15 @@ CroutonMap.prototype.mapSearchTextMode = function(location) {
 	}
 };
 
-Crouton.prototype.renderMap = function() {
+CroutonMap.prototype.renderMap = function() {
 	var self = this;
-	jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
 	self.geocoder = new google.maps.Geocoder();
 	jQuery.when(jQuery.getJSON(self.config['template_path'] + "/themes/" + self.config['theme'] + ".json").then(
 		function (data, textStatus, jqXHR) {
 			return self.config["theme_js"] = data["google_map_theme"];
 		}
 	)).then(function() {
-		self.map = new google.maps.Map(document.getElementById('bmlt-map'), {
+		self.map = new google.maps.Map(document.getElementById(self.domElementName), {
 			zoom: self.config['map_search']['zoom'] || 10,
 			center: {
 				lat: self.config['map_search']['latitude'],
@@ -199,48 +195,34 @@ Crouton.prototype.renderMap = function() {
 		}
 	})
 };
-CroutonMap.prototype.render = function() {
+CroutonMap.prototype.showMap = function() {
+}
+CroutonMap.prototype.render = function(domElementName) {
+	self = this;
+	self.domElementName = domElementName;
 	this.loadGapi('croutonMap.renderMap');
 }
-CroutonMap.prototype.initialize = function(meetingData, formatsData, handlebarMapOptions=[]) {
+CroutonMap.prototype.initialize = function(domElementName, meetingData, formatsData, handlebarMapOptions=null) {
 	this.meetingData = meetingData;
 	this.formatsData = formatsData;
 	this.handlebarMapOptions = handlebarMapOptions;
+	this.domElementName = domElementName;
 	this.loadGapi('croutonMap.initMap');
-}
-CroutonMap.prototype.embed = function(meetingData, formatsData) {
-	this.meetingData = meetingData;
-	this.formatsData = formatsData;
-	this.loadGapi('croutonMap.mapPage');
 }
 CroutonMap.prototype.initMap = function(callback) {
 	var self = this;
 	if (self.map == null) {
-		jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
-		var mapOpt = { zoom: 3 };
-		if (self.handlebarMapOptions.length > 0) mapOpt = {
+		var mapOpt = { zoom: 3, maxZoom: 17 };
+		if (self.handlebarMapOptions) mapOpt = {
 			center: new google.maps.LatLng(self.handlebarMapOptions.lat, self.handlebarMapOptions.lng),
 			zoom: self.handlebarMapOptions.zoom,
 			mapTypeId:google.maps.MapTypeId.ROADMAP
 		};
-		self.map = new google.maps.Map(document.getElementById('bmlt-map'), mapOpt );
-	}
-
- 	jQuery("#bmlt-map").removeClass("hide");
-	self.fillMap(callback);
-}
-CroutonMap.prototype.mapPage = function(callback) {
-	var self = this;
-	if (self.map == null) {
-		self.map = new google.maps.Map(document.getElementById('byfield_embeddedMapPage'), { zoom: 3, maxZoom: 17 } );
+		self.map = new google.maps.Map(document.getElementById(self.domElementName), mapOpt );
 	}
 	self.fillMap(callback);
 }
-CroutonMap.prototype.fillMap = function(callback, filteredIds=null) {
-	if (typeof crouton_external_map !== 'undefined') {
-		crouton_external_map.filterFromCrouton(filteredIds);
-		return;
-	}
+CroutonMap.prototype.fillMap = function(filteredIds=null) {
 	var self = this;
 	if (self.map == null) return;
 	self.clearAllMapObjects();
@@ -370,6 +352,4 @@ CroutonMap.prototype.fillMap = function(callback, filteredIds=null) {
 		maxZoom: self.config['map_max_zoom'],
 		zoomOnClick: false
 	});
-
-	if (callback !== undefined && isFunction(callback)) callback();
 };

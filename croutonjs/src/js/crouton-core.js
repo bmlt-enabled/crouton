@@ -263,12 +263,6 @@ function Crouton(config) {
 		}
 	};
 
-	if (self.config['map_search'] !== null) {
-		croutonMap.render();
-	} else {
-		self.meetingSearch();
-	}
-
 	self.lock = function(callback) {
 		var self = this;
 		var lock_id = setInterval(function() {
@@ -383,12 +377,12 @@ function Crouton(config) {
 		});
 		showingNow = [...new Set(showingNow)];
 		if (self.config.map_page) {
-			croutonMap.fillMap(null, showingNow);
+			croutonMap.fillMap(showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 				jQuery('#displayTypeButton_tablePages').removeClass('hide');
 				jQuery('#filterButton_embeddedMapPage').addClass('hide');
 			}
-		} else if (self.config.show_map) croutonMap.fillMap(null, showingNow);
+		} else if (self.config.show_map) croutonMap.fillMap(showingNow);
 
 		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
@@ -413,10 +407,10 @@ function Crouton(config) {
 	}
 	self.resetFilter = function () {
 		if (self.config.map_page) {
-			if (self.filtering) croutonMap.fillMap(null);
+			if (self.filtering) croutonMap.fillMap();
 			jQuery('#displayTypeButton_tablePages').addClass('hide');
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
-		} else if (self.config.show_map && self.filtering) croutonMap.fillMap(null);
+		} else if (self.config.show_map && self.filtering) croutonMap.fillMap();
 		self.filtering = false;
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
@@ -648,6 +642,16 @@ function Crouton(config) {
 		}
 		return true;
 	};
+	self.createBmltMapElement = function() {
+		if (!document.getElementById('bmlt-map'))
+			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+		return 'bmlt-map';
+	}
+	if (self.config['map_search'] !== null) {
+		croutonMap.render(self.createBmltMapElement());
+	} else {
+		self.meetingSearch();
+	}
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -705,7 +709,6 @@ Crouton.prototype.reset = function() {
 	var self = this;
 	jQuery("#custom-css").remove();
 	jQuery("#" + self.config["placeholder_id"]).html("");
-	croutonMap.reset();
 };
 
 Crouton.prototype.meetingCount = function(callback) {
@@ -855,13 +858,13 @@ Crouton.prototype.doHandlebars = function() {
 				}
 				if (mustDoMap) {
 					self.meetingData = enrichedMeetingData;
-					croutonMap.initialize(self.meetingData, self.formatsData, self.handlebarMapOptions);
+					croutonMap.initialize(self.createBmltMapElement(),self.meetingData, self.formatsData, self.handlebarMapOptions);
+					jQuery("#bmlt-map").removeClass("hide");
 				}
 			});
 	});
 
 };
-
 Crouton.prototype.render = function() {
 	var self = this;
 	self.lock(function() {
@@ -1129,24 +1132,21 @@ Crouton.prototype.render = function() {
 					}
 
 					if (self.config['show_map']) {
-						croutonMap.initialize(self.meetingData, self.formatsData);
+						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, self.formatsData);
+						jQuery("#bmlt-map").removeClass("hide");
 					}
 
 					if (self.config['map_page']) {
-						if (typeof crouton_external_map === 'undefined')
-							croutonMap.embed(self.meetingData, self.formatsData);
-						else {
-							crouton_external_map.loadMapExt(document.getElementById('byfield_embeddedMapPage'), self.meetingData, self.formatsData);
+							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
 							const attrObserver = new MutationObserver((mutations) => {
 								const showList = mutations.filter(mu => { 
 								  	return mu.type === "attributes" && mu.attributeName == "class" 
 										&& mu.target.classList.contains("show");
 								});
-								if (showList.length > 0) crouton_external_map.showMapExt();
+								if (showList.length > 0) croutonMap.showMap();
 							});
 							attrObserver.observe(document.getElementById('byfield_embeddedMapPage'), {attributes: true});
 						}
-					}
 
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();

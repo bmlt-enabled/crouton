@@ -45,7 +45,7 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
-        private $embeddedMap = false;
+        private $hasMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -177,11 +177,14 @@ if (!class_exists("Crouton")) {
                     echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
                     $split = explode("show_map", $shortcode[3]);
                     if (count($split) > 1) {
-                        $split = explode('=', $split[1]);
-                        if ((count($split) > 1) && (trim($split[1]) === 'embed')) {
-                            $this->embeddedMap = true;
-                        }
+                        $this->hasMap = true;
                     }
+                }
+                if ($shortcode[2] === 'bmlt_handlebar') {
+                    $this->hasMap = true;
+                }
+                if ($shortcode[2] === 'crouton_map') {
+                    $this->hasMap = true;
                 }
             }
 
@@ -257,7 +260,7 @@ if (!class_exists("Crouton")) {
                 $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton.nojquery.js" : "crouton.nojquery.min.js");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
-                if ($this->embeddedMap) {
+                if ($this->hasMap) {
                     if (has_action('crouton_map_enqueue_scripts')) {
                         do_action('crouton_map_enqueue_scripts');
                     } else {
@@ -386,21 +389,25 @@ if (!class_exists("Crouton")) {
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
-
+        private function getMapInitialization($mapConfig)
+        {
+            $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
+            if ($this->hasMap) {
+                $externalMap = apply_filters(
+                    "crouton_map_create_control",
+                    $externalMap,
+                    isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
+                    "croutonMap"
+                );
+            }
+            return $externalMap;
+        }
         public function getInitializeCroutonBlock($config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
-                if ($this->embeddedMap) {
-                    $externalMap = apply_filters(
-                        "crouton_map_create_control",
-                        $externalMap,
-                        isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
-                        "crouton_external_map"
-                    );
-                }
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config);$externalMap });</script>";
+                $externalMap =  $this->getMapInitialization($mapConfig);
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap; crouton = new Crouton($config); });</script>";
             } else {
                 return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
             }
@@ -472,13 +479,14 @@ if (!class_exists("Crouton")) {
             $meetingId = $_GET['meeting-id'];
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
-            $config = $this->getCroutonJsConfig($attr);
+            [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
+            $externalMap =  $this->getMapInitialization($mapConfig);
             ?>
 <script type='text/javascript'>
 var crouton;
 
 jQuery(document).ready(function() { 
-    crouton = new Crouton(<?php echo $config[0]; ?>);
+    <?php echo $externalMap; ?>; crouton = new Crouton(<?php echo $config; ?>);
     crouton.doHandlebars();
 });
 </script>
@@ -1095,9 +1103,11 @@ jQuery(document).ready(function() {
             $params['extra_meetings'] = $extra_meetings_array;
 
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            if ($this->embeddedMap) {
+            if ($this->hasMap) {
                 $params = apply_filters('crouton_configuration', $params);
             }
+            $mapParams['theme'] = $params['theme'];
+            
             return [json_encode($params), json_encode($mapParams)];
         }
     }

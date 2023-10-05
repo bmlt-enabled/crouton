@@ -8,3 +8,6 @@ croutonjs/src/js/templates.js
 *.orig
 *.iml
 tmp
+croutonjs/dist/crouton-map.min.js
+croutonjs/dist/crouton-map.min.js
+croutonjs/dist/crouton-map.js
