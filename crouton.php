@@ -267,9 +267,6 @@ if (!class_exists("Crouton")) {
                         $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
                         wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
                     }
-                } else {
-                    $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
-                    wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
                 }
             }
         }
@@ -391,8 +388,9 @@ if (!class_exists("Crouton")) {
         }
         private function getMapInitialization($mapConfig)
         {
-            $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
+            $externalMap = "";
             if ($this->hasMap) {
+                $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
                 $externalMap = apply_filters(
                     "crouton_map_create_control",
                     $externalMap,
