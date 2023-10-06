@@ -490,7 +490,7 @@ if (!class_exists("Crouton")) {
 var crouton;
 
 jQuery(document).ready(function() { 
-    <?php echo $externalMap; ?>; crouton = new Crouton(<?php echo $config; ?>);
+            <?php echo $externalMap; ?>; crouton = new Crouton(<?php echo $config; ?>);
     crouton.doHandlebars();
 });
 </script>
