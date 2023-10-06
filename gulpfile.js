@@ -8,7 +8,7 @@ const wrap = require('gulp-wrap');
 const declare = require('gulp-declare');
 const notify = require('gulp-notify');
 
-let jsFilesNoJQuery = [
+let jsFilesCroutonCore = [
 	'bootstrap.min.js',
 	'transition.js',
 	'select2.full.min.js',
@@ -24,14 +24,18 @@ let jsFilesNoJQuery = [
 	'fetch-jsonp.js',
 	'promises-polyfill.js',
 ];
-let jsFilesWithJquery = [
-	'jquery-3.4.1.min.js',
-].concat(jsFilesNoJQuery);
 let jsFilesCroutonMap = [
 	'crouton-map.js',
 	'markerclusterer.js',
 	'oms-1.0.3.min.js',
 ];
+let jsFilesNoJQuery = [
+].concat(jsFilesCroutonCore)
+.concat(jsFilesCroutonMap);
+let jsFilesWithJquery = [
+	'jquery-3.4.1.min.js',
+].concat(jsFilesNoJQuery);
+
 let cssFiles = [
 	'select2.min.css',
 	'bootstrap.min.css',
@@ -56,7 +60,23 @@ task('js-files-nojquery', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
 });
+task('jsFilesCroutonCore', () => {
+	let jsFilesWithFullPath = [];
+	for (let jsFile of jsFilesCroutonCore) {
+		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
+	}
 
+	return src(jsFilesWithFullPath)
+		.pipe(concat('crouton-core.js'))
+		.pipe(dest(distDir))
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message:"js-files-crouton-core complete", wait: true}));
+});
 task('jsFilesCroutonMap', () => {
 	let jsFilesWithFullPath = [];
 	for (let jsFile of jsFilesCroutonMap) {
@@ -123,7 +143,7 @@ task('css-files', () => {
 		.pipe(notify({message: "css-files complete", wait: true}));
 });
 
-task('default', series('templates', 'js-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'css-files'));
+task('default', series('templates', 'js-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'css-files'));
 
 task('watch', () => {
 	watch([

@@ -38,9 +38,11 @@ https://demo.bmlt.app/crouton
 
 = 3.17.0 =
 * Fix bug where extra meetings were not recognised
-* Embedded map that listens to filter
-* Map can be implemented by another plugin (bmlt-meeting-map), that uses OSM instead of Google
+* Maps can be embedded, so that users can switch between table and map views, rather than needing to scroll.
+* Embedded maps listen to filters
+* Map can be implemented by another plugin (bmlt-meeting-map) that uses OSM instead of Google
 * Filters can be combined
+* Only the needed map implementations are loaded
 
 = 3.16.3 =
 * Fix problem causing format popover to close immediately whenever show_map option is on

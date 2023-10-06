@@ -648,8 +648,14 @@ function Crouton(config) {
 		return 'bmlt-map';
 	}
 	if (self.config['map_search'] !== null) {
+		if (typeof window.croutonMap === 'undefined') {
+			window.croutonMap = new CroutonMap(config);
+		}
 		croutonMap.render(self.createBmltMapElement());
 	} else {
+		if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
+			window.croutonMap = new CroutonMap(config);
+		}
 		self.meetingSearch();
 	}
 }
