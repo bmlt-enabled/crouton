@@ -45,7 +45,10 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
+        // crouton includes a map, we need to include the JS files and create the croutonMap object.
         private $hasMap = false;
+        // the [crouton_map] shortcode always uses the internal map.  If we want the other, you can just use its shortcode.
+        private $useInternalMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -185,6 +188,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($shortcode[2] === 'crouton_map') {
                     $this->hasMap = true;
+                    $this->useInternalMap = true;
                 }
             }
 
@@ -261,7 +265,7 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
                 if ($this->hasMap) {
-                    if (has_action('crouton_map_enqueue_scripts')) {
+                    if (has_action('crouton_map_enqueue_scripts') && !$this->useInternalMap) {
                         do_action('crouton_map_enqueue_scripts');
                     } else {
                         $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
@@ -391,12 +395,14 @@ if (!class_exists("Crouton")) {
             $externalMap = "";
             if ($this->hasMap) {
                 $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
-                $externalMap = apply_filters(
-                    "crouton_map_create_control",
-                    $externalMap,
-                    isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
-                    "croutonMap"
-                );
+                if (!$this->useInternalMap) {
+                    $externalMap = apply_filters(
+                        "crouton_map_create_control",
+                        $externalMap,
+                        isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
+                        "croutonMap"
+                    );
+                }
             }
             return $externalMap;
         }
@@ -1101,7 +1107,7 @@ jQuery(document).ready(function() {
             $params['extra_meetings'] = $extra_meetings_array;
 
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            if ($this->hasMap) {
+            if ($this->hasMap && !$this->useInternalMap) {
                 $params = apply_filters('crouton_configuration', $params);
             }
             $mapParams['theme'] = $params['theme'];

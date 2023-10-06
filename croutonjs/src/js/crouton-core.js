@@ -1045,8 +1045,9 @@ Crouton.prototype.render = function() {
 				}, function () {
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
-						jQuery(".bmlt-data-row").click(function () {
-							croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+						jQuery(".bmlt-data-row").click(function (e) {
+							if (e.target.tagName !== 'A')
+								croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
 						});
 					}
 
