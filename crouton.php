@@ -1107,9 +1107,7 @@ jQuery(document).ready(function() {
             $params['extra_meetings'] = $extra_meetings_array;
 
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            if ($this->hasMap && !$this->useInternalMap) {
-                $params = apply_filters('crouton_configuration', $params);
-            }
+            $params = apply_filters('crouton_configuration', $params);
             $mapParams['theme'] = $params['theme'];
             
             return [json_encode($params), json_encode($mapParams)];
