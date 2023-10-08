@@ -41,7 +41,8 @@ function CroutonLocalization(language) {
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'tabular': "Tabular",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -79,6 +80,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Teilen",
+			'tabular': "Tabularisch",
 			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -119,6 +121,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -159,6 +162,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -199,6 +203,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -239,6 +244,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -266,6 +272,7 @@ function CroutonLocalization(language) {
 			"common_needs": "Common Needs",
 			"meeting_count": "Weekly Meetings:",
 			"venue_types": "Venue Types",
+			'tabular': "Tabular",
 			"venue_type_choices": {
 				IN_PERSON: "In Person",
 				VIRTUAL: "Virtual",
@@ -321,6 +328,7 @@ function CroutonLocalization(language) {
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
+			'tabular': "Tabular",
 			'css-floatdirection': ''
 		},
 		"fa-IR": {
@@ -359,6 +367,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': 'style="text-align:right;"',
 			'css-floatdirection': 'style="float:right;"'
@@ -399,6 +408,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -439,6 +449,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Condividi",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -479,6 +490,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -519,6 +531,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -559,6 +572,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "Compartilhar",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -599,6 +613,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''
@@ -639,6 +654,7 @@ function CroutonLocalization(language) {
 				GS: "Group Support Forum"
 			},
 			"share": "share",
+			'tabular': "Tabular",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': ''

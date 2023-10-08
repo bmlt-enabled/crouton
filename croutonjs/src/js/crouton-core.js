@@ -278,7 +278,10 @@ function Crouton(config) {
 		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
 		self.showPage("#" + day_id);
 	};
-
+	self.dayTabFromId = function(id) {
+		day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
+		self.dayTab(day_id);
+	};
 	self.showPage = function (id) {
 		jQuery(id).removeClass("hide").addClass("show");
 	};
