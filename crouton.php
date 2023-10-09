@@ -366,6 +366,9 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
@@ -541,13 +544,17 @@ jQuery(document).ready(function() {
                 'filterPluginActions'
             ), 10, 2);
         }
+        private function getDefaultMeetingDetailsPageContents()
+        {
+            return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
+        }
         public function createMeetingDetailsPage($page, $title = "Meeting Details")
         {
             $create_message = '';
             $meeting_details_id = (strlen($this->options[$page]) > 0)  ? url_to_postid($this->options[$page]) : 0;
             if (strlen($this->options[$page]) > 0 && $meeting_details_id === 0) {
                 if (isset($_POST['create_default_page'])) {
-                    $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
+                    $contents = $this->getDefaultMeetingDetailsPageContents();
                     $slug = basename(parse_url($this->options[$page], PHP_URL_PATH));
                     $post_details = array(
                         'post_title'    => $title,
@@ -1106,6 +1113,9 @@ jQuery(document).ready(function() {
 
             $params['extra_meetings'] = $extra_meetings_array;
 
+            if (empty($params['meeting_details_href'])) {
+                $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
+            }
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             $params = apply_filters('crouton_configuration', $params);
             $mapParams['theme'] = $params['theme'];
