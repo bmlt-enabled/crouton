@@ -182,6 +182,9 @@ if (!class_exists("Crouton")) {
                     if (count($split) > 1) {
                         $this->hasMap = true;
                     }
+                    if ($_GET['meeting-id']) {
+                        $this->hasMap = true;
+                    }
                 }
                 if ($shortcode[2] === 'bmlt_handlebar') {
                     $this->hasMap = true;
@@ -403,7 +406,8 @@ if (!class_exists("Crouton")) {
                         "crouton_map_create_control",
                         $externalMap,
                         isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
-                        "croutonMap"
+                        "croutonMap",
+                        (empty($params['meeting_details_href'])) ? $_SERVER["REQUEST_URI"] : $params['meeting_details_href']
                     );
                 }
             }

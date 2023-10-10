@@ -279,6 +279,9 @@ CroutonMap.prototype.fillMap = function(filteredIds=null) {
 		infoWindow.setContent(marker.desc);
 		infoWindow.open(self.map, marker);
 	});
+	infoWindow.addListener('closeclick', function() {
+		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+	});
 	// Add some markers to the map.
 	filteredMeetings.map(function (location, i) {
 		var marker_html = '<dl><dt><strong>';
