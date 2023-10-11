@@ -175,15 +175,16 @@ if (!class_exists("Crouton")) {
     
             foreach ($matches as $shortcode) {
                 if ($shortcode[2] === 'bmlt_tabs') {
-                    // This is a bad-smell.  It is a side effect.
-                    // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
-                    echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
-                    $split = explode("show_map", $shortcode[3]);
-                    if (count($split) > 1) {
-                        $this->hasMap = true;
-                    }
                     if ($_GET['meeting-id']) {
                         $this->hasMap = true;
+                    } else {
+                        // This is a bad-smell.  It is a side effect.
+                        // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
+                        echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
+                        $split = explode("show_map", $shortcode[3]);
+                        if (count($split) > 1) {
+                            $this->hasMap = true;
+                        }
                     }
                 }
                 if ($shortcode[2] === 'bmlt_handlebar') {
@@ -407,7 +408,7 @@ if (!class_exists("Crouton")) {
                         $externalMap,
                         isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
                         "croutonMap",
-                        (empty($params['meeting_details_href'])) ? $_SERVER["REQUEST_URI"] : $params['meeting_details_href']
+                        $this->options['meeting_details_href']
                     );
                 }
             }
@@ -1120,6 +1121,8 @@ jQuery(document).ready(function() {
             if (empty($params['meeting_details_href'])) {
                 $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
             }
+            $this->options['meeting_details_href'] = $params['meeting_details_href'];
+             
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             $params = apply_filters('crouton_configuration', $params);
             $mapParams['theme'] = $params['theme'];
