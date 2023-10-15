@@ -98,6 +98,22 @@ jQuery(document).ready(function($) {
 		position: 'right',
 		trigger: 'click'
 	});
+	jQuery('.handlebarsCode').each(function(i,textArea) {
+		CodeMirror.fromTextArea(textArea, {
+			matchBrackets: true,
+			lineNumbers: true,
+			mode: {name: 'handlebars', base: 'text/html'},
+			indentUnit: 4,
+			indentWithTabs: true
+		});
+	});
+	jQuery('#custom_css').each(function(i,textArea) {
+		CodeMirror.fromTextArea(textArea, {
+			lineNumbers: true,
+			mode: 'css',
+        	extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+	});
 });
 function show_create_detail_option(me) {
 	if (me.value && me.value.trim().length > 0) {

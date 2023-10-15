@@ -123,7 +123,6 @@ if (!class_exists("Crouton")) {
                 add_action("admin_notices", array(&$this, "isRootServerMissing"));
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
-                add_filter('wp_editor_settings', array(&$this, "disableTinyMCE"), 100, 2);
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -256,6 +255,18 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script('common');
                 wp_enqueue_script('jquery-ui-accordion');
                 wp_enqueue_script("crouton-default-templates", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-default-templates.js"), true);
+            
+                wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/codemirror.css", false, "5.65.15", 'all');
+                wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/show-hint.css", false, "5.65.15", 'all');
+                wp_enqueue_script('codemirror', plugins_url('js/codemirror/codemirror.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/codemirror.js"), false);
+                wp_enqueue_script('codemirror-simple', plugins_url('js/codemirror/simple.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/simple.js"), false);
+                wp_enqueue_script('codemirror-multiplex', plugins_url('js/codemirror/multiplex.js', __FILE__), array('codemirror-simple'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/multiplex.js"), false);
+                wp_enqueue_script('codemirror-matchbrackets', plugins_url('js/codemirror/matchbrackets.js', __FILE__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/matchbrackets.js"), false);
+                wp_enqueue_script('codemirror-xml', plugins_url('js/codemirror/xml.js', __FILE__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/xml.js"), false);
+                wp_enqueue_script('codemirror-handlebars', plugins_url('js/codemirror/handlebars.js', __FILE__), array('codemirror-xml'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/handlebars.js"), false);
+                wp_enqueue_script('codemirror-css', plugins_url('js/codemirror/css.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/css.js"), false);
+                wp_enqueue_script('showhint', plugins_url('js/codemirror/show-hint.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/show-hint.js"), false);
+                wp_enqueue_script('csshint', plugins_url('js/codemirror/css-hint.js', __FILE__), array('showhint'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/css-hint.js"), false);
             }
         }
 
@@ -845,7 +856,7 @@ jQuery(document).ready(function() {
                         <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
@@ -867,7 +878,7 @@ jQuery(document).ready(function() {
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
                         <ul>
                             <li>
-                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
