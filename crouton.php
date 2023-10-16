@@ -564,48 +564,11 @@ jQuery(document).ready(function() {
         {
             return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
         }
-        public function createMeetingDetailsPage($page, $title = "Meeting Details")
-        {
-            $create_message = '';
-            $meeting_details_id = (strlen($this->options[$page]) > 0)  ? url_to_postid($this->options[$page]) : 0;
-            if (strlen($this->options[$page]) > 0 && $meeting_details_id === 0) {
-                if (isset($_POST['create_default_page'])) {
-                    $contents = $this->getDefaultMeetingDetailsPageContents();
-                    $slug = basename(parse_url($this->options[$page], PHP_URL_PATH));
-                    $post_details = array(
-                        'post_title'    => $title,
-                        'post_name'     => $slug,
-                        'post_content'  => $contents,
-                        'post_status'   => 'publish',
-                        'post_author'   => get_current_user_id(),
-                        'post_type' => 'page'
-                    );
-                    $res = wp_insert_post($post_details);
-                    if (is_wp_error($res)) {
-                        $create_message = "<div class='page-insert-error'>Could not create default $title page:<br/>"
-                            .$res->get_error_message().'</div>';
-                    } else {
-                        $meeting_details_id = $res;
-                        $this->options[$page] = rtrim(parse_url(get_permalink($meeting_details_id))['path'], '/');
-                        $create_message = "<div class='page-insert-ok'>$title page created</div>";
-                    }
-                }
-            }
-            if ($meeting_details_id > 0) {
-                if (isset($_POST['disable_tinyMCE'])) {
-                    update_post_meta($meeting_details_id, '_crouton_disable_tinyMCE', 1);
-                } else {
-                    delete_post_meta($meeting_details_id, '_crouton_disable_tinyMCE');
-                }
-            }
-            return $create_message;
-        }
         /**
          * Adds settings/options page
          */
         public function adminOptionsPage()
         {
-            $create_message = '';
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
@@ -620,20 +583,17 @@ jQuery(document).ready(function() {
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $this->options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
                 $this->options['native_lang'] = trim($_POST['native_lang']);
-                $this->options['meeting_details_href'] = trim($_POST['meeting_details_href']);
-                $this->options['virtual_meeting_details_href'] = trim($_POST['virtual_meeting_details_href']);
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
                 $this->options['metadata_template'] = isset($_POST['metadata_template']) ? str_replace('\\', '', $_POST['metadata_template']) : "";
+                $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
+                $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
-                $this->options['disable_tinyMCE'] = isset($_POST['disable_tinyMCE']);
-                $create_message = $this->createMeetingDetailsPage('meeting_details_href', "Meeting Details");
-                $create_message .= $this->createMeetingDetailsPage('virtual_meeting_details_href', "Virtual_Meeting Details");
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
@@ -786,32 +746,6 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
-                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-details-href" class="anchor"></a>Meeting Detail Pages</h3>
-                        <p>Link to pages where the [bmlt_handlebar] tag is used to insert information about a particular meeting, in more detail and in an
-                            easier to read format than is possible in the crouton table.  Use the partial {{> meetingLink this}} to insert into a template.
-                        </p>
-                        <ul>
-                            <li>
-                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
-                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
-                            </li>
-                            <li>
-                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
-                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
-                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
-                            </li>
-                            <li>
-                                <div id="meeting_details_options" style="margin-bottom:5px;">
-                                    <?php if ($create_message) {
-                                        echo $create_message;
-                                    } ?>
-                                </div>
-                                <input type="checkbox" id="disable_tinyMCE" name="disable_tinyMCE" <?php echo ($this->options['disable_tinyMCE']) ? 'checked': ''; ?>>
-                                <label for="disable_tinyMCE">Disable visual (WYSIWYG) editor when editing template. (recommended).</label>
-                            </li>
-                        </ul>
-                    </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
@@ -863,13 +797,8 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                         <script type="text/javascript">
-                            jQuery("document").ready(function() {
-                                var meeting_data_template = jQuery("#meeting_data_template").val();
-                                jQuery("#meeting_data_template").val(meeting_data_template.replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template));
-                            });
-
                             jQuery("#reset_meeting_data_template").click(function() {
-                                jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
+                                resetCodemirrorToDefault("meeting_data_template");
                             });
                         </script>
                     </div>
@@ -885,13 +814,31 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                         <script type="text/javascript">
-                            jQuery("document").ready(function() {
-                                var metadata_template = jQuery("#metadata_template").val();
-                                jQuery("#metadata_template").val(metadata_template.replace("___DEFAULT___", croutonDefaultTemplates.metadata_template));
-                            });
-
                             jQuery("#reset_metadata_template").click(function() {
-                                jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
+                                resetCodemirrorToDefault("metadata_template");
+                            });
+                        </script>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-details-page" class="anchor"></a>Meeting Details Page</h3>
+                        <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <ul>
+                            <li>
+                                <label for="meetingpage_title_template">Title</label>
+                                <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($this->options['meetingpage_title_template']) ? html_entity_decode($this->options['meetingpage_title_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <label for="meetingpage_contents_template">Contents</label>
+                                <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($this->options['meetingpage_contents_template']) ? html_entity_decode($this->options['meetingpage_contents_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_meetingpage_templates" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_meetingpage_templates").click(function() {
+                                resetCodemirrorToDefault("meetingpage_title_template");
+                                resetCodemirrorToDefault("meetingpage_contents_template");
                             });
                         </script>
                     </div>

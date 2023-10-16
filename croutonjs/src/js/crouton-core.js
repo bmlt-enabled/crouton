@@ -72,6 +72,8 @@ function Crouton(config) {
 		observer_template: croutonDefaultTemplates.observer_template,
 		meeting_count_template: croutonDefaultTemplates.meeting_count_template,
 		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
+		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
+		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 	};
 
 	self.setConfig(config);
@@ -525,6 +527,8 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
 		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
+		crouton_Handlebars.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
+		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
 		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
 
