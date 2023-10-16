@@ -264,12 +264,13 @@
         <p>You can specify the maximum zoom level at which clustering is enabled, 15 is the default. This may be desirable with smaller data sets in which you don't want to cluster at all.</p>
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
+		<p>As an alternative to using google maps, you may install and activate the plugin "bmlt-meeting-map".  In the settings for this plugin, you may select Open Street Maps, or any other standard conform map tile service.  Upon activation, crouton companion maps will use this functionality, rather than the native google maps.
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>
         <p>With this shortcode you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
         <p><strong>[crouton_map]</strong></p>
-        <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs]</p>
+        <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs])</p>
         <p><strong>[crouton_map map_search_auto="false"]</strong> - specifies you do NOT want to automatically use your current latitude and longitude to find meetings (default: true).</p>
         <p><strong>[crouton_map map_search_location="Greensboro, NC"]</strong> - specifies the starting search location on the map (default: none).</p>
         <p><strong>[crouton_map map_search_coordinates_search="true"]</strong> - specifies the starting search coordinates on the map, will use (and require) the latitude and longitude settings as mentioned here. (default: none).</p>
@@ -277,47 +278,6 @@
         <p><strong>[crouton_map map_search_zoom="10"]</strong> - specifies the starting zoom level on the map (default: 10).</p>
         <p><strong>[crouton_map map_search_width="-50"]</strong> - specifies how many meetings to return, a positive integer means how many miles or kilometers to search.  A negative integer indicates the closest number of meetings from that point with no distance limits. (default: -50 [the fifty closest meetings to the point selected]).</p>
         <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
-    </div>
-	<h3 class="help-accordian"><strong>Create Meeting-Detail Pages</strong></h3>
-    <div>
-        <p>With this shortcode you can insert a HandlebarJS template into your page. 
-        <p><strong>[bmlt_handlebar]</strong></p>
-        <p> If the page is called with a query string including "meeting-id=<em>your meeting here</em>"
-			the default BMLT root server will be accessed to obtain the meeting information used when evaluating the template.  The Meeting Data template, and all other templates and helpers
-			used by Crouton are also available for use within the [bmlt-handlebar] tag.</p>
-			<p>For instance, to put the meeting name as the title of the page, you could have
-				<code>[bmlt_handlebar]&lt;H1&gt;{{this.meeting_name}}&lt;/H1&gt;[/bmlt_handlebar]</code>
-			</p>
-		</p>
-		<p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
-		<ul style="list-style:disc; padding-inline-start: 20px;">
-    <li>start_time_formatted</li>
-    <li>end_time_formatted</li>
-    <li>formatted_day</li>
-    <li>formats_expanded - which contains:
-        <ul style="padding-inline-start: 20px;">
-            <li>id</li>
-            <li>key</li>
-            <li>name</li>
-            <li>description</li>
-            <li>type</li>
-        </ul>
-    </li>
-    <li>venue_type</li>
-    <li>venue_type_name</li>  
-    <li>formatted_address</li>
-    <li>formatted_location_info</li>
-    <li>serviceBodyUrl</li>
-    <li>serviceBodyPhone</li>
-    <li>serviceBodyName</li>
-    <li>serviceBodyDescription</li>
-    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
-    <li>serviceBodyType</li>
-</ul>
-		</p>
-		<p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
-			Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
-		</p>
     </div>
 	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
     <div>

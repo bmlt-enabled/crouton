@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.0
+Version: 3.17.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -253,6 +253,7 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_admin.js"), false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__FILE__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
+                add_thickbox();
                 wp_enqueue_script('jquery-ui-accordion');
                 wp_enqueue_script("crouton-default-templates", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-default-templates.js"), true);
             
@@ -746,6 +747,41 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
+                    <div id="examplePopup1" style="display:none">
+<h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
+foreach ($this->getAllFields($this->options['root_server']) as $field) {
+    echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
+}
+?></table>
+<h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
+        <ul style="list-style:disc; padding-inline-start: 20px;">
+    <li>start_time_formatted</li>
+    <li>end_time_formatted</li>
+    <li>formatted_day</li>
+    <li>formats_expanded - which contains:
+        <ul style="padding-inline-start: 20px;">
+            <li>id</li>
+            <li>key</li>
+            <li>name</li>
+            <li>description</li>
+            <li>type</li>
+        </ul>
+    </li>
+    <li>venue_type</li>
+    <li>venue_type_name</li>  
+    <li>formatted_address</li>
+    <li>formatted_location_info</li>
+    <li>serviceBodyUrl</li>
+    <li>serviceBodyPhone</li>
+    <li>serviceBodyName</li>
+    <li>serviceBodyDescription</li>
+    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
+    <li>serviceBodyType</li>
+</ul>
+        </p>
+        <p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+            Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
+        </p></div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
@@ -787,7 +823,9 @@ jQuery(document).ready(function() {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
-                        <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <p>This allows a customization of the meeting data template.  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
                         <ul>
                             <li>
                                 <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
@@ -804,7 +842,9 @@ jQuery(document).ready(function() {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
-                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
                         <ul>
                             <li>
                                 <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
@@ -821,7 +861,9 @@ jQuery(document).ready(function() {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-details-page" class="anchor"></a>Meeting Details Page</h3>
-                        <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
+                        <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
                         <ul>
                             <li>
                                 <label for="meetingpage_title_template">Title</label>
@@ -929,7 +971,19 @@ jQuery(document).ready(function() {
             update_option($this->optionsName, $this->options);
             return;
         }
-
+        /**
+         * @param $root_server
+         * @return array
+         */
+        public function getAllFields($root_server)
+        {
+            try {
+                $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFieldKeys");
+                return json_decode(wp_remote_retrieve_body($results), true);
+            } catch (Exception) {
+                return [];
+            }
+        }
         /**
          * @param $root_server
          * @return string

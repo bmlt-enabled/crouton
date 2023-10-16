@@ -36,6 +36,12 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.17.1 =
+* Meeting Detail Pages are now the Crouton Page, with meeting-id in the query string.  No need for separate pages
+* Meeting Detail Pages can now be edited from the crouton admin/settings page.
+* All Handlebar Templates edited using codemirror
+* Thickbox used to show the values available in templates.
+
 = 3.17.0 =
 * Fix bug where extra meetings were not recognised
 * Maps can be embedded, so that users can switch between table and map views, rather than needing to scroll.
