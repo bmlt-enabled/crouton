@@ -158,11 +158,10 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "bmltHandlebar"
                 ));
-                add_filter('the_content', array(&$this, "disableWpautop"), 0);
             }
         }
 
-        public function hasShortcode()
+        private function hasShortcode()
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
@@ -206,7 +205,7 @@ if (!class_exists("Crouton")) {
             ));
         }
 
-        public function clearAdminMessage()
+        private function clearAdminMessage()
         {
             remove_action("admin_notices", array(
                 &$this,
@@ -218,29 +217,6 @@ if (!class_exists("Crouton")) {
         {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
             $this->__construct();
-        }
-        public function disableTinyMCE($settings, $editor_id)
-        {
-            if ($editor_id === 'content' && get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE', true)) {
-                $settings['tinymce']   = false;
-                $settings['quicktags'] = false;
-                $settings['media_buttons'] = false;
-            }
-        
-            return $settings;
-        }
-        public function disableWpautop($content)
-        {
-            if (get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE')) {
-                remove_filter('the_content', 'wpautop');
-            }
-            return $content;
-        }
-        public function includeToString($file)
-        {
-            ob_start();
-            include($file);
-            return ob_get_clean();
         }
 
         public function enqueueBackendFiles($hook)
@@ -291,34 +267,7 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function getNameFromServiceBodyID($serviceBodyID)
-        {
-            $bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
-            $serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
-            foreach ($serviceBodies as $serviceBody) {
-                if ($serviceBody->id == $serviceBodyID) {
-                    return $serviceBody->name;
-                }
-            }
-        }
-        public function getMeetingsJson($url)
-        {
-            $results = wp_remote_get($url, Crouton::HTTP_RETRIEVE_ARGS);
-            $httpcode = wp_remote_retrieve_response_code($results);
-            $response_message = wp_remote_retrieve_response_message($results);
-            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
-                echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $url</p>";
-                return 0;
-            }
-            $result = wp_remote_retrieve_body($results);
-            if ($result == null || count(json_decode($result)) == 0) {
-                echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
-                return 0;
-            }
-            return $result;
-        }
-
-        public function getCustomQuery($custom_query)
+        private function getCustomQuery($custom_query)
         {
             if (isset($_GET['custom_query'])) {
                 return $_GET['custom_query'];
@@ -331,7 +280,7 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function testRootServer($root_server)
+        private function testRootServer($root_server)
         {
             $args = array(
                 'timeout' => '10',
@@ -364,7 +313,7 @@ if (!class_exists("Crouton")) {
             return $message;
         }
 
-        public function sharedRender()
+        private function sharedRender()
         {
             $output = "";
             if (isset($_GET['this_title'])) {
@@ -426,7 +375,7 @@ if (!class_exists("Crouton")) {
             }
             return $externalMap;
         }
-        public function getInitializeCroutonBlock($config, $mapConfig)
+        private function getInitializeCroutonBlock($config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
@@ -437,12 +386,12 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function renderTable($atts)
+        private function renderTable($atts)
         {
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
-        public function renderMap($atts)
+        private function renderMap($atts)
         {
             if ($atts == null) {
                 $atts = array();
@@ -473,7 +422,7 @@ if (!class_exists("Crouton")) {
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
 
-        public function initCrouton($atts)
+        private function initCrouton($atts)
         {
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
@@ -584,6 +533,8 @@ jQuery(document).ready(function() {
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $this->options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
                 $this->options['native_lang'] = trim($_POST['native_lang']);
+                $this->options['meeting_details_href'] = trim($_POST['meeting_details_href']);
+                $this->options['virtual_meeting_details_href'] = trim($_POST['virtual_meeting_details_href']);
                 $this->options['custom_query']   = $_POST['custom_query'];
                 $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
@@ -648,13 +599,15 @@ jQuery(document).ready(function() {
                         <ul class="configuration-toc">
                             <li><a href="#config-bmlt-root-server">BMLT Root Server</a></li>
                             <li><a href="#config-service-body">Service Body</a></li>
+                            <li><a href="#config-default-options">Default Options</a></li>
                             <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
                             <li><a href="#config-custom-query">Custom Query</a></li>
+                            <li><a href="#config-theme">Theme</a></li>
+                            <li><a href="#config-google-api-key">Google API Key</a></li>
                             <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
                             <li><a href="#config-metadata-data-template">Metadata Template</a></li>
-                            <li><a href="#config-theme">Theme</a></li>
+                            <li><a href="#config-meeting-details-page">Meeting Details Page</a></li>
                             <li><a href="#config-custom-css">Custom CSS</a></li>
-                            <li><a href="#config-google-api-key">Google API Key</a></li>
                             <li><a href="#config-documentation">Documentation</a></li>
                         </ul>
                     </div>
@@ -822,6 +775,40 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
+                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
+                        <ul>
+                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
+                            <li>
+                                <select style="display:inline;" id="theme" name="theme"  class="theme_select">
+                                    <?php
+                                    foreach ($this->themes as $theme) { ?>
+                                        <option <?php if ($theme === $this->options['theme']) {
+                                                    echo "selected";
+                                                } else {
+                                                    echo "";
+                                                }
+                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
+                                        <?php
+                                    }?>
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
+                        <p>This is only needed when using the companion map feature.  As an alternative to using google maps, get the <a href="https://wordpress.org/plugins/bmlt-meeting-map/" target="_blank">BMLT Meeting Map</a> plugin.
+                        This plugin can be configured to use Open Street Mapps (OSM) as its tile provider.  If BMLT-Meeting-Map is activated, crouton will use it to provide its maps.</p>
+                        <ul>
+                            <li>
+                                <label for="google_api_key">API Key: </label>
+                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
+                            </li>
+                        </ul>
+                        <p>If you're using Google Maps, you must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
+                    </div>
+
+                    <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are
                         <span style="text-align:center;padding:20px 0;"> 
@@ -883,25 +870,20 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                                 resetCodemirrorToDefault("meetingpage_contents_template");
                             });
                         </script>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
-                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
+                        <p>By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
+                        be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.
+                        Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).
+                        The partials "meetingpage_title_template" and "meetingpage_contents_template", defined in the two code areas above, are available for use in this way.
+                        </p>
                         <ul>
-                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
                             <li>
-                                <select style="display:inline;" id="theme" name="theme"  class="theme_select">
-                                    <?php
-                                    foreach ($this->themes as $theme) { ?>
-                                        <option <?php if ($theme === $this->options['theme']) {
-                                                    echo "selected";
-                                                } else {
-                                                    echo "";
-                                                }
-                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
-                                        <?php
-                                    }?>
-                                </select>
+                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                            </li>
+                            <li>
+                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
+                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
                             </li>
                         </ul>
                     </div>
@@ -913,17 +895,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
                             </li>
                         </ul>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
-                        <p>This is only needed when using the companion map feature show_map.</p>
-                        <ul>
-                            <li>
-                                <label for="google_api_key">API Key: </label>
-                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
-                            </li>
-                        </ul>
-                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
                     </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
@@ -949,7 +920,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
          * Retrieves the plugin options from the database.
          * @return array
          */
-        public function getOptions()
+        private function getOptions()
         {
             // Don't forget to set up the default options
             if (!$theOptions = get_option($this->optionsName)) {
@@ -961,11 +932,16 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             $this->options = $theOptions;
             $this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
+
+            if (!isset($this->options['crouton_version'])) {
+                $this->options['crouton_version'] = "3.17";
+                $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+            }
         }
         /**
          * Saves the admin options to the database.
          */
-        public function saveAdminOptions()
+        private function saveAdminOptions()
         {
             $this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
             update_option($this->optionsName, $this->options);
@@ -975,7 +951,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
          * @param $root_server
          * @return array
          */
-        public function getAllFields($root_server)
+        private function getAllFields($root_server)
         {
             try {
                 $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFieldKeys");
@@ -984,11 +960,20 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 return [];
             }
         }
+        private function templateToParameter($name)
+        {
+            if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
+                $template = $atts[$name];
+            } else {
+                $template = $this->options[$name];
+            }
+            return html_entity_decode($template);
+        }
         /**
          * @param $root_server
          * @return string
          */
-        public function getAllMeetings($root_server)
+        private function getAllMeetings($root_server)
         {
             $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
             $result = json_decode(wp_remote_retrieve_body($results), true);
@@ -1007,7 +992,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             return $all_meetings;
         }
-        public function getCroutonJsConfig($atts)
+        private function getCroutonJsConfig($atts)
         {
             $mapParams = [];
             if (isset($atts['map_search'])) {
@@ -1104,19 +1089,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
-            if (isset($atts['meeting_data_template']) && $atts['meeting_data_template'] !== null && $atts['meeting_data_template'] !== "") {
-                $meeting_data_template = $atts['meeting_data_template'];
-            } else {
-                $meeting_data_template = $this->options['meeting_data_template'];
-            }
-            $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
-
-            if (isset($atts['metadata_template']) && $atts['metadata_template'] !== null && $atts['metadata_template'] !== "") {
-                $metadata_template = $atts['metadata_template'];
-            } else {
-                $metadata_template = $this->options['metadata_template'];
-            }
-            $params['metadata_template'] = html_entity_decode($metadata_template);
+            $params['meeting_data_template'] = $this->templateToParameter('meeting_data_template');
+            $params['metadata_template'] = $this->templateToParameter('metadata_template');
+            $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
+            $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
 
             $mapParams['google_api_key'] = $this->options['google_api_key'];
             $mapParams['template_path'] = $params['template_path'];
