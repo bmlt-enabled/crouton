@@ -545,6 +545,9 @@ table.tablesaw {
 	.tablesaw-stack td:empty,.tablesaw-stack th:empty {
 		display: none;
 	}
+	th#meeting-details-title {
+		display: table-cell;
+	}
 }
 
 /* Media query to show as a standard table at 560px (35em x 16px) or wider */
