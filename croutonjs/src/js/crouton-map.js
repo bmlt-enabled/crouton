@@ -235,7 +235,8 @@ CroutonMap.prototype.fillMap = function(filteredIds=null) {
 			return bounds.extend(new google.maps.LatLng(m.latitude, m.longitude))
 		}, new google.maps.LatLngBounds());
 	// We now have the full rectangle of our meeting search results. Scale the map to fit them.
-	self.map.fitBounds(bounds);
+	if (!self.handlebarMapOptions) self.map.fitBounds(bounds);
+	if (self.map.getZoom()>18) self.map.setZoom(18);
 	var infoWindow = new google.maps.InfoWindow();
 
 	// Create OverlappingMarkerSpiderfier instance

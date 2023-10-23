@@ -873,7 +873,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         <p>By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
                         be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.
                         Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).
-                        The partials "meetingpage_title_template" and "meetingpage_contents_template", defined in the two code areas above, are available for use in this way.
+                        The partials "meetingpageTitleTemplate" and "meetingpageContentsTemplate", defined in the two code areas above, are available for use in this way.
                         </p>
                         <ul>
                             <li>
