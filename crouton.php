@@ -173,7 +173,7 @@ if (!class_exists("Crouton")) {
     
             foreach ($matches as $shortcode) {
                 if ($shortcode[2] === 'bmlt_tabs') {
-                    if ($_GET['meeting-id']) {
+                    if (isset($_GET['meeting-id'])) {
                         $this->hasMap = true;
                     } else {
                         // This is a bad-smell.  It is a side effect.
