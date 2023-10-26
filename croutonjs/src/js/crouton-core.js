@@ -381,6 +381,7 @@ function Crouton(config) {
 			showingNow.push(rowId[rowId.length-1]);
 		});
 		showingNow = [...new Set(showingNow)];
+		self.updateMeetingCount(showingNow.length);
 		if (self.config.map_page) {
 			croutonMap.fillMap(showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
@@ -417,6 +418,7 @@ function Crouton(config) {
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
 		} else if (self.config.show_map && self.filtering) croutonMap.fillMap();
 		self.filtering = false;
+		self.updateMeetingCount(self.meetingData.length);
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
@@ -436,7 +438,9 @@ function Crouton(config) {
 		jQuery(selector).html(template(context));
 		callback();
 	};
-
+	self.updateMeetingCount = function(meetingCount) {
+		jQuery('#bmlt_tabs_meeting_count').html(meetingCount);
+	}
 	self.getServiceBodies = function(service_bodies_id) {
 		var requires_parents = false;
 		for (var i = 0; i < self.all_data_keys.length; i++) {
