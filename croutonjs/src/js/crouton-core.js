@@ -884,6 +884,7 @@ Crouton.prototype.doHandlebars = function() {
 };
 Crouton.prototype.render = function() {
 	var self = this;
+	self.uniqueData = [];
 	self.lock(function() {
 		var body = jQuery("body");
 		if (self.config['theme'] !== '') {
@@ -897,20 +898,8 @@ Crouton.prototype.render = function() {
 			return;
 		}
 
-		var unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
-		var promises = [self.getMasterFormats(), self.getServiceBodies(unique_service_bodies_ids)];
-
-		self.uniqueData = {
-			'groups': getUniqueValuesOfKey(self.meetingData, 'meeting_name').sort(),
-			'cities': getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort(),
-			'locations': getUniqueValuesOfKey(self.meetingData, 'location_text').sort(),
-			'sub_provinces': getUniqueValuesOfKey(self.meetingData, 'location_sub_province').sort(),
-			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
-			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
-			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': unique_service_bodies_ids,
-			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
-		};
+		self.unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
+		var promises = [self.getMasterFormats(), self.getServiceBodies(self.unique_service_bodies_ids)];
 
 		Promise.all(promises)
 			.then(function(data) {
@@ -920,22 +909,12 @@ Crouton.prototype.render = function() {
 				var service_bodies = data[1];
 				for (var i = 0; i < service_bodies.length; i++) {
 					self.all_service_bodies.push(service_bodies[i]);
-					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
-						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
+					for (var j = 0; j < self.unique_service_bodies_ids.length; j++) {
+						if (service_bodies[i]["id"] === self.unique_service_bodies_ids[j]) {
 							self.active_service_bodies.push(service_bodies[i]);
 						}
 					}
 				}
-
-				self.uniqueData['regions'] = [];
-				for (var i = 0; i < self.all_service_bodies.length; i++) {
-					var service_body = self.all_service_bodies[i];
-					if (service_body.type === 'RS') {
-						self.uniqueData['regions'].push(service_body)
-					}
-				}
-
-				self.uniqueData['areas'] = self.active_service_bodies.sortByKey('name');
 				if (!jQuery.isEmptyObject(self.formatsData)) {
 					self.formatsData = self.formatsData.sortByKey('name_string');
 				}
@@ -1048,6 +1027,64 @@ Crouton.prototype.render = function() {
 						buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
 					}
 				}
+				let dropdownData = [];
+				if (self.config.has_days) dropdownData.push(
+					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays", 
+					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), dayNamesSequenced), 
+					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_cities) dropdownData.push(
+					{placeholder: self.localization.getWord('cities'), pointer: 'Cities', elementId: "filter-dropdown-cities", 
+					 uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_municipality').sort(), 
+					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_groups) dropdownData.push(
+					{placeholder: self.localization.getWord('groups'), pointer: 'Groups', elementId: "filter-dropdown-groups", 
+					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(), 
+					objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_venues) dropdownData.push(
+					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-areas", 
+						uniqueData: (meetings) => getValuesFromObject(self.localization.getWord("venue_type_choices")).sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_areas) dropdownData.push(
+					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
+						uniqueData: (meetings) => self.active_service_bodies.sortByKey('name'), 
+						objectPointer: (a) => a.id, optionName: (a)=>a.name});
+				if (self.config.has_regions) dropdownData.push(
+					{placeholder: self.localization.getWord('region'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
+						uniqueData: (meetings) => self.active_service_bodies.sortByKey('name').filter((sb)=>sb.type==='RS'), 
+						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
+				if (self.config.has_locations) dropdownData.push(
+					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_sub_province) dropdownData.push(
+					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_neighborhoods) dropdownData.push(
+					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_states) dropdownData.push(
+					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_zip_codes) dropdownData.push(
+					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_formats) dropdownData.push(
+					{placeholder: self.localization.getWord('formats'), pointer: 'Formats', elementId: "filter-dropdown-formats", 
+						uniqueData: (meetings) => getUniqueUsedFormats(meetings), 
+						objectPointer: (f) => convertToPunyCode(f.name_string), optionName: (f)=>f.name_string});
+				if (self.config.has_languages) dropdownData.push(
+					{placeholder: self.localization.getWord('languages'), pointer: 'Languages', elementId: "filter-dropdown-languages", 
+						uniqueData: (meetings) => getUniqueUsedFormatType(meetings, 'LANG'), 
+						objectPointer: (f) => convertToPunyCode(f.name_string), optionName: (f)=>f.name_string});
+				if (self.config.has_languages) dropdownData.push(
+					{placeholder: self.localization.getWord('common_needs'), pointer: 'Languages', elementId: "filter-dropdown-languages", 
+						uniqueData: (meetings) => getUniqueUsedFormatType(meetings, 'FC3'), 
+						objectPointer: (f) => convertToPunyCode(f.name_string), optionName: (f)=>f.name_string});
+
 
 				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
@@ -1056,9 +1093,11 @@ Crouton.prototype.render = function() {
 						"buttonFilters": buttonFiltersDataSorted,
 						"buttonFormatFilters": buttonFormatFiltersData,
 						"bydays": byDayData,
-						"meetingCount": self.meetingData.length
+						"meetingCount": self.meetingData.length,
+						"meetingData": self.meetingData
 					},
-					"uniqueData": self.uniqueData
+					"uniqueData": self.uniqueData,
+					"dropdownData": dropdownData
 				}, function () {
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
@@ -1235,6 +1274,9 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str);
 });
 
+crouton_Handlebars.registerHelper('call', function(fn, str) {
+	return fn(str);
+});
 crouton_Handlebars.registerHelper('canShare', function(data, options) {
 	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
 });
