@@ -113,7 +113,7 @@ var croutonDefaultTemplates = {
             </ul>
             <br/>
         {{/if}}
-        <h4>Kontakt:</h4>
+        <h4>Contact:</h4>
         This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a>
         </td>`,
 }

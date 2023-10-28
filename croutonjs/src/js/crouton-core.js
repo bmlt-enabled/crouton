@@ -391,7 +391,7 @@ function Crouton(config) {
 			}
 		} else if (self.config.show_map) croutonMap.fillMap(showingNow);
 
-		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
 		}
 		self.filtering = true;
@@ -668,7 +668,13 @@ function Crouton(config) {
 		jQuery("#" + self.config['placeholder_id']).html("crouton: " + message);
 		jQuery("#" + self.config['placeholder_id']).removeClass("hide");
 	};
-
+	self.getUsedVenueType = function(meetings) {
+		let venueTypes = getUniqueValuesOfKey(meetings, 'venue_type');
+		if (venueTypes.includes(3)) return Object.values(self.localization.getWord("venue_type_choices"));
+		if (venueTypes.length === 2) return Object.values(self.localization.getWord("venue_type_choices"));
+		if (venueTypes[0] === 1) return [self.localization.getWord("venue_type_choices").IN_PERSON];
+		return [self.localization.getWord("venue_type_choices").VIRTUAL];
+	}
 	self.isEmpty = function(obj) {
 		for (var key in obj) {
 			if(obj.hasOwnProperty(key))
@@ -1039,7 +1045,7 @@ Crouton.prototype.render = function() {
 					objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_venues) self.dropdownData.push(
 					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues", 
-						uniqueData: (meetings) => getValuesFromObject(self.localization.getWord("venue_type_choices")).sort(), 
+						uniqueData: (meetings) => self.getUsedVenueType(meetings), 
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_areas) self.dropdownData.push(
 					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
@@ -1119,8 +1125,6 @@ Crouton.prototype.render = function() {
 								return data;
 							if (typeof dropdown.optionsShowing === 'undefined')
 								return data;
-							console.log(dropdown.optionsShowing);
-							console.log(data);
 							if (dropdown.optionsShowing.includes(data.text))
 								return data;
 							return null;
@@ -1162,6 +1166,7 @@ Crouton.prototype.render = function() {
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
+						croutonMap.showMap();
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
@@ -1201,19 +1206,9 @@ Crouton.prototype.render = function() {
 						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, self.formatsData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
-
 					if (self.config['map_page']) {
-							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
-							const attrObserver = new MutationObserver((mutations) => {
-								const showList = mutations.filter(mu => { 
-								  	return mu.type === "attributes" && mu.attributeName == "class" 
-										&& mu.target.classList.contains("show");
-								});
-								if (showList.length > 0) croutonMap.showMap();
-							});
-							attrObserver.observe(document.getElementById('byfield_embeddedMapPage'), {attributes: true});
-						}
-
+						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
+					}
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
