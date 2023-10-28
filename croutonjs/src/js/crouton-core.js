@@ -827,7 +827,6 @@ Crouton.prototype.doHandlebars = function() {
 		Promise.all(promises)
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
-				self.active_service_bodies = [];
 				self.all_service_bodies = [];
 				var service_body = data[0][0];
 				self.all_service_bodies.push(service_body);
@@ -924,20 +923,14 @@ Crouton.prototype.render = function() {
 
 		self.unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
 		var promises = [self.getMasterFormats(), self.getServiceBodies(self.unique_service_bodies_ids)];
-
 		Promise.all(promises)
 			.then(function(data) {
-				self.active_service_bodies = [];
 				self.all_service_bodies = [];
 				self.masterFormatCodes = data[0];
 				var service_bodies = data[1];
+				//TODO: why does he do this???
 				for (var i = 0; i < service_bodies.length; i++) {
 					self.all_service_bodies.push(service_bodies[i]);
-					for (var j = 0; j < self.unique_service_bodies_ids.length; j++) {
-						if (service_bodies[i]["id"] === self.unique_service_bodies_ids[j]) {
-							self.active_service_bodies.push(service_bodies[i]);
-						}
-					}
 				}
 				if (!jQuery.isEmptyObject(self.formatsData)) {
 					self.formatsData = self.formatsData.sortByKey('name_string');
@@ -1045,16 +1038,16 @@ Crouton.prototype.render = function() {
 					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(), 
 					objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_venues) self.dropdownData.push(
-					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-areas", 
+					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues", 
 						uniqueData: (meetings) => getValuesFromObject(self.localization.getWord("venue_type_choices")).sort(), 
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_areas) self.dropdownData.push(
 					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
-						uniqueData: (meetings) => self.active_service_bodies.sortByKey('name'), 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'), 
 						objectPointer: (a) => a.id, optionName: (a)=>a.name});
 				if (self.config.has_regions) self.dropdownData.push(
-					{placeholder: self.localization.getWord('region'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
-						uniqueData: (meetings) => self.active_service_bodies.sortByKey('name').filter((sb)=>sb.type==='RS'), 
+					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id) && sb.type==='RS').sortByKey('name'), 
 						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
 				if (self.config.has_locations) self.dropdownData.push(
 					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
@@ -1120,13 +1113,14 @@ Crouton.prototype.render = function() {
 						matcher: function(params, data) {
 							elementId = data.element.parentElement.id;
 							dropdown = self.dropdownData.find((dropdown) => dropdown.elementId === elementId);
-							if (typeof dropdown.optionsShowing === 'undefined')
+							if (typeof dropdown === 'undefined')
 								return data;
 							if (data.id === "a-")
 								return data;
-							console.log(dropdown.optionsShowing);
 							if (typeof dropdown.optionsShowing === 'undefined')
 								return data;
+							console.log(dropdown.optionsShowing);
+							console.log(data);
 							if (dropdown.optionsShowing.includes(data.text))
 								return data;
 							return null;
