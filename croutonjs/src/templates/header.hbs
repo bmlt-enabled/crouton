@@ -18,7 +18,6 @@
 	<div class="bmlt-dropdown-container">
 		<select class="crouton-select filter-dropdown" style="width:{{../this.config.dropdown_width}};" data-placeholder="{{placeholder}}" data-pointer="{{pointer}}" id={{elementId}}>
 		    <option value="a-">{{getWord 'all'}} {{placeholder}}</option>
-            {{console ../this}}
 		    {{#each (call uniqueData ../meetings.meetingData)}}
 			    <option value="a-{{call ../objectPointer this}}">{{call ../optionName this}}</option>
 		    {{/each}}
