@@ -41,6 +41,8 @@ https://demo.bmlt.app/crouton
 * Meeting Detail Pages can now be edited from the crouton admin/settings page.
 * All Handlebar Templates edited using codemirror
 * Thickbox used to show the values available in templates.
+* The choices available in dropdown filters reflect the limitations imposed by the selections in other filters.
+* The meeting count reflects the meetings currently visible, after filters are applied.
 
 = 3.17.0 =
 * Fix bug where extra meetings were not recognised
