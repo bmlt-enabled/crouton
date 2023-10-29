@@ -382,6 +382,7 @@ function Crouton(config) {
 		});
 		showingNow = [...new Set(showingNow)];
 		self.updateMeetingCount(showingNow.length);
+		self.updateFilters();
 		if (self.config.map_page) {
 			croutonMap.fillMap(showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
@@ -390,7 +391,7 @@ function Crouton(config) {
 			}
 		} else if (self.config.show_map) croutonMap.fillMap(showingNow);
 
-		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
 		}
 		self.filtering = true;
@@ -417,7 +418,8 @@ function Crouton(config) {
 			jQuery('#displayTypeButton_tablePages').addClass('hide');
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
 		} else if (self.config.show_map && self.filtering) croutonMap.fillMap();
-		self.filtering = false;
+		self.filtering = false; 
+		self.updateFilters();
 		self.updateMeetingCount(self.meetingData.length);
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
@@ -425,7 +427,29 @@ function Crouton(config) {
 		jQuery(".evenRow").removeClass("evenRow");
 		jQuery(".oddRow").removeClass("oddRow");
 	};
-
+	self.updateFilters = function() {
+		const getId = function (row) {return row.id.replace("meeting-data-row-", "")};
+		// The options available for this filter have to take into account all other filters, but ignore the
+		// filter itself (otherwise there's only one option!)
+		self.dropdownData.forEach(function(dropdown, index) {
+			let hidden = [];
+			jQuery(".filter-dropdown").each(function(index, filter) {
+				if (filter.id === dropdown.elementId) return;
+				const dataValue = filter.value.replace("a-", "");
+				if (dataValue === "") return;
+				filteringDropdown = true;
+				const dataType = filter.getAttribute("data-pointer").toLowerCase();
+				if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
+					jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").each((i,item) => hidden.push(getId(item)));
+				} else {
+					jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").each((i,item) => hidden.push(getId(item)));
+				}
+			});
+			hidden = [...new Set(hidden)];
+			let showing = self.meetingData.filter((m) => !(hidden.includes(m.id_bigint)));
+			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
+		});
+	}
 	self.renderView = function (selector, context, callback) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
@@ -640,12 +664,17 @@ function Crouton(config) {
 
 		return meetings;
 	};
-
 	self.showMessage = function(message) {
 		jQuery("#" + self.config['placeholder_id']).html("crouton: " + message);
 		jQuery("#" + self.config['placeholder_id']).removeClass("hide");
 	};
-
+	self.getUsedVenueType = function(meetings) {
+		let venueTypes = getUniqueValuesOfKey(meetings, 'venue_type');
+		if (venueTypes.includes(3)) return Object.values(self.localization.getWord("venue_type_choices"));
+		if (venueTypes.length === 2) return Object.values(self.localization.getWord("venue_type_choices"));
+		if (venueTypes[0] === 1) return [self.localization.getWord("venue_type_choices").IN_PERSON];
+		return [self.localization.getWord("venue_type_choices").VIRTUAL];
+	}
 	self.isEmpty = function(obj) {
 		for (var key in obj) {
 			if(obj.hasOwnProperty(key))
@@ -804,7 +833,6 @@ Crouton.prototype.doHandlebars = function() {
 		Promise.all(promises)
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
-				self.active_service_bodies = [];
 				self.all_service_bodies = [];
 				var service_body = data[0][0];
 				self.all_service_bodies.push(service_body);
@@ -882,6 +910,7 @@ Crouton.prototype.doHandlebars = function() {
 	});
 
 };
+
 Crouton.prototype.render = function() {
 	var self = this;
 	self.lock(function() {
@@ -897,73 +926,22 @@ Crouton.prototype.render = function() {
 			return;
 		}
 
-		var unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
-		var promises = [self.getMasterFormats(), self.getServiceBodies(unique_service_bodies_ids)];
-
-		self.uniqueData = {
-			'groups': getUniqueValuesOfKey(self.meetingData, 'meeting_name').sort(),
-			'cities': getUniqueValuesOfKey(self.meetingData, 'location_municipality').sort(),
-			'locations': getUniqueValuesOfKey(self.meetingData, 'location_text').sort(),
-			'sub_provinces': getUniqueValuesOfKey(self.meetingData, 'location_sub_province').sort(),
-			'neighborhoods': getUniqueValuesOfKey(self.meetingData, 'location_neighborhood').sort(),
-			'states': getUniqueValuesOfKey(self.meetingData, 'location_province').sort(),
-			'zips': getUniqueValuesOfKey(self.meetingData, 'location_postal_code_1').sort(),
-			'unique_service_bodies_ids': unique_service_bodies_ids,
-			'venue_types': getValuesFromObject(crouton.localization.getWord("venue_type_choices")).sort()
-		};
-
+		self.unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
+		var promises = [self.getMasterFormats(), self.getServiceBodies(self.unique_service_bodies_ids)];
 		Promise.all(promises)
 			.then(function(data) {
-				self.active_service_bodies = [];
 				self.all_service_bodies = [];
 				self.masterFormatCodes = data[0];
 				var service_bodies = data[1];
+				//TODO: why does he do this???
 				for (var i = 0; i < service_bodies.length; i++) {
 					self.all_service_bodies.push(service_bodies[i]);
-					for (var j = 0; j < self.uniqueData['unique_service_bodies_ids'].length; j++) {
-						if (service_bodies[i]["id"] === self.uniqueData['unique_service_bodies_ids'][j]) {
-							self.active_service_bodies.push(service_bodies[i]);
-						}
-					}
 				}
-
-				self.uniqueData['regions'] = [];
-				for (var i = 0; i < self.all_service_bodies.length; i++) {
-					var service_body = self.all_service_bodies[i];
-					if (service_body.type === 'RS') {
-						self.uniqueData['regions'].push(service_body)
-					}
-				}
-
-				self.uniqueData['areas'] = self.active_service_bodies.sortByKey('name');
 				if (!jQuery.isEmptyObject(self.formatsData)) {
 					self.formatsData = self.formatsData.sortByKey('name_string');
 				}
-				self.uniqueData['formats'] = self.formatsData;
-				self.uniqueData['languages'] = [];
-				self.uniqueData['common_needs'] = [];
 
-				for (var l = 0; l < self.formatsData.length; l++) {
-					var format = self.formatsData[l];
-					if (format['format_type_enum'] === "LANG") {
-						if (self.config.native_lang !== format.key_string) {
-							self.uniqueData['languages'].push(format);
-						}
-					}
-					if (format['format_type_enum'] === "FC3") {
-						self.uniqueData['common_needs'].push(format);
-					}
-				}
-
-				var weekdaysData = [];
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
-
-
-				var dayNamesSequenced = [];
-				for (var x = 0; x < crouton.config.day_sequence.length; x++) {
-					dayNamesSequenced.push(crouton.localization.getDayOfTheWeekWord(crouton.config.day_sequence[x]))
-				}
-				self.uniqueData['formatted_days'] = sortListByList(getUniqueValuesOfKey(enrichedMeetingData, "formatted_day"), dayNamesSequenced);
 
 				enrichedMeetingData.sort(function (a, b) {
 					if (a['start_time_raw'] < b['start_time_raw']) {
@@ -981,6 +959,7 @@ Crouton.prototype.render = function() {
 				var byDayData = [];
 				var buttonFiltersData = {};
 				var buttonFormatFiltersData = {};
+				var weekdaysData = [];
 				while (day_counter < 7) {
 					var day = self.config.day_sequence[day_counter];
 					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
@@ -1049,6 +1028,65 @@ Crouton.prototype.render = function() {
 					}
 				}
 
+				self.dayNamesSequenced = self.config.day_sequence.map((d)=>self.localization.getDayOfTheWeekWord(d));
+				self.dropdownData = [];
+				if (self.config.has_days) self.dropdownData.push(
+					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays", 
+					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced), 
+					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_cities) self.dropdownData.push(
+					{placeholder: self.localization.getWord('cities'), pointer: 'Cities', elementId: "filter-dropdown-cities", 
+					 uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_municipality').sort(), 
+					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_groups) self.dropdownData.push(
+					{placeholder: self.localization.getWord('groups'), pointer: 'Groups', elementId: "filter-dropdown-groups", 
+					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(), 
+					objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_venues) self.dropdownData.push(
+					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues", 
+						uniqueData: (meetings) => self.getUsedVenueType(meetings), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_areas) self.dropdownData.push(
+					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'), 
+						objectPointer: (a) => a.id, optionName: (a)=>a.name});
+				if (self.config.has_regions) self.dropdownData.push(
+					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id) && sb.type==='RS').sortByKey('name'), 
+						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
+				if (self.config.has_locations) self.dropdownData.push(
+					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_sub_province) self.dropdownData.push(
+					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_neighborhoods) self.dropdownData.push(
+					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_states) self.dropdownData.push(
+					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_zip_codes) self.dropdownData.push(
+					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_formats) self.dropdownData.push(
+					{placeholder: self.localization.getWord('formats'), pointer: 'Formats', elementId: "filter-dropdown-formats", 
+						uniqueData: (meetings) => getUniqueFormats(meetings), 
+						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
+				if (self.config.has_languages) self.dropdownData.push(
+					{placeholder: self.localization.getWord('languages'), pointer: 'Formats', elementId: "filter-dropdown-languages", 
+						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'LANG').filter((f)=>f.key!==self.config.native_lang), 
+						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
+				if (self.config.has_languages) self.dropdownData.push(
+					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds", 
+						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
+						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
+
 				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
@@ -1056,9 +1094,10 @@ Crouton.prototype.render = function() {
 						"buttonFilters": buttonFiltersDataSorted,
 						"buttonFormatFilters": buttonFormatFiltersData,
 						"bydays": byDayData,
-						"meetingCount": self.meetingData.length
+						"meetingCount": self.meetingData.length,
+						"meetingData": self.meetingData
 					},
-					"uniqueData": self.uniqueData
+					"dropdownData": self.dropdownData
 				}, function () {
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
@@ -1074,7 +1113,20 @@ Crouton.prototype.render = function() {
 						allowClear: false,
 						width: "resolve",
 						minimumResultsForSearch: 1,
-						dropdownCssClass: 'bmlt-drop'
+						dropdownCssClass: 'bmlt-drop',
+						matcher: function(params, data) {
+							elementId = data.element.parentElement.id;
+							dropdown = self.dropdownData.find((dropdown) => dropdown.elementId === elementId);
+							if (typeof dropdown === 'undefined')
+								return data;
+							if (data.id === "a-")
+								return data;
+							if (typeof dropdown.optionsShowing === 'undefined')
+								return data;
+							if (dropdown.optionsShowing.includes(data.text))
+								return data;
+							return null;
+						}
 					});
 
 					jQuery('[data-toggle="popover"]').popover().click(function(e) {e.preventDefault(); e.stopPropagation()});
@@ -1085,12 +1137,10 @@ Crouton.prototype.render = function() {
 					});
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
-						var val = jQuery(this).val();
 						jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
 							self.hidePage(this);
-							self.filteredPage();
-							return;
 						});
+						self.filteredPage();
 					});
 
 					jQuery("#day").on('click', function () {
@@ -1114,6 +1164,7 @@ Crouton.prototype.render = function() {
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
+						croutonMap.showMap();
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
@@ -1153,19 +1204,9 @@ Crouton.prototype.render = function() {
 						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, self.formatsData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
-
 					if (self.config['map_page']) {
-							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
-							const attrObserver = new MutationObserver((mutations) => {
-								const showList = mutations.filter(mu => { 
-								  	return mu.type === "attributes" && mu.attributeName == "class" 
-										&& mu.target.classList.contains("show");
-								});
-								if (showList.length > 0) croutonMap.showMap();
-							});
-							attrObserver.observe(document.getElementById('byfield_embeddedMapPage'), {attributes: true});
-						}
-
+						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
+					}
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
@@ -1235,6 +1276,9 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 	return convertToPunyCode(str);
 });
 
+crouton_Handlebars.registerHelper('call', function(fn, str) {
+	return fn(str);
+});
 crouton_Handlebars.registerHelper('canShare', function(data, options) {
 	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
 });
@@ -1429,8 +1473,14 @@ function getValuesFromObject(o) {
 
 	return arr;
 }
+function getUniqueFormats(array){
+	return array.reduce(function(carry, val){
+		if (!(val.formats_expanded)) return carry;
+		return carry.concat(val.formats_expanded.filter((item) => carry.map(f => f.key).indexOf(item.key) < 0));
+	},[]);
+}
 function getUniqueFormatsOfType(array, type){
-	var x = array.reduce(function(carry, val){
+	return array.reduce(function(carry, val){
 		if (!(val.formats_expanded)) return carry;
 		var fmts = val.formats_expanded.filter((item) => item.type===type);
 		if (fmts) {
@@ -1438,7 +1488,6 @@ function getUniqueFormatsOfType(array, type){
 		}
 		return carry;
 	},[]);
-	return x;
 }
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
