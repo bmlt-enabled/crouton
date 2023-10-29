@@ -913,7 +913,6 @@ Crouton.prototype.doHandlebars = function() {
 
 Crouton.prototype.render = function() {
 	var self = this;
-	self.uniqueData = [];
 	self.lock(function() {
 		var body = jQuery("body");
 		if (self.config['theme'] !== '') {
@@ -1098,7 +1097,6 @@ Crouton.prototype.render = function() {
 						"meetingCount": self.meetingData.length,
 						"meetingData": self.meetingData
 					},
-					"uniqueData": self.uniqueData,
 					"dropdownData": self.dropdownData
 				}, function () {
 					if (self.config['map_search'] != null || self.config['show_map']) {

@@ -12,4 +12,3 @@ tmp
 croutonjs/dist/crouton-core.js
 croutonjs/dist/crouton-core.min.js
 .vscode/launch.json
-.gitignore
