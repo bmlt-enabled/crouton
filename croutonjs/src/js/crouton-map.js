@@ -28,7 +28,7 @@ function CroutonMap(config) {
 		}
 	};
 
-	self.addCurrentLocationPin = function(latitude, longitude) {
+	CroutonMap.prototype.addCurrentLocationPin = function(latitude, longitude) {
 		var latlng = new google.maps.LatLng(latitude, longitude);
 		self.map.setCenter(latlng);
 
@@ -39,11 +39,9 @@ function CroutonMap(config) {
 
 		self.addToMapObjectCollection(currentLocationMarker);
 
-		// TODO: needs to show on click only
-		/*var infowindow = new google.maps.InfoWindow({
-			"content": 'Current Location',
-			"position": latlng,
-		}).open(self.map, currentLocationMarker);*/
+		var infoWindow = new google.maps.InfoWindow();
+		infoWindow.setContent('Current Location');
+		infoWindow.open(self.map, currentLocationMarker);
 	};
 
 	self.findMarkerById = function(id) {
@@ -202,6 +200,10 @@ CroutonMap.prototype.render = function(domElementName) {
 	self.domElementName = domElementName;
 	this.loadGapi('croutonMap.renderMap');
 }
+CroutonMap.prototype.reload = function(meetingData, formatsData) {
+	this.meetingData = meetingData;
+	this.formatsData = formatsData;
+}
 CroutonMap.prototype.initialize = function(domElementName, meetingData, formatsData, handlebarMapOptions=null) {
 	this.meetingData = meetingData;
 	this.formatsData = formatsData;
@@ -209,7 +211,7 @@ CroutonMap.prototype.initialize = function(domElementName, meetingData, formatsD
 	this.domElementName = domElementName;
 	this.loadGapi('croutonMap.initMap');
 }
-CroutonMap.prototype.initMap = function(callback) {
+CroutonMap.prototype.initMap = function(callback=null) {
 	var self = this;
 	if (self.map == null) {
 		var mapOpt = { zoom: 3, maxZoom: 17 };
@@ -220,7 +222,8 @@ CroutonMap.prototype.initMap = function(callback) {
 		};
 		self.map = new google.maps.Map(document.getElementById(self.domElementName), mapOpt );
 	}
-	self.fillMap(callback);
+	self.fillMap();
+	if (callback) callback();
 }
 CroutonMap.prototype.fillMap = function(filteredIds=null) {
 	var self = this;

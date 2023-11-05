@@ -87,8 +87,9 @@ function Crouton(config) {
 			.then(function() {
 				self.reset();
 				self.render();
-				self.initMap(function() {
-					self.addCurrentLocationPin(latitude, longitude);
+				croutonMap.reload(self.meetingData, self.formatsData);
+				croutonMap.initMap(function() {
+					croutonMap.addCurrentLocationPin(latitude, longitude);
 				});
 			});
 	};
