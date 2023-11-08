@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.16.3
+Version: 3.17.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -45,6 +45,10 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
+        // crouton includes a map, we need to include the JS files and create the croutonMap object.
+        private $hasMap = false;
+        // the [crouton_map] shortcode always uses the internal map.  If we want the other, you can just use its shortcode.
+        private $useInternalMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -119,7 +123,6 @@ if (!class_exists("Crouton")) {
                 add_action("admin_notices", array(&$this, "isRootServerMissing"));
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
-                add_filter('wp_editor_settings', array(&$this, "disableTinyMCE"), 100, 2);
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -155,38 +158,43 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "bmltHandlebar"
                 ));
-                add_filter('the_content', array(&$this, "disableWpautop"), 0);
             }
         }
 
-        public function hasShortcode()
+        private function hasShortcode()
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            // check the post content for the short code
-            if (stripos($post_content, '[bmlt_tabs') !== false) {
-                echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
-                return true;
+            $tags = ['bmlt_tabs', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
+            if (empty($matches)) {
+                return false;
             }
-            if (stripos($post_content, '[crouton_map') !== false) {
-                return true;
+    
+            foreach ($matches as $shortcode) {
+                if ($shortcode[2] === 'bmlt_tabs') {
+                    if (isset($_GET['meeting-id'])) {
+                        $this->hasMap = true;
+                    } else {
+                        // This is a bad-smell.  It is a side effect.
+                        // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
+                        echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
+                        $split = explode("show_map", $shortcode[3]);
+                        if (count($split) > 1) {
+                            $this->hasMap = true;
+                        }
+                    }
+                }
+                if ($shortcode[2] === 'bmlt_handlebar') {
+                    $this->hasMap = true;
+                }
+                if ($shortcode[2] === 'crouton_map') {
+                    $this->hasMap = true;
+                    $this->useInternalMap = true;
+                }
             }
-            if (stripos($post_content, '[bmlt_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[meeting_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[group_count') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[service_body_names') !== false) {
-                return true;
-            }
-            if (stripos($post_content, '[bmlt_handlebar') !== false) {
-                return true;
-            }
-            return false;
+
+            return true;
         }
 
         public function isRootServerMissing()
@@ -197,7 +205,7 @@ if (!class_exists("Crouton")) {
             ));
         }
 
-        public function clearAdminMessage()
+        private function clearAdminMessage()
         {
             remove_action("admin_notices", array(
                 &$this,
@@ -210,29 +218,6 @@ if (!class_exists("Crouton")) {
         // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
             $this->__construct();
         }
-        public function disableTinyMCE($settings, $editor_id)
-        {
-            if ($editor_id === 'content' && get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE', true)) {
-                $settings['tinymce']   = false;
-                $settings['quicktags'] = false;
-                $settings['media_buttons'] = false;
-            }
-        
-            return $settings;
-        }
-        public function disableWpautop($content)
-        {
-            if (get_post_meta(get_the_ID(), '_crouton_disable_tinyMCE')) {
-                remove_filter('the_content', 'wpautop');
-            }
-            return $content;
-        }
-        public function includeToString($file)
-        {
-            ob_start();
-            include($file);
-            return ob_get_clean();
-        }
 
         public function enqueueBackendFiles($hook)
         {
@@ -244,8 +229,21 @@ if (!class_exists("Crouton")) {
                 wp_enqueue_script('bmlt-tabs-admin', plugins_url('js/bmlt_tabs_admin.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/bmlt_tabs_admin.js"), false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__FILE__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
+                add_thickbox();
                 wp_enqueue_script('jquery-ui-accordion');
                 wp_enqueue_script("crouton-default-templates", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-default-templates.js"), true);
+            
+                wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/codemirror.css", false, "5.65.15", 'all');
+                wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/show-hint.css", false, "5.65.15", 'all');
+                wp_enqueue_script('codemirror', plugins_url('js/codemirror/codemirror.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/codemirror.js"), false);
+                wp_enqueue_script('codemirror-simple', plugins_url('js/codemirror/simple.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/simple.js"), false);
+                wp_enqueue_script('codemirror-multiplex', plugins_url('js/codemirror/multiplex.js', __FILE__), array('codemirror-simple'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/multiplex.js"), false);
+                wp_enqueue_script('codemirror-matchbrackets', plugins_url('js/codemirror/matchbrackets.js', __FILE__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/matchbrackets.js"), false);
+                wp_enqueue_script('codemirror-xml', plugins_url('js/codemirror/xml.js', __FILE__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/xml.js"), false);
+                wp_enqueue_script('codemirror-handlebars', plugins_url('js/codemirror/handlebars.js', __FILE__), array('codemirror-xml'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/handlebars.js"), false);
+                wp_enqueue_script('codemirror-css', plugins_url('js/codemirror/css.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/css.js"), false);
+                wp_enqueue_script('showhint', plugins_url('js/codemirror/show-hint.js', __FILE__), array('codemirror'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/show-hint.js"), false);
+                wp_enqueue_script('csshint', plugins_url('js/codemirror/css-hint.js', __FILE__), array('showhint'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/css-hint.js"), false);
             }
         }
 
@@ -255,40 +253,21 @@ if (!class_exists("Crouton")) {
         public function enqueueFrontendFiles()
         {
             if ($this->hasShortcode()) {
-                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton.nojquery.js" : "crouton.nojquery.min.js");
+                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-core.js" : "crouton-core.min.js");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
-            }
-        }
-
-        public function getNameFromServiceBodyID($serviceBodyID)
-        {
-            $bmlt_search_endpoint =  wp_remote_get($this->options['root_server'] . "/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
-            $serviceBodies = json_decode(wp_remote_retrieve_body($bmlt_search_endpoint));
-            foreach ($serviceBodies as $serviceBody) {
-                if ($serviceBody->id == $serviceBodyID) {
-                    return $serviceBody->name;
+                if ($this->hasMap) {
+                    if (has_action('crouton_map_enqueue_scripts') && !$this->useInternalMap) {
+                        do_action('crouton_map_enqueue_scripts');
+                    } else {
+                        $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
+                        wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
+                    }
                 }
             }
         }
-        public function getMeetingsJson($url)
-        {
-            $results = wp_remote_get($url, Crouton::HTTP_RETRIEVE_ARGS);
-            $httpcode = wp_remote_retrieve_response_code($results);
-            $response_message = wp_remote_retrieve_response_message($results);
-            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
-                echo "<p style='color: #FF0000;'>Problem Connecting to BMLT Root Server: $url</p>";
-                return 0;
-            }
-            $result = wp_remote_retrieve_body($results);
-            if ($result == null || count(json_decode($result)) == 0) {
-                echo "<p style='color: #FF0000;'>No Meetings were Found: $url</p>";
-                return 0;
-            }
-            return $result;
-        }
 
-        public function getCustomQuery($custom_query)
+        private function getCustomQuery($custom_query)
         {
             if (isset($_GET['custom_query'])) {
                 return $_GET['custom_query'];
@@ -301,7 +280,7 @@ if (!class_exists("Crouton")) {
             }
         }
 
-        public function testRootServer($root_server)
+        private function testRootServer($root_server)
         {
             $args = array(
                 'timeout' => '10',
@@ -334,7 +313,7 @@ if (!class_exists("Crouton")) {
             return $message;
         }
 
-        public function sharedRender()
+        private function sharedRender()
         {
             $output = "";
             if (isset($_GET['this_title'])) {
@@ -352,6 +331,9 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
@@ -376,23 +358,40 @@ if (!class_exists("Crouton")) {
         {
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
-
-        public function getInitializeCroutonBlock($config = array())
+        private function getMapInitialization($mapConfig)
+        {
+            $externalMap = "";
+            if ($this->hasMap) {
+                $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
+                if (!$this->useInternalMap) {
+                    $externalMap = apply_filters(
+                        "crouton_map_create_control",
+                        $externalMap,
+                        isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
+                        "croutonMap",
+                        $this->options['meeting_details_href']
+                    );
+                }
+            }
+            return $externalMap;
+        }
+        private function getInitializeCroutonBlock($config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { crouton = new Crouton($config); });</script>";
+                $externalMap =  $this->getMapInitialization($mapConfig);
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap; crouton = new Crouton($config); });</script>";
             } else {
                 return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
             }
         }
 
-        public function renderTable($atts)
+        private function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
         }
 
-        public function renderMap($atts)
+        private function renderMap($atts)
         {
             if ($atts == null) {
                 $atts = array();
@@ -420,30 +419,30 @@ if (!class_exists("Crouton")) {
                     ? boolval($atts['map_search_coordinates_search'])
                     : $this->shortCodeOptions['map_search_coordinates_search']
             ];
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
 
-        public function initCrouton($atts)
+        private function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
         }
 
         public function groupCount($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
         }
 
         public function serviceBodyNames($atts)
         {
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock($this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
+            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
         public function handlebarFooter()
         {
@@ -453,13 +452,14 @@ if (!class_exists("Crouton")) {
             $meetingId = $_GET['meeting-id'];
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
-            $config = $this->getCroutonJsConfig($attr);
+            [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
+            $externalMap =  $this->getMapInitialization($mapConfig);
             ?>
 <script type='text/javascript'>
 var crouton;
 
 jQuery(document).ready(function() { 
-    crouton = new Crouton(<?php echo $config; ?>);
+            <?php echo $externalMap; ?>; crouton = new Crouton(<?php echo $config; ?>);
     crouton.doHandlebars();
 });
 </script>
@@ -510,48 +510,15 @@ jQuery(document).ready(function() {
                 'filterPluginActions'
             ), 10, 2);
         }
-        public function createMeetingDetailsPage($page, $title = "Meeting Details")
+        private function getDefaultMeetingDetailsPageContents()
         {
-            $create_message = '';
-            $meeting_details_id = (strlen($this->options[$page]) > 0)  ? url_to_postid($this->options[$page]) : 0;
-            if (strlen($this->options[$page]) > 0 && $meeting_details_id === 0) {
-                if (isset($_POST['create_default_page'])) {
-                    $contents = file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
-                    $slug = basename(parse_url($this->options[$page], PHP_URL_PATH));
-                    $post_details = array(
-                        'post_title'    => $title,
-                        'post_name'     => $slug,
-                        'post_content'  => $contents,
-                        'post_status'   => 'publish',
-                        'post_author'   => get_current_user_id(),
-                        'post_type' => 'page'
-                    );
-                    $res = wp_insert_post($post_details);
-                    if (is_wp_error($res)) {
-                        $create_message = "<div class='page-insert-error'>Could not create default $title page:<br/>"
-                            .$res->get_error_message().'</div>';
-                    } else {
-                        $meeting_details_id = $res;
-                        $this->options[$page] = rtrim(parse_url(get_permalink($meeting_details_id))['path'], '/');
-                        $create_message = "<div class='page-insert-ok'>$title page created</div>";
-                    }
-                }
-            }
-            if ($meeting_details_id > 0) {
-                if (isset($_POST['disable_tinyMCE'])) {
-                    update_post_meta($meeting_details_id, '_crouton_disable_tinyMCE', 1);
-                } else {
-                    delete_post_meta($meeting_details_id, '_crouton_disable_tinyMCE');
-                }
-            }
-            return $create_message;
+            return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
         }
         /**
          * Adds settings/options page
          */
         public function adminOptionsPage()
         {
-            $create_message = '';
             if (!isset($_POST['bmlttabssave'])) {
                 $_POST['bmlttabssave'] = false;
             }
@@ -572,15 +539,13 @@ jQuery(document).ready(function() {
                 $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
                 $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
                 $this->options['metadata_template'] = isset($_POST['metadata_template']) ? str_replace('\\', '', $_POST['metadata_template']) : "";
+                $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
+                $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['google_api_key'];
-                $this->options['google_api_key'] = $_POST['google_api_key'];
-                $this->options['disable_tinyMCE'] = isset($_POST['disable_tinyMCE']);
-                $create_message = $this->createMeetingDetailsPage('meeting_details_href', "Meeting Details");
-                $create_message .= $this->createMeetingDetailsPage('virtual_meeting_details_href', "Virtual_Meeting Details");
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
@@ -634,13 +599,15 @@ jQuery(document).ready(function() {
                         <ul class="configuration-toc">
                             <li><a href="#config-bmlt-root-server">BMLT Root Server</a></li>
                             <li><a href="#config-service-body">Service Body</a></li>
+                            <li><a href="#config-default-options">Default Options</a></li>
                             <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
                             <li><a href="#config-custom-query">Custom Query</a></li>
+                            <li><a href="#config-theme">Theme</a></li>
+                            <li><a href="#config-google-api-key">Google API Key</a></li>
                             <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
                             <li><a href="#config-metadata-data-template">Metadata Template</a></li>
-                            <li><a href="#config-theme">Theme</a></li>
+                            <li><a href="#config-meeting-details-page">Meeting Details Page</a></li>
                             <li><a href="#config-custom-css">Custom CSS</a></li>
-                            <li><a href="#config-google-api-key">Google API Key</a></li>
                             <li><a href="#config-documentation">Documentation</a></li>
                         </ul>
                     </div>
@@ -733,32 +700,41 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
-                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-details-href" class="anchor"></a>Meeting Detail Pages</h3>
-                        <p>Link to pages where the [bmlt_handlebar] tag is used to insert information about a particular meeting, in more detail and in an
-                            easier to read format than is possible in the crouton table.  Use the partial {{> meetingLink this}} to insert into a template.
-                        </p>
-                        <ul>
-                            <li>
-                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
-                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
-                            </li>
-                            <li>
-                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
-                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
-                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
-                            </li>
-                            <li>
-                                <div id="meeting_details_options" style="margin-bottom:5px;">
-                                    <?php if ($create_message) {
-                                        echo $create_message;
-                                    } ?>
-                                </div>
-                                <input type="checkbox" id="disable_tinyMCE" name="disable_tinyMCE" <?php echo ($this->options['disable_tinyMCE']) ? 'checked': ''; ?>>
-                                <label for="disable_tinyMCE">Disable visual (WYSIWYG) editor when editing template. (recommended).</label>
-                            </li>
-                        </ul>
-                    </div>
+                    <div id="examplePopup1" style="display:none">
+<h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
+foreach ($this->getAllFields($this->options['root_server']) as $field) {
+    echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
+}
+?></table>
+<h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
+        <ul style="list-style:disc; padding-inline-start: 20px;">
+    <li>start_time_formatted</li>
+    <li>end_time_formatted</li>
+    <li>formatted_day</li>
+    <li>formats_expanded - which contains:
+        <ul style="padding-inline-start: 20px;">
+            <li>id</li>
+            <li>key</li>
+            <li>name</li>
+            <li>description</li>
+            <li>type</li>
+        </ul>
+    </li>
+    <li>venue_type</li>
+    <li>venue_type_name</li>  
+    <li>formatted_address</li>
+    <li>formatted_location_info</li>
+    <li>serviceBodyUrl</li>
+    <li>serviceBodyPhone</li>
+    <li>serviceBodyName</li>
+    <li>serviceBodyDescription</li>
+    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
+    <li>serviceBodyType</li>
+</ul>
+        </p>
+        <p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+            Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
+        </p></div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
@@ -799,50 +775,6 @@ jQuery(document).ready(function() {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
-                        <p>This allows a customization of the meeting data template.  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
-                        <ul>
-                            <li>
-                                <textarea id="meeting_data_template" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
-                            </li>
-                            <li>
-                                <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
-                            </li>
-                        </ul>
-                        <script type="text/javascript">
-                            jQuery("document").ready(function() {
-                                var meeting_data_template = jQuery("#meeting_data_template").val();
-                                jQuery("#meeting_data_template").val(meeting_data_template.replace("___DEFAULT___", croutonDefaultTemplates.meeting_data_template));
-                            });
-
-                            jQuery("#reset_meeting_data_template").click(function() {
-                                jQuery('#meeting_data_template').val(croutonDefaultTemplates.meeting_data_template);
-                            });
-                        </script>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
-                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are here <a target="_blank" href="<?php echo $this->options['root_server']?>/client_interface/json/?switcher=GetFieldKeys">here</a>.)</p>
-                        <ul>
-                            <li>
-                                <textarea id="metadata_template" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
-                            </li>
-                            <li>
-                                <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
-                            </li>
-                        </ul>
-                        <script type="text/javascript">
-                            jQuery("document").ready(function() {
-                                var metadata_template = jQuery("#metadata_template").val();
-                                jQuery("#metadata_template").val(metadata_template.replace("___DEFAULT___", croutonDefaultTemplates.metadata_template));
-                            });
-
-                            jQuery("#reset_metadata_template").click(function() {
-                                jQuery('#metadata_template').val(croutonDefaultTemplates.metadata_template);
-                            });
-                        </script>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-theme" class="anchor"></a>Theme</h3>
                         <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
                         <ul>
@@ -864,6 +796,98 @@ jQuery(document).ready(function() {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
+                        <p>This is only needed when using the companion map feature.  As an alternative to using google maps, get the <a href="https://wordpress.org/plugins/bmlt-meeting-map/" target="_blank">BMLT Meeting Map</a> plugin.
+                        This plugin can be configured to use Open Street Mapps (OSM) as its tile provider.  If BMLT-Meeting-Map is activated, crouton will use it to provide its maps.</p>
+                        <ul>
+                            <li>
+                                <label for="google_api_key">API Key: </label>
+                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
+                            </li>
+                        </ul>
+                        <p>If you're using Google Maps, you must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
+                    </div>
+
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
+                        <p>This allows a customization of the meeting data template.  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <ul>
+                            <li>
+                                <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_meeting_data_template").click(function() {
+                                resetCodemirrorToDefault("meeting_data_template");
+                            });
+                        </script>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
+                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <ul>
+                            <li>
+                                <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_metadata_template").click(function() {
+                                resetCodemirrorToDefault("metadata_template");
+                            });
+                        </script>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-details-page" class="anchor"></a>Meeting Details Page</h3>
+                        <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <ul>
+                            <li>
+                                <label for="meetingpage_title_template">Title</label>
+                                <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($this->options['meetingpage_title_template']) ? html_entity_decode($this->options['meetingpage_title_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <label for="meetingpage_contents_template">Contents</label>
+                                <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($this->options['meetingpage_contents_template']) ? html_entity_decode($this->options['meetingpage_contents_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_meetingpage_templates" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_meetingpage_templates").click(function() {
+                                resetCodemirrorToDefault("meetingpage_title_template");
+                                resetCodemirrorToDefault("meetingpage_contents_template");
+                            });
+                        </script>
+                        <p>By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
+                        be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.
+                        Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).
+                        The partials "meetingpageTitleTemplate" and "meetingpageContentsTemplate", defined in the two code areas above, are available for use in this way.
+                        </p>
+                        <ul>
+                            <li>
+                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                            </li>
+                            <li>
+                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
+                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
@@ -871,17 +895,6 @@ jQuery(document).ready(function() {
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
                             </li>
                         </ul>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
-                        <p>This is only needed when using the companion map feature show_map.</p>
-                        <ul>
-                            <li>
-                                <label for="google_api_key">API Key: </label>
-                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
-                            </li>
-                        </ul>
-                        <p>You must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
                     </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
@@ -907,7 +920,7 @@ jQuery(document).ready(function() {
          * Retrieves the plugin options from the database.
          * @return array
          */
-        public function getOptions()
+        private function getOptions()
         {
             // Don't forget to set up the default options
             if (!$theOptions = get_option($this->optionsName)) {
@@ -919,22 +932,48 @@ jQuery(document).ready(function() {
             }
             $this->options = $theOptions;
             $this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
+
+            if (!isset($this->options['crouton_version'])) {
+                $this->options['crouton_version'] = "3.17";
+                $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+            }
         }
         /**
          * Saves the admin options to the database.
          */
-        public function saveAdminOptions()
+        private function saveAdminOptions()
         {
             $this->options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
             update_option($this->optionsName, $this->options);
             return;
         }
-
+        /**
+         * @param $root_server
+         * @return array
+         */
+        private function getAllFields($root_server)
+        {
+            try {
+                $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFieldKeys");
+                return json_decode(wp_remote_retrieve_body($results), true);
+            } catch (Exception) {
+                return [];
+            }
+        }
+        private function templateToParameter($name)
+        {
+            if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
+                $template = $atts[$name];
+            } else {
+                $template = $this->options[$name];
+            }
+            return html_entity_decode($template);
+        }
         /**
          * @param $root_server
          * @return string
          */
-        public function getAllMeetings($root_server)
+        private function getAllMeetings($root_server)
         {
             $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
             $result = json_decode(wp_remote_retrieve_body($results), true);
@@ -953,9 +992,12 @@ jQuery(document).ready(function() {
             }
             return $all_meetings;
         }
-
-        public function getCroutonJsConfig($atts)
+        private function getCroutonJsConfig($atts)
         {
+            $mapParams = [];
+            if (isset($atts['map_search'])) {
+                $mapParams['map_search'] = $atts['map_search'];
+            }
             // Pulling simple values from options
             $defaults = $this->shortCodeOptions;
             foreach ($defaults as $key => $value) {
@@ -1047,21 +1089,13 @@ jQuery(document).ready(function() {
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
-            if (isset($atts['meeting_data_template']) && $atts['meeting_data_template'] !== null && $atts['meeting_data_template'] !== "") {
-                $meeting_data_template = $atts['meeting_data_template'];
-            } else {
-                $meeting_data_template = $this->options['meeting_data_template'];
-            }
-            $params['meeting_data_template'] = html_entity_decode($meeting_data_template);
+            $params['meeting_data_template'] = $this->templateToParameter('meeting_data_template');
+            $params['metadata_template'] = $this->templateToParameter('metadata_template');
+            $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
+            $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
 
-            if (isset($atts['metadata_template']) && $atts['metadata_template'] !== null && $atts['metadata_template'] !== "") {
-                $metadata_template = $atts['metadata_template'];
-            } else {
-                $metadata_template = $this->options['metadata_template'];
-            }
-            $params['metadata_template'] = html_entity_decode($metadata_template);
-
-            $params['google_api_key'] = $this->options['google_api_key'];
+            $mapParams['google_api_key'] = $this->options['google_api_key'];
+            $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
@@ -1072,10 +1106,16 @@ jQuery(document).ready(function() {
 
             $params['extra_meetings'] = $extra_meetings_array;
 
+            if (empty($params['meeting_details_href'])) {
+                $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
+            }
+            $this->options['meeting_details_href'] = $params['meeting_details_href'];
+             
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            // TODO add default language and root_server
             $params = apply_filters('crouton_configuration', $params);
-            return json_encode($params);
+            $mapParams['theme'] = $params['theme'];
+            
+            return [json_encode($params), json_encode($mapParams)];
         }
     }
     //End Class Crouton

@@ -35,7 +35,11 @@ function numbersonly(myfield, e, dec)
 	else
 	   return false;
 };
-
+function resetCodemirrorToDefault(textAreaId) {
+	console.log("in Function");
+	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
+	cm.setValue(croutonDefaultTemplates[textAreaId]);
+}
 jQuery(document).ready(function($) {
 	var aggregator = "https://aggregator.bmltenabled.org/main_server";
 	$("#accordion").accordion({
@@ -98,14 +102,23 @@ jQuery(document).ready(function($) {
 		position: 'right',
 		trigger: 'click'
 	});
+	jQuery('.handlebarsCode').each(function(i,textArea) {
+		let template = textArea.value;
+		textArea.value = template.replace("___DEFAULT___", croutonDefaultTemplates[textArea.id]);
+		textArea.dataset.codeMirror = CodeMirror.fromTextArea(textArea, {
+			matchBrackets: true,
+			lineNumbers: true,
+			mode: {name: 'handlebars', base: 'text/html'},
+			viewportMargin: Infinity,
+			indentUnit: 4,
+			indentWithTabs: true
+		});
+	});
+	jQuery('#custom_css').each(function(i,textArea) {
+		CodeMirror.fromTextArea(textArea, {
+			lineNumbers: true,
+			mode: 'css',
+        	extraKeys: {"Ctrl-Space": "autocomplete"}
+      });
+	});
 });
-function show_create_detail_option(me) {
-	if (me.value && me.value.trim().length > 0) {
-		document.getElementById('meeting_details_options').innerHTML =
-			'<input type="checkbox" id="create_default_page" name="create_default_page">' +
-			'<label for="create_default_page">If page doesn\'t exist, create it.</label>'
-		;
-	} else {
-		document.getElementById('meeting_details_options').innerHTML = '';
-	}
-}

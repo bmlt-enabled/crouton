@@ -466,7 +466,9 @@ table.tablesaw {
 .bmlt-map {
 	height: 400px;
 }
-
+#byfield_embeddedMapPage{
+	height: 400px;
+}
 .bmlt-observer {
 	font-size: 14px;
 	font-weight: bold;
@@ -542,6 +544,9 @@ table.tablesaw {
 
 	.tablesaw-stack td:empty,.tablesaw-stack th:empty {
 		display: none;
+	}
+	th#meeting-details-title {
+		display: table-cell;
 	}
 }
 

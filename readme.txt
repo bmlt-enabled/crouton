@@ -1,11 +1,11 @@
 === crouton ===
 
-Contributors: odathp, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718, jbraswell
+Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718, jbraswell
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 6.2.2
-Stable tag: 3.16.3
+Stable tag: 3.17.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,22 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.17.1 =
+* Meeting Detail Pages are now the Crouton Page, with meeting-id in the query string.  No need for separate pages
+* Meeting Detail Pages can now be edited from the crouton admin/settings page.
+* All Handlebar Templates edited using codemirror
+* Thickbox used to show the values available in templates.
+* The choices available in dropdown filters reflect the limitations imposed by the selections in other filters.
+* The meeting count reflects the meetings currently visible, after filters are applied.
+
+= 3.17.0 =
+* Fix bug where extra meetings were not recognised
+* Maps can be embedded, so that users can switch between table and map views, rather than needing to scroll.
+* Embedded maps listen to filters
+* Map can be implemented by another plugin (bmlt-meeting-map) that uses OSM instead of Google
+* Filters can be combined
+* Only the needed map implementations are loaded
 
 = 3.16.3 =
 * Fix problem causing format popover to close immediately whenever show_map option is on
