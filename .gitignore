@@ -3,12 +3,9 @@
 logs
 vendor
 node_modules
-croutonjs/dist/crouton.*
+croutonjs/dist/crouton*
 croutonjs/src/js/templates.js
 *.orig
 *.iml
 tmp
-
-croutonjs/dist/crouton-core.js
-croutonjs/dist/crouton-core.min.js
 .vscode/launch.json
