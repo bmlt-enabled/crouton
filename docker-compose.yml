@@ -10,6 +10,7 @@ services:
       - 8080:80
       - 7443:443
     environment:
+      WORDPRESS_DEBUG: true
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
