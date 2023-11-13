@@ -180,7 +180,7 @@ if (!class_exists("Crouton")) {
                         // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
                         echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
                         $split = explode("show_map", $shortcode[3]);
-                        if (count($split) > 1) {
+                        if (count($split) > 1 || isset($_GET['show_map'])) {
                             $this->hasMap = true;
                         }
                     }
@@ -318,8 +318,6 @@ if (!class_exists("Crouton")) {
             $output = "";
             if (isset($_GET['this_title'])) {
                 $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
-            } else {
-                $output .= $sub_title = $meeting_count = $group_count= '';
             }
 
             if (isset($_GET['sub_title'])) {
@@ -429,18 +427,27 @@ if (!class_exists("Crouton")) {
 
         public function meetingCount($atts)
         {
+            if (isset($_GET['meeting-id'])) {
+                return '1';
+            }
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
         }
 
         public function groupCount($atts)
         {
+            if (isset($_GET['meeting-id'])) {
+                return '1';
+            }
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
         }
 
         public function serviceBodyNames($atts)
         {
+            if (isset($_GET['meeting-id'])) {
+                return '';
+            }
             $random_id = rand(10000, 99999);
             return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
         }
@@ -1099,7 +1106,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $mapParams['google_api_key'] = $this->options['google_api_key'];
             $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
-            if (isset($this->options['extra_meetings'])) {
+            if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
                     $data = array(" [", "]");
                     array_push($extra_meetings_array, str_replace($data, "", $value));
@@ -1109,7 +1116,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['extra_meetings'] = $extra_meetings_array;
 
             if (empty($params['meeting_details_href'])) {
-                $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
+                $params['meeting_details_href'] = strtok($_SERVER["REQUEST_URI"], '?');
             }
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
              
