@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.4
+Version: 3.17.5
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -354,6 +354,9 @@ if (!class_exists("Crouton")) {
         }
         public function croutonMap($atts, $content = null)
         {
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
         private function getMapInitialization($mapConfig)
@@ -368,7 +371,7 @@ if (!class_exists("Crouton")) {
                         isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
                         "croutonMap",
                         $this->options['meeting_details_href']
-                    );
+                    ).';';
                 }
             }
             return $externalMap;
@@ -378,7 +381,7 @@ if (!class_exists("Crouton")) {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 $externalMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap; crouton = new Crouton($config); });</script>";
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap crouton = new Crouton($config); });</script>";
             } else {
                 return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
             }
@@ -466,7 +469,7 @@ if (!class_exists("Crouton")) {
 var crouton;
 
 jQuery(document).ready(function() { 
-            <?php echo $externalMap; ?>; crouton = new Crouton(<?php echo $config; ?>);
+            <?php echo $externalMap; ?> crouton = new Crouton(<?php echo $config; ?>);
     crouton.doHandlebars();
 });
 </script>
@@ -1104,6 +1107,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
 
             $mapParams['google_api_key'] = $this->options['google_api_key'];
+            $params['missing_api_key'] = 0;
+            if (empty($this->options['google_api_key']) && !has_filter("crouton_map_create_control")) {
+                $params['missing_api_key'] = 1;
+            }
             $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
@@ -1121,6 +1128,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
              
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
+            
             $params = apply_filters('crouton_configuration', $params);
             $mapParams['theme'] = $params['theme'];
             
