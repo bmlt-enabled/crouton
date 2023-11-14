@@ -67,6 +67,7 @@ function Crouton(config) {
 		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
+		missing_api_key: false,			// Hide map is google not configured
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
 		observer_template: croutonDefaultTemplates.observer_template,
@@ -903,6 +904,10 @@ Crouton.prototype.doHandlebars = function() {
 					if (brothers) firstPart.after(...brothers);
 				}
 				if (mustDoMap) {
+					if (self.config.missing_api_key) {
+						jQuery("#bmlt-map").parent().remove();
+						return;
+					}
 					self.meetingData = enrichedMeetingData;
 					croutonMap.initialize(self.createBmltMapElement(),self.meetingData, self.formatsData, self.handlebarMapOptions);
 					jQuery("#bmlt-map").removeClass("hide");
