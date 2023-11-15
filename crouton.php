@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.5
+Version: 3.17.6
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -18,6 +18,11 @@ if (!class_exists("Crouton")) {
     // phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
     {
         public $optionsName = 'bmlt_tabs_options';
+        /**
+         * configuration
+         *
+         * @var mixed[]
+         */
         public $options = array();
         public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
@@ -350,7 +355,7 @@ if (!class_exists("Crouton")) {
                 add_action("wp_footer", [$this,'handlebarFooter']);
             }
             $this->has_handlebars = true;
-            return sprintf('<bmlt-handlebar><div style="display:none;">%s</div>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
+            return sprintf('<bmlt-handlebar style="display:none;"><span style="display:none;">%s</span>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
         }
         public function croutonMap($atts, $content = null)
         {
@@ -981,10 +986,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             return html_entity_decode($template);
         }
-        /**
-         * @param $root_server
-         * @return string
-         */
         private function getAllMeetings($root_server)
         {
             $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
