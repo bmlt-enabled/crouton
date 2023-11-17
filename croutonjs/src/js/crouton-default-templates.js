@@ -116,4 +116,22 @@ var croutonDefaultTemplates = {
         <h4>Contact:</h4>
         This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a>
         </td>`,
+	marker_contents_template: 
+	`<h4>{{meeting_name}}</h4>
+	<div class="active">
+		<div class="marker_div_location_text">{{{this.location_text}}}</div>
+		<div class="marker_div_location_address">{{this.formatted_address}}</div>
+		<div class="marker_div_location_info">{{{this.formatted_location_info}}}</div>
+		<div class="marker_div_location_maplink">
+		{{#if this.meeting_details_url}}
+			<a href={{this.meeting_details_url}}" target="_blank">More info</a>
+		{{/if}}
+		</div>
+		<div class="marker_div_formats">
+		{{#each this.formats_expanded}}{{#if @index}}; {{/if}}{{this.name}}{{/each}}
+		</div>
+	</div>
+	`
 }
+
+

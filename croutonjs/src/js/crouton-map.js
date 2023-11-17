@@ -200,13 +200,11 @@ CroutonMap.prototype.render = function(domElementName) {
 	self.domElementName = domElementName;
 	this.loadGapi('croutonMap.renderMap');
 }
-CroutonMap.prototype.reload = function(meetingData, formatsData) {
+CroutonMap.prototype.reload = function(meetingData) {
 	this.meetingData = meetingData;
-	this.formatsData = formatsData;
 }
-CroutonMap.prototype.initialize = function(domElementName, meetingData, formatsData, handlebarMapOptions=null) {
+CroutonMap.prototype.initialize = function(domElementName, meetingData, handlebarMapOptions=null) {
 	this.meetingData = meetingData;
-	this.formatsData = formatsData;
 	this.handlebarMapOptions = handlebarMapOptions;
 	this.domElementName = domElementName;
 	this.loadGapi('croutonMap.initMap');

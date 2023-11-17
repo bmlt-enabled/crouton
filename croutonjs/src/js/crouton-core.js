@@ -75,6 +75,7 @@ function Crouton(config) {
 		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
+		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
 	};
 
 	self.setConfig(config);
@@ -88,7 +89,7 @@ function Crouton(config) {
 			.then(function() {
 				self.reset();
 				self.render();
-				croutonMap.reload(self.meetingData, self.formatsData);
+				croutonMap.reload(self.meetingData);
 				croutonMap.initMap(function() {
 					croutonMap.addCurrentLocationPin(latitude, longitude);
 				});
@@ -343,8 +344,9 @@ function Crouton(config) {
 	self.filterOnMapVisibility = function() {
 		let visible = croutonMap.filterVisibleExt().map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
-			row.dataset.visible = (visible.includes(this.id)) ? '1' : '0';
+			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
 		});
+		jQuery("#filter-dropdown-visibile").val('a-1');
 	}
 	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
@@ -566,6 +568,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
 		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
+		crouton_Handlebars.registerPartial("markerContentsTemplate", self.config['marker_contents_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -917,7 +920,7 @@ Crouton.prototype.doHandlebars = function() {
 						return;
 					}
 					self.meetingData = enrichedMeetingData;
-					croutonMap.initialize(self.createBmltMapElement(),self.meetingData, self.formatsData, self.handlebarMapOptions);
+					croutonMap.initialize(self.createBmltMapElement(),self.meetingData, self.handlebarMapOptions);
 					jQuery("#bmlt-map").removeClass("hide");
 				}
 			});
@@ -1101,7 +1104,7 @@ Crouton.prototype.render = function() {
 						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
 				self.dropdownData.push(
-					{placeholder: '', pointer: '', elementId: "filter-dropdown-visibile", 
+					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile", 
 						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				self.renderView("#" + self.config['placeholder_id'], {
@@ -1125,6 +1128,7 @@ Crouton.prototype.render = function() {
 					}
 
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
+					jQuery("#filter-dropdown-visibile").removeClass("crouton-select").addClass("hide");
 					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
 						allowClear: false,
@@ -1226,11 +1230,11 @@ Crouton.prototype.render = function() {
 					}
 
 					if (self.config['show_map']) {
-						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, self.formatsData);
+						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
 					if (self.config['map_page']) {
-						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, self.formatsData);
+						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();

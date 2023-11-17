@@ -7,7 +7,6 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 	const config = inConfig;
 
 	var gAllMeetings = null;
-	var gFormatHash = null;
 	var gMeetingIdsFromCrouton = null;
 	var loadedCallbackFunction = null;
 	var loadedCallbackArgs = [];
@@ -38,8 +37,7 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			if (gDelegate.createMap(inDiv, location)) {
 				createThrobber(inDiv);
 				gDelegate.addListener('zoomend', function (ev) {
-					if (gAllMeetings &&
-						gFormatHash) {
+					if (gAllMeetings) {
 						searchResponseCallback();
 					}
 				}, false);
@@ -52,15 +50,15 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			};
 		};
 	};
-	function loadFromCrouton(inDiv_id, meetings_responseObject, formats_responseObject, handlebarMapOptions = null) {
+	function loadFromCrouton(inDiv_id, meetings_responseObject, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, formats_responseObject, handlebarMapOptions]);
+			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, handlebarMapOptions]);
 			gDelegate.loadApi();
 			return;
 		}
 		inDiv = document.getElementById(inDiv_id);
 		loadMap(handlebarMapOptions);
-		loadAllMeetings(meetings_responseObject, formats_responseObject, 0, '', true);
+		loadAllMeetings(meetings_responseObject, 0, '', true);
 		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 		gDelegate.fitBounds(lat_lngs);
 	};
@@ -105,9 +103,8 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			inDiv.myThrobber.style.display = 'none';
 		};
 	};
-	function loadAllMeetings(meetings_responseObject, formats_responseObject, centerMe, goto, fitAll=false) {
+	function loadAllMeetings(meetings_responseObject, centerMe, goto, fitAll=false) {
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		gFormatHash = createFormatHash(formats_responseObject);
 		searchResponseCallback();
 		if (centerMe != 0) {
 			if (navigator.geolocation) {
@@ -128,13 +125,6 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 		}
 		hideThrobber();
 	}
-	function createFormatHash(format_arr) {
-		var ret = [];
-		for (i = 0; i < format_arr.length; i++) {
-			ret[format_arr[i].key_string] = format_arr[i];
-		}
-		return ret;
-	};
 	function createCityHash(allMeetings) {
 		return allMeetings.reduce(function(prev, meeting) {
 			if (prev.hasOwnProperty(meeting.location_municipality))
@@ -152,6 +142,7 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 		try {
 			drawMarkers(expand);
 		} catch (e) {
+			console.log(e);
 			gDelegate.addListener('projection_changed', function (ev) {
 				drawMarkers(expand);
 			}, true);
@@ -253,150 +244,28 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 	}
 	return 0;
 };
+	var markerTemplateSrc = `
+	<div class="accordion">
+	{{#each this}}<div>
+			<input type="radio" name="panel" id="panel-{{this.id_bigint}}" {{#unless @index}}checked{{/unless}}/>
+			<label for="panel-{{this.id_bigint}}">{{this.formatted_day}} {{this.start_time_formatted}}</label>
+			<div class="marker_div_meeting" id="{{this.id_bigint}}">
+				{{> markerContentsTemplate}}
+			</div>
+	</div>{{/each}}
+	</div>
+	`;
+
 	/************************************************************************************//**
 	 *	 \brief	This creates a single meeting's marker on the map.							*
 	 ****************************************************************************************/
-	function createMapMarker(in_mtg_obj_array	/**< A meeting object array. */) {
-		var main_point = [in_mtg_obj_array[0].latitude, in_mtg_obj_array[0].longitude];
-		var marker_html = '<div class="accordion">';
-		var checked = ' checked';
-		var marker_title = '';
-		for (var c = 0; c < in_mtg_obj_array.length; c++) {
-			marker_html += '<div><input type="radio" name="panel" id="panel-' + in_mtg_obj_array[c].id_bigint + '"' + checked + '>';
-			if (c > 0) {
-				marker_title += '; ';
-			}
-			var dayAndTime = getDayAndTime(in_mtg_obj_array[c]);
-			marker_title += dayAndTime;
-			checked = '';
-			marker_html += '<label for="panel-' + in_mtg_obj_array[c].id_bigint + '">' + dayAndTime + '</label>';
-			marker_html += marker_make_meeting(in_mtg_obj_array[c],false);
-			marker_html += '</div>';
-		}
-		marker_html += '</div>';
+	function createMapMarker(meetings) {
+		var main_point = [meetings[0].latitude, meetings[0].longitude];
+		let markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
+		var marker_html = markerTemplate(meetings);
 		gDelegate.createMarker(main_point,
-			(in_mtg_obj_array.length > 1),
-			marker_html, marker_title,in_mtg_obj_array.map((m)=>parseInt(m.id_bigint)));
-	};
-	function getDayAndTime(in_meeting_obj) {
-		return config.weekdays[in_meeting_obj.weekday_tinyint] + " " + formattedTime(in_meeting_obj.start_time);
-	}
-	function formattedTime(in_time) {
-		var time = in_time.toString().split(':');
-		if (config.time_format == '12') {
-			var h = time[0] % 12 || 12;
-			var ampm = (time[0] < 12 || time[0] === 24) ? "AM" : "PM";
-			return h + ':' + time[1] + ampm;
-		}
-		return time[0] + ':' + time[1];
-	}
-	function getLangs(in_meeting_obj) {
-		var ret = '';
-		if (in_meeting_obj.formats && in_meeting_obj.formats.length > 0) {
-			var myFormatKeys = in_meeting_obj.formats.split(',');
-			for (i = 0; i < myFormatKeys.length; i++) {
-				theFormat = gFormatHash[myFormatKeys[i]];
-				if (typeof theFormat == 'undefined') continue;
-				if (theFormat.format_type_enum == 'LANG') {
-					var a = config.BMLTPlugin_images + '/../lang/' + theFormat.key_string + ".png";
-					ret += ' <img src="' + a + '">';
-				}
-			}
-		}
-		return ret;
-	}
-	function marker_make_meeting(in_meeting_obj, listView) {
-		var id = in_meeting_obj.id_bigint.toString();
-		var myFormatKeys = in_meeting_obj.formats.split(',');
-		var covidFormats = new Array;
-		var regFormats = new Array;
-		var address_class = 'active';
-		var hygene_class = 'hidden';
-		for (i=0; i<myFormatKeys.length; i++) {
-			theFormat = gFormatHash[myFormatKeys[i]];
-			if (typeof theFormat == 'undefined') continue;
-			if (theFormat.format_type_enum=='FC2' || theFormat.format_type_enum=='FC3' || theFormat.format_type_enum=='Covid' || 
-				((typeof theFormat.format_type_enum!=='undefined')&&theFormat.format_type_enum.charAt(0)=='O')) {
-				regFormats.push(theFormat);
-			}
-			else if (theFormat.format_type_enum=='xCovidx') {
-				covidFormats.push(theFormat);
-				address_class = listView ? 'active' : 'hidden';
-				hygene_class = 'active';
-			} 
-		}
-		var ret = '<div class="marker_div_meeting" id="' + id + '">';
-		ret += '<h4>' + in_meeting_obj.meeting_name.toString() + getLangs(in_meeting_obj) + '</h4>';
-		var address_id = "meeting_address_" + id;
-		var hygene_id = "meeting_hygene_" + id;
-
-
-		ret += '<div id="' + address_id + '" class="'+address_class+'">';
-		if (in_meeting_obj.comments) {
-			ret += '<em>' + in_meeting_obj.comments + '</em>';
-		}
-
-		if (in_meeting_obj.location_text) {
-			ret += '<div class="marker_div_location_text">' + in_meeting_obj.location_text.toString() + '</div>';
-		};
-
-		var location = '';
-		if (in_meeting_obj.location_street) {
-			location = in_meeting_obj.location_street.toString();
-		};
-
-		if (in_meeting_obj.location_municipality) {
-			location += ', ' + in_meeting_obj.location_municipality.toString();
-
-			if (in_meeting_obj.location_city_subsection) {
-				location += ' ' + in_meeting_obj.location_city_subsection + ', ';
-			}
-		};
-		if (location.length > 0) {
-			ret += '<div class="marker_div_location_address">' + location + "</div>";
-		}
-		if (in_meeting_obj.location_info) {
-			ret += '<div class="marker_div_location_info">' + in_meeting_obj.location_info.toString() + '</div>';
-		};
-		if (config.meeting_details_href.length) {
-			ret += '<div class="marker_div_location_maplink"><a href="';
-			ret += config.meeting_details_href + '?meeting-id=' + in_meeting_obj.id_bigint;
-			ret += '" target="_blank">' + config.more_info_text + '</a>';
-			ret += '</div>';
-		} else {
-			ret += '<div class="marker_div_location_maplink"><a href="';
-			ret += 'https://www.google.com/maps/dir/?api=1&destination='
-				+ encodeURIComponent(in_meeting_obj.latitude.toString()) + ',' + encodeURIComponent(in_meeting_obj.longitude.toString());
-			ret += '" rel="external" target="_blank">' + config.map_link_text + '</a>';
-			ret += '</div>';
-		}
-		if (regFormats.length > 0) {
-			ret += '<div class="marker_div_formats">';
-			regFormats.forEach(function(format) {
-				ret += format['name_string'] + '; ';
-			});
-			ret += '</div>';
-		};
-		if (covidFormats.length > 0 && !listView) {
-			ret += '<button class="hygene-button" onClick=\'exchange("' + address_id + '", "' + hygene_id + '")\'>' + config.hygene_button + '</button>';
-		}
-		ret += '</div>';
-		if (covidFormats.length > 0) {
-			ret += '<div id="' + hygene_id + '" class="'+hygene_class+'">';
-			ret += '<div class="bmlt-hygene-header">' + config.hygene_header + '</div>';
-			ret += '<div class="bmlt-hygene-descr">';
-			covidFormats.forEach(function(format) {
-				ret += format['description_string'] + '; ';
-			});
-			ret += '</div>';
-			if (!listView)
-				ret += '<button class="hygene-button" onClick=\'exchange("' + hygene_id + '", "' + address_id + '")\'>' + config.hygene_back + '</button>';
-			ret += '</div>';
-		}
-		ret += '</div>';
-
-
-		return ret;
+			(meetings.length > 1),
+			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
 	function filterBounds(bounds) {
 		var ret = new Array;
@@ -443,29 +312,6 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			return ret.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint));
 		}
 		return ret;
-	}
-	function meetingTimes(meeting) {
-		var duration = meeting.duration_time.split(':');
-		var minutes = parseInt(duration[0]) * 60;
-		if (duration.length > 1)
-			minutes += parseInt(duration[1]);
-		var startDate = new Date(new Date().toDateString() + ' ' + meeting.start_time);
-		var endDate = new Date(startDate.getTime() + minutes * 60000);
-		var startTimeSplit = meeting.start_time.split(':');
-		var startTime = formattedTime(meeting.start_time);
-		var endTime = '' + endDate.getHours() + ':';
-		if (endDate.getMinutes() == 0) {
-			endTime += '00';
-		} else if (endDate.getMinutes() < 10) {
-			endTime += '0' + endDate.getMinutes();
-		} else {
-			endTime += endDate.getMinutes();
-		}
-		endTime = formattedTime(endTime);
-		return startTime + "&nbsp;-&nbsp;" + endTime;
-	}
-	function meetingDayAndTimes(meeting) {
-		return config.weekdays[meeting.weekday_tinyint] + ' ' + meetingTimes(meeting);
 	}
 	var _isPseudoFullscreen = false;
 	function isFullscreen() {
