@@ -12,6 +12,7 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
     // die('Sorry, but you cannot access this page directly.');
 }
 ini_set('max_execution_time', 120);
+require_once(__DIR__."/meeting-map/meeting_map.php");
 if (!class_exists("Crouton")) {
     // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
     class Crouton
@@ -119,7 +120,7 @@ if (!class_exists("Crouton")) {
             "native_lang" => '',
             "has_meeting_count" => false
         );
-
+        private MeetingMap\Controller $mapController;
         public function __construct()
         {
             $this->getOptions();
@@ -129,6 +130,7 @@ if (!class_exists("Crouton")) {
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
             } else {
                 // Front end
+                $this->mapController = new MeetingMap\Controller();
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
                 add_shortcode('init_crouton', array(
                     &$this,
