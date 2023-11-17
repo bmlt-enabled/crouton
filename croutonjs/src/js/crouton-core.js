@@ -340,7 +340,12 @@ function Crouton(config) {
 			return;
 		});
 	};
-
+	self.filterOnMapVisibility = function() {
+		let visible = croutonMap.filterVisibleExt().map((m)=>m.id_bigint);
+		jQuery(".bmlt-data-row").each(function(index,row) {
+			row.dataset.visible = (visible.includes(this.id)) ? '1' : '0';
+		});
+	}
 	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	};
@@ -676,6 +681,9 @@ function Crouton(config) {
 		if (venueTypes.length === 2) return Object.values(self.localization.getWord("venue_type_choices"));
 		if (venueTypes[0] === 1) return [self.localization.getWord("venue_type_choices").IN_PERSON];
 		return [self.localization.getWord("venue_type_choices").VIRTUAL];
+	}
+	self.getUsedVisibility = function(meetings) {
+		return [{name: 'Visible', value: 1}];
 	}
 	self.isEmpty = function(obj) {
 		for (var key in obj) {
@@ -1092,7 +1100,10 @@ Crouton.prototype.render = function() {
 					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds", 
 						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
-
+				self.dropdownData.push(
+					{placeholder: '', pointer: '', elementId: "filter-dropdown-visibile", 
+						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
+						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				self.renderView("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
@@ -1157,12 +1168,10 @@ Crouton.prototype.render = function() {
 						self.filteredView(e.target.attributes['data-field'].value);
 					});
 					jQuery(".displayTypeLogic").on('click', function (e) {
-						if (self.filtering) {
-							jQuery(".displayTypeLogic").each(function() {
-								if (e.target == this) jQuery(this).addClass("hide");
-								else jQuery(this).removeClass("hide");
-							})
-						}
+						jQuery(".displayTypeLogic").each(function() {
+							if (e.target == this) jQuery(this).addClass("hide");
+							else jQuery(this).removeClass("hide");
+						})
 					});
 					jQuery('#displayTypeButton_tablePages').on('click', function (e) {
 						self.hidePage('#byfield_embeddedMapPage');
@@ -1171,6 +1180,11 @@ Crouton.prototype.render = function() {
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
 						croutonMap.showMap();
+					});
+					jQuery('#displayTypeButton_onlyVisible').on('click', function (e) {
+						self.hidePage('#byfield_embeddedMapPage');
+						self.filterOnMapVisibility();
+						self.filteredPage();
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {

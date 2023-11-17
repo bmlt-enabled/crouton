@@ -1,0 +1,537 @@
+.BMLTPlugin_simple_throbber_container_div
+{
+    text-align:center;
+    margin-top:8px;
+}
+
+.BMLTPlugin_simple_throbber_div img,
+.BMLTPlugin_simple_throbber_div
+{
+    display:block;
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+    width:40px;
+    height:40px;
+}
+/* These are all for the new map search implementation */
+
+div.bmlt_map_container_div 
+{
+    width: 100%;
+    margin:auto;
+    left:0;
+	top:0;
+	height:640px;
+}
+
+div.bmlt_search_map_div {
+    width: 100%;
+    margin:auto;
+    left:0;
+	top:0;
+  height:100%;	
+  z-index: 10;
+}
+div.bmlt_map_container_div .bmlt_map_throbber_div
+{
+    position:absolute;
+    top:50%;
+    left:50%;
+    height:48px;
+    width:48px;
+    margin:0;
+    margin-top:-24px;
+    margin-left:-24px;
+    z-index:10000;
+    background-color:#555;
+}
+
+div.bmlt_map_container_div .bmlt_map_throbber_div img
+{
+    display:block;
+    height:40px;
+    width:40px;
+    margin:4px;
+}
+
+div.bmlt_map_container_div .bmlt_search_map_div,
+div.bmlt_map_container_div .bmlt_map_throbber_div
+{
+    border: 1px solid #555;
+    border-radius: 3px;
+	-moz-border-radius:3px;
+	-webkit-border-radius: 3px;
+}
+
+div.bmlt_map_container_div div.bmlt_search_map_div
+{
+    width:100%;
+    margin:auto;
+    margin-top:2px;
+}
+.accordion {
+
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+  min-width: 200px !important;
+  /* Radio Inputs */
+  /* Labels */
+  /* Panel Content */
+}
+.accordion input[name='panel'] {
+  display: none;
+}
+.accordion label {
+  position: relative;
+  display: block;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: .25em;
+  padding-bottom: .25em;
+  background: linear-gradient(to bottom, #fefefe 0%, #d1d1d1 50%, #dbdbdb 55%, #e2e2e2 100%);
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 2px 0 #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75);
+  color: #666;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.865, 0.14, 0.095, 0.87);
+}
+.accordion h4 {
+  padding-top: .25em;
+  font-size: 16px;
+  font-weight: bold;	
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.accordion label:after {
+  content: '+';
+  position: absolute;
+  right: 1em;
+  width: 1em;
+  height: 1em;
+  color: #eee;
+  text-align: center;
+  border-radius: 50%;
+  background: #27ae60;
+  box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.5), 0 1px 0 #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.75);
+}
+.accordion label:hover {
+  color: #444;
+}
+.accordion input:checked + label {
+  color: #222;
+}
+.accordion input:checked + label:after {
+  content: '-';
+  /* adjsut line-height to vertically center icon */
+  line-height: .8em;
+}
+.accordion .marker_div_meeting {
+  overflow: hidden;
+  height: 0px;
+  position: relative;
+  padding: 0 1.5em;
+  box-shadow: inset 4px 0 0 0 #27ae60, inset 0 3px 6px rgba(0, 0, 0, 0.75);
+  color: #444;
+  transition: height 0.4s cubic-bezier(0.865, 0.14, 0.095, 0.87);
+}
+.accordion .marker_div_meeting:not(:last-of-type) {
+  box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.25), inset 4px 0 0 0 #27ae60, inset 0 3px 6px rgba(0, 0, 0, 0.75);
+}
+.accordion .marker_div_meeting .accordion__header {
+  padding: 1em 0;
+}
+.accordion .marker_div_meeting .accordion__body {
+  font-size: .825em;
+  line-height: 1.4em;
+}
+.active {
+  display: block;
+}
+.hidden {
+  display: none;
+}
+.hygene-button {
+  padding: 3px 5px;
+  font-size: 12px;
+  background-color: #F1F1F1;
+  color: #35414F;
+  border-color: #C5C5C5;
+  margin-bottom: 3px;
+}
+.bmlt-hygene-descr {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 12px;
+  border:0;
+}
+
+.bmlt-hygene-header {
+  font-weight: bold;
+  padding-bottom: 2px;
+  font-size:12px;
+  border:0;
+}  
+input[name='panel']:checked ~ .marker_div_meeting {
+  height:auto;
+  overflow: auto !important;
+  padding-bottom:1em;
+}
+
+.onoffswitch {
+    position: relative; width: 170px !important;
+    opacity: 1 !important;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none !important;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #2d5c88 !important; border-radius: 20px !important;
+    	    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    
+}
+.onoffswitch-inner {
+    display: block !important; width: 200% !important; margin-left: -100% !important;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px !important; color: white; font-family: Roboto, Arial, sans-serif !important; font-weight: bold !important;
+    box-sizing: border-box !important;
+}
+
+.onoffswitch-switch {
+    display: block !important; width: 18px !important; margin: 6px !important;
+    background: #FFFFFF !important;
+    position: absolute; top: 0; bottom: 0;
+    right: 136px !important;
+    border: 2px solid #2d5c88 !important; border-radius: 20px;
+    transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0 !important;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px !important; 
+}
+.mapSearchText {
+	background-color: #fff !important;
+	border: none !important;
+	outline: none !important;
+	font-size: 14px !important;font-family: Roboto, Arial, sans-serif !important; font-weight: bold !important;
+	border-radius: 2px !important;
+	box-shadow: 0 1px 4px rgba(0,0,0,0.3) !important;
+	cursor: pointer !important;
+	padding: 0px !important;
+	margin-left: 10px !important;
+	margin-bottom: 0px !important;
+	height: 30px !important;
+}
+.si-content-wrapper {
+	padding: 0;
+}
+
+div.bmlt_map_container_div  input {
+	width: 100%;
+	background-color: #fff;
+}
+div.bmlt_map_container_div  button {
+	background-color: #eeeeee !important;
+	color: #2d5c88 !important;
+}
+#open_filter {
+	width: inherit;
+}
+/* The Modal (background) */
+.modal {
+  font-size: 14px !important; color: black; font-family: Roboto, Arial, sans-serif !important; 
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1000; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  border: 1px solid #888;
+  line-height: 1.2;
+}
+
+/* The Close Button */
+.modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 0;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-title {
+	font-size: 18px;
+	text-align: left;
+}
+#filter_modal p {
+	margin-top: .5em;
+	margin-bottom: 0;
+}
+.filter-button {
+  background-color: #1abc9c;
+  color: #fff;
+  margin: 10px;
+  border-radius: 3px;
+  padding: .3em .5em;
+}
+/* Custom dropdown */
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 10px; /* demo only */
+}
+
+.custom-dropdown select {
+  background-color: #eeeeee !important;
+  width:100% !important;
+  color: #2d5c88 !important;
+  font-size: inherit;
+  font-weight: bold !important;
+  padding: .25em !important;
+  padding-right: 2.5em !important; 
+  padding-left: 1em !important;
+  height: 2em !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  border-color: #2d5c88 !important;
+  margin: 0 !important;
+  border-radius: 3px;
+  text-indent: 0.01px;
+  background-image: none !important; 
+  -webkit-appearance: button; /* hide default arrow in chrome OSX */
+}
+
+.custom-dropdown::before,
+.custom-dropdown::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.custom-dropdown::after { /*  Custom dropdown arrow */
+  content: "\25BC";
+  height: 1em;
+  font-size: .625em;
+  line-height: 1;
+  right: 1.2em;
+  top: 50%;
+  margin-top: -.5em;
+}
+
+.custom-dropdown::before { /*  Custom dropdown arrow cover */
+  width: 2em;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.custom-dropdown select[disabled] {
+  color: rgba(0,0,0,.3);
+}
+
+.custom-dropdown select[disabled]::after {
+  color: rgba(0,0,0,.1);
+}
+
+.custom-dropdown::before {
+  background-color: rgba(0,0,0,.15);
+}
+
+.custom-dropdown::after {
+  color: rgba(0,0,0,.4);
+}
+
+/* Style the buttons inside the tab */
+#modal-tab button {
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 8px;
+  transition: 0.3s;
+  font-size: 13px;
+	margin-left: 2px;
+	margin-top: 6px;
+	border-color: #C5C5C5 !important;
+		color: #FFF !important;
+	background-color: #DB4865 !important;
+}
+#table_content {
+  font-size: 14px !important; font-family: Roboto, Arial, sans-serif !important;
+  transform: translate(-50%, 0px);
+  top: 15%;
+  width: 75%;
+}
+#table_content h4 {
+  font-size: 14px;
+  font-weight: bold;
+      margin-top: 0;
+    line-height: 1.2;	
+}
+.modal_times {
+  font-size: 14px;
+  font-weight: bold;
+  color: #DB4865;	
+}
+#table_content .meeting-header{
+  background-color: #93c3cd !important;
+  font-size: 14px;
+  font-weight: 700 !important;
+  color: #000 !important;
+}
+
+#modal-day-button {
+	margin-left:6px;
+}
+
+/* Change background color of buttons on hover */
+#modal-tab button:hover {
+  background-color: #F1F1F1 !important;
+  border-color: #fff !important;
+}
+
+/* Create an active/current tablink class */
+#modal-tab button.active {
+    color: #000 !important;
+	background-color: #93c3cd !important;
+}
+
+/* Style the tab content */
+.modal-tabcontent {
+  display: none;
+  padding: 4px 4px;
+  border: 1px solid #ccc;
+  border-top: none;
+  background-color: #35414F;
+}
+.modal-tabcontent td {
+	background-color: inherit;
+}
+
+
+.modal-tabcontent tr:nth-child(even) {
+	background-color: #F2F2F2 !important;
+}
+
+.modal-tabcontent tr:nth-child(odd) {
+	background: #FFF;
+}
+
+#bmlt-tabs td {
+/* border-top: 0; */
+	padding: .8em;
+}
+.menu-button {
+        background-color: #EEEEEE !important;
+        color: #2d5c88 !important;
+	    outline: none;
+	    width: 55px;
+	    height: 32px;
+    	border: 2px solid #2d5c88 !important; border-radius: 20px !important;
+	    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+	    cursor: pointer;
+	    margin-right: 10px;
+	    margin-top: 10px;
+	    padding: 0px;
+}
+.menu-button:hover, .menu-button:focus {
+	background-color: #EEEEEE !important;
+}
+.menu-button-label {
+    position: relative;
+    top: -12px;
+    left: -0.3em;
+    font-weight: bold;
+    font-size: 14px;
+    color: #2d5c88 !important;
+
+}
+.menu-button-child {
+	    width: 32px;
+	    height: 32px;
+	    background-size: 32px 32px;
+	    background-position: 1px -2px;
+	    background-repeat: no-repeat;
+	    font-size: 14px;
+	    display: inline-block;
+}
+.menu-button-childSmall {
+	    width: 32px;
+	    height: 32px;
+	    background-size: 24px 24px;
+	    background-position: 1px 2px;
+	    background-repeat: no-repeat;
+	    font-size: 14px;
+	    display: inline-block;
+}
+.menu-dropdown {
+		display: none;
+background-color: #EEEEEE;
+    color: #2d5c88;
+	    position: absolute;
+	    top: 45px;
+	    right: 10px;
+	    border-radius: 2px;
+	    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+	    min-width: 160px;
+}
+.menu-dropdown button {
+  color: black;
+  padding: 12px 16px;
+  font-size: 14px !important; font-family: Roboto, Arial, sans-serif !important;
+  font-weight: bold;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+.leaflet-popup-content {
+  margin: 0px 0px;
+}
+
+.leaflet-pseudo-fullscreen {
+  position:fixed!important;
+  width:100%!important;
+  height:100%!important;
+  top:0!important;
+  left:0!important;
+  z-index:99999;
+  }
+  .gm-style-iw-d {
+    overflow: hidden !important;
+  }
+  .gm-style .gm-style-iw-c {
+    padding: 0px;
+  }
