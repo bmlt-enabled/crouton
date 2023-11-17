@@ -260,9 +260,14 @@ if (!class_exists("Crouton")) {
         public function enqueueFrontendFiles()
         {
             if ($this->hasShortcode()) {
-                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-core.js" : "crouton-core.min.js");
+                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-core.js" : "");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
-                wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
+                if (isset($_GET['croutonjsdebug'])) {
+                    wp_enqueue_script("croutonnocorejs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-nocore.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-nocore.js"), true);
+                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-core.js", array('croutonnocorejs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-core.js"), true);
+                } else {
+                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.js"), true);
+                }
                 if ($this->hasMap) {
                     if (has_action('crouton_map_enqueue_scripts') && !$this->useInternalMap) {
                         do_action('crouton_map_enqueue_scripts');
