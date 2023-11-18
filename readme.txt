@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.17.6 =
 * Bug fix release - better parsing of <bmlt-handlebar> tags.
+* Remove unused admin notice which could cause problems on certain sites.
 
 = 3.17.5 =
 * hide meeting-details map if google maps but no api key
