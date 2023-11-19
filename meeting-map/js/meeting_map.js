@@ -1,9 +1,10 @@
-function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
+function MeetingMap(inConfig) {
 	/****************************************************************************************
 	 *										CLASS VARIABLES									*
 	 ****************************************************************************************/
 
 	var gDelegate = new MapDelegate(inConfig);
+	var gInDiv = null;
 	const config = inConfig;
 
 	var gAllMeetings = null;
@@ -21,88 +22,92 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 	 *	\brief Load the map and set it up.													*
 	 ****************************************************************************************/
 
-	function loadMap(handlebarMapOptions=null) {
+	function loadMap(inDiv, menuContext, handlebarMapOptions=null) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadMap, []);
+			preloadApiLoadedCallback(loadMap, [inDiv]);
 			gDelegate.loadApi();
 			return;
 		}
-		let location = inCoords;
-		if (handlebarMapOptions) {
-			location = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
-		}
 		if (inDiv) {
-			inDiv.myThrobber = null;
-
+			gInDiv = inDiv;
 			if (gDelegate.createMap(inDiv, location)) {
-				createThrobber(inDiv);
 				gDelegate.addListener('zoomend', function (ev) {
 					if (gAllMeetings) {
 						searchResponseCallback();
 					}
 				}, false);
-				showThrobber();
-				var pixel_width = inDiv.offsetWidth;
-				if (!inMeetingDetail) {
-					gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
-					gDelegate.addControl(createMenuButton(pixel_width), 'topright');
-				}
-			};
+
+				if (menuContext) {
+					menuContext.pixel_width = inDiv.offsetWidth;
+					//gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
+					gDelegate.addControl(createMenuButton(menuContext), 'topright');
+				};
+			}
 		};
+		if (handlebarMapOptions) {
+			location = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
+		}
 	};
-	function loadFromCrouton(inDiv_id, meetings_responseObject, handlebarMapOptions = null) {
+	function createMenuButton(menuContext) {
+		var template = hbs_Crouton.templates['mapMenu'];
+		var controlDiv = document.createElement('div');
+		controlDiv.innerHTML = template(menuContext);
+		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function (position) {
+					coords = position.coords;
+					gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
+				});
+			}
+			dropdownContent = document.getElementById("map-menu-dropdown").style.display = "none";
+		});
+		controlDiv.querySelector("#lookupLocation").addEventListener('click', showGeocodingDialog);
+		controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
+		controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
+		controlDiv.querySelector("#fullscreenMode").addEventListener('click', toggleFullscreen);
+		controlDiv.querySelector("#map-menu-button").addEventListener('click', function (e) {
+			let dropdownContent = document.getElementById("map-menu-dropdown");
+			if (dropdownContent.style.display == "inline-block")
+				dropdownContent.style.display = "none";
+			else
+				dropdownContent.style.display = "inline-block";
+		});
+		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
+		controlDiv.querySelector("#close_table").addEventListener('click', (e)=>filterVisible(false));
+		controlDiv.querySelector("#goto-text").addEventListener('keydown', function (event) {
+			if (event && event.key == "Enter") {
+				closeModalWindow(event.target);
+				lookupLocation(g_suspendedFullscreen);
+			}
+		});
+		controlDiv.querySelector("#goto-button").addEventListener('click', function (event) {
+			closeModalWindow(event.target);
+			lookupLocation(g_suspendedFullscreen);
+		});
+		return controlDiv;
+	}
+	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, handlebarMapOptions]);
+			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions]);
 			gDelegate.loadApi();
 			return;
 		}
-		inDiv = document.getElementById(inDiv_id);
-		loadMap(handlebarMapOptions);
+		let inDiv = document.getElementById(inDiv_id);
+		loadMap(inDiv, menuContext, handlebarMapOptions);
 		loadAllMeetings(meetings_responseObject, 0, '', true);
 		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 		gDelegate.fitBounds(lat_lngs);
 	};
+	var fitDuringFilter = true;
 	function filterFromCrouton(filter) {
 		gMeetingIdsFromCrouton = filter;
 		if (gAllMeetings)
-			searchResponseCallback(true);
+			searchResponseCallback(fitDuringFilter);
 	};
 	/************************************************************************************//**
 	 *	\brief 
 	 ****************************************************************************************/
 
-	function createThrobber(inDiv) {
-		if (!inDiv.myThrobber) {
-			inDiv.myThrobber = document.createElement("div");
-			if (inDiv.myThrobber) {
-				inDiv.myThrobber.id = inDiv.id + 'Throbber_div';
-				inDiv.myThrobber.className = 'bmlt_mapThrobber_div';
-				inDiv.myThrobber.style.display = 'none';
-				inDiv.appendChild(inDiv.myThrobber);
-				var img = document.createElement("img");
-
-				if (img) {
-					img.src = config.BMLTPluginThrobber_img_src;
-					img.className = 'bmlt_mapThrobber_img';
-					img.id = inDiv.id + 'Throbber_img';
-					img.alt = 'AJAX Throbber';
-					inDiv.myThrobber.appendChild(img);
-				} else {
-					inDiv.myThrobber = null;
-				};
-			};
-		};
-	};
-	function showThrobber() {
-		if (inDiv.myThrobber) {
-			inDiv.myThrobber.style.display = 'block';
-		};
-	};
-	function hideThrobber() {
-		if (inDiv.myThrobber) {
-			inDiv.myThrobber.style.display = 'none';
-		};
-	};
 	function loadAllMeetings(meetings_responseObject, centerMe, goto, fitAll=false) {
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		searchResponseCallback();
@@ -123,7 +128,6 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 		} else if (goto != '') {
 			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
 		}
-		hideThrobber();
 	}
 	function createCityHash(allMeetings) {
 		return allMeetings.reduce(function(prev, meeting) {
@@ -134,6 +138,49 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			return prev;
 		}, {});
 	}
+	var g_suspendedFullscreen = false;
+	function closeModalWindow(modal) {
+		if (!modal.classList.contains("modal"))
+			return closeModalWindow(modal.parentNode);
+		modal.style.display = "none";
+		if (g_suspendedFullscreen) {
+			g_suspendedFullscreen = false;
+			if (!isFullscreen()) {
+				toggleFullscreen();
+			}
+		}
+	}
+	function openModalWindow(modal) {
+		if (isFullscreen()) {
+			g_suspendedFullscreen = true;
+			toggleFullscreen();
+		}
+		modal.style.display = "block";
+	}
+	function showFilterDialog(e) {
+		openModalWindow(document.getElementById('filter_modal'));
+	}
+	function showGeocodingDialog(e) {
+		openModalWindow(document.getElementById('geocoding_modal'));
+	}
+	function showListView(e) {
+		filterVisible();
+		openModalWindow(document.getElementById('table_modal'));
+	}
+	function lookupLocation(fullscreen) {
+		if (document.getElementById('goto-text').value != '') {
+			if (fullscreen) {
+				gDelegate.addListener('idle', function () {
+					gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+				}, true);
+			} else {
+				gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+			}
+		} else {
+			alert("");
+		};
+		return true;
+	};
 	function searchResponseCallback(expand = false) {
 		if (!gAllMeetings.length) {
 			alert(config.no_meetings_found);
@@ -268,16 +315,19 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
 	function filterBounds(bounds) {
-		var ret = new Array;
-		gAllMeetings.forEach(function (meeting) {
-			if (gDelegate.contains(bounds, meeting.latitude, meeting.longitude)) {
-				ret.push(meeting);
-			}
-		});
-		return ret;
+		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
-	function filterVisible() {
-		return filterBounds(gDelegate.getBounds());
+	function filterVisible(on=true) {
+		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
+		let visible = mtgs.map((m)=>m.id_bigint);
+		jQuery(".bmlt-data-row").each(function(index,row) {
+			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
+		});
+		jQuery("#byday").removeClass('hide');
+		jQuery("#filter-dropdown-visibile").val('a-1');
+		fitDuringFilter = false;
+		crouton.doFilters();
+		fitDuringFilter = true;
 	}
 	function filterBounds(bounds) {
 		var ret = gAllMeetings.filter((meeting) =>
@@ -291,16 +341,6 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			gDelegate.openMarker(meetingId);
 		} else {
 			gDelegate.setViewToPosition({latitude: meeting.latitude, longitude: meeting.longitude}, filterMeetingsAndBounds, function() {gDelegate.openMarker(meetingId);});
-		}
-	}
-	var g_suspendedFullscreen = false;
-	function closeModalWindow(modal) {
-		modal.style.display = "none";
-		if (g_suspendedFullscreen) {
-			g_suspendedFullscreen = false;
-			if (!isFullscreen()) {
-				toggleFullscreen();
-			}
 		}
 	}
 	function filterMeetingsAndBounds(bounds) {
@@ -321,10 +361,10 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 			document.webkitFullscreenElement ||
 			document.msFullscreenElement;
 
-		return (fullscreenElement === inDiv) || _isPseudoFullscreen;
+		return (fullscreenElement === gInDiv) || _isPseudoFullscreen;
 	}
 	function toggleFullscreen(options) {
-		var container = inDiv;
+		var container = gInDiv;
 		if (isFullscreen()) {
 			if (options && options.pseudoFullscreen) {
 				_setFullscreen(false);
@@ -358,7 +398,7 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 	var _isPseudoFullscreen = false;
 	function _setFullscreen(fullscreen) {
 		_isPseudoFullscreen = fullscreen;
-		var container = inDiv;
+		var container = gInDiv;
 		if (fullscreen) {
 			L.DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
 		} else {
@@ -379,23 +419,14 @@ function MeetingMap(inConfig, inDiv, inCoords, inMeetingDetail) {
 	/****************************************************************************************
 	 *								MAIN FUNCTIONAL INTERFACE								*
 	 ****************************************************************************************/
-	if (inDiv && inCoords) {
-		if (!inMeetingDetail) loadMap();
-		this.getMeetingsExt = getMeetings;
-		this.openTableViewExt = openTableView;
-	};
 	this.initialize = loadFromCrouton;
 	this.showMap = showMap;
 	this.fillMap = filterFromCrouton;
 	this.rowClick = focusOnMeeting;
 	this.apiLoadedCallback = apiLoadedCallback;
-	this.filterVisibleExt = filterVisible;
 };
-MeetingMap.prototype.getMeetingsExt = null;
-MeetingMap.prototype.openTableViewExt = null;
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
 MeetingMap.prototype.fillMap = null;
 MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
-MeetingMap.prototype.filterVisibleExt = null;
