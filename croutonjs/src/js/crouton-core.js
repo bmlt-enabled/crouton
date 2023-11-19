@@ -341,13 +341,6 @@ function Crouton(config) {
 			return;
 		});
 	};
-	self.filterOnMapVisibility = function() {
-		let visible = croutonMap.filterVisibleExt().map((m)=>m.id_bigint);
-		jQuery(".bmlt-data-row").each(function(index,row) {
-			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
-		});
-		jQuery("#filter-dropdown-visibile").val('a-1');
-	}
 	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	};
@@ -380,7 +373,6 @@ function Crouton(config) {
 			}
 		});
 		if (!filteringDropdown) {
-			self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 			return;
 		}
 		var showingNow = [];
@@ -458,6 +450,15 @@ function Crouton(config) {
 			let showing = self.meetingData.filter((m) => !(hidden.includes(m.id_bigint)));
 			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
 		});
+	}
+	self.renderStandaloneMap = function (selector, context, callback) {
+		hbs_Crouton['localization'] = self.localization;
+		self.config["hide_byday_headers"] = true;
+		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
+		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context);
+		callback();
 	}
 	self.renderView = function (selector, context, callback) {
 		hbs_Crouton['localization'] = self.localization;
@@ -696,8 +697,9 @@ function Crouton(config) {
 		return true;
 	};
 	self.createBmltMapElement = function() {
-		if (!document.getElementById('bmlt-map'))
-			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bmlt-map'></div>");
+		if (!document.getElementById('bmlt-map')) {
+			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bootstrap-bmlt bmlt-map bmlt_map_container_div'></div>");
+		}
 		return 'bmlt-map';
 	}
 	if (self.config['map_search'] !== null) {
@@ -816,7 +818,9 @@ Crouton.prototype.serviceBodyNames = function(callback) {
 		});
 	});
 };
-
+Crouton.prototype.doFilters = function() {
+	return this.filteredPage();
+}
 Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
 	var self = this;
 	for (var s = 0; s < self.all_service_bodies.length; s++) {
@@ -920,7 +924,7 @@ Crouton.prototype.doHandlebars = function() {
 						return;
 					}
 					self.meetingData = enrichedMeetingData;
-					croutonMap.initialize(self.createBmltMapElement(),self.meetingData, self.handlebarMapOptions);
+					croutonMap.initialize(self.createBmltMapElement(), self.meetingData, false, self.handlebarMapOptions);
 					jQuery("#bmlt-map").removeClass("hide");
 				}
 			});
@@ -1107,7 +1111,9 @@ Crouton.prototype.render = function() {
 					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile", 
 						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
-				self.renderView("#" + self.config['placeholder_id'], {
+				self.config.doMeetingMap = true;
+				let renderer = self.config.doMeetingMap ? self.renderStandaloneMap : renderView;
+				renderer("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
@@ -1167,6 +1173,8 @@ Crouton.prototype.render = function() {
 							self.hidePage(this);
 						});
 						self.filteredPage();
+						if (!self.filtering)
+							self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 					});
 
 					jQuery("#day").on('click', function () {
@@ -1189,11 +1197,6 @@ Crouton.prototype.render = function() {
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
 						croutonMap.showMap();
-					});
-					jQuery('#displayTypeButton_onlyVisible').on('click', function (e) {
-						self.hidePage('#byfield_embeddedMapPage');
-						self.filterOnMapVisibility();
-						self.filteredPage();
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {

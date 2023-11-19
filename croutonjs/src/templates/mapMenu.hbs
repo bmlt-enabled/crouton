@@ -1,0 +1,47 @@
+<button id="map-menu-button" class="menu-button" title="Erweiterte Suche" style="width: 95px;">
+    <span class="menu-button-childSmall" style="background-image: url('/map_images/menu-32.png');"></span>
+    <span class="menu-button-label">Menu </span>
+</button>
+    <div id="map-menu-dropdown" class="menu-dropdown">
+        <button id="lookupLocation" style="display: block;">Meetings in anderen Städten</button>
+        <button id="nearbyMeetings" style="display: block;">Meetings in der Nähe</button>
+        <button id="filterMeetings" style="display: block;">Filter für Sprache/ Format</button>
+        <button id="showAsTable" style="display: block;">Sichtbare Meetings als Tabelle</button>
+        <button id="fullscreenMode" style="display: block;">Umschalten Vollbildmodus</button>
+    </div>
+<div id="filter_modal" class="modal" style="display: none;">
+	<div class="modal-content">
+        <span class="modal-title">Filtern nach:</span><span id="close_filter" class="modal-close">×</span>
+        {{#each this.dropdownData}}
+	        <div class="bmlt-dropdown-container">
+		        <select class="crouton-select filter-dropdown" style="width:{{../this.config.dropdown_width}};" data-placeholder="{{placeholder}}" data-pointer="{{pointer}}" id={{elementId}}>
+		            <option value="a-">{{getWord 'all'}} {{placeholder}}</option>
+		            {{#each (call uniqueData ../meetings.meetingData)}}
+			            <option value="a-{{call ../objectPointer this}}">{{call ../optionName this}}</option>
+		            {{/each}}
+		        </select>
+	        </div>
+        {{/each}}
+    </div>
+</div>
+<div id="table_modal" class="modal" style="display: none;">
+	<div class="modal-content">
+        <span class="modal-title">Currently Visible Meetings:</span><span id="close_table" class="modal-close">×</span>
+        <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+            {{> meetings this.meetings.meetingData }}
+        </table>
+    </div>
+</div>
+<div id="geocoding_modal" class="modal" style="display: none;">
+	<div id="search_content" class="modal-content">
+		<span class="modal-title">Finde Meetings</span><span id="close_search" class="modal-close">×</span>
+        <p></p>
+        <div class="modal-search">
+            Suche eine Stadt oder PLZ
+            <input id="goto-text" type="text">
+            <p>
+                <button id="goto-button" class="filter-button">Los</button>
+            </p>
+        </div>
+  	</div>	
+</div>

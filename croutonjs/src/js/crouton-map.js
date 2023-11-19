@@ -203,7 +203,7 @@ CroutonMap.prototype.render = function(domElementName) {
 CroutonMap.prototype.reload = function(meetingData) {
 	this.meetingData = meetingData;
 }
-CroutonMap.prototype.initialize = function(domElementName, meetingData, handlebarMapOptions=null) {
+CroutonMap.prototype.initialize = function(domElementName, meetingData, showMenu=null, handlebarMapOptions=null) {
 	this.meetingData = meetingData;
 	this.handlebarMapOptions = handlebarMapOptions;
 	this.domElementName = domElementName;
