@@ -102,7 +102,7 @@ jQuery(document).ready(function($) {
 		position: 'right',
 		trigger: 'click'
 	});
-	jQuery('.handlebarsCode').each(function(i,textArea) {
+	$('.handlebarsCode').each(function(i,textArea) {
 		let template = textArea.value;
 		textArea.value = template.replace("___DEFAULT___", croutonDefaultTemplates[textArea.id]);
 		textArea.dataset.codeMirror = CodeMirror.fromTextArea(textArea, {
@@ -114,11 +114,30 @@ jQuery(document).ready(function($) {
 			indentWithTabs: true
 		});
 	});
-	jQuery('#custom_css').each(function(i,textArea) {
+	$('#custom_css').each(function(i,textArea) {
 		CodeMirror.fromTextArea(textArea, {
 			lineNumbers: true,
 			mode: 'css',
         	extraKeys: {"Ctrl-Space": "autocomplete"}
       });
 	});
+	showOrHide($("#tile_provider").val());
+    $("#tile_provider").change(function() {
+        showOrHide($("#tile_provider").val());
+    })
+    function showOrHide(val) {
+    	if (val == 'google') {
+        	$("#nominatim_div").hide();
+        	$("#custom_tile_provider").hide();
+        	$("#api_key_div").show();
+    	} else if (val == 'custom') {
+        	$("#nominatim_div").show();
+        	$("#custom_tile_provider").show();
+        	$("#api_key_div").hide();
+    	} else {
+        	$("#nominatim_div").show();
+        	$("#custom_tile_provider").hide();
+        	$("#api_key_div").hide();   
+    	}
+	}
 });
