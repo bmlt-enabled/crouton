@@ -584,6 +584,27 @@ jQuery(document).ready(function() {
             if (!isset($this->options['disable_tinyMCE'])) {
                 $this->options['disable_tinyMCE'] = false;
             }
+            if (!isset($this->options['tile_provider'])) {
+                if (!empty($this->options['google_api_key'])) {
+                    $this->options['tile_provider'] = 'google';
+                    $this->options['api_key'] = $this->options['google_api_key'];
+                } else {
+                    $this->options['tile_provider'] = "OSM";
+                    $this->options['api_key'] = "";
+                }
+
+                $this->options['tile_url'] = "";
+                $this->options["tile_attribution"] = "";
+                $this->options["nominatim_url"] = "";
+                $this->options["region_bias"] = "";
+                $this->options["bounds_north"] = "";
+                $this->options["bounds_east"] = "";
+                $this->options["bounds_south"] = "";
+                $this->options["bounds_west"] = "";
+                $this->options["lat"] = "";
+                $this->options["lng"] = "";
+                $this->options["zoom"] = "";
+            }
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
@@ -802,16 +823,71 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
-                        <p>This is only needed when using the companion map feature.  As an alternative to using google maps, get the <a href="https://wordpress.org/plugins/bmlt-meeting-map/" target="_blank">BMLT Meeting Map</a> plugin.
-                        This plugin can be configured to use Open Street Mapps (OSM) as its tile provider.  If BMLT-Meeting-Map is activated, crouton will use it to provide its maps.</p>
+                         <h3>Map Tile Provider</h3>
+                        <select name="tile_provider" id="tile_provider">
+                            <option value="OSM" <?php echo ( 'OSM' == $this->options['tile_provider'] ? 'selected' : '' )?>>Open Street Map</option>
+                            <option value="OSM DE" <?php echo ( 'OSM DE' == $this->options['tile_provider'] ? 'selected' : '' )?>>German Open Street Map</option>
+                            <option value="google" <?php echo ( 'google' == $this->options['tile_provider'] ? 'selected' : '' )?>>Google Maps</option>
+                            <option value="custom" <?php echo ( 'custom' == $this->options['tile_provider'] ? 'selected' : '' )?>>Custom</option>
+                        </select>
+                        <div id="custom_tile_provider">
+                            <label for="tile_url">URL for tiles: </label>
+                            <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo $this->options['tile_url']; ?>" />
+                            <br>
+                            <label for="tile_attribution">Attribution: </label>
+                            <input id="tile_attribution" type="text" size="60" name="tile_attribution" value="<?php echo esc_html($this->options['tile_attribution']); ?>" />
+                        </div>
+                        <div id="api_key_div">
+                            <label for="api_key">API Key: </label>
+                            <input id="api_key" type="text" size="40" name="api_key" value="<?php echo $this->options['api_key']; ?>" />
+                        </div>
+                        <h3>GeoCoding Parameters</h3>
+                        <div id="nominatim_div">
+                            <label for="nominatim_url">Nominatim URL: </label>
+                            <input id="nominatim_url" type="text" size="40" name="nominatim_url" value="<?php echo $this->options['nominatim_url']; ?>" />
+                        </div>
                         <ul>
                             <li>
-                                <label for="google_api_key">API Key: </label>
-                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
+                                <label for="region_bias">Region/ Country Code (optional): </label>
+                                <input id="region_bias" type="text" size="2" name="region_bias" value="<?php echo $this->options['region_bias']; ?>" />
+                            </li>
+                            <li>
+                            <table>
+                            <tr>
+                            <td>Geolocation Bounds (optional)</td>
+                            <td>
+                                <label for="bounds_north">North: </label>
+                                <input id="bounds_north" type="text" size="8" name="bounds_north" value="<?php echo $this->options['bounds_north']; ?>" />
+                                <label for="bounds_east">East: </label>
+                                <input id="bounds_east" type="text" size="8" name="bounds_east" value="<?php echo $this->options['bounds_east']; ?>" />
+                                <br>
+                                <label for="bounds_south">South: </label>
+                                <input id="bounds_south" type="text" size="8" name="bounds_south" value="<?php echo $this->options['bounds_south']; ?>" />
+                                <label for="bounds_west">West: </label>
+                                <input id="bounds_west" type="text" size="8" name="bounds_west" value="<?php echo $this->options['bounds_west']; ?>" />
+                             </td>
+                            </tr>
+                            </table>
                             </li>
                         </ul>
-                        <p>If you're using Google Maps, you must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Default Latitude and Longitude of map</h3>
+                        <p>Open Google Maps, right click on a point, and select "what is here?"</p>
+                        <ul>
+                            <li>
+                                <label for="lat">Latitude: </label>
+                                <input id="lat" type="text" size="10" name="lat" value="<?php echo $this->options['lat']; ?>" />
+                            </li>
+                            <li>
+                                <label for="lng">longitude: </label>
+                                <input id="lng" type="text" size="10" name="lng" value="<?php echo $this->options['lng']; ?>" />
+                            </li>
+                            <li>
+                                <label for="zoom">zoom: </label>
+                                <input id="zoom" type="text" size="3" name="zoom" value="<?php echo $this->options['zoom']; ?>" />
+                            </li>                           
+                        </ul>
                     </div>
 
                     <div style="padding: 0 15px;" class="postbox">
