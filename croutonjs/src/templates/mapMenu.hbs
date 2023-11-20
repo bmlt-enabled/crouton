@@ -25,11 +25,15 @@
     </div>
 </div>
 <div id="table_modal" class="modal" style="display: none;">
-	<div class="modal-content">
+	<div class="modal-content" style="max-height:85%; position:relative;">
         <span class="modal-title">Currently Visible Meetings:</span><span id="close_table" class="modal-close">×</span>
+        <div style="max-height: 500px; overflow-y: auto;">
         <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
-            {{> meetings this.meetings.meetingData }}
+        {{#each this.meetings.bydays}}
+            {{> meetings this.meetings }}
+        {{/each}}
         </table>
+        </div>
     </div>
 </div>
 <div id="geocoding_modal" class="modal" style="display: none;">
