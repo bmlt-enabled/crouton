@@ -1121,12 +1121,17 @@ Crouton.prototype.render = function() {
 						minimumResultsForSearch: 1,
 						dropdownCssClass: 'bmlt-drop',
 						matcher: function(params, data) {
+							if (data.id === "a-")
+								return data;
 							elementId = data.element.parentElement.id;
+							if (params.hasOwnProperty('term')) {
+								if (data.text.toUpperCase().indexOf(params.term.toUpperCase()) < 0)
+									return null;
+							}
 							dropdown = self.dropdownData.find((dropdown) => dropdown.elementId === elementId);
 							if (typeof dropdown === 'undefined')
 								return data;
-							if (data.id === "a-")
-								return data;
+
 							if (typeof dropdown.optionsShowing === 'undefined')
 								return data;
 							if (dropdown.optionsShowing.includes(data.text))
