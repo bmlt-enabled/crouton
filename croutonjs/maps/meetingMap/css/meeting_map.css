@@ -283,7 +283,16 @@ div.bmlt_map_container_div  button {
   font-weight: bold;
   line-height: 0;
 }
-
+.table-close {
+  color: white;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+.map-list-title {
+  color: white;
+  font-weight:bold;
+}
 .modal-close:hover,
 .modal-close:focus {
   color: black;
@@ -304,74 +313,6 @@ div.bmlt_map_container_div  button {
   margin: 10px;
   border-radius: 3px;
   padding: .3em .5em;
-}
-/* Custom dropdown */
-.custom-dropdown {
-  position: relative;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 10px; /* demo only */
-}
-
-.custom-dropdown select {
-  background-color: #eeeeee !important;
-  width:100% !important;
-  color: #2d5c88 !important;
-  font-size: inherit;
-  font-weight: bold !important;
-  padding: .25em !important;
-  padding-right: 2.5em !important; 
-  padding-left: 1em !important;
-  height: 2em !important;
-  border-style: solid !important;
-  border-width: 1px !important;
-  border-color: #2d5c88 !important;
-  margin: 0 !important;
-  border-radius: 3px;
-  text-indent: 0.01px;
-  background-image: none !important; 
-  -webkit-appearance: button; /* hide default arrow in chrome OSX */
-}
-
-.custom-dropdown::before,
-.custom-dropdown::after {
-  content: "";
-  position: absolute;
-  pointer-events: none;
-}
-
-.custom-dropdown::after { /*  Custom dropdown arrow */
-  content: "\25BC";
-  height: 1em;
-  font-size: .625em;
-  line-height: 1;
-  right: 1.2em;
-  top: 50%;
-  margin-top: -.5em;
-}
-
-.custom-dropdown::before { /*  Custom dropdown arrow cover */
-  width: 2em;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  border-radius: 0 3px 3px 0;
-}
-
-.custom-dropdown select[disabled] {
-  color: rgba(0,0,0,.3);
-}
-
-.custom-dropdown select[disabled]::after {
-  color: rgba(0,0,0,.1);
-}
-
-.custom-dropdown::before {
-  background-color: rgba(0,0,0,.15);
-}
-
-.custom-dropdown::after {
-  color: rgba(0,0,0,.4);
 }
 
 /* Style the buttons inside the tab */

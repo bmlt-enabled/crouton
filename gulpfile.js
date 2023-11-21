@@ -23,18 +23,21 @@ let jsFilesCroutonNoCore = [
 	'fetch-jsonp.js',
 	'promises-polyfill.js',
 ];
+let jsFilesCroutonNoCoreWithFullPath = jsFilesCroutonNoCore.map((f)=>'croutonjs/src/js/'+f);
 let jsFilesCroutonCore = jsFilesCroutonNoCore.concat(['crouton-core.js']);
+let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/js/'+f);
 let jsFilesCroutonMap = [
 	'crouton-map.js',
 	'markerclusterer.js',
 	'oms-1.0.3.min.js',
 ];
-let jsFilesNoJQuery = [
-].concat(jsFilesCroutonCore)
-.concat(jsFilesCroutonMap);
-let jsFilesWithJquery = [
-	'jquery-3.4.1.min.js',
-].concat(jsFilesNoJQuery);
+let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/maps/defaultCroutonMap/js/'+f);
+let jsFilesNoJQueryWithFullPath = [
+].concat(jsFilesCroutonCoreWithFullPath)
+.concat(jsFilesCroutonMapWithFullPath);
+let jsFilesWithJqueryWithFullPath = [
+	'croutonjs/src/js/jquery-3.4.1.min.js',
+].concat(jsFilesNoJQueryWithFullPath);
 
 let cssFiles = [
 	'select2.min.css',
@@ -44,12 +47,7 @@ let cssFiles = [
 let distDir = 'croutonjs/dist';
 
 task('js-files-nojquery', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesNoJQuery) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesNoJQueryWithFullPath)
 		.pipe(concat('crouton.nojquery.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -61,12 +59,7 @@ task('js-files-nojquery', () => {
 		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
 });
 task('jsFilesCroutonCore', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesCroutonCore) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesCroutonCoreWithFullPath)
 		.pipe(concat('crouton-core.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -78,12 +71,7 @@ task('jsFilesCroutonCore', () => {
 		.pipe(notify({message:"js-files-crouton-core complete", wait: true}));
 });
 task('jsFilesCroutonNoCore', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesCroutonNoCore) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesCroutonNoCoreWithFullPath)
 		.pipe(concat('crouton-nocore.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -95,12 +83,7 @@ task('jsFilesCroutonNoCore', () => {
 		.pipe(notify({message:"js-files-crouton-nocore complete", wait: true}));
 });
 task('jsFilesCroutonMap', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesCroutonMap) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesCroutonMapWithFullPath)
 		.pipe(concat('crouton-map.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -113,12 +96,8 @@ task('jsFilesCroutonMap', () => {
 });
 
 task('js-files', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesWithJquery) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
 
-	return src(jsFilesWithFullPath)
+	return src(jsFilesWithJqueryWithFullPath)
 		.pipe(concat('crouton.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({

@@ -73,7 +73,7 @@ function MeetingMap(inConfig) {
 				dropdownContent.style.display = "inline-block";
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
-		controlDiv.querySelector("#close_table").addEventListener('click', (e)=>filterVisible(false));
+		controlDiv.querySelector("#close_table").addEventListener('click', hideListView);
 		controlDiv.querySelector("#goto-text").addEventListener('keydown', function (event) {
 			if (event && event.key == "Enter") {
 				closeModalWindow(event.target);
@@ -156,6 +156,7 @@ function MeetingMap(inConfig) {
 			toggleFullscreen();
 		}
 		modal.style.display = "block";
+		document.getElementById("map-menu-dropdown").style.display = "none";
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
@@ -165,7 +166,16 @@ function MeetingMap(inConfig) {
 	}
 	function showListView(e) {
 		filterVisible();
-		openModalWindow(document.getElementById('table_modal'));
+		jQuery("#bmlt-tabs").append(jQuery("#table_page"));
+		jQuery("#table_page").removeClass("hide");
+		jQuery("#bmlt-map").css("display", "none");
+		jQuery("#table_page").css("max-height", jQuery("#bmlt-map").height());
+		document.getElementById("map-menu-dropdown").style.display = "none";
+	}
+	function hideListView(e) {
+		filterVisible(false);
+		jQuery("#table_page").addClass("hide");
+		jQuery("#bmlt-map").css("display", "block");
 	}
 	function lookupLocation(fullscreen) {
 		if (document.getElementById('goto-text').value != '') {

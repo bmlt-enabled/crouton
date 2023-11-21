@@ -14,11 +14,9 @@ if (!class_exists("MeetingMap/Controller")) {
         public $optionsName = 'bmlt_meeting_map_options';
         public $options = array();
 
-        public function __construct()
+        public function __construct($options)
         {
-            $this->getOptions();
-            add_action("crouton_map_enqueue_scripts", array(&$this, "enqueueFrontendFiles"), 0);
-            add_filter("crouton_map_create_control", array(&$this, "createMeetingMap"), 10, 4);
+            $this->options = $options;
         }
         public function enhanceTileProvider()
         {
@@ -63,56 +61,19 @@ if (!class_exists("MeetingMap/Controller")) {
         public function enqueueFrontendFiles()
         {
             if ($this->options['tile_provider'] == 'google') {
-                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__) . "css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__) . "css/meeting_map.css"), false);
-                wp_enqueue_script("gmapsDelegate", plugin_dir_url(__FILE__) . "js/gmapsDelegate.js", false, filemtime(plugin_dir_path(__FILE__) . "js/gmapsDelegate.js"), false);
-                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__) . "js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__) . "js/meeting_map.js"), false);
+                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__) . "css/meeting_map.css"), false);
+                wp_enqueue_script("gmapsDelegate", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/js/gmapsDelegate.js", false, filemtime(plugin_dir_path(__FILE__) . "js/gmapsDelegate.js"), false);
+                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__) . "js/meeting_map.js"), false);
             } else {
-                wp_enqueue_style("leaflet", plugin_dir_url(__FILE__) . "css/leaflet.css", false, filemtime(plugin_dir_path(__FILE__) . "css/leaflet.css"), false);
-                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__) . "css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__) . "css/meeting_map.css"), false);
-                wp_enqueue_script("leaflet", plugin_dir_url(__FILE__) . "js/leaflet.js", false, filemtime(plugin_dir_path(__FILE__) . "js/leaflet.js"), false);
+                wp_enqueue_style("leaflet", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/css/leaflet.css", false, filemtime(plugin_dir_path(__FILE__) . "css/leaflet.css"), false);
+                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__) . "css/meeting_map.css"), false);
+                wp_enqueue_script("leaflet", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/js/leaflet.js", false, filemtime(plugin_dir_path(__FILE__) . "js/leaflet.js"), false);
                 //wp_enqueue_script("geocoder", plugin_dir_url(__FILE__) . "js/nominatim.js", false, filemtime(plugin_dir_path(__FILE__) . "js/nominatim.js"), false);
-                wp_enqueue_script("osmDelegate", plugin_dir_url(__FILE__) . "js/osmDelegate.js", false, filemtime(plugin_dir_path(__FILE__) . "js/osmDelegate.js"), false);
-                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__) . "js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__) . "js/meeting_map.js"), false);
+                wp_enqueue_script("osmDelegate", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/js/osmDelegate.js", false, filemtime(plugin_dir_path(__FILE__) . "js/osmDelegate.js"), false);
+                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__) . "croutonjs/maps/meetingMap/js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__) . "js/meeting_map.js"), false);
             }
         }
-        /**
-         * Retrieves the plugin options from the database.
-         * @return array
-         */
-        public function getOptions()
-        {
-            // Don't forget to set up the default options
-            if (!$theOptions = get_option($this->optionsName)) {
-                $theOptions = array(
-                    'root_server' => '',
-                    'api_key' => '',
-                    'lat' => 52.533849,
-                    'lng' => 13.418893,
-                    'zoom' => 12
-                );
-                update_option($this->optionsName, $theOptions);
-            }
-            $this->options = $theOptions;
-            if (!isset($this->options['tile_provider'])) {
-                $this->options['tile_provider'] = 'OSM';
-            }
-            if (!isset($this->options['nominatim_url'])) {
-                $this->options['nominatim_url'] = 'https://nominatim.openstreetmap.org/';
-            }
-            if (!isset($this->options['lang'])) {
-                $this->options['lang'] = 'en';
-            }
-            if (!isset($this->options['tile_url'])) {
-                $this->options['tile_url'] = '';
-            }
-            if (!isset($this->options['tile_attribution'])) {
-                $this->options['tile_attribution'] = '';
-            }
-            if (!isset($this->options['region_bias'])) {
-                $this->options['region_bias'] = '';
-            }
-        }
-        public function createMeetingMap($ret, $lang, $control, $detailsPage = '')
+        public function createCroutonMap($ret, $lang, $control, $detailsPage = '')
         {
             include(dirname(__FILE__)."/lang/translate_".$lang.".php");
             $lat = $this->options['lat'];
@@ -183,11 +144,6 @@ if (!class_exists("MeetingMap/Controller")) {
             return $croutonOptions
                 ? (isset($croutonOptions['meeting_details_href']) ? $croutonOptions['meeting_details_href'] : '')
                 : '';
-        }
-        protected function getPluginPath()
-        {
-            // phpcs:enable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-            return plugin_dir_url(__FILE__);
         }
     }
 }

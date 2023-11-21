@@ -706,7 +706,7 @@ function Crouton(config) {
 		if (typeof window.croutonMap === 'undefined') {
 			window.croutonMap = new CroutonMap(config);
 		}
-		croutonMap.render(self.createBmltMapElement());
+		window.croutonMap.render(self.createBmltMapElement());
 	} else {
 		if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
 			window.croutonMap = new CroutonMap(config);
@@ -932,7 +932,7 @@ Crouton.prototype.doHandlebars = function() {
 
 };
 
-Crouton.prototype.render = function() {
+Crouton.prototype.render = function(doMeetingMap = false) {
 	var self = this;
 	self.lock(function() {
 		var body = jQuery("body");
@@ -1111,8 +1111,7 @@ Crouton.prototype.render = function() {
 					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile", 
 						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
-				self.config.doMeetingMap = true;
-				let renderer = self.config.doMeetingMap ? self.renderStandaloneMap : renderView;
+				let renderer = doMeetingMap ? self.renderStandaloneMap : self.renderView;
 				renderer("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {

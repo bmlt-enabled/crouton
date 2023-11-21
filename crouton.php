@@ -53,7 +53,6 @@ if (!class_exists("Crouton")) {
         );
         // crouton includes a map, we need to include the JS files and create the croutonMap object.
         private $hasMap = false;
-        // the [crouton_map] shortcode always uses the internal map.  If we want the other, you can just use its shortcode.
         private $useInternalMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
@@ -120,7 +119,8 @@ if (!class_exists("Crouton")) {
             "native_lang" => '',
             "has_meeting_count" => false
         );
-        private MeetingMap\Controller $mapController;
+        private MeetingMap\Controller $meetingMapController;
+        private GoogleMapController $googleMapController;
         public function __construct()
         {
             $this->getOptions();
@@ -372,20 +372,20 @@ if (!class_exists("Crouton")) {
             }
             return $externalMap;
         }
-        private function getInitializeCroutonBlock($config, $mapConfig)
+        private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 $externalMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap crouton = new Crouton($config); });</script>";
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap crouton = new Crouton($config); $renderCmd });</script>";
             } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
+                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
             }
         }
 
         private function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock("crouton.render();", ...$this->getCroutonJsConfig($atts));
         }
 
         private function renderMap($atts)
@@ -416,12 +416,12 @@ if (!class_exists("Crouton")) {
                     ? boolval($atts['map_search_coordinates_search'])
                     : $this->shortCodeOptions['map_search_coordinates_search']
             ];
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("croutonMap.render();", ...$this->getCroutonJsConfig($atts));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("", ...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
@@ -430,7 +430,7 @@ if (!class_exists("Crouton")) {
                 return '1';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='meeting-count-$random_id'></span>";
         }
 
         public function groupCount($atts)
@@ -439,7 +439,7 @@ if (!class_exists("Crouton")) {
                 return '1';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='group-count-$random_id'></span>";
         }
 
         public function serviceBodyNames($atts)
@@ -448,7 +448,7 @@ if (!class_exists("Crouton")) {
                 return '';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; })", ...$this->getCroutonJsConfig($atts)) . "<span id='service-body-names-$random_id'></span>";
         }
         public function handlebarFooter()
         {
