@@ -69,6 +69,8 @@ if (!class_exists("MeetingMap/Controller")) {
             }
             $mapParams['template_path'] = plugin_dir_url(__FILE__) . '../../dist/templates/';
             $mapParams['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
+            $mapParams['language'] = $params['language'];
+            return json_encode($mapParams);
         }
     }
 }
