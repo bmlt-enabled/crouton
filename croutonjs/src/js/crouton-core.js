@@ -702,17 +702,10 @@ function Crouton(config) {
 		}
 		return 'bmlt-map';
 	}
-	if (self.config['map_search'] !== null) {
-		if (typeof window.croutonMap === 'undefined') {
-			window.croutonMap = new CroutonMap(config);
-		}
-		window.croutonMap.render(self.createBmltMapElement());
-	} else {
-		if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
-			window.croutonMap = new CroutonMap(config);
-		}
-		self.meetingSearch();
+	if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
+		window.croutonMap = new CroutonMap(config);
 	}
+	self.meetingSearch();
 }
 
 Crouton.prototype.setConfig = function(config) {

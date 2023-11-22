@@ -5,6 +5,7 @@ function CroutonMap(config) {
 		distance_units: 'mi'
 	};
 	Object.assign(self.config, config);
+	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
     self.map = null;
     self.geocoder = null;
     self.map_objects = [];
