@@ -27,8 +27,11 @@ if (!class_exists("MeetingMap/Controller")) {
                 wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__)."js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__)."js/meeting_map.js"), false);
             } else {
                 wp_enqueue_style("leaflet", plugin_dir_url(__FILE__)."css/leaflet.css", false, filemtime(plugin_dir_path(__FILE__)."css/leaflet.css"), false);
+                wp_enqueue_style("leaflet-markercluster-default", plugin_dir_url(__FILE__)."css/MarkerCluster.Default.css", false, filemtime(plugin_dir_path(__FILE__)."css/MarkerCluster.Default.css"), false);
+                wp_enqueue_style("leaflet-markercluster", plugin_dir_url(__FILE__)."css/MarkerCluster.css", false, filemtime(plugin_dir_path(__FILE__)."css/MarkerCluster.css"), false);
                 wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__)."css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__)."css/meeting_map.css"), false);
                 wp_enqueue_script("leaflet", plugin_dir_url(__FILE__)."js/leaflet.js", false, filemtime(plugin_dir_path(__FILE__)."js/leaflet.js"), false);
+                wp_enqueue_script("leaflet.markercluster", plugin_dir_url(__FILE__)."js/leaflet.markercluster.js", false, filemtime(plugin_dir_path(__FILE__)."js/leaflet.markercluster.js"), false);
                 //wp_enqueue_script("geocoder", plugin_dir_url(__FILE__) . "js/nominatim.js", false, filemtime(plugin_dir_path(__FILE__) . "js/nominatim.js"), false);
                 wp_enqueue_script("osmDelegate", plugin_dir_url(__FILE__)."js/osmDelegate.js", false, filemtime(plugin_dir_path(__FILE__)."js/osmDelegate.js"), false);
                 wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__)."js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__)."js/meeting_map.js"), false);

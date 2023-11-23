@@ -31,7 +31,7 @@ function MeetingMap(inConfig) {
 		if (inDiv) {
 			gInDiv = inDiv;
 			if (gDelegate.createMap(inDiv, location)) {
-				gDelegate.addListener('zoomend', function (ev) {
+				useMarkerCluster() || gDelegate.addListener('zoomend', function (ev) {
 					if (gAllMeetings) {
 						searchResponseCallback();
 					}
@@ -208,17 +208,26 @@ function MeetingMap(inConfig) {
 	/****************************************************************************************
 	 *									CREATING MARKERS									*
 	 ****************************************************************************************/
+	function useMarkerCluster() {
+		return true;
+	}
 	function drawMarkers(expand = false) {
+		console.log("calling drawMarkers");
 		gDelegate.clearAllMarkers();
 
 		// This calculates which markers are the red "multi" markers.
 		const filtered = filterMeetings(gAllMeetings);
-		var overlap_map = mapOverlappingMarkersInCity(filtered);
 
+		var overlap_map = useMarkerCluster()
+			? filtered.map((m)=>[m])
+			: mapOverlappingMarkersInCity(filtered);
+
+		if (useMarkerCluster()) gDelegate.createClusterLayer(); 
 		// Draw the meeting markers.
 		overlap_map.forEach(function (marker) {
 			createMapMarker(marker);
 		});
+		if (useMarkerCluster()) gDelegate.addClusterLayer(); 
 		if (expand) {
 			const lat_lngs = filtered.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);

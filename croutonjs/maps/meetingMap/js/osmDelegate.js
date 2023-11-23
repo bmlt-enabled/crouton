@@ -29,6 +29,7 @@ function MapDelegate(config) {
     var	gAllMarkers = [];				///< Holds all the markers.
 	var gMainMap;
 	var gTileLayer;
+	var gClusterLayer = null;
     function createMap(inDiv, inCenter) {
 		if (! inCenter ) return null;
 		myOptions = {
@@ -163,7 +164,9 @@ function MapDelegate(config) {
 		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
 	}
-    var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title}).bindPopup(in_html).addTo(gMainMap);
+    var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title}).bindPopup(in_html);
+	if (gClusterLayer) gClusterLayer.addLayer(marker);
+	else marker.addTo(gMainMap);
 	marker.on('popupopen', function(e) {
         marker.oldIcon = marker.getIcon();
 		marker.setIcon(g_icon_image_selected);
@@ -322,6 +325,12 @@ function addControl(div,pos) {
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
 		gMainMap.fitBounds(bounds);
 	}
+	function createClusterLayer() {
+		gClusterLayer = L.markerClusterGroup();
+	}
+	function addClusterLayer() {
+		gClusterLayer && gMainMap.addLayer(gClusterLayer);
+	}
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -340,6 +349,8 @@ function addControl(div,pos) {
 	this.fitBounds = fitBounds;
 	this.openMarker = openMarker;
 	this.isApiLoaded = returnTrue;
+	this.createClusterLayer = createClusterLayer;
+	this.addClusterLayer = addClusterLayer;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -358,3 +369,5 @@ MapDelegate.prototype.zoomOut = null;
 MapDelegate.prototype.fitBounds = null;
 MapDelegate.prototype.openMarker = null;
 MapDelegate.prototype.isApiLoaded = null;
+MapDelegate.prototype.createClusterLayer = null;
+MapDelegate.prototype.addClusterLayer = null;

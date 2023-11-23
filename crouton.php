@@ -112,7 +112,7 @@ if (!class_exists("Crouton")) {
         );
         private function useMeetingMap()
         {
-            return empty($this->options['google_api_key']);
+            return true; //empty($this->options['google_api_key']);
         }
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
