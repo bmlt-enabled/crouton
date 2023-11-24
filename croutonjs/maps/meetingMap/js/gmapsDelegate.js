@@ -8,6 +8,7 @@
         var gMainMap;
         var gInfoWindow;
         var gIsLoaded = false;
+        var gIsClustering = false;
         var	gAllMarkers = [];				///< Holds all the markers.
         function isApiLoaded() {
             return gIsLoaded;
@@ -141,7 +142,7 @@
             gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
         }
         function getZoom() {
-            gMainMap.getZoom();
+            return gMainMap.getZoom();
         }
         function zoomOut(filterMeetings) {
             gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
@@ -161,6 +162,20 @@
         function setZoom(filterMeetings) {
             gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
         }
+        function createClusterLayer() {
+            gIsClustering = true;
+        }
+        function removeClusterLayer() {
+            gIsClustering =false;
+            gMarkerClusterer && gMarkerClusterer.setMap(null);
+            gMarkerClusterer = null;
+        }
+    var gMarkerClusterer = null;
+       function addClusterLayer() {
+            let markers = gAllMarkers.map((m)=>m.marker);
+            if (gIsClustering) gMarkerClusterer = new markerClusterer.MarkerClusterer( { 'map': gMainMap, 'markers': markers, 'imagePath': 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'} );
+            else markers.forEach((m)=>m.setMap(gMainMap));
+       }
     function createMarker (	inCoords,		///< The long/lat for the marker.
 			multi, 
 			inHtml,		///< The info window HTML
@@ -175,7 +190,6 @@
 
 		var marker = new google.maps.Marker ( 
             { 'position':		new google.maps.LatLng(...inCoords),
-				'map':			gMainMap,
 				'shadow':		g_icon_shadow,
 				'icon':			in_main_icon,
 				'shape':		g_icon_shape,
@@ -316,6 +330,9 @@
         this.openMarker = openMarker;
         this.isApiLoaded = isApiLoaded;
         this.loadApi = loadApi;
+        this.createClusterLayer = createClusterLayer;
+        this.addClusterLayer = addClusterLayer;
+        this.removeClusterLayer = removeClusterLayer;
     }
     MapDelegate.prototype.createMap = null;
     MapDelegate.prototype.addListener = null;
@@ -335,3 +352,6 @@
     MapDelegate.prototype.isApiLoaded = null;
     MapDelegate.prototype.loadApi = null;
     MapDelegate.prototype.openMarker = null;
+    MapDelegate.prototype.createClusterLayer = null;
+    MapDelegate.prototype.addClusterLayer = null;
+    MapDelegate.prototype.removeClusterLayer = null;

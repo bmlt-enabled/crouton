@@ -189,8 +189,9 @@ function MapDelegate(config) {
 function openMarker(id) {
 	marker = gAllMarkers.find((m) => m.ids.includes(id));
 	if (marker) {
-		 marker.marker.openPopup();
-		 jQuery("#panel-"+id).prop('checked', true);
+		marker.marker.openPopup();
+		jQuery("#panel-"+id).prop('checked', true);
+		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
 	}
 	jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
 	jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
@@ -331,6 +332,10 @@ function addControl(div,pos) {
 	function addClusterLayer() {
 		gClusterLayer && gMainMap.addLayer(gClusterLayer);
 	}
+	function removeClusterLayer() {
+		gClusterLayer && gMainMap.removeLayer(gClusterLayer);
+		gClusterLayer = null;
+	}
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -351,6 +356,7 @@ function addControl(div,pos) {
 	this.isApiLoaded = returnTrue;
 	this.createClusterLayer = createClusterLayer;
 	this.addClusterLayer = addClusterLayer;
+	this.removeClusterLayer = removeClusterLayer;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -371,3 +377,4 @@ MapDelegate.prototype.openMarker = null;
 MapDelegate.prototype.isApiLoaded = null;
 MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
+MapDelegate.prototype.removeClusterLayer = null;

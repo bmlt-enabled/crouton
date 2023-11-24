@@ -509,6 +509,7 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->options['google_api_key'] = $_POST['api_key'];
+                $this->options['tile_provider'] = $_POST['tile_provider'];
                 $this->saveAdminOptions();
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }

@@ -24,15 +24,15 @@ function MeetingMap(inConfig) {
 
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadMap, [inDiv]);
+			preloadApiLoadedCallback(loadMap, [inDiv, menuContext, handlebarMapOptions]);
 			gDelegate.loadApi();
 			return;
 		}
 		if (inDiv) {
 			gInDiv = inDiv;
 			if (gDelegate.createMap(inDiv, location)) {
-				useMarkerCluster() || gDelegate.addListener('zoomend', function (ev) {
-					if (gAllMeetings) {
+				gDelegate.addListener('zoomend', function (ev) {
+					if (shouldRedrawMarkers() && gAllMeetings) {
 						searchResponseCallback();
 					}
 				}, false);
@@ -208,13 +208,25 @@ function MeetingMap(inConfig) {
 	/****************************************************************************************
 	 *									CREATING MARKERS									*
 	 ****************************************************************************************/
+	var prevUseMarkerCluster;
 	function useMarkerCluster() {
-		return true;
+		if (typeof gDelegate.getZoom() === 'undefined') return true;
+		return gDelegate.getZoom() < 12;
+	}
+	function shouldRedrawMarkers() {
+		if (typeof prevUseMarkerCluster === 'undefined') return true;
+		if (prevUseMarkerCluster !== useMarkerCluster()) {
+			prevUseMarkerCluster = useMarkerCluster();
+			return true;
+		}
+		if (useMarkerCluster()===false) {
+			return true;
+		}
+		return false;
 	}
 	function drawMarkers(expand = false) {
-		console.log("calling drawMarkers");
 		gDelegate.clearAllMarkers();
-
+		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.
 		const filtered = filterMeetings(gAllMeetings);
 
@@ -227,13 +239,12 @@ function MeetingMap(inConfig) {
 		overlap_map.forEach(function (marker) {
 			createMapMarker(marker);
 		});
-		if (useMarkerCluster()) gDelegate.addClusterLayer(); 
+		gDelegate.addClusterLayer(); 
 		if (expand) {
 			const lat_lngs = filtered.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);
 		}
 	};
-
 	function mapOverlappingMarkersInCity(in_meeting_array)	///< Used to draw the markers when done.
 	{
 		var tolerance = 8;	/* This is how many pixels we allow. */
