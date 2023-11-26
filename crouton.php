@@ -52,7 +52,6 @@ if (!class_exists("Crouton")) {
         );
         // crouton includes a map, we need to include the JS files and create the croutonMap object.
         private $hasMap = false;
-        private $useInternalMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -110,19 +109,11 @@ if (!class_exists("Crouton")) {
             "native_lang" => '',
             "has_meeting_count" => false
         );
-        private function useMeetingMap()
-        {
-            return true; //empty($this->options['google_api_key']);
-        }
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
         {
             $this->getOptions();
-            if ($this->useMeetingMap()) {
-                require_once(__DIR__."/croutonjs/maps/meetingMap/meeting_map.php");
-            } else {
-                require_once(__DIR__."/croutonjs/maps/defaultCroutonMap/croutonMap.php");
-            }
+            require_once(__DIR__."/croutonjs/meetingMap/meeting_map.php");
             $this->meetingMapController = new MeetingMap\Controller($this->options);
             if (is_admin()) {
                 // Back end
@@ -142,6 +133,10 @@ if (!class_exists("Crouton")) {
                 add_shortcode('crouton_map', array(
                     &$this,
                     "croutonMap"
+                ));
+                add_shortcode('meeting_map', array(
+                    &$this,
+                    "meetingMap"
                 ));
                 add_shortcode('bmlt_count', array(
                     &$this,
@@ -170,7 +165,7 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            $tags = ['bmlt_tabs', 'meeting_map', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
                 return false;
@@ -190,12 +185,10 @@ if (!class_exists("Crouton")) {
                         }
                     }
                 }
-                if ($shortcode[2] === 'bmlt_handlebar') {
+                if ($shortcode[2] === 'bmlt_handlebar' ||
+                    $shortcode[2] === 'crouton_map' ||
+                    $shortcode[2] === 'meeting_map') {
                     $this->hasMap = true;
-                }
-                if ($shortcode[2] === 'crouton_map') {
-                    $this->hasMap = true;
-                    $this->useInternalMap = true;
                 }
             }
 
@@ -347,6 +340,13 @@ if (!class_exists("Crouton")) {
             }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
+        public function meetingMap($atts, $content = null)
+        {
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
+        }
         private function getMapInitialization($mapConfig)
         {
             $className = $this->meetingMapController->className();
@@ -371,8 +371,13 @@ if (!class_exists("Crouton")) {
             return $this->getInitializeCroutonBlock("crouton.render();", ...$this->getCroutonJsConfig($atts));
         }
 
-        private function renderMap($atts)
+        private function renderMap($atts, $croutonMap = true)
         {
+            if ($croutonMap) {
+                // This loads a map in which BMLT queries can be initiated
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts));
+            }
+            // This is the map UI, but loading meetings like in the table form, only at startu
             return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
         }
 
@@ -717,7 +722,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
     <li>serviceBodyType</li>
 </ul>
         </p>
-        <p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+        <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
             Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
         </p></div>
                     <div style="padding: 0 15px;" class="postbox">
@@ -1128,10 +1133,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
             $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
 
-            $params['missing_api_key'] = 0;
-            if (empty($this->options['google_api_key']) && !has_filter("crouton_map_create_control")) {
-                $params['missing_api_key'] = 1;
-            }
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($this->options['extra_meetings'] as $value) {

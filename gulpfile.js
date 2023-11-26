@@ -27,11 +27,14 @@ let jsFilesCroutonNoCoreWithFullPath = jsFilesCroutonNoCore.map((f)=>'croutonjs/
 let jsFilesCroutonCore = jsFilesCroutonNoCore.concat(['crouton-core.js']);
 let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/js/'+f);
 let jsFilesCroutonMap = [
-	'crouton-map.js',
-	'markerclusterer.js',
-	'oms-1.0.3.min.js',
+	'meeting-map.js',
+	'osmDelegate.js',
+	'gmapsDelegate.js',
+	'google.markerclusterer.min.js',
+	'leaflet.js',
+	'leaflet.markercluster.js'
 ];
-let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/maps/defaultCroutonMap/js/'+f);
+let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesNoJQueryWithFullPath = [
 ].concat(jsFilesCroutonCoreWithFullPath)
 .concat(jsFilesCroutonMapWithFullPath);

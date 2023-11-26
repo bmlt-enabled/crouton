@@ -30,7 +30,7 @@ function MeetingMap(inConfig) {
 		}
 		if (inDiv) {
 			gInDiv = inDiv;
-			if (gDelegate.createMap(inDiv, location)) {
+			if (gDelegate.createMap(inDiv, menuContext.location)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
 						searchResponseCallback();
@@ -48,6 +48,7 @@ function MeetingMap(inConfig) {
 			location = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 		}
 	};
+	var gSearchModal;
 	function createMenuButton(menuContext) {
 		var template = hbs_Crouton.templates['mapMenu'];
 		var controlDiv = document.createElement('div');
@@ -84,8 +85,13 @@ function MeetingMap(inConfig) {
 			closeModalWindow(event.target);
 			lookupLocation(g_suspendedFullscreen);
 		});
+		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
+
+		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
+		gSearchModal.parentElement.removeChild(gSearchModal); 
 		return controlDiv;
 	}
+
 	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
 			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions]);
@@ -95,8 +101,6 @@ function MeetingMap(inConfig) {
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions);
 		loadAllMeetings(meetings_responseObject, 0, '', true);
-		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
-		gDelegate.fitBounds(lat_lngs);
 	};
 	var fitDuringFilter = true;
 	function filterFromCrouton(filter) {
@@ -104,11 +108,25 @@ function MeetingMap(inConfig) {
 		if (gAllMeetings)
 			searchResponseCallback(fitDuringFilter);
 	};
+	function nearMeSearch() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+				function (position) {
+					crouton.searchByCoordinates(position.coords.latitude, position.coords.longitude);
+				},
+				function(e) {console.log(e)}
+			)
+		}
+	}
 	/************************************************************************************//**
 	 *	\brief 
 	 ****************************************************************************************/
 
 	function loadAllMeetings(meetings_responseObject, centerMe, goto, fitAll=false) {
+		if (meetings_responseObject === null) {
+			showBmltSearchDialog();
+			return;
+		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		searchResponseCallback();
 		if (centerMe != 0) {
@@ -119,15 +137,17 @@ function MeetingMap(inConfig) {
 						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
 					},
 					function () {
-						showSearchDialog(null);
+						showSearchDialog();
 					}
 				);
 			} else if (fitAll) {
-				showSearchDialog(null);
+				showSearchDialog();
 			}
 		} else if (goto != '') {
 			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
 		}
+		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+		gDelegate.fitBounds(lat_lngs);
 	}
 	function createCityHash(allMeetings) {
 		return allMeetings.reduce(function(prev, meeting) {
@@ -156,15 +176,20 @@ function MeetingMap(inConfig) {
 			toggleFullscreen();
 		}
 		modal.style.display = "block";
-		document.getElementById("map-menu-dropdown").style.display = "none";
+		dd = document.getElementById("map-menu-dropdown");
+		if (dd) dd.style.display = "none";
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
-	function showGeocodingDialog(e) {
+	function showBmltSearchDialog(e) {
+		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
+		openModalWindow(gSearchModal);
+	}
+	function showGeocodingDialog(e=null) {
 		openModalWindow(document.getElementById('geocoding_modal'));
 	}
-	function showListView(e) {
+	function showListView(e=null) {
 		filterVisible();
 		jQuery("#bmlt-tabs").append(jQuery("#table_page"));
 		jQuery("#table_page").removeClass("hide");
@@ -172,7 +197,7 @@ function MeetingMap(inConfig) {
 		jQuery("#table_page").css("max-height", jQuery("#bmlt-map").height());
 		document.getElementById("map-menu-dropdown").style.display = "none";
 	}
-	function hideListView(e) {
+	function hideListView(e=null) {
 		filterVisible(false);
 		jQuery("#table_page").addClass("hide");
 		jQuery("#bmlt-map").css("display", "block");
@@ -454,9 +479,11 @@ function MeetingMap(inConfig) {
 	this.fillMap = filterFromCrouton;
 	this.rowClick = focusOnMeeting;
 	this.apiLoadedCallback = apiLoadedCallback;
+	this.refreshMeetings = loadAllMeetings;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
 MeetingMap.prototype.fillMap = null;
 MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
+MeetingMap.prototype.refreshMeetings = null;
