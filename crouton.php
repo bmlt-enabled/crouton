@@ -513,9 +513,9 @@ jQuery(document).ready(function() {
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
-                $this->options['google_api_key'] = $_POST['api_key'];
-                $this->options['tile_provider'] = $_POST['tile_provider'];
+                $this->meetingMapController->processUpdate($this->options);
                 $this->saveAdminOptions();
+                $this->meetingMapController = new MeetingMap\Controller($this->options);
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
             if (!isset($this->options['time_format']) || strlen(trim($this->options['time_format'])) == 0) {
@@ -543,30 +543,6 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
-            }
-            if (!isset($this->options['disable_tinyMCE'])) {
-                $this->options['disable_tinyMCE'] = false;
-            }
-            if (!isset($this->options['tile_provider'])) {
-                if (!empty($this->options['google_api_key'])) {
-                    $this->options['tile_provider'] = 'google';
-                    $this->options['api_key'] = $this->options['google_api_key'];
-                } else {
-                    $this->options['tile_provider'] = "OSM";
-                    $this->options['api_key'] = "";
-                }
-
-                $this->options['tile_url'] = "";
-                $this->options["tile_attribution"] = "";
-                $this->options["nominatim_url"] = "";
-                $this->options["region_bias"] = "";
-                $this->options["bounds_north"] = "";
-                $this->options["bounds_east"] = "";
-                $this->options["bounds_south"] = "";
-                $this->options["bounds_west"] = "";
-                $this->options["lat"] = "";
-                $this->options["lng"] = "";
-                $this->options["zoom"] = "";
             }
             ?>
             <div class="wrap">
@@ -785,74 +761,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                             </li>
                         </ul>
                     </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                         <h3>Map Tile Provider</h3>
-                        <select name="tile_provider" id="tile_provider">
-                            <option value="OSM" <?php echo ( 'OSM' == $this->options['tile_provider'] ? 'selected' : '' )?>>Open Street Map</option>
-                            <option value="OSM DE" <?php echo ( 'OSM DE' == $this->options['tile_provider'] ? 'selected' : '' )?>>German Open Street Map</option>
-                            <option value="google" <?php echo ( 'google' == $this->options['tile_provider'] ? 'selected' : '' )?>>Google Maps</option>
-                            <option value="custom" <?php echo ( 'custom' == $this->options['tile_provider'] ? 'selected' : '' )?>>Custom</option>
-                        </select>
-                        <div id="custom_tile_provider">
-                            <label for="tile_url">URL for tiles: </label>
-                            <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo $this->options['tile_url']; ?>" />
-                            <br>
-                            <label for="tile_attribution">Attribution: </label>
-                            <input id="tile_attribution" type="text" size="60" name="tile_attribution" value="<?php echo esc_html($this->options['tile_attribution']); ?>" />
-                        </div>
-                        <div id="api_key_div">
-                            <label for="api_key">API Key: </label>
-                            <input id="api_key" type="text" size="40" name="api_key" value="<?php echo $this->options['api_key']; ?>" />
-                        </div>
-                        <h3>GeoCoding Parameters</h3>
-                        <div id="nominatim_div">
-                            <label for="nominatim_url">Nominatim URL: </label>
-                            <input id="nominatim_url" type="text" size="40" name="nominatim_url" value="<?php echo $this->options['nominatim_url']; ?>" />
-                        </div>
-                        <ul>
-                            <li>
-                                <label for="region_bias">Region/ Country Code (optional): </label>
-                                <input id="region_bias" type="text" size="2" name="region_bias" value="<?php echo $this->options['region_bias']; ?>" />
-                            </li>
-                            <li>
-                            <table>
-                            <tr>
-                            <td>Geolocation Bounds (optional)</td>
-                            <td>
-                                <label for="bounds_north">North: </label>
-                                <input id="bounds_north" type="text" size="8" name="bounds_north" value="<?php echo $this->options['bounds_north']; ?>" />
-                                <label for="bounds_east">East: </label>
-                                <input id="bounds_east" type="text" size="8" name="bounds_east" value="<?php echo $this->options['bounds_east']; ?>" />
-                                <br>
-                                <label for="bounds_south">South: </label>
-                                <input id="bounds_south" type="text" size="8" name="bounds_south" value="<?php echo $this->options['bounds_south']; ?>" />
-                                <label for="bounds_west">West: </label>
-                                <input id="bounds_west" type="text" size="8" name="bounds_west" value="<?php echo $this->options['bounds_west']; ?>" />
-                             </td>
-                            </tr>
-                            </table>
-                            </li>
-                        </ul>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3>Default Latitude and Longitude of map</h3>
-                        <p>Open Google Maps, right click on a point, and select "what is here?"</p>
-                        <ul>
-                            <li>
-                                <label for="lat">Latitude: </label>
-                                <input id="lat" type="text" size="10" name="lat" value="<?php echo $this->options['lat']; ?>" />
-                            </li>
-                            <li>
-                                <label for="lng">longitude: </label>
-                                <input id="lng" type="text" size="10" name="lng" value="<?php echo $this->options['lng']; ?>" />
-                            </li>
-                            <li>
-                                <label for="zoom">zoom: </label>
-                                <input id="zoom" type="text" size="3" name="zoom" value="<?php echo $this->options['zoom']; ?>" />
-                            </li>                           
-                        </ul>
-                    </div>
-
+                    <?php $this->meetingMapController->adminSection(); ?>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are

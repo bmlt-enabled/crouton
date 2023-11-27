@@ -13,8 +13,47 @@ if (!class_exists("MeetingMap/Controller")) {
         // phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
         public $options = array();
 
-        public function __construct($options)
+        public function __construct(&$options)
         {
+            if (!isset($options['region_bias'])) {
+                $options['region_bias'] = "";
+            }
+            if (!isset($options['bounds_north'])) {
+                $options['bounds_north'] = "";
+            }
+            if (!isset($options['bounds_east'])) {
+                $options['bounds_east'] = "";
+            }
+            if (!isset($options['bounds_south'])) {
+                $options['bounds_south'] = "";
+            }
+            if (!isset($options['bounds_west'])) {
+                $options['bounds_west'] = "";
+            }
+            if (!isset($options['lat'])) {
+                $options['lat'] = "";
+            }
+            if (!isset($options['lng'])) {
+                $options['lng'] = "";
+            }
+            if (!isset($options['zoom'])) {
+                $options['zoom'] = "";
+            }
+            if (!isset($options['nominatim_url'])) {
+                $options['nominatim_url'] = "";
+            }
+            if (!isset($options['api_key'])) {
+                $options['api_key'] = "";
+            }
+            if (!isset($options['tile_provider'])) {
+                if (!empty($options['google_api_key'])) {
+                    $options['tile_provider'] = 'google';
+                    $options['api_key'] = $options['google_api_key'];
+                } else {
+                    $options['tile_provider'] = "OSM";
+                    $options['api_key'] = "";
+                }
+            }
             $this->options = $options;
         }
         // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -147,6 +186,83 @@ if (!class_exists("MeetingMap/Controller")) {
             $ret .= 'api_key:"'.$options['api_key'].'",';
             $ret .= '}';
             return $ret;
+        }
+        public function adminSection()
+        {
+            ?>
+                    <div style="padding: 0 15px;" class="postbox">
+                         <h3>Map Tile Provider</h3>
+                        <select name="tile_provider" id="tile_provider">
+                            <option value="OSM" <?php echo ( 'OSM' == $this->options['tile_provider'] ? 'selected' : '' )?>>Open Street Map</option>
+                            <option value="OSM DE" <?php echo ( 'OSM DE' == $this->options['tile_provider'] ? 'selected' : '' )?>>German Open Street Map</option>
+                            <option value="google" <?php echo ( 'google' == $this->options['tile_provider'] ? 'selected' : '' )?>>Google Maps</option>
+                            <option value="custom" <?php echo ( 'custom' == $this->options['tile_provider'] ? 'selected' : '' )?>>Custom</option>
+                        </select>
+                        <div id="custom_tile_provider">
+                            <label for="tile_url">URL for tiles: </label>
+                            <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo $this->options['tile_url']; ?>" />
+                            <br>
+                            <label for="tile_attribution">Attribution: </label>
+                            <input id="tile_attribution" type="text" size="60" name="tile_attribution" value="<?php echo esc_html($this->options['tile_attribution']); ?>" />
+                        </div>
+                        <div id="api_key_div">
+                            <label for="api_key">API Key: </label>
+                            <input id="api_key" type="text" size="40" name="api_key" value="<?php echo $this->options['api_key']; ?>" />
+                        </div>
+                        <h3>GeoCoding Parameters</h3>
+                        <div id="nominatim_div">
+                            <label for="nominatim_url">Nominatim URL: </label>
+                            <input id="nominatim_url" type="text" size="40" name="nominatim_url" value="<?php echo $this->options['nominatim_url']; ?>" />
+                        </div>
+                        <ul>
+                            <li>
+                                <label for="region_bias">Region/ Country Code (optional): </label>
+                                <input id="region_bias" type="text" size="2" name="region_bias" value="<?php echo $this->options['region_bias']; ?>" />
+                            </li>
+                            <li>
+                            <table>
+                            <tr>
+                            <td>Geolocation Bounds (optional)</td>
+                            <td>
+                                <label for="bounds_north">North: </label>
+                                <input id="bounds_north" type="text" size="8" name="bounds_north" value="<?php echo $this->options['bounds_north']; ?>" />
+                                <label for="bounds_east">East: </label>
+                                <input id="bounds_east" type="text" size="8" name="bounds_east" value="<?php echo $this->options['bounds_east']; ?>" />
+                                <br>
+                                <label for="bounds_south">South: </label>
+                                <input id="bounds_south" type="text" size="8" name="bounds_south" value="<?php echo $this->options['bounds_south']; ?>" />
+                                <label for="bounds_west">West: </label>
+                                <input id="bounds_west" type="text" size="8" name="bounds_west" value="<?php echo $this->options['bounds_west']; ?>" />
+                             </td>
+                            </tr>
+                            </table>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Default Latitude and Longitude of map</h3>
+                        <p>Open Google Maps, right click on a point, and select "what is here?"</p>
+                        <ul>
+                            <li>
+                                <label for="lat">Latitude: </label>
+                                <input id="lat" type="text" size="10" name="lat" value="<?php echo $this->options['lat']; ?>" />
+                            </li>
+                            <li>
+                                <label for="lng">longitude: </label>
+                                <input id="lng" type="text" size="10" name="lng" value="<?php echo $this->options['lng']; ?>" />
+                            </li>
+                            <li>
+                                <label for="zoom">zoom: </label>
+                                <input id="zoom" type="text" size="3" name="zoom" value="<?php echo $this->options['zoom']; ?>" />
+                            </li>                           
+                        </ul>
+                    </div>
+            <?php
+        }
+        public function processUpdate(&$options)
+        {
+            $options['google_api_key'] = $_POST['api_key'];
+            $options['tile_provider'] = $_POST['tile_provider'];
         }
     }
 }
