@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.8
+Version: 3.17.9
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -318,6 +318,7 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
+            $this->hasMap = isset($atts['show_map']);
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
@@ -325,6 +326,7 @@ if (!class_exists("Crouton")) {
         }
         public function bmltHandlebar($atts, $template = null)
         {
+            $this->hasMap = true;
             if (!isset($_GET['meeting-id'])) {
                 return "Meeting-ID not set in query-string";
             }
@@ -343,6 +345,8 @@ if (!class_exists("Crouton")) {
         }
         public function croutonMap($atts, $content = null)
         {
+            $this->hasMap = true;
+            $this->useInternalMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
