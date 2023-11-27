@@ -27,10 +27,10 @@ let jsFilesCroutonNoCoreWithFullPath = jsFilesCroutonNoCore.map((f)=>'croutonjs/
 let jsFilesCroutonCore = jsFilesCroutonNoCore.concat(['crouton-core.js']);
 let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/js/'+f);
 let jsFilesCroutonMap = [
-	'meeting-map.js',
+	'meeting_map.js',
 	'osmDelegate.js',
 	'gmapsDelegate.js',
-	'google.markerclusterer.min.js',
+	'google.markercluster.min.js',
 	'leaflet.js',
 	'leaflet.markercluster.js'
 ];

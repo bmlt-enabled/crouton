@@ -30,7 +30,6 @@
 	    g_icon_shadow = new google.maps.MarkerImage( config.BMLTPlugin_images+"/NAMarkerS.png", new google.maps.Size(43, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
 	    g_icon_shape = { coord: [16,0,18,1,19,2,20,3,21,4,21,5,22,6,22,7,22,8,22,9,22,10,22,11,22,12,22,13,22,14,22,15,22,16,21,17,21,18,22,19,20,20,19,21,20,22,18,23,17,24,18,25,17,26,15,27,14,28,15,29,12,30,12,31,10,31,10,30,9,29,8,28,8,27,7,26,6,25,5,24,5,23,4,22,3,21,3,20,2,19,1,18,1,17,1,16,0,15,0,14,0,13,0,12,0,11,0,10,0,9,0,8,0,7,1,6,1,5,2,4,2,3,3,2,5,1,6,0,16,0], type: 'poly' };
 
-            if (! inCenter ) return null;
             var myOptions = {
                 'mapTypeId': google.maps.MapTypeId.ROADMAP,
                 'zoomControl': true,
@@ -42,10 +41,12 @@
                 'scaleControl' : true,
                 'fullscreenControl': false,
             };
-            myOptions = Object.assign(myOptions, {
+            if (inCenter) {
+                myOptions = Object.assign(myOptions, {
                     'center': new google.maps.LatLng ( inCenter.latitude, inCenter.longitude ),
                     'zoom': inCenter.zoom
                 });
+            }
             var	pixel_width = inDiv.offsetWidth;
             var	pixel_height = inDiv.offsetHeight;
             
@@ -69,6 +70,7 @@
                 default:
                     ;
             }
+            console.log(gMainMap);
             if (once) {
                 google.maps.event.addListenerOnce( gMainMap, e, f);
             } else {

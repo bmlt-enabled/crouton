@@ -30,7 +30,10 @@ function MeetingMap(inConfig) {
 		}
 		if (inDiv) {
 			gInDiv = inDiv;
-			if (gDelegate.createMap(inDiv, menuContext.location)) {
+			let loc = null;
+			if (menuContext && hasOwnProperty('location')) loc = menuContext.location;
+			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
+			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
 						searchResponseCallback();
@@ -44,9 +47,6 @@ function MeetingMap(inConfig) {
 				};
 			}
 		};
-		if (handlebarMapOptions) {
-			location = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
-		}
 	};
 	var gSearchModal;
 	function createMenuButton(menuContext) {
