@@ -78,8 +78,7 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
-	Crouton.prototype.searchByCoordinates = function(latitude, longitude) {
-		var width = -50; //self.config['map_search']['width'] || -50;
+	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width) {
 
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
 			+ "&lat_val=" + latitude + "&long_val=" + longitude

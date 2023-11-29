@@ -89,7 +89,6 @@ if (!class_exists("Crouton")) {
             "distance_units" => 'mi',
             "custom_query" => null,
             "show_map" => '0',
-            "max_zoom_level" => 15,
             "language" => 'en-US',
             'strict_datafields' => false,
             'meeting_details_href' => '',
@@ -338,7 +337,6 @@ if (!class_exists("Crouton")) {
         public function croutonMap($atts, $content = null)
         {
             $this->hasMap = true;
-            $this->useInternalMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
@@ -346,6 +344,7 @@ if (!class_exists("Crouton")) {
         }
         public function meetingMap($atts, $content = null)
         {
+            $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
@@ -379,7 +378,7 @@ if (!class_exists("Crouton")) {
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, true));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
             return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
@@ -573,7 +572,7 @@ jQuery(document).ready(function() {
                             <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
                             <li><a href="#config-custom-query">Custom Query</a></li>
                             <li><a href="#config-theme">Theme</a></li>
-                            <li><a href="#config-google-api-key">Google API Key</a></li>
+                            <li><a href="#config-google-api-key">Map Options</a></li>
                             <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
                             <li><a href="#config-metadata-data-template">Metadata Template</a></li>
                             <li><a href="#config-meeting-details-page">Meeting Details Page</a></li>
@@ -948,7 +947,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             return $all_meetings;
         }
-        private function getCroutonJsConfig($atts)
+        private function getCroutonJsConfig($atts, $croutonMap = false)
         {
             // Pulling simple values from options
             $defaults = $this->shortCodeOptions;
@@ -1015,15 +1014,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 }
             }
 
-            /*$convert_to_int = array("latitude", "longitude", "width", "zoom");
-            $params['map_search'] = null;
-            foreach (explode(",", $params['map_search_option']) as $item) {
-                $setting = explode(":", $item);
-                $key = trim($setting[0]);
-                $value = trim($setting[1]);
-                $params['map_search'][$key] = intval($value);
-            }*/
-
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
 
@@ -1063,9 +1053,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
              
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             
-            $params = apply_filters('crouton_configuration', $params);
-            
-            return [json_encode($params), $this->meetingMapController->getMapJSConfig($params)];
+            return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
         }
     }
     //End Class Crouton

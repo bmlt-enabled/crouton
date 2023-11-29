@@ -10,48 +10,31 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
 if (!class_exists("MeetingMap/Controller")) {
     class Controller
     {
+        private $defaultOptions = array(
+            'lat' => 0,
+            'lng' => 0,
+            'zoom' => 10,
+            'tile_provider' => 'OSM',
+            'tile_url' => '',
+            'tile_attribution' => '',
+            'nominatim_url' => '',
+            'api_key' => '',
+            'clustering' => 12,
+            'region_bias' => 'us',
+            'bounds_north' => '',
+            'bounds_east' => '',
+            'bounds_south' => '',
+            'bounds_west' => '',
+            'map_search_width' => '-50',
+        );
         // phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
         public $options = array();
 
         public function __construct(&$options)
         {
-            if (!isset($options['region_bias'])) {
-                $options['region_bias'] = "";
-            }
-            if (!isset($options['bounds_north'])) {
-                $options['bounds_north'] = "";
-            }
-            if (!isset($options['bounds_east'])) {
-                $options['bounds_east'] = "";
-            }
-            if (!isset($options['bounds_south'])) {
-                $options['bounds_south'] = "";
-            }
-            if (!isset($options['bounds_west'])) {
-                $options['bounds_west'] = "";
-            }
-            if (!isset($options['lat'])) {
-                $options['lat'] = "";
-            }
-            if (!isset($options['lng'])) {
-                $options['lng'] = "";
-            }
-            if (!isset($options['zoom'])) {
-                $options['zoom'] = "";
-            }
-            if (!isset($options['nominatim_url'])) {
-                $options['nominatim_url'] = "";
-            }
-            if (!isset($options['api_key'])) {
-                $options['api_key'] = "";
-            }
-            if (!isset($options['tile_provider'])) {
-                if (!empty($options['google_api_key'])) {
-                    $options['tile_provider'] = 'google';
-                    $options['api_key'] = $options['google_api_key'];
-                } else {
-                    $options['tile_provider'] = "OSM";
-                    $options['api_key'] = "";
+            foreach ($this->defaultOptions as $key => $value) {
+                if (!isset($options[$key])) {
+                    $options[$key] = $value;
                 }
             }
             $this->options = $options;
@@ -81,23 +64,28 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig($params)
+        public function getMapJSConfig($atts, $croutonMap = false)
         {
-            $params['tile_provider'] = isset($params['tile_provider']) ? $params['tile_provider'] : 'OSM';
-            switch ($params['tile_provider']) {
+            // Pulling simple values from options
+            $defaults = $this->defaultOptions;
+            foreach ($defaults as $key => $value) {
+                $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
+            }
+
+            switch ($defaults['tile_provider']) {
                 case 'MapBox':
-                    $params['tile_url'] =
+                    $defaults['tile_url'] =
                     'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}';
-                    $params['tile_params'] = array(
+                    $defaults['tile_params'] = array(
                     'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
                     'id'            => 'mapbox.streets',
-                    'accessToken'   => $params['api_key']
+                    'accessToken'   => $defaults['api_key']
                     );
                     break;
                 case "OSM DE":
-                    $params['tile_url'] =
+                    $defaults['tile_url'] =
                     'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png';
-                    $params['tile_params'] = array(
+                    $defaults['tile_params'] = array(
                     'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.de/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
                     "maxZoom"       => '18',
                     //'subdomains'    => '["a","b","c"]'
@@ -105,57 +93,79 @@ if (!class_exists("MeetingMap/Controller")) {
                     break;
                 case 'custom':
                     // http://tileserver.maptiler.com/campus/{z}/{x}/{y}.png
-                    $params['tile_params'] = array(
-                    'attribution'   => $params['tile_attribution'],
+                    $defaults['tile_params'] = array(
+                    'attribution'   => $defaults['tile_attribution'],
                     "maxZoom"       => '18',
                     );
                     break;
                 case "OSM":
                 default:
-                    $params['tile_url'] =
+                    $defaults['tile_url'] =
                         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-                    $params['tile_params'] = array(
+                    $defaults['tile_params'] = array(
                         'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
                         "maxZoom"       => '18',
                     );
                     break;
             }
-            if (!isset($params['region_bias'])) {
-                $params['region_bias'] = "";
+            $params = shortcode_atts($defaults, $atts);
+            
+            // Pulling from querystring
+            foreach ($params as $key => $value) {
+                $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
             }
-            if (!isset($params['bounds_north'])) {
-                $params['bounds_north'] = "";
+            if ($croutonMap) {
+                $this->addCroutonMapParameters($params);
             }
-            if (!isset($params['bounds_east'])) {
-                $params['bounds_east'] = "";
+            return $this->createJavascriptConfig($params);
+        }
+        private function addCroutonMapParameters(&$params)
+        {
+            $params['map_search'] = [];
+            if (isset($params['map_search_option'])) {
+                foreach (explode(",", $params['map_search_option']) as $item) {
+                    $setting = explode(":", $item);
+                    $key = trim($setting[0]);
+                    $value = trim($setting[1]);
+                    $params['map_search'][$key] = $value;
+                }
             }
-            if (!isset($params['bounds_south'])) {
-                $params['bounds_south'] = "";
+            if (!empty($params['map_search']['latitude'])) {
+                $params['lat'] = $params['map_search']['latitude'];
             }
-            if (!isset($params['bounds_west'])) {
-                $params['bounds_west'] = "";
+            if (!empty($params['map_search_latitude'])) {
+                $params['lat'] = $params['map_search_latitude'];
+                $params['map_search']['latitude'] = $params['map_search_latitude'];
             }
-            if (!isset($params['lat'])) {
-                $params['lat'] = "";
+            if (!empty($params['map_search']['longitude'])) {
+                $params['lng'] = $params['map_search']['longitude'];
             }
-            if (!isset($params['lng'])) {
-                $params['lng'] = "";
+            if (!empty($params['map_search_longitude'])) {
+                $params['lng'] = $params['map_search_longitude'];
+                $params['map_search']['longitude'] = $params['map_search_longitude'];
             }
-            if (!isset($params['zoom'])) {
-                $params['zoom'] = "";
+            if (!empty($params['map_search']['zoom'])) {
+                $params['zoom'] = $params['map_search']['zoom'];
             }
-            if (!isset($params['nominatim_url'])) {
-                $params['nominatim_url'] = "";
+            if (!empty($params['map_search_zoom'])) {
+                $params['zoom'] = $params['map_search_zoom'];
+                $params['map_search']['zoom'] = $params['map_search_zoom'];
             }
-            if (!isset($params['api_key'])) {
-                $params['api_key'] = "";
+            if (!empty($params['map_search_width'])) {
+                $params['map_search']['width'] = $params['map_search_width'];
             }
-            $ret = $this->createJavascriptConfig($params).", null,";
-            $lat = $params['lat'];
-            $lng = $params['lng'];
-            $zoom = $params['zoom'];
-            $ret .= "{'latitude':'$lat','longitude':'$lng','zoom':'$zoom'},true";
-            return $ret;
+            if (!empty($params['map_search_auto'])) {
+                $params['map_search']['auto'] = $params['map_search_auto'];
+            }
+            if (!empty($params['map_search_location'])) {
+                $params['map_search']['location'] = $params['map_search_location'];
+            }
+            if (!empty($params['map_search_location'])) {
+                $params['map_search']['location'] = $params['map_search_location'];
+            }
+            if (!empty($params['map_search_coordinates_search'])) {
+                $params['map_search']['coordinates_search'] = $params['map_search_ coordinates_search'];
+            }
         }
         /** Emulates the behavior from PHP 7 */
         private function hsc($field)
@@ -171,12 +181,13 @@ if (!class_exists("MeetingMap/Controller")) {
             $ret .= "BMLTPlugin_throbber_img_src:'".$this->hsc(plugin_dir_url(__FILE__)."map_images/Throbber.gif")."'," . (defined('_DEBUG_MODE_') ? "\n" : '');
             $ret .= 'region:"'.$options['region_bias'].'",';
             $ret .= 'bounds:{';
-                $ret .= ' "north": "'.$options['bounds_north'].'",';
-                $ret .= ' "east": "'.$options['bounds_east'].'",';
-                $ret .= ' "south": "'.$options['bounds_south'].'",';
-                $ret .= ' "west": "'.$options['bounds_west'].'"';
+            $ret .= ' "north": "'.$options['bounds_north'].'",';
+            $ret .= ' "east": "'.$options['bounds_east'].'",';
+            $ret .= ' "south": "'.$options['bounds_south'].'",';
+            $ret .= ' "west": "'.$options['bounds_west'].'"';
             $ret .= '},';
             $ret .= 'tileUrl:"'.$options['tile_url'].'",';
+            $ret .= 'clustering:"'.$options['clustering'].'",';
             $ret .= 'nominatimUrl:"'.$options['nominatim_url'].'",';
             $ret .= 'tileOptions:{';
             foreach ($options['tile_params'] as $key => $value) {
@@ -184,7 +195,17 @@ if (!class_exists("MeetingMap/Controller")) {
             }
             $ret .= '},';
             $ret .= 'api_key:"'.$options['api_key'].'",';
-            $ret .= '}';
+            $ret .= 'lat:"'.$options['lat'].'",';
+            $ret .= 'lng:"'.$options['lng'].'",';
+            $ret .= 'zoom:"'.$options['zoom'].'",';
+            if (isset($options['map_search'])) {
+                $ret .= 'map_search: {';
+                foreach ($options['map_search'] as $key => $value) {
+                    $ret .= $key.':"'.$value.'",';
+                }
+                $ret .= '},';
+            }
+            $ret .= '},';
             return $ret;
         }
         public function adminSection()
@@ -241,7 +262,7 @@ if (!class_exists("MeetingMap/Controller")) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3>Default Latitude and Longitude of map</h3>
-                        <p>Open Google Maps, right click on a point, and select "what is here?"</p>
+                        <p>A good way to find the latitude and longitude is to open Google Maps, right click on a point, and select "what is here?"</p>
                         <ul>
                             <li>
                                 <label for="lat">Latitude: </label>
@@ -257,12 +278,32 @@ if (!class_exists("MeetingMap/Controller")) {
                             </li>                           
                         </ul>
                     </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3>Clustering</h3>
+                        <ul>
+                            <li>
+                                <label for="clustering">Use clustering below zoom level: </label>
+                                <input id="clustering" type="text" size="2" name="clustering" value="<?php echo $this->options['clustering']; ?>" />
+                            </li>                        
+                        </ul>
+                    </div>
             <?php
         }
         public function processUpdate(&$options)
         {
-            $options['google_api_key'] = $_POST['api_key'];
+            $options['api_key'] = $_POST['api_key'];
             $options['tile_provider'] = $_POST['tile_provider'];
+            $options['tile_url'] = sanitize_url($_POST['tile_url']);
+            $options['nominatim_url'] = sanitize_url($_POST['nominatim_url']);
+            $options['tile_attribution'] = wp_kses_post($_POST['tile_attribution']);
+            $options['lat'] = floatval($_POST['lat']);
+            $options['lng'] = floatval($_POST['lng']);
+            $options['zoom'] = intval($_POST['zoom']);
+            $options['bounds_north'] = floatval($_POST['bounds_north']);
+            $options['bounds_east'] = floatval($_POST['bounds_east']);
+            $options['bounds_south'] = floatval($_POST['bounds_south']);
+            $options['bounds_west'] = floatval($_POST['bounds_west']);
+            $options['clustering'] = intval($_POST['clustering']);
         }
     }
 }

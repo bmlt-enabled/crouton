@@ -41,10 +41,11 @@
                 'scaleControl' : true,
                 'fullscreenControl': false,
             };
+            console.log(inCenter);
             if (inCenter) {
                 myOptions = Object.assign(myOptions, {
                     'center': new google.maps.LatLng ( inCenter.latitude, inCenter.longitude ),
-                    'zoom': inCenter.zoom
+                    'zoom': parseInt(inCenter.zoom)
                 });
             }
             var	pixel_width = inDiv.offsetWidth;
@@ -285,7 +286,7 @@
                         new google.maps.LatLng(config.bounds.south, config.bounds.west), 
                         new google.maps.LatLng(config.bounds.north, config.bounds.east));
                 }
-                var callback = geoCallback.bind({filterMeetings:filterMeetings});
+                var callback = geoCallback.bind({filterMeetings: filterMeetings});
                 var	status = geocoder.geocode ( geoCodeParams, callback );
     
                 if ( google.maps.OK != status )
