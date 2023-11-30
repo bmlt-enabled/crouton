@@ -315,6 +315,21 @@
         }
         function invalidateSize() {
         }
+        function clickSearch(ev, cb) {
+            gMainMap.setOptions({
+                draggableCursor: 'crosshair',
+                zoomControl: false,
+                gestureHandling: 'none'
+            });
+            google.maps.event.addListenerOnce( gMainMap, 'click', function(e) {
+                gMainMap.setOptions({
+                    draggableCursor: 'default',
+                    zoomControl: true,
+                    gestureHandling: 'auto'
+                });
+                cb(e.latLng.lat(), e.latLng.lng());
+            })
+        };
         this.createMap = createMap;
         this.addListener = addListener;
         this.addControl = addControl;
@@ -336,6 +351,7 @@
         this.createClusterLayer = createClusterLayer;
         this.addClusterLayer = addClusterLayer;
         this.removeClusterLayer = removeClusterLayer;
+        this.clickSearch = clickSearch;
     }
     MapDelegate.prototype.createMap = null;
     MapDelegate.prototype.addListener = null;
@@ -358,3 +374,5 @@
     MapDelegate.prototype.createClusterLayer = null;
     MapDelegate.prototype.addClusterLayer = null;
     MapDelegate.prototype.removeClusterLayer = null;
+    MapDelegate.prototype.clickSearch = null;
+    

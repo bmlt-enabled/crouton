@@ -1,21 +1,3 @@
-.BMLTPlugin_simple_throbber_container_div
-{
-    text-align:center;
-    margin-top:8px;
-}
-
-.BMLTPlugin_simple_throbber_div img,
-.BMLTPlugin_simple_throbber_div
-{
-    display:block;
-    text-align:center;
-    margin-left:auto;
-    margin-right:auto;
-    width:40px;
-    height:40px;
-}
-/* These are all for the new map search implementation */
-
 div.bmlt_map_container_div 
 {
     width: 100%;
@@ -44,9 +26,11 @@ div.bmlt_map_container_div .bmlt_map_throbber_div
     margin-top:-24px;
     margin-left:-24px;
     z-index:10000;
-    background-color:#555;
 }
-
+div.bmlt_map_throbber_div {
+  background-color: transparent;
+  border: 0px;
+}
 div.bmlt_map_container_div .bmlt_map_throbber_div img
 {
     display:block;

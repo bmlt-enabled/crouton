@@ -336,6 +336,15 @@ function addControl(div,pos) {
 		gClusterLayer && gMainMap.removeLayer(gClusterLayer);
 		gClusterLayer = null;
 	}
+	function clickSearch(ev, cb) {
+		L.DomUtil.addClass(gMainMap._container,'crosshair-cursor-enabled');
+		gMainMap.once('click',function(e) {
+			gMainMap.once('click',function(e) {
+				L.DomUtil.removeClass(gMainMap._container,'crosshair-cursor-enabled');
+				cb(e.latlng.lat,e.latlng.lng);
+			})
+		});
+	}
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -357,6 +366,7 @@ function addControl(div,pos) {
 	this.createClusterLayer = createClusterLayer;
 	this.addClusterLayer = addClusterLayer;
 	this.removeClusterLayer = removeClusterLayer;
+	this.clickSearch = clickSearch;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -378,3 +388,4 @@ MapDelegate.prototype.isApiLoaded = null;
 MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
+MapDelegate.prototype.clickSearch = null;

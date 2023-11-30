@@ -1,0 +1,26 @@
+<button id="map-search-button" class="menu-button" title="Erweiterte Suche" style="width: 95px;">
+    <span class="menu-button-label">{{getWord 'Search for meetings'}}</span>
+</button>
+<div id="bmltsearch_modal" class="modal" style="display: none;">
+	<div id="bmltsearch_content" class="modal-content">
+		<span class="modal-title">{{getWord 'Search for meetings'}}</span><span id="close_search" class="modal-close">×</span>
+        <p></p>
+        <div class="modal-search">
+            {{getWord 'Enter a city or zip code'}}
+            <input id="bmltsearch-goto-text" type="text">
+            <p>
+                <button id="bmltsearch-text-button" class="filter-button">{{getWord 'Search Now'}}</button>
+            </p>
+        </div>
+        <div class="modal-search">
+            <p>
+                <button id="bmltsearch-nearbyMeetings" class="filter-button">{{getWord 'Show meetings near me'}}</button>
+            </p>
+        </div>
+        <div class="modal-search">
+            <p>
+                <button id="bmltsearch-clicksearch" class="filter-button">{{getWord 'Click to search'}}</button>
+            </p>
+        </div>
+  	</div>	
+</div>

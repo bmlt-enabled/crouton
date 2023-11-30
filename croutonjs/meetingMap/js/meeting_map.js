@@ -34,6 +34,8 @@ function MeetingMap(inConfig) {
 		}
 		if (inDiv) {
 			gInDiv = inDiv;
+			createThrobber(inDiv);
+			showThrobber()
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
 			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc)) {
@@ -42,8 +44,10 @@ function MeetingMap(inConfig) {
 						searchResponseCallback();
 					}
 				}, false);
-
-				if (menuContext) {
+				if (config.map_search) {
+					gDelegate.addControl(createSearchButton(), 'topleft');
+				}
+				else if (menuContext) {
 					menuContext.pixel_width = inDiv.offsetWidth;
 					//gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright');
@@ -52,6 +56,19 @@ function MeetingMap(inConfig) {
 		};
 	};
 	var gSearchModal;
+	function createSearchButton(menuContext) {
+		var template = hbs_Crouton.templates['mapSearch'];
+		var controlDiv = document.createElement('div');
+		controlDiv.innerHTML = template();
+		controlDiv.querySelector("#map-search-button").addEventListener('click', showBmltSearchDialog);
+		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
+		controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
+		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
+		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
+		gSearchModal.parentElement.removeChild(gSearchModal);
+
+		return controlDiv;
+	}
 	function createMenuButton(menuContext) {
 		var template = hbs_Crouton.templates['mapMenu'];
 		var controlDiv = document.createElement('div');
@@ -88,10 +105,7 @@ function MeetingMap(inConfig) {
 			closeModalWindow(event.target);
 			lookupLocation(g_suspendedFullscreen);
 		});
-		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
 
-		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
-		gSearchModal.parentElement.removeChild(gSearchModal); 
 		return controlDiv;
 	}
 
@@ -120,10 +134,44 @@ function MeetingMap(inConfig) {
 				function(e) {console.log(e)}
 			)
 		}
+		closeModalWindow(gSearchModal);
 	}
-	/************************************************************************************//**
-	 *	\brief 
-	 ****************************************************************************************/
+	function clickSearch(e) {
+		gDelegate.clickSearch(e, (lat,lng)=>crouton.searchByCoordinates(lat, lng, config.map_search.width));
+		closeModalWindow(gSearchModal);
+	}
+	function createThrobber(inDiv) {
+		if (!inDiv.myThrobber) {
+			inDiv.myThrobber = document.createElement("div");
+			if (inDiv.myThrobber) {
+				inDiv.myThrobber.id = inDiv.id + 'Throbber_div';
+				inDiv.myThrobber.className = 'bmlt_map_throbber_div';
+				inDiv.myThrobber.style.display = 'none';
+				inDiv.appendChild(inDiv.myThrobber);
+				var img = document.createElement("img");
+
+				if (img) {
+					img.src = config.BMLTPlugin_throbber_img_src;
+					img.className = 'bmlt_mapThrobber_img';
+					img.id = inDiv.id + 'Throbber_img';
+					img.alt = 'AJAX Throbber';
+					inDiv.myThrobber.appendChild(img);
+				} else {
+					inDiv.myThrobber = null;
+				};
+			};
+		};
+	};
+	function showThrobber() {
+		if (gInDiv.myThrobber) {
+			gInDiv.myThrobber.style.display = 'block';
+		};
+	};
+	function hideThrobber() {
+		if (gInDiv.myThrobber) {
+			gInDiv.myThrobber.style.display = 'none';
+		};
+	};
 
 	function loadAllMeetings(meetings_responseObject, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
@@ -135,6 +183,7 @@ function MeetingMap(inConfig) {
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		searchResponseCallback();
+		hideThrobber();
 		if (config.centerMe) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -142,12 +191,10 @@ function MeetingMap(inConfig) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
 						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
 					},
-					function () {
-						showSearchDialog();
-					}
+					showGeocodingDialog
 				);
 			} else if (fitAll) {
-				showSearchDialog();
+				showGeocodingDialog();
 			}
 		} else if (config.goto) {
 			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
@@ -189,6 +236,10 @@ function MeetingMap(inConfig) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
 	function showBmltSearchDialog(e) {
+		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
+		openModalWindow(gSearchModal);
+	}
+	function showSearchDialog(e) {
 		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
 		openModalWindow(gSearchModal);
 	}
