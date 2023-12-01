@@ -917,7 +917,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 return [];
             }
         }
-        private function templateToParameter($name)
+        public static function templateToParameter($atts, $name)
         {
             if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
                 $template = $atts[$name];
@@ -1031,10 +1031,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['custom_css'] = html_entity_decode($this->options['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
-            $params['meeting_data_template'] = $this->templateToParameter('meeting_data_template');
-            $params['metadata_template'] = $this->templateToParameter('metadata_template');
-            $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
-            $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
+            $params['meeting_data_template'] = $this->templateToParameter($atts, 'meeting_data_template');
+            $params['metadata_template'] = $this->templateToParameter($atts, 'metadata_template');
+            $params['meetingpage_title_template'] = $this->templateToParameter($atts, 'meetingpage_title_template');
+            $params['meetingpage_contents_template'] = $this->templateToParameter($atts, 'meetingpage_contents_template');
 
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {

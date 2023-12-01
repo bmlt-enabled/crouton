@@ -117,6 +117,7 @@ if (!class_exists("MeetingMap/Controller")) {
             if ($croutonMap) {
                 $this->addCroutonMapParameters($params);
             }
+            $params['marker_contents_template'] = \Crouton::templateToParameter($atts, 'marker_contents_template');
             return $this->createJavascriptConfig($params);
         }
         private function addCroutonMapParameters(&$params)
@@ -287,6 +288,25 @@ if (!class_exists("MeetingMap/Controller")) {
                             </li>                        
                         </ul>
                     </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-popup-template" class="anchor"></a>Popup Template</h3>
+                        <p>This allows a customization of the fields displayed when you click on a map icon.  A list of available fields are
+                        <span style="text-align:center;padding:20px 0;"> 
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <ul>
+                            <li>
+                                <textarea id="marker_contents_template" class="handlebarsCode" name="marker_contents_template" cols="100" rows="10"><?php echo isset($this->options['marker_contents_template']) ? html_entity_decode($this->options['marker_contents_template']) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_marker_contents_template" value="RESET TO DEFAULT" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_marker_contents_template").click(function() {
+                                resetCodemirrorToDefault("marker_contents_template");
+                            });
+                        </script>
+                    </div>
             <?php
         }
         public function processUpdate(&$options)
@@ -305,6 +325,7 @@ if (!class_exists("MeetingMap/Controller")) {
             $options['bounds_west'] = ((trim($_POST['bounds_west']))==='') ? '' : floatval($_POST['bounds_west']);
             $options['region_bias'] = $_POST['region_bias'];
             $options['clustering'] = intval($_POST['clustering']);
+            $options['marker_contents_template'] = isset($_POST['marker_contents_template']) ? str_replace('\\', '', $_POST['marker_contents_template']) : "";
         }
     }
 }
