@@ -269,18 +269,23 @@ function addControl(div,pos) {
 		  ),
 		  L.bind(function(data) {
 			var results = [];
-			for (var i = data.length - 1; i >= 0; i--) {
-			  var bbox = data[i].boundingbox;
-			  for (var j = 0; j < 4; j++) bbox[j] = parseFloat(bbox[j]);
-			  results[i] = {
-				icon: data[i].icon,
-				name: data[i].display_name,
-				bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
-				center: L.latLng(data[i].lat, data[i].lon),
-				properties: data[i]
-			  };
+			if (data && data.length) {
+				for (var i = data.length - 1; i >= 0; i--) {
+					var bbox = data[i].boundingbox;
+					for (var j = 0; j < 4; j++) bbox[j] = parseFloat(bbox[j]);
+					results[i] = {
+						icon: data[i].icon,
+						name: data[i].display_name,
+						bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
+						center: L.latLng(data[i].lat, data[i].lon),
+						properties: data[i]
+					};
+				}
+				if (filterMeetings) cb(results,filterMeetings);
+				else cb(results);
+			} else {
+				alert ( crouton.localization.getWord("address_lookup_fail") );
 			}
-			cb(results,filterMeetings);
 		}, this)
 		);
     };
@@ -295,10 +300,17 @@ function addControl(div,pos) {
 				});
 			});
         } else {
-            alert ( config.address_lookup_fail );
+            alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-    function callGeocoder(in_loc, filterMeetings) {
+	function getGeocodeCenter ( in_geocode_response ) {
+        if ( in_geocode_response && in_geocode_response[0] ) {
+	        return {lat: in_geocode_response[0].center.lat, lng: in_geocode_response[0].center.lng};
+        } else {
+            alert ( crouton.localization.getWord("address_lookup_fail") );
+        };
+	};
+    function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
 		geoCodeParams = {};
 		if (config.region.trim() !== '') {
 			geoCodeParams.countrycodes = config.region;
@@ -311,7 +323,7 @@ function addControl(div,pos) {
 				geoCodeParams.viewbox = config.bounds.south+","+config.bounds.west+","+
 					                    config.bounds.north+","+config.bounds.east;
 		}
-        var	geocoder = geocode(in_loc, geoCodeParams, geoCallback, filterMeetings);
+        geocode(in_loc, geoCodeParams, callback, filterMeetings);
     }
 	function contains(bounds, lat, lng) {
 		return bounds.contains(L.latLng ( lat, lng ));
@@ -367,6 +379,7 @@ function addControl(div,pos) {
 	this.addClusterLayer = addClusterLayer;
 	this.removeClusterLayer = removeClusterLayer;
 	this.clickSearch = clickSearch;
+	this.getGeocodeCenter = getGeocodeCenter;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -389,3 +402,4 @@ MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
+MapDelegate.prototype.getGeocodeCenter = null;

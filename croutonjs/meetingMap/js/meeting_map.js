@@ -48,7 +48,7 @@ function MeetingMap(inConfig) {
 					gDelegate.addControl(createSearchButton(), 'topleft');
 				}
 				else if (menuContext) {
-					menuContext.pixel_width = inDiv.offsetWidth;
+					menuContext.imageDir = config.BMLTPlugin_images;
 					//gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright');
 				};
@@ -62,6 +62,12 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template();
 		controlDiv.querySelector("#map-search-button").addEventListener('click', showBmltSearchDialog);
 		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
+		controlDiv.querySelector("#bmltsearch-text-button").addEventListener('click', function () {
+			let text = document.getElementById("bmltsearch-goto-text").value.trim();
+			if (text === "") return;
+			gDelegate.callGeocoder(text, null, mapSearchGeocode);
+			closeModalWindow(gSearchModal);
+		});
 		controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
@@ -131,7 +137,7 @@ function MeetingMap(inConfig) {
 				function (position) {
 					crouton.searchByCoordinates(position.coords.latitude, position.coords.longitude, config.map_search.width);
 				},
-				function(e) {console.log(e)}
+				showBmltSearchDialog
 			)
 		}
 		closeModalWindow(gSearchModal);
@@ -172,12 +178,16 @@ function MeetingMap(inConfig) {
 			gInDiv.myThrobber.style.display = 'none';
 		};
 	};
-
+	function mapSearchGeocode(resp) {
+		console.log(resp);
+		let latlng = gDelegate.getGeocodeCenter(resp);
+		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
+	}
 	function loadAllMeetings(meetings_responseObject, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
 			if (config.map_search.auto) nearMeSearch();
 			else if (config.map_search.coordinates_search) crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude);
-			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, filterMeetingsAndBounds)
+			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, null, mapSearchGeocode);
 			else showBmltSearchDialog();
 			return;
 		}
@@ -275,7 +285,7 @@ function MeetingMap(inConfig) {
 	};
 	function searchResponseCallback(expand = false) {
 		if (!gAllMeetings.length) {
-			alert(config.no_meetings_found);
+			alert ( crouton.localization.getWord("no meetings found") );
 			return;
 		};
 		try {

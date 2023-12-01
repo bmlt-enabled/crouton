@@ -299,10 +299,11 @@ if (!class_exists("MeetingMap/Controller")) {
             $options['lat'] = floatval($_POST['lat']);
             $options['lng'] = floatval($_POST['lng']);
             $options['zoom'] = intval($_POST['zoom']);
-            $options['bounds_north'] = floatval($_POST['bounds_north']);
-            $options['bounds_east'] = floatval($_POST['bounds_east']);
-            $options['bounds_south'] = floatval($_POST['bounds_south']);
-            $options['bounds_west'] = floatval($_POST['bounds_west']);
+            $options['bounds_north'] = ((trim($_POST['bounds_north']))==='') ? '' : floatval($_POST['bounds_north']);
+            $options['bounds_east'] = ((trim($_POST['bounds_east']))==='') ? '' : floatval($_POST['bounds_east']);
+            $options['bounds_south'] = ((trim($_POST['bounds_south']))==='') ? '' : floatval($_POST['bounds_south']);
+            $options['bounds_west'] = ((trim($_POST['bounds_west']))==='') ? '' : floatval($_POST['bounds_west']);
+            $options['region_bias'] = $_POST['region_bias'];
             $options['clustering'] = intval($_POST['clustering']);
         }
     }
