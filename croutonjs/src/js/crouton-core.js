@@ -76,6 +76,16 @@ function Crouton(config) {
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
+		lat: 0,
+		lng: 0,
+		zoom: 10,
+		clustering: 12,
+		nominatimUrl: 'https://nominatim.openstreetmap.org/',
+		tileUrl: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		tileOptions: {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+			maxZoom: 18
+		}
 	};
 
 	self.setConfig(config);
@@ -709,7 +719,7 @@ function Crouton(config) {
 		return 'bmlt-map';
 	}
 	if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
-		window.croutonMap = new CroutonMap(config);
+		window.croutonMap = new MeetingMap(self.config);
 	}
 	self.meetingSearch();
 }

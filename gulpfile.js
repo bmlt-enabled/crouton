@@ -29,10 +29,13 @@ let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/
 let jsFilesCroutonMap = [
 	'meeting_map.js',
 	'osmDelegate.js',
-	'gmapsDelegate.js',
-	'google.markercluster.min.js',
 	'leaflet.js',
 	'leaflet.markercluster.js'
+];
+let jsFilesGoogleMap = [
+	'meeting_map.js',
+	'gmapsDelegate.js',
+	'google.markercluster.min.js',
 ];
 let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesNoJQueryWithFullPath = [
@@ -46,6 +49,12 @@ let cssFiles = [
 	'select2.min.css',
 	'bootstrap.min.css',
 	'bmlt_tabs.css',
+];
+let cssMapFiles = [
+	'leaflet.css',
+	'MarkerCluster.css',
+	'MarkerCluster.Default.css',
+	'meeting_map.css',
 ];
 let distDir = 'croutonjs/dist';
 
@@ -130,7 +139,9 @@ task('css-files', () => {
 	for (let cssFile of cssFiles) {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
 	}
-
+	for (let cssFile of cssMapFiles) {
+		cssFilesWithFullPath.push('croutonjs/MeetingMap/css/' + cssFile);
+	}
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton.css'))
 		.pipe(dest(distDir))
