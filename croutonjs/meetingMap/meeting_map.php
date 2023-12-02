@@ -117,8 +117,19 @@ if (!class_exists("MeetingMap/Controller")) {
             if ($croutonMap) {
                 $this->addCroutonMapParameters($params);
             }
-            $params['marker_contents_template'] = \Crouton::templateToParameter($atts, 'marker_contents_template');
+            $params['marker_contents_template'] = $this->templateToParameter($atts, 'marker_contents_template');
             return $this->createJavascriptConfig($params);
+        }
+        private function templateToParameter($atts, $name)
+        {
+            if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
+                $template = $atts[$name];
+            } elseif (isset($this->options[$name])) {
+                $template = $this->options[$name];
+            } else {
+                $template = "";
+            }
+            return html_entity_decode($template);
         }
         private function addCroutonMapParameters(&$params)
         {

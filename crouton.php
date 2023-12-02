@@ -917,7 +917,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 return [];
             }
         }
-        public static function templateToParameter($atts, $name)
+        private function templateToParameter($atts, $name)
         {
             if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
                 $template = $atts[$name];
