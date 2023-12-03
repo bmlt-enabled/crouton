@@ -140,7 +140,7 @@ task('css-files', () => {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
 	}
 	for (let cssFile of cssMapFiles) {
-		cssFilesWithFullPath.push('croutonjs/MeetingMap/css/' + cssFile);
+		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
 	}
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton.css'))
