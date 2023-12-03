@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 5.6
 Tested up to: 6.2.2
-Stable tag: 3.17.9
+Stable tag: 3.18.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,13 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.18.0 =
+* Merge with BMLT-Meeting-Map
+* All Maps can be either OSM or Google Maps
+* Admins can set clustering zoom level, above clustering, below, red/blue NA Markers
+* Markers show multiple meetings in accordion.  No "spiders".
+* Popup text configurable through handlebars.
 
 = 3.17.9 =
 * Bug fix release - Shortcodes that are called before Enqueue_Scripts
