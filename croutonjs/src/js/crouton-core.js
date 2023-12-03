@@ -386,6 +386,7 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
+		console.log(filteringDropdown);
 		if (!filteringDropdown) {
 			self.filtering = false;
 			return;
@@ -399,13 +400,13 @@ function Crouton(config) {
 		showingNow = [...new Set(showingNow)];
 		self.updateMeetingCount(showingNow.length);
 		self.updateFilters();
+		if (croutonMap) croutonMap.fillMap(showingNow);
 		if (self.config.map_page) {
-			croutonMap.fillMap(showingNow);
 			if (!jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 				jQuery('#displayTypeButton_tablePages').removeClass('hide');
 				jQuery('#filterButton_embeddedMapPage').addClass('hide');
 			}
-		} else if (self.config.show_map) croutonMap.fillMap(showingNow);
+		}
 
 		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			self.showFilteredMeetingsAsTable();
