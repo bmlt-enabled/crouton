@@ -1329,7 +1329,8 @@ crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
 
 crouton_Handlebars.registerHelper('getWord', function(word) {
 	var translation = hbs_Crouton.localization.getWord(word);
-	if (translation) return translation;
+	if (typeof translation !== 'undefined') return translation;
+	console.log("no translation for '"+word+"'");
 	// if none found, return the untranslated - better than nothing.
 	return word;
 });

@@ -42,7 +42,6 @@ function MapDelegate(in_config) {
             'scaleControl' : true,
             'fullscreenControl': false,
         };
-        console.log(inCenter);
         if (inCenter) {
             myOptions = Object.assign(myOptions, {
                 'center': new google.maps.LatLng ( inCenter.latitude, inCenter.longitude ),
@@ -72,7 +71,6 @@ function MapDelegate(in_config) {
             default:
                 ;
         }
-        console.log(gMainMap);
         if (once) {
             google.maps.event.addListenerOnce( gMainMap, e, f);
         } else {

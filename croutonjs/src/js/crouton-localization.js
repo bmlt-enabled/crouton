@@ -2,7 +2,7 @@ var words;
 
 function CroutonLocalization(language) {
 	this.language = language;
-	words = {
+	this.words = {
 		"da-DK": {
 			"days_of_the_week": ["", "Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
 			"weekday": 'Ugedag',
@@ -44,6 +44,14 @@ function CroutonLocalization(language) {
 			'css-floatdirection': '',
 			'tabular': "As table",
 			'google_directions': 'Google directions to meeting',
+			'all': 'All',
+			'menu': 'Menu',
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -85,7 +93,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google Routenplaner',
 			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': 'Menu',
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Meetings in andere Städten',
+			'filter meetings': 'Filter für Sprache, Format usw.',
+			'visible meeting list': 'Sichtbare Meetings als Tabelle',
+			'enter a city or zip code': 'Stadt oder PLZ',
+			'toggle fullscreen mode': 'Umschalten Vollbildmodus',
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -105,7 +121,6 @@ function CroutonLocalization(language) {
 			"near_me": "Near Me",
 			"text_search": "Text Search",
 			"click_search": "Click Search",
-			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Languages",
 			"common_needs": "Common Needs",
 			"meeting_count": "Weekly Meetings:",
@@ -127,7 +142,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': 'Menu',
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -169,7 +192,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': 'Menu',
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -211,7 +242,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': 'Menu',
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -253,7 +292,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -295,7 +342,15 @@ function CroutonLocalization(language) {
 			"share": "share",
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -337,7 +392,15 @@ function CroutonLocalization(language) {
 			'css-textalign': '',
 			'tabular': "As table",
 			'google_directions': 'Google directions to meeting',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -379,7 +442,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': 'style="text-align:right;"',
-			'css-floatdirection': 'style="float:right;"'
+			'css-floatdirection': 'style="float:right;"',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -421,7 +492,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -463,7 +542,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -505,7 +592,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -547,7 +642,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -589,7 +692,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -631,7 +742,15 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -673,23 +792,31 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
-			'css-floatdirection': ''
+			'css-floatdirection': '',
+			'all': 'All',
+			'menu': "Menu",
+			'search for meetings': 'Search for meetings',
+			'show meetings near...': 'Show meetings near...',
+			'filter meetings': 'Filter meetings',
+			'visible meeting list': 'Visible meetings as list',
+			'enter a city or zip code': 'Enter a city or zip code',
+			'toggle fullscreen mode': 'Toggle fullscreen mode',
 		}
 	};
 }
 
 CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
-	return words[this.language]['days_of_the_week'][day_id];
+	return this.words[this.language]['days_of_the_week'][day_id];
 };
 
 CroutonLocalization.prototype.getWord = function(word) {
-	return words[this.language][word.toLowerCase()];
+	return this.words[this.language][word.toLowerCase()];
 };
 
 CroutonLocalization.prototype.getVenueType = function(type) {
-	return words[this.language]['venue_type_choices'][type];
+	return this.words[this.language]['venue_type_choices'][type];
 }
 
 CroutonLocalization.prototype.getServiceBodyType = function(type) {
-	return words[this.language]['service_body_types'][type];
+	return this.words[this.language]['service_body_types'][type];
 }
