@@ -476,6 +476,13 @@ function Crouton(config) {
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context);
 		callback && callback();
 	}
+	self.getCurrentLocation = function(callback) {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(callback, self.errorHandler);
+		} else {
+			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
+		}
+	};
 	self.renderView = function (selector, context, callback) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
@@ -719,8 +726,9 @@ function Crouton(config) {
 		}
 		return 'bmlt-map';
 	}
-	if (self.config['show_map'] && (typeof window.croutonMap === 'undefined')) {
+	if ((self.config['show_map'] || self.config['map_search']) && (typeof window.croutonMap === 'undefined')) {
 		window.croutonMap = new MeetingMap(self.config);
+		if (self.config['map_search']) self.searchMap();
 	}
 	self.meetingSearch();
 }
@@ -769,7 +777,12 @@ Crouton.prototype.setConfig = function(config) {
 	if (self.config["template_path"] == null) {
 		self.config["template_path"] = "templates"
 	}
-
+	if (self.config["BMLTPlugin_images"] == null) {
+		self.config["BMLTPlugin_images"] = self.config["template_path"];
+	}
+	if (self.config["BMLTPlugin_throbber_img_src"] == null) {
+		self.config["BMLTPlugin_throbber_img_src"] = self.config["template_path"]+'/Throbber.gif';
+	}
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
 	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);

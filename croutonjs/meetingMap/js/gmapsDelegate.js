@@ -278,7 +278,7 @@ function geoCallback( in_geocode_response ) {
         if ( geocoder )
         {
             var geoCodeParams = { 'address': in_loc };
-            if (config.region.trim() !== '') {
+            if (config.region && config.region.trim() !== '') {
                 geoCodeParams.region = config.region;
             }
             if (config.bounds

@@ -312,7 +312,7 @@ function addControl(div,pos) {
 	};
     function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
 		geoCodeParams = {};
-		if (config.region.trim() !== '') {
+		if (config.region && config.region.trim() !== '') {
 			geoCodeParams.countrycodes = config.region;
 		}
 		if (config.bounds
