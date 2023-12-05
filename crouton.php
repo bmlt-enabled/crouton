@@ -118,7 +118,8 @@ if (!class_exists("Crouton")) {
             "show_qrcode" => false,
             "hide_byday_headers" => false,
             "native_lang" => '',
-            "has_meeting_count" => false
+            "has_meeting_count" => false,
+            "google_api_key" => ""
         );
 
         public function __construct()
