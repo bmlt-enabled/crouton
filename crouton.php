@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.9
+Version: 3.17.10
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -101,6 +101,7 @@ if (!class_exists("Crouton")) {
             "sort_keys" => 'start_time',
             "int_start_day_id" => '1',
             "recurse_service_bodies" => '0',
+            "custom_css" => "",
             "theme" => '',
             "map_search" => null,
             "map_search_zoom" => 10,
@@ -938,7 +939,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
 
             if (!isset($this->options['crouton_version'])) {
                 $this->options['crouton_version'] = "3.17";
-                $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+                if (isset($this->options['meeting_data_template'])) {
+                    $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+                }
             }
         }
         /**
@@ -1080,14 +1083,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 $params['recurse_service_bodies'] = true;
             } elseif (isset($_GET['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = filter_var($_GET['recurse_service_bodies'], FILTER_VALIDATE_BOOLEAN);
-            } elseif (!isset($atts['recurse_service_bodies'])) {
-                $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
             }
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
-            $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
-            $params['custom_css'] = html_entity_decode($this->options['custom_css']);
+            $params['theme'] = $params['theme'] != '' ? $params['theme'] : 'jack';
+            $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
             $params['meeting_data_template'] = $this->templateToParameter('meeting_data_template');
@@ -1095,9 +1096,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
             $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
 
-            $mapParams['google_api_key'] = $this->options['google_api_key'];
+            $mapParams['google_api_key'] = $params['google_api_key'];
             $params['missing_api_key'] = 0;
-            if (empty($this->options['google_api_key']) && !has_filter("crouton_map_create_control")) {
+            if (empty($params['google_api_key']) && !has_filter("crouton_map_create_control")) {
                 $params['missing_api_key'] = 1;
             }
             $mapParams['template_path'] = $params['template_path'];
