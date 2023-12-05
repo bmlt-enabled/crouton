@@ -38,6 +38,7 @@ let jsFilesGoogleMap = [
 	'google.markercluster.min.js',
 ];
 let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
+let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesNoJQueryWithFullPath = [
 ].concat(jsFilesCroutonCoreWithFullPath)
 .concat(jsFilesCroutonMapWithFullPath);
@@ -120,7 +121,22 @@ task('js-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "js-files complete", wait: true}));
 });
+let jsFilesGoogleWithFullPath = ['croutonjs/src/js/jquery-3.4.1.min.js'
+].concat(jsFilesCroutonCoreWithFullPath)
+.concat(jsFilesGoogleMapWithFullPath);
+task('js-gmaps-files', () => {
 
+	return src(jsFilesGoogleWithFullPath)
+		.pipe(concat('crouton-gmaps.js'))
+		.pipe(dest(distDir))
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message: "js-gmaps-files complete", wait: true}));
+});
 task('templates', function () {
 	return src('croutonjs/src/templates/*.hbs')
 		.pipe(handlebars())
@@ -153,7 +169,7 @@ task('css-files', () => {
 		.pipe(notify({message: "css-files complete", wait: true}));
 });
 
-task('default', series('templates', 'js-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files'));
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files'));
 
 task('watch', () => {
 	watch([

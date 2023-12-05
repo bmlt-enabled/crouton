@@ -386,7 +386,6 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
-		console.log(filteringDropdown);
 		if (!filteringDropdown) {
 			self.filtering = false;
 			return;
