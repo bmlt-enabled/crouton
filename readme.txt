@@ -43,6 +43,9 @@ https://demo.bmlt.app/crouton
 * Markers show multiple meetings in accordion.  No "spiders".
 * Popup text configurable through handlebars.
 
+= 3.17.10 =
+* Bug fix release - Fix some PHP warnings
+
 = 3.17.9 =
 * Bug fix release - Shortcodes that are called before Enqueue_Scripts
 

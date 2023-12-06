@@ -98,6 +98,7 @@ if (!class_exists("Crouton")) {
             "sort_keys" => 'start_time',
             "int_start_day_id" => '1',
             "recurse_service_bodies" => '0',
+            "custom_css" => "",
             "theme" => '',
             "default_filter_dropdown" => '',
             "meeting_data_template" => null,
@@ -106,7 +107,8 @@ if (!class_exists("Crouton")) {
             "show_qrcode" => false,
             "hide_byday_headers" => false,
             "native_lang" => '',
-            "has_meeting_count" => false
+            "has_meeting_count" => false,
+            "google_api_key" => ""
         );
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
@@ -892,7 +894,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
 
             if (!isset($this->options['crouton_version'])) {
                 $this->options['crouton_version'] = "3.17";
-                $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+                if (isset($this->options['meeting_data_template'])) {
+                    $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+                }
             }
         }
         /**
@@ -1021,14 +1025,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 $params['recurse_service_bodies'] = true;
             } elseif (isset($_GET['recurse_service_bodies'])) {
                 $params['recurse_service_bodies'] = filter_var($_GET['recurse_service_bodies'], FILTER_VALIDATE_BOOLEAN);
-            } elseif (!isset($atts['recurse_service_bodies'])) {
-                $params['recurse_service_bodies'] = $this->options['recurse_service_bodies'];
             }
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
             $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
-            $params['theme'] = $params['theme'] != '' ? $params['theme'] : $this->options['theme'];
-            $params['custom_css'] = html_entity_decode($this->options['custom_css']);
+            $params['theme'] = $params['theme'] != '' ? $params['theme'] : 'jack';
+            $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
             $params['meeting_data_template'] = $this->templateToParameter($atts, 'meeting_data_template');
@@ -1036,6 +1038,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['meetingpage_title_template'] = $this->templateToParameter($atts, 'meetingpage_title_template');
             $params['meetingpage_contents_template'] = $this->templateToParameter($atts, 'meetingpage_contents_template');
 
+            $mapParams['google_api_key'] = $params['google_api_key'];
+            $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
