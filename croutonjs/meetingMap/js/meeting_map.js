@@ -18,6 +18,8 @@ function MeetingMap(inConfig) {
 			config.zoom = config.map_search.zoom;
 		}
 	}
+	if (!config.maxZoom) config.maxZoom = 17;
+	if (!config.minZoom) config.minZoom = 6;
 	var gAllMeetings = null;
 	var gMeetingIdsFromCrouton = null;
 	var loadedCallbackFunction = null;
@@ -186,7 +188,6 @@ function MeetingMap(inConfig) {
 		};
 	};
 	function mapSearchGeocode(resp) {
-		console.log(resp);
 		let latlng = gDelegate.getGeocodeCenter(resp);
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
@@ -445,7 +446,6 @@ function MeetingMap(inConfig) {
 			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
 	function filterBounds(bounds) {
-		console.log(bounds);
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
 	function filterVisible(on=true) {

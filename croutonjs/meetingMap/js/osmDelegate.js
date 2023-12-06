@@ -33,8 +33,8 @@ function MapDelegate(config) {
     function createMap(inDiv, inCenter) {
 		if (! inCenter ) return null;
 		myOptions = {
-                'minZoom': 6,
-                'maxZoom': 17,
+                'minZoom': config.minZoom,
+                'maxZoom': config.maxZoom,
 				'doubleClickZoom' : false,
 				'scrollWheelZoom' : false
 		};

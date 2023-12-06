@@ -36,6 +36,7 @@ let jsFilesGoogleMap = [
 	'meeting_map.js',
 	'gmapsDelegate.js',
 	'google.markercluster.min.js',
+	'oms-1.0.3.min.js',
 ];
 let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/meetingMap/js/'+f);

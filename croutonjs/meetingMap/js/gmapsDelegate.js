@@ -6,6 +6,8 @@ function MapDelegate(in_config) {
     var g_icon_shadow = null;
     var g_icon_shape = null;
     var gMainMap;
+    var gOms = null;
+    var gMarkerClusterer = null;
     var gInfoWindow;
     var gIsLoaded = false;
     var gIsClustering = false;
@@ -18,7 +20,6 @@ function MapDelegate(in_config) {
         gIsLoaded = true;
         if (typeof config['api_key'] === 'undefined') config['api_key'] = "";
         tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&callback=croutonMap.apiLoadedCallback";
-        //tag.src = "https://maps.googleapis.com/maps/api/js?callback=croutonMap.apiLoadedCallback";
         tag.defer = true;
         tag.async = true;
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -34,13 +35,14 @@ function MapDelegate(in_config) {
         var myOptions = {
             'mapTypeId': google.maps.MapTypeId.ROADMAP,
             'zoomControl': true,
-            'minZoom': 6,
+            'minZoom': config.minZoom,
+            'maxZoom': config.maxZoom,
             'mapTypeControl': false,
             'streetViewControl': false,
             'disableDoubleClickZoom' : true,
             'draggableCursor': "pointer",
             'scaleControl' : true,
-            'fullscreenControl': false,
+            'fullscreenControl': config.map_search ? true : false,
         };
         if (inCenter) {
             myOptions = Object.assign(myOptions, {
@@ -79,12 +81,15 @@ function MapDelegate(in_config) {
     }
     function fitBounds(locations) {
         google.maps.event.addListenerOnce(gMainMap, "bounds_changed", function () {
-            this.setZoom(Math.min(this.getZoom(), 17));
+            gMainMap.setZoom(parseInt(Math.min(gMainMap.getZoom(), config.maxZoom)));
         });
+        let start = new google.maps.LatLngBounds();  // avoid occasional timing problem
+        if (!start) return;
         const bounds = locations.reduce(
             function (bounds, m) {
+                if (bounds === null) return start;
                 return bounds.extend(new google.maps.LatLng(m[0], m[1]));
-            }, new google.maps.LatLngBounds());
+            }, start);
         gMainMap.fitBounds(bounds);
     }
     function setViewToPosition(position, filterMeetings, f) {
@@ -171,12 +176,54 @@ function MapDelegate(in_config) {
         gIsClustering =false;
         gMarkerClusterer && gMarkerClusterer.setMap(null);
         gMarkerClusterer = null;
+        if (gOms) {
+            gOms.removeAllMarkers();
+            gOms.clearListeners('click');
+            gOms = null;
+        }
     }
-var gMarkerClusterer = null;
    function addClusterLayer() {
         let markers = gAllMarkers.map((m)=>m.marker);
-        if (gIsClustering) gMarkerClusterer = new markerClusterer.MarkerClusterer( { 'map': gMainMap, 'markers': markers, 'imagePath': 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'} );
-        else markers.forEach((m)=>m.setMap(gMainMap));
+        if (gIsClustering) {
+            gMarkerClusterer = new markerClusterer.MarkerClusterer( { 'map': gMainMap, 'markers': markers, 'imagePath': 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'} );
+            gOms = new OverlappingMarkerSpiderfier(gMainMap, {
+                markersWontMove: true,
+                markersWontHide: true,
+            });
+            gOms.addListener('format', function (marker, status) {
+                var icon;
+                if (status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIED
+                    || status === OverlappingMarkerSpiderfier.markerStatus.SPIDERFIABLE
+                    || status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIED) {
+                    icon = g_icon_image_multi;
+                } else if (status === OverlappingMarkerSpiderfier.markerStatus.UNSPIDERFIABLE) {
+                    icon = g_icon_image_single;
+                } else {
+                    icon = null;
+                }
+                marker.setIcon(icon);
+            });
+            google.maps.event.addListener(gMainMap, 'zoom_changed', function() {
+                if (gMainMap.getProjection()=='undefined') return;
+                google.maps.event.addListenerOnce(gMainMap, 'idle', function() {
+                    if (gMainMap.getProjection()=='undefined') return;
+                    if (gOms == null) return;
+                    var spidered = gOms.markersNearAnyOtherMarker();
+                    for (var i = 0; i < spidered.length; i ++) {
+                        spidered[i].icon = g_icon_image_multi;
+                    }
+                });
+            });
+        
+            // This is necessary to make the Spiderfy work
+            gOms.addListener('click', function (marker) {
+                marker.zIndex = 999;
+                gInfoWindow.setContent(marker.desc);
+                gInfoWindow.open(gMainMap, marker);
+            });
+            markers.forEach((marker)=>gOms.addMarker(marker));
+        
+        } else markers.forEach((m)=>m.setMap(gMainMap));
    }
 function createMarker (	inCoords,		///< The long/lat for the marker.
         multi, 
@@ -233,9 +280,11 @@ function addControl(div,pos) {
     switch(pos) {
         case 'topright':
             p = google.maps.ControlPosition.TOP_RIGHT;
+            div.style.margin = "10px 10px 0 0";
             break;
         case 'topleft':
             p = google.maps.ControlPosition.TOP_LEFT;
+            div.style.margin = "10px 0 0 10px";
             break;
     }
     div.index = 1;
