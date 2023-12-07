@@ -35,9 +35,9 @@ function MeetingMap(inConfig) {
 	 *	\brief Load the map and set it up.													*
 	 ****************************************************************************************/
 
-	function loadMap(inDiv, menuContext, handlebarMapOptions=null) {
+	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadMap, [inDiv, menuContext, handlebarMapOptions]);
+			preloadApiLoadedCallback(loadMap, [inDiv, menuContext, handlebarMapOptions, cb]);
 			gDelegate.loadApi();
 			return;
 		}
@@ -54,12 +54,12 @@ function MeetingMap(inConfig) {
 					}
 				}, false);
 				if (config.map_search) {
-					gDelegate.addControl(createSearchButton(), 'topleft');
+					gDelegate.addControl(createSearchButton(), 'topleft', cb);
 				}
 				else if (menuContext) {
 					menuContext.imageDir = config.BMLTPlugin_images;
 					//gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
-					gDelegate.addControl(createMenuButton(menuContext), 'topright');
+					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 				};
 			}
 		};
@@ -124,14 +124,14 @@ function MeetingMap(inConfig) {
 		return controlDiv;
 	}
 
-	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null) {
+	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null, callback) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions]);
+			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions, callback]);
 			gDelegate.loadApi();
 			return;
 		}
 		let inDiv = document.getElementById(inDiv_id);
-		loadMap(inDiv, menuContext, handlebarMapOptions);
+		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
 		loadAllMeetings(meetings_responseObject, true);
 	};
 	var fitDuringFilter = true;

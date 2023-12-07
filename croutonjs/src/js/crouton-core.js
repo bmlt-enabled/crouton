@@ -474,8 +474,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context);
-		callback && callback();
+		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,callback);
 	}
 	self.getCurrentLocation = function(callback) {
 		if (navigator.geolocation) {
@@ -1120,7 +1119,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
 				if (self.config.has_locations) self.dropdownData.push(
 					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').sort(), 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').map((s)=>s.replace(/(<([^>]+)>)/gi, "")).sort(), 
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_sub_province) self.dropdownData.push(
 					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 

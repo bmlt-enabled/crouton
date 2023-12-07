@@ -275,7 +275,7 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     });
     gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
 };
-function addControl(div,pos) {
+function addControl(div,pos,cb) {
     var p = pos;
     switch(pos) {
         case 'topright':
@@ -288,6 +288,19 @@ function addControl(div,pos) {
             break;
     }
     div.index = 1;
+    if (cb) {
+        const observer = new MutationObserver(function (records) {
+            records.forEach(record => {
+                record.addedNodes.forEach(n => {
+                    if (n === div) {
+                        observer.disconnect();
+                        cb();
+                    }
+                });
+            })
+        });
+        observer.observe(document, {childList: true, subtree: true});
+    }
     gMainMap.controls[p].push(div);
 }
     /************************************************************************************//**

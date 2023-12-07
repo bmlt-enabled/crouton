@@ -196,7 +196,7 @@ function openMarker(id) {
 	jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
 	jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 }
-function addControl(div,pos) {
+function addControl(div,pos,cb) {
 		var ControlClass =  L.Control.extend({
 	  		onAdd: function (map) {
 				return div;
@@ -207,6 +207,19 @@ function addControl(div,pos) {
 		});
 		var controlConstructor = function(opts) {
 			return new ControlClass(opts);
+		}
+		if (cb) {
+			const observer = new MutationObserver(function (records) {
+				records.forEach(record => {
+					record.addedNodes.forEach(n => {
+						if (n === div) {
+							observer.disconnect();
+							cb();
+						}
+					});
+				})
+			});
+			observer.observe(document, {childList: true, subtree: true});
 		}
 		controlConstructor({ position: pos }).addTo(gMainMap);
     }
