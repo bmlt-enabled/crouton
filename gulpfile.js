@@ -169,8 +169,22 @@ task('css-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "css-files complete", wait: true}));
 });
-
-task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files'));
+task('css-core-files', () => {
+	let cssFilesWithFullPath = [];
+	for (let cssFile of cssFiles) {
+		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
+	}
+	return src(cssFilesWithFullPath)
+		.pipe(concat('crouton-core.css'))
+		.pipe(dest(distDir))
+		.pipe(cleanCSS())
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message: "css-core-files complete", wait: true}));
+});
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files', 'css-core-files'));
 
 task('watch', () => {
 	watch([

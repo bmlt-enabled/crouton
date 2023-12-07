@@ -810,7 +810,9 @@ CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
 };
 
 CroutonLocalization.prototype.getWord = function(word) {
-	return this.words[this.language][word.toLowerCase()];
+	const ret = this.words[this.language][word.toLowerCase()];
+	if (typeof ret === 'undefined') return word;
+	return ret;
 };
 
 CroutonLocalization.prototype.getVenueType = function(type) {

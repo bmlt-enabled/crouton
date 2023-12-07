@@ -58,7 +58,7 @@ function MeetingMap(inConfig) {
 				}
 				else if (menuContext) {
 					menuContext.imageDir = config.BMLTPlugin_images;
-					//gDelegate.addControl(createFilterMeetingsToggle(), 'topleft');
+					gDelegate.addControl(createNext24Toggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 				};
 			}
@@ -82,6 +82,44 @@ function MeetingMap(inConfig) {
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
 		gSearchModal.parentElement.removeChild(gSearchModal);
 
+		return controlDiv;
+	}
+	var next24status = false;
+	function createNext24Toggle() {
+		const toggleSrc = `
+	<div id="next24_toggle" title="Next24_toggle" style="background: rgba(0, 0, 0, 0); cursor: pointer;">
+		 <div class="onoffswitch">
+			 <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="next24onoffswitch"/>
+			 <label class="onoffswitch-label" for="next24onoffswitch">
+				 <span class="onoffswitch-inner"></span>
+				 <span class="onoffswitch-switch"></span>
+			 </label>
+		 </div>
+	</div>`;
+		rules = [`.onoffswitch-inner:before {
+		content: "__text__";
+		padding-left: 10px;
+		background-color: #2d5c88; color: #FFFFFF;
+		}`,
+		`.onoffswitch-inner:after {
+		content: "__text__";
+		padding-left: 30px;
+		background-color: #EEEEEE; color: #2d5c88;
+		text-align: left;
+		}`];
+		rules[0] = rules[0].replace("__text__", crouton.localization.getWord("All Meetings"));
+		rules[1] = rules[1].replace("__text__", crouton.localization.getWord("Upcoming Meetings"));
+		var controlDiv = document.createElement('div');
+		controlDiv.innerHTML = toggleSrc;
+		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
+			if (event.pointerId < 0) return;
+			next24status = !next24status;
+			fitDuringFilter = false;
+			crouton.filterNext24(next24status);
+			fitDuringFilter = true;
+		});
+		document.styleSheets[0].insertRule(rules[0]);
+		document.styleSheets[0].insertRule(rules[1]);
 		return controlDiv;
 	}
 	function createMenuButton(menuContext) {
@@ -422,7 +460,7 @@ function MeetingMap(inConfig) {
 	}
 	return 0;
 };
-	var markerTemplateSrc = `
+	const markerTemplateSrc = `
 	<div class="accordion">
 	{{#each this}}<div>
 			<input type="radio" name="panel" id="panel-{{this.id_bigint}}" {{#unless @index}}checked{{/unless}}/>

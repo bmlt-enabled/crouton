@@ -332,7 +332,6 @@ function Crouton(config) {
 
 	self.dayView = function () {
 		self.resetFilter();
-		croutonMap && croutonMap.fillMap();
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -390,6 +389,7 @@ function Crouton(config) {
 		});
 		if (!filteringDropdown) {
 			self.filtering = false;
+			if (croutonMap) croutonMap.fillMap();
 			return;
 		}
 		var showingNow = [];
@@ -552,7 +552,44 @@ function Crouton(config) {
 	self.errorHandler = function(msg) {
 		jQuery('.geo').removeClass("hide").addClass("show").html('');
 	};
+	Crouton.prototype.filterNext24 = function(filterNow = true) {
+		if (!filterNow) {
+			jQuery("#filter-dropdown-next24").val('a-');
+			self.filteredPage();
+			return;
+		}
+		const date = new Date();
+		const dayNow = date.getDay();
+		const hour = date.getHours();
+		const mins = date.getMinutes();
+		const next24 = self.meetingData.filter(function(meeting) {
+			var weekday = meeting.weekday_tinyint - 1;
+			if (weekday == dayNow) {
+				var time = meeting.start_time.toString().split(':');
+				var meetingHour = parseInt(time[0]);
+				if (meetingHour > hour) {
+					return true;
+				}
+				if (meetingHour == hour) {
+					if (parseInt(time[1]) > mins) {
+						return true;
+					}
+				}
+			} else if (weekday == (dayNow + 1) % 7) {
+				return true;
+			}
+			return false;
+		}).map((m)=>m.id_bigint);
+		jQuery(".bmlt-data-row").each(function(index,row) {
+			row.dataset.next24 = (next24.includes(row.id.split('-').pop())) ? '1' : '0';
+		});
+		jQuery("#filter-dropdown-next24").val('a-1');
+		self.filteredPage();
+	}
 
+	self.isMeetingInTime = function(meeting, dayNow, hour, mins) {
+
+	}
 	self.distance = function(lat1, lon1, lat2, lon2, unit) {
 		if ((lat1 === lat2) && (lon1 === lon2)) {
 			return 0;
@@ -712,6 +749,9 @@ function Crouton(config) {
 	}
 	self.getUsedVisibility = function(meetings) {
 		return [{name: 'Visible', value: 1}];
+	}
+	self.getUsedNext24 = function(meetings) {
+		return [{name: 'Next24', value: 1}];
 	}
 	self.isEmpty = function(obj) {
 		for (var key in obj) {
@@ -1097,10 +1137,38 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays", 
 					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced), 
 					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_states) self.dropdownData.push(
+					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_sub_province) self.dropdownData.push(
+					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
 				if (self.config.has_cities) self.dropdownData.push(
 					{placeholder: self.localization.getWord('cities'), pointer: 'Cities', elementId: "filter-dropdown-cities", 
 					 uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_municipality').sort(), 
 					 objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_neighborhoods) self.dropdownData.push(
+					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+				if (self.config.has_zip_codes) self.dropdownData.push(
+					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_locations) self.dropdownData.push(
+					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').map((s)=>s.replace(/(<([^>]+)>)/gi, "")).sort(), 
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
+				if (self.config.has_regions) self.dropdownData.push(
+					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id) && sb.type==='RS').sortByKey('name'), 
+						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
+				if (self.config.has_areas) self.dropdownData.push(
+					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'), 
+						objectPointer: (a) => a.id, optionName: (a)=>a.name});
 				if (self.config.has_groups) self.dropdownData.push(
 					{placeholder: self.localization.getWord('groups'), pointer: 'Groups', elementId: "filter-dropdown-groups", 
 					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(), 
@@ -1108,34 +1176,6 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 				if (self.config.has_venues) self.dropdownData.push(
 					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues", 
 						uniqueData: (meetings) => self.getUsedVenueType(meetings), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});
-				if (self.config.has_areas) self.dropdownData.push(
-					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
-						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'), 
-						objectPointer: (a) => a.id, optionName: (a)=>a.name});
-				if (self.config.has_regions) self.dropdownData.push(
-					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
-						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id) && sb.type==='RS').sortByKey('name'), 
-						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
-				if (self.config.has_locations) self.dropdownData.push(
-					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').map((s)=>s.replace(/(<([^>]+)>)/gi, "")).sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});
-				if (self.config.has_sub_province) self.dropdownData.push(
-					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});	
-				if (self.config.has_neighborhoods) self.dropdownData.push(
-					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});	
-				if (self.config.has_states) self.dropdownData.push(
-					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});	
-				if (self.config.has_zip_codes) self.dropdownData.push(
-					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(), 
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_formats) self.dropdownData.push(
 					{placeholder: self.localization.getWord('formats'), pointer: 'Formats', elementId: "filter-dropdown-formats", 
@@ -1149,9 +1189,13 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds", 
 						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
-				self.dropdownData.push(
+				if (doMeetingMap) self.dropdownData.push(
 					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile", 
 						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
+						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
+				if (doMeetingMap) self.dropdownData.push(
+					{placeholder: '', pointer: 'next24', elementId: "filter-dropdown-next24", 
+						uniqueData: (meetings) => self.getUsedNext24(meetings), 
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				let renderer = doMeetingMap ? self.renderStandaloneMap : self.renderView;
 				renderer("#" + self.config['placeholder_id'], {
@@ -1176,6 +1220,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery("#filter-dropdown-visibile").removeClass("crouton-select").addClass("hide");
+					jQuery("#filter-dropdown-next24").removeClass("crouton-select").addClass("hide");
 					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
 						allowClear: false,
