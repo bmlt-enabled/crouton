@@ -107,8 +107,8 @@ function MeetingMap(inConfig) {
 		background-color: #EEEEEE; color: #2d5c88;
 		text-align: left;
 		}`];
-		rules[0] = rules[0].replace("__text__", crouton.localization.getWord("All Meetings"));
-		rules[1] = rules[1].replace("__text__", crouton.localization.getWord("Upcoming Meetings"));
+		rules[0] = rules[0].replace("__text__", crouton.localization.getWord("Upcoming Meetings"));
+		rules[1] = rules[1].replace("__text__", crouton.localization.getWord("All Meetings"));
 		var controlDiv = document.createElement('div');
 		controlDiv.innerHTML = toggleSrc;
 		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
