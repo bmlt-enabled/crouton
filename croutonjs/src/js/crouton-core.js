@@ -499,14 +499,7 @@ function Crouton(config) {
 		jQuery('#bmlt_tabs_meeting_count').html(meetingCount);
 	}
 	self.getServiceBodies = function(service_bodies_id) {
-		var requires_parents = false;
-		for (var i = 0; i < self.all_data_keys.length; i++) {
-			var data_key = self.all_data_keys[i];
-			if (data_key.indexOf("parentServiceBody") >= 0 || self.config.has_regions) {
-				requires_parents = true;
-				break;
-			}
-		}
+		var requires_parents = self.config.has_regions;
 
 		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
 			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
@@ -711,6 +704,7 @@ function Crouton(config) {
 
 			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
 			if (parentBodyInfo !== undefined) {
+				meetingData[m]['parentServiceBodyId'] = serviceBodyInfo["parent_id"];
 				meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
 				meetingData[m]['parentServiceBodyPhone'] = parentBodyInfo["helpline"];
 				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
@@ -1163,7 +1157,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_regions) self.dropdownData.push(
 					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
-						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id) && sb.type==='RS').sortByKey('name'), 
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'parentServiceBodyId').includes(sb.id)).sortByKey('name'), 
 						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
 				if (self.config.has_areas) self.dropdownData.push(
 					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
