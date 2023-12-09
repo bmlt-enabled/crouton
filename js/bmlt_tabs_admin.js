@@ -55,6 +55,10 @@ jQuery(document).ready(function($) {
 		inherit_select_classes: true,
 		width: "20%"
 	});
+	$("#select_filters").chosen({
+		inherit_select_classes: true,
+		width: "60%"
+	});
 	$("#extra_meetings").chosen({
 		no_results_text: "Oops, nothing found!",
 		width: "60%",

@@ -110,6 +110,22 @@ if (!class_exists("Crouton")) {
             "has_meeting_count" => false,
             "google_api_key" => ""
         );
+        private $hasFilters = [
+            "has_days",
+            "has_groups",
+            "has_areas",
+            "has_regions",
+            "has_cities",
+            "has_formats",
+            "has_locations",
+            "has_sub_province",
+            "has_neighborhoods",
+            "has_states",
+            "has_languages",
+            "has_zip_codes",
+            "has_venues",
+            "has_common_needs"
+        ];
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
         {
@@ -516,6 +532,10 @@ jQuery(document).ready(function() {
                 $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
+                $postFilters = isset($_POST['select_filters']) ? $_POST['select_filters'] : array();
+                foreach ($this->hasFilters as $hasFilter) {
+                    $this->options[$hasFilter] = in_array($hasFilter, $postFilters);
+                }
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->meetingMapController->processUpdate($this->options);
@@ -736,6 +756,18 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-select-dropdown-filters" class="anchor"></a>Select Dropdown Filters</h3>
+                        <div class="inside">
+
+                            <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
+                            foreach ($this->hasFilters as $hasFilter) {?>
+                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo $hasFilter;?>"><?php echo $hasFilter;?></option>
+                                <?php
+                            }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
                         <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
                         <ul>
@@ -896,6 +928,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 $this->options['crouton_version'] = "3.17";
                 if (isset($this->options['meeting_data_template'])) {
                     $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
+                }
+            }
+            foreach ($this->hasFilters as $hasFilter) {
+                if (!isset($this->options[$hasFilter])) {
+                    $this->options[$hasFilter] = $this->shortCodeOptions[$hasFilter];
                 }
             }
         }
