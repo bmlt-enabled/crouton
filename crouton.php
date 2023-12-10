@@ -531,6 +531,12 @@ jQuery(document).ready(function() {
                 $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
                 $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
+                $this->options['show_map']       = $_POST['show_map'];
+                $this->options['header']         = isset($_POST['header']) ? "1" : "0";
+                $this->options['has_tabs']       = isset($_POST['has_tabs']) ? "1" : "0";
+                $this->options['include_city_button']    = isset($_POST['include_city_button']) ? "1" : "0";
+                $this->options['include_weekday_button'] = isset($_POST['include_weekday_button']) ? "1" : "0";
+                $this->options['view_by']       = $_POST['view_by'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
                 $postFilters = isset($_POST['select_filters']) ? $_POST['select_filters'] : array();
                 foreach ($this->hasFilters as $hasFilter) {
@@ -722,6 +728,19 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-show-map" class="anchor"></a>Companion Map</h3>
+                        <p>In addition to croutons tabular listing of meetings, the meetings can be be displayed on a map.</p>
+                        <p>You may configure the map by clicking on the "Map" tab, above.</p>
+                                <select id="show_map" name="show_map" style="display:block;">
+                                    <option <?php echo $this->options['show_map']=='0' ? 'selected' : '';?> value="0">No Map</option>
+                                    <option <?php echo $this->options['show_map']=='1' ? 'selected' : '';?> value="1">Show Map and Table</option>
+                                    <option <?php echo $this->options['show_map']=='embed' ? 'selected' : '';?> value="embed">Embed Map as Table Page</option>
+                                </select>
+                            </li>
+                        </ul>
+                        <br/>
+                    </div>
             <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
                         <p>These values will be used when the attributes are not defined in the shortcode</p>
@@ -762,7 +781,19 @@ jQuery(document).ready(function() {
                         </ul>
                     </div>
             <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-select-dropdown-filters" class="anchor"></a>Select Dropdown Filters</h3>
+                        <h3><a id="config-table-headers" class="anchor"></a>Configure Table Headers</h3>
+                        <h4>Header Contents</h4>
+                        <ul>
+                            <li><input type="checkbox" name="header" value="1" <?php echo ($this->options['header'] == 1 ? 'checked' : '') ?> /> Show Header</li>
+                            <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($this->options['has_tabs'] == 1 ? 'checked' : '') ?> /> Separate days into tabs</li>
+                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($this->options['include_city_button'] == 1 ? 'checked' : '') ?> /> Include 'Cities' Button</li>
+                            <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($this->options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> Include 'Weekdays' Button</li>
+                            <li><select name="view_by">
+                                <option value="weekday" <?php echo ($this->options["view_by"] == "weekday") ? 'selected' : ''; ?>>View by Weekday</option>
+                                <option value="city" <?php echo ($this->options["view_by"] == "city") ? 'selected' : ''; ?>>View by City</option>
+                            </select></li>
+                        </ul>
+                        <h4>Select Dropdown Filters</h4>
                         <div class="inside">
 
                             <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
@@ -949,6 +980,24 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 if (!isset($this->options[$hasFilter])) {
                     $this->options[$hasFilter] = $this->shortCodeOptions[$hasFilter];
                 }
+            }
+            if (!isset($this->options['show_map'])) {
+                $this->options['show_map'] = $this->shortCodeOptions['show_map'];
+            }
+            if (!isset($this->options['header'])) {
+                $this->options['header'] = $this->shortCodeOptions['header'];
+            }
+            if (!isset($this->options['has_tabs'])) {
+                $this->options['has_tabs'] = $this->shortCodeOptions['has_tabs'];
+            }
+            if (!isset($this->options['include_city_button'])) {
+                $this->options['include_city_button'] = $this->shortCodeOptions['include_city_button'];
+            }
+            if (!isset($this->options['include_weekday_button'])) {
+                $this->options['include_weekday_button'] = $this->shortCodeOptions['include_weekday_button'];
+            }
+            if (!isset($this->options['view_by'])) {
+                $this->options['view_by'] = $this->shortCodeOptions['view_by'];
             }
         }
         /**
