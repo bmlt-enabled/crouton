@@ -602,6 +602,13 @@ jQuery(document).ready(function() {
                             <li><a href="#config-documentation">Documentation</a></li>
                         </ul>
                     </div>
+                    <nav class="nav-tab-wrapper">
+                        <a href="#bmlt-query" class="nav-tab nav-tab-active">BMLT Query</a>
+                        <a href="#crouton-ui" class="nav-tab">Crouton UI</a>
+                        <a href="#crouton-map" class="nav-tab">Map</a>
+                        <a href="#crouton-templates" class="nav-tab">Templates</a>
+                    </nav>
+                <div id="bmlt-query" class="tab-content">
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3><a id="config-bmlt-root-server" class="anchor"></a>BMLT Root Server URL</h3>
                         <p>Example: https://bmlt.sezf.org/main_server</p>
@@ -652,7 +659,70 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
-                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
+                        <div class="inside">
+                            <p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
+                            <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
+                            if ($this->options['extra_meetings_enabled'] == 0) {
+                                echo 'Not Enabled';
+                            } elseif (!$this_connected) {
+                                echo 'Not Connected';
+                            } else {
+                                echo 'Select Extra Meetings';
+                            } ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
+                                <?php if ($this_connected && $this->options['extra_meetings_enabled'] == 1) {
+                                    $extra_meetings_array = $this->getAllMeetings($this->options['root_server']);
+                                    foreach ($extra_meetings_array as $extra_meeting) {
+                                        $extra_meeting_x = explode('|||', $extra_meeting);
+                                        $extra_meeting_id = $extra_meeting_x[3];
+                                        $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
+                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
+                                        <?php
+                                    }
+                                } ?>
+                            </select>
+                            <p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
+                            <div>
+                                <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($this->options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> Extra Meetings Enabled
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
+                        <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
+                        <ul>
+                            <li>
+                                <label for="custom_query">Custom Query: </label>
+                                <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
+                            </li>
+                        </ul>
+                    </div>
+            </div>
+            <div id="crouton-ui" class=tab-content>
+            <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
+                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
+                        <ul>
+                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
+                            <li>
+                                <select style="display:inline;" id="theme" name="theme"  class="theme_select">
+                                    <?php
+                                    foreach ($this->themes as $theme) { ?>
+                                        <option <?php if ($theme === $this->options['theme']) {
+                                                    echo "selected";
+                                                } else {
+                                                    echo "";
+                                                }
+                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
+                                        <?php
+                                    }?>
+                                </select>
+                            </li>
+                        </ul>
+                    </div>
+            <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
                         <p>These values will be used when the attributes are not defined in the shortcode</p>
                         <ul>
@@ -691,7 +761,33 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
-                    <div id="examplePopup1" style="display:none">
+            <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-select-dropdown-filters" class="anchor"></a>Select Dropdown Filters</h3>
+                        <div class="inside">
+
+                            <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
+                            foreach ($this->hasFilters as $hasFilter) {?>
+                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo $hasFilter;?>"><?php echo $hasFilter;?></option>
+                                <?php
+                            }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
+                        <p>Allows for custom styling of your crouton.</p>
+                        <ul>
+                            <li>
+                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
+                            </li>
+                        </ul>
+                    </div>
+            </div>
+            <div id="crouton-map">
+                <?php $this->meetingMapController->adminSection(); ?>
+            </div>
+            <div id="crouton-templates">
+                                    <div id="examplePopup1" style="display:none">
 <h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
 foreach ($this->getAllFields($this->options['root_server']) as $field) {
     echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
@@ -726,80 +822,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
             Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
         </p></div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
-                        <div class="inside">
-                            <p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
-                            <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
-                            if ($this->options['extra_meetings_enabled'] == 0) {
-                                echo 'Not Enabled';
-                            } elseif (!$this_connected) {
-                                echo 'Not Connected';
-                            } else {
-                                echo 'Select Extra Meetings';
-                            } ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
-                                <?php if ($this_connected && $this->options['extra_meetings_enabled'] == 1) {
-                                    $extra_meetings_array = $this->getAllMeetings($this->options['root_server']);
-                                    foreach ($extra_meetings_array as $extra_meeting) {
-                                        $extra_meeting_x = explode('|||', $extra_meeting);
-                                        $extra_meeting_id = $extra_meeting_x[3];
-                                        $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
-                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
-                                        <?php
-                                    }
-                                } ?>
-                            </select>
-                            <p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
-                            <div>
-                                <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($this->options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> Extra Meetings Enabled
-                            </div>
-                        </div>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-select-dropdown-filters" class="anchor"></a>Select Dropdown Filters</h3>
-                        <div class="inside">
-
-                            <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
-                            foreach ($this->hasFilters as $hasFilter) {?>
-                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo $hasFilter;?>"><?php echo $hasFilter;?></option>
-                                <?php
-                            }?>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
-                        <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
-                        <ul>
-                            <li>
-                                <label for="custom_query">Custom Query: </label>
-                                <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
-                            </li>
-                        </ul>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
-                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
-                        <ul>
-                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
-                            <li>
-                                <select style="display:inline;" id="theme" name="theme"  class="theme_select">
-                                    <?php
-                                    foreach ($this->themes as $theme) { ?>
-                                        <option <?php if ($theme === $this->options['theme']) {
-                                                    echo "selected";
-                                                } else {
-                                                    echo "";
-                                                }
-                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
-                                        <?php
-                                    }?>
-                                </select>
-                            </li>
-                        </ul>
-                    </div>
-                    <?php $this->meetingMapController->adminSection(); ?>
-                    <div style="padding: 0 15px;" class="postbox">
+        <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are
                         <span style="text-align:center;padding:20px 0;"> 
@@ -878,15 +901,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                             </li>
                         </ul>
                     </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
-                        <p>Allows for custom styling of your crouton.</p>
-                        <ul>
-                            <li>
-                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
-                            </li>
-                        </ul>
-                    </div>
+            </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
                 <br/><br/>
