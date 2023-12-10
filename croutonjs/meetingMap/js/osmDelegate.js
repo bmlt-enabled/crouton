@@ -370,6 +370,12 @@ function addControl(div,pos,cb) {
 			})
 		});
 	}
+	function modalOn() {
+		gMainMap.dragging.disable()
+	}
+	function modalOff() {
+		gMainMap.dragging.enable()
+	}
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -393,6 +399,8 @@ function addControl(div,pos,cb) {
 	this.removeClusterLayer = removeClusterLayer;
 	this.clickSearch = clickSearch;
 	this.getGeocodeCenter = getGeocodeCenter;
+	this.modalOn = modalOn;
+	this.modalOff = modalOff;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -416,3 +424,5 @@ MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.modalOn = null;
+MapDelegate.prototype.modalOff = null;

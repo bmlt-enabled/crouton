@@ -227,6 +227,7 @@ function MeetingMap(inConfig) {
 	};
 	function mapSearchGeocode(resp) {
 		let latlng = gDelegate.getGeocodeCenter(resp);
+		document.getElementById("bmltsearch-goto-text").value = ""
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function loadAllMeetings(meetings_responseObject, fitAll=false) {
@@ -269,6 +270,7 @@ function MeetingMap(inConfig) {
 	}
 	var g_suspendedFullscreen = false;
 	function closeModalWindow(modal) {
+		gDelegate.modalOff();
 		if (!modal.classList.contains("modal"))
 			return closeModalWindow(modal.parentNode);
 		modal.style.display = "none";
@@ -287,6 +289,7 @@ function MeetingMap(inConfig) {
 		modal.style.display = "block";
 		dd = document.getElementById("map-menu-dropdown");
 		if (dd) dd.style.display = "none";
+		gDelegate.modalOn();
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));

@@ -378,6 +378,8 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
+    function modalOn() {}
+    function modalOff() {}
     this.createMap = createMap;
     this.addListener = addListener;
     this.addControl = addControl;
@@ -401,6 +403,8 @@ function geoCallback( in_geocode_response ) {
     this.removeClusterLayer = removeClusterLayer;
     this.clickSearch = clickSearch;
     this.getGeocodeCenter = getGeocodeCenter;
+    this.modalOn = modalOn;
+    this.modalOff = modalOff;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -425,3 +429,5 @@ MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.modalOn = null;
+MapDelegate.prototype.modalOff = null;
