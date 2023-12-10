@@ -651,16 +651,17 @@ function Crouton(config) {
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
+			let formatRootServer = self.formatsData.filter((f)=>f['root_server_id'] == meetingData[m]['root_server_id']);
 			for (var f = 0; f < formats.length; f++) {
-				for (var g = 0; g < self.formatsData.length; g++) {
-					if (formats[f] === self.formatsData[g]['key_string']) {
+				for (var g = 0; g < formatRootServer.length; g++) {
+					if (formats[f] === formatRootServer[g]['key_string']) {
 						formats_expanded.push(
 							{
-								"id": self.formatsData[g]['id'],
+								"id": formatRootServer[g]['id'],
 								"key": formats[f],
-								"name": self.formatsData[g]['name_string'],
-								"description": self.formatsData[g]['description_string'],
-								"type": self.formatsData[g]['format_type_enum'],
+								"name": formatRootServer[g]['name_string'],
+								"description": formatRootServer[g]['description_string'],
+								"type": formatRootServer[g]['format_type_enum'],
 							}
 						)
 					}
