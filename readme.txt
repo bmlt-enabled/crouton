@@ -3,8 +3,8 @@
 Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718, jbraswell
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
-Required PHP: 5.6
-Tested up to: 6.2.2
+Required PHP: 8.0
+Tested up to: 6.4.2
 Stable tag: 3.18.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -37,11 +37,12 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.18.0 =
-* Merge with BMLT-Meeting-Map
+* New shortcode, [bmlt_map], presents a mobile friendly, map based interface.
 * All Maps can be either OSM or Google Maps
 * Admins can set clustering zoom level, above clustering, below, red/blue NA Markers
 * Markers show multiple meetings in accordion.  No "spiders".
 * Popup text configurable through handlebars.
+* Admin page organized into tabs
 
 = 3.17.10 =
 * Bug fix release - Fix some PHP warnings

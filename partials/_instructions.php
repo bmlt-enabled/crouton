@@ -5,7 +5,8 @@
         <p>Crouton defines the following shortcodes.</p>
         <ul>
             <li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
-            <li><code>[crouton_map]</code> -- generates a map-based interface (see "Map Search" below for details)</li>
+            <li><code>[crouton_map]</code> -- generates a map-based interface from which geographic queries can be made. See "Map Search" below for details.</li>
+			<li><code>[bmlt_map]</code> -- generates a map-based interface suitible for mobile devices.  Queries to the BMLT database, along with the available filters, are control by the usual <code>[bmlt_tabs]</code> parameters.</li>
             <li><code>[meeting_count]</code></li>
             <li><code>[group_count]</code></li>
             <li><code>[service_body_names]</code></li>
@@ -86,26 +87,15 @@
 		<p>weekday = view meetings by Weekdays (default)</p>
         <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
 	</div>
-	<h3 class="help-accordian"><strong>View By Language or Common Need</strong></h3>
-	<div>
-		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the button_filters_option was added ahead of time.</p>
-		<p><strong>[bmlt_tabs view_by="weekday"]</strong></p>
-		<p>weekday = view meetings by Weekdays (default)</p>
-        <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
-	</div>
-	<h3 class="help-accordian"><strong>Exclude City Button</strong></h3>
-	<div>
-		<p>With this parameter you can exclude the City button.</p>
-		<p><strong>[bmlt_tabs include_city_button="0|1"]</strong></p>
-		<p>0 = exclude City button</p>
-		<p>1 = include City button (default)</p>
-		<p><em>City button will be included when view_by = "city" (include_city_button will be set to "1").</em></p>
-	</div>
 	<h3 class="help-accordian"><strong>Show Filter Buttons</strong></h3>
 	<div>
 		<p>With this parameter you can include specific buttons.</p>
 		<p><strong>[bmlt_tabs button_filters_option="City:location_municipality"]</strong></p>
         <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
+		<p>The "City" button shown in the example above is defined by default.  To disable it, you may use:</p>
+		<p><strong>[bmlt_tabs include_city_button="0|1"]</strong></p>
+		<p>0 = exclude City button</p>
+		<p>1 = include City button (default)</p>
 	</div>
 	<h3 class="help-accordian"><strong>Show Format Filter Buttons</strong></h3>
 	<div>
@@ -277,7 +267,6 @@
         <p><strong>[crouton_map map_search_latitude="0" map_search_longitude="0"]</strong> - specifies the starting latitude and longitude in the map view (default: 0, 0).</p>
         <p><strong>[crouton_map map_search_zoom="10"]</strong> - specifies the starting zoom level on the map (default: 10).</p>
         <p><strong>[crouton_map map_search_width="-50"]</strong> - specifies how many meetings to return, a positive integer means how many miles or kilometers to search.  A negative integer indicates the closest number of meetings from that point with no distance limits. (default: -50 [the fifty closest meetings to the point selected]).</p>
-        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
     </div>
 	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
     <div>

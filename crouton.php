@@ -151,7 +151,7 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "croutonMap"
                 ));
-                add_shortcode('meeting_map', array(
+                add_shortcode('bmlt_map', array(
                     &$this,
                     "meetingMap"
                 ));
@@ -182,7 +182,7 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'meeting_map', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
                 return false;
@@ -204,7 +204,7 @@ if (!class_exists("Crouton")) {
                 }
                 if ($shortcode[2] === 'bmlt_handlebar' ||
                     $shortcode[2] === 'crouton_map' ||
-                    $shortcode[2] === 'meeting_map') {
+                    $shortcode[2] === 'bmlt_map') {
                     $this->hasMap = true;
                 }
             }
