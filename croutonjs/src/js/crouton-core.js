@@ -1312,7 +1312,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						self.getCurrentLocation(self.showLocation);
 					}
 
-					if (self.config['show_map'] && !self.config['refresh_map']) {
+					if (self.config['show_map'] && !self.config['refresh_map'] && !doMeetingMap) {
 						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
