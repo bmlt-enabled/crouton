@@ -253,7 +253,6 @@ if (!class_exists("Crouton")) {
         public function enqueueFrontendFiles()
         {
             if ($this->hasShortcode()) {
-                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-core.js" : "");
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.css"), false);
                 if (isset($_GET['croutonjsdebug'])) {
                     wp_enqueue_script("croutonnocorejs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-nocore.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-nocore.js"), true);
@@ -371,7 +370,7 @@ if (!class_exists("Crouton")) {
         private function getMapInitialization($mapConfig)
         {
             $className = $this->meetingMapController->className();
-            if ($this->hasMap) {
+            if ($this->hasMap || $this->options['show_map']) {
                 return  "window.croutonMap = new $className($mapConfig);";
             }
             return "";

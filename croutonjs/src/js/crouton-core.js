@@ -651,7 +651,7 @@ function Crouton(config) {
 
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
-			let formatRootServer = self.formatsData.filter((f)=>f['root_server_id'] == meetingData[m]['root_server_id']);
+			let formatRootServer = self.formatsData.filter((f)=>f['root_server_uri'] == meetingData[m]['root_server_uri']);
 			for (var f = 0; f < formats.length; f++) {
 				for (var g = 0; g < formatRootServer.length; g++) {
 					if (formats[f] === formatRootServer[g]['key_string']) {
@@ -1180,7 +1180,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					{placeholder: self.localization.getWord('languages'), pointer: 'Formats', elementId: "filter-dropdown-languages", 
 						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'LANG').filter((f)=>f.key!==self.config.native_lang), 
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
-				if (self.config.has_languages) self.dropdownData.push(
+				if (self.config.has_common_needs) self.dropdownData.push(
 					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds", 
 						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
