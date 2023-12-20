@@ -998,6 +998,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             if (!isset($this->options['view_by'])) {
                 $this->options['view_by'] = $this->shortCodeOptions['view_by'];
             }
+            if (!isset($this->options['theme'])) {
+                $this->options['theme'] = $this->shortCodeOptions['theme'];
+            }
         }
         /**
          * Saves the admin options to the database.
