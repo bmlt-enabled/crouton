@@ -64,6 +64,32 @@ var croutonDefaultTemplates = {
 			"{{this.meeting_name}}",
 		"{{/if}}"
 	].join('\n'),
+	meeting_modal_template: [
+		"<a onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
+	].join('\n'),
+	meetingpage_frame_template: `
+	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;">
+	<div class="modal-content">
+        <span class="modal-title">Meeting Details</span><span id="close_meeting_details" class="modal-close">×</span>
+		<table id="meeting-details-table" class="bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
+			<thead>
+        		<th id="meeting-details-title" colspan="2">
+		    		{{> meetingpageTitleTemplate this}}
+	    		</th>
+    		</thead>
+    		<tbody>
+        		<tr id="meeting-details-contents">
+           			{{> meetingpageContentsTemplate this}}
+        		</tr>
+    		</tbody>
+		</table>
+		<div>
+			<a id="map-button" class="btn btn-primary btn-xs" href="{{{this.meeting_details_url}}}" target="_blank" rel="noopener noreferrer" style="float:left">
+				Meeting Page</a>
+			<a id="map-button" class="btn btn-primary btn-xs modal-close" style="float:right">
+				Close</a>
+		</div>
+	</div></div>`,
 	meetingpage_title_template: [
 		"{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}}: {{this.meeting_name}}"
 	].join('\n'),

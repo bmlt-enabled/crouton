@@ -975,6 +975,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
                 }
             }
+            if ($this->options['crouton_version'] === "3.17") {
+                $this->options['crouton_version'] = "3.18";
+                if (isset($this->options['meeting_data_template'])) {
+                    $this->options['meeting_data_template'] = str_replace('{{> meetingLink this}}', "{{> meetingModal this}}", $this->options['meeting_data_template']);
+                }
+            }
             foreach ($this->hasFilters as $hasFilter) {
                 if (!isset($this->options[$hasFilter])) {
                     $this->options[$hasFilter] = $this->shortCodeOptions[$hasFilter];

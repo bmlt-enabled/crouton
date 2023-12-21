@@ -4,6 +4,7 @@ function MeetingMap(inConfig) {
 	 ****************************************************************************************/
 
 	var gDelegate = new MapDelegate(inConfig);
+	var gModalDelegate = null;
 	var gInDiv = null;
 	const config = inConfig;
 	if (config.map_search) {
@@ -36,11 +37,6 @@ function MeetingMap(inConfig) {
 	 ****************************************************************************************/
 
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null) {
-		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadMap, [inDiv, menuContext, handlebarMapOptions, cb]);
-			gDelegate.loadApi();
-			return;
-		}
 		if (inDiv) {
 			gInDiv = inDiv;
 			createThrobber(inDiv);
@@ -171,6 +167,21 @@ function MeetingMap(inConfig) {
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
 		loadAllMeetings(meetings_responseObject, true);
+	};
+	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
+		if (!gDelegate.isApiLoaded()) {
+			preloadApiLoadedCallback(loadPopupMap, [inDiv_id, meeting, handlebarMapOptions]);
+			gDelegate.loadApi();
+			return;
+		}
+		let inDiv = document.getElementById(inDiv_id);
+		let delegate = new MapDelegate(config);
+		if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng, zoom: handlebarMapOptions.zoom};
+		if (delegate.createMap(inDiv, loc)) {
+			delegate.createMarker([meeting.latitude, meeting.longitude], false, null, "", [parseInt(meeting.id_bigint)]);
+			delegate.addClusterLayer();
+			gModalDelegate = delegate;
+		}
 	};
 	var fitDuringFilter = true;
 	function filterFromCrouton(filter) {
@@ -372,7 +383,7 @@ function MeetingMap(inConfig) {
 		// This calculates which markers are the red "multi" markers.
 		const filtered = filterMeetings(gAllMeetings);
 
-		var overlap_map = useMarkerCluster()
+		var overlap_map = (useMarkerCluster() || filtered.length == 1)
 			? filtered.map((m)=>[m])
 			: mapOverlappingMarkersInCity(filtered);
 
@@ -578,10 +589,11 @@ function MeetingMap(inConfig) {
 		}
 		gDelegate.invalidateSize();
 	}
-	var _firstShow = true;
-	function showMap() {
-		if (!_firstShow) return;
-		//_firstShow = false;
+	function showMap(isModal=false) {
+		if (isModal) {
+			gModalDelegate.invalidateSize();
+			return;
+		}
 		gDelegate.invalidateSize();
 		gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
@@ -597,6 +609,10 @@ function MeetingMap(inConfig) {
 	this.rowClick = focusOnMeeting;
 	this.apiLoadedCallback = apiLoadedCallback;
 	this.refreshMeetings = loadAllMeetings;
+
+	this.openModalWindow = openModalWindow;
+	this.closeModalWindow = closeModalWindow;
+	this.loadPopupMap = loadPopupMap;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -604,3 +620,7 @@ MeetingMap.prototype.fillMap = null;
 MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
 MeetingMap.prototype.refreshMeetings = null;
+
+MeetingMap.prototype.openModalWindow = null;
+MeetingMap.prototype.closeModalWindow = null;
+MeetingMap.prototype.loadPopupMap = null;
