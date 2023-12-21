@@ -567,6 +567,9 @@ table.tablesaw {
 	.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
 		display: none !important;
 	}
+	#meetingpage_map_td {
+		width: 25em;
+	}
 }
 
 @media only screen and (max-width: 480px) {
