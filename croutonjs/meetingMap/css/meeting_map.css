@@ -258,6 +258,12 @@ div.bmlt_map_container_div  button {
   border: 1px solid #888;
   line-height: 1.2;
 }
+#meeting_modal .modal-content {
+  transform: unset;
+  top: 10%;
+  left: 8%;
+  max-width: 85%;
+}
 
 /* The Close Button */
 .modal-close {

@@ -95,7 +95,7 @@ var croutonDefaultTemplates = {
 	].join('\n'),
 
 	meetingpage_contents_template:
-        `<td style="width:500px">
+        `<td id="meetingpage_map_td">
 		{{#isInPersonOrHybrid this}}
             {{{crouton_map}}}
         </td>

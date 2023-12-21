@@ -981,6 +981,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     $this->options['meeting_data_template'] = str_replace('{{> meetingLink this}}', "{{> meetingModal this}}", $this->options['meeting_data_template']);
                 }
             }
+            if (isset($this->options['meetingpage_contents_template'])) {
+                $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
+            }
             foreach ($this->hasFilters as $hasFilter) {
                 if (!isset($this->options[$hasFilter])) {
                     $this->options[$hasFilter] = $this->shortCodeOptions[$hasFilter];

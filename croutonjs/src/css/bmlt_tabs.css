@@ -547,6 +547,7 @@ table.tablesaw {
 	}
 	th#meeting-details-title {
 		display: table-cell;
+		text-wrap: balance;
 	}
 }
 
