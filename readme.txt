@@ -37,6 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.18.0 =
+* Meeting details as modal popup
 * New shortcode, [bmlt_map], presents a mobile friendly, map based interface.
 * All Maps can be either OSM or Google Maps
 * Admins can set clustering zoom level, above clustering, below, red/blue NA Markers

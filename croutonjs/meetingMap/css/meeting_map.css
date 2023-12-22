@@ -263,6 +263,7 @@ div.bmlt_map_container_div  button {
   top: 10%;
   left: 8%;
   max-width: 85%;
+  overflow-y: auto;
 }
 
 /* The Close Button */

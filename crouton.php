@@ -60,7 +60,7 @@ if (!class_exists("Crouton")) {
             "formats" => '',
             "has_tabs" => '1',
             "has_days" => '0',
-            "has_groups" => '1',
+            "has_groups" => '0',
             "has_areas" => '0',
             "has_regions" => '0',
             "has_cities" => '1',
@@ -79,7 +79,7 @@ if (!class_exists("Crouton")) {
             "button_format_filters_option" => "",
             "view_by" => 'weekday',
             "dropdown_width" => 'auto',
-            "has_zip_codes" => '1',
+            "has_zip_codes" => '0',
             "header" => '1',
             "format_key" => '',
             "time_format" => 'h:mm a',
@@ -88,7 +88,7 @@ if (!class_exists("Crouton")) {
             "distance_search" => '0',
             "distance_units" => 'mi',
             "custom_query" => null,
-            "show_map" => '0',
+            "show_map" => 'embed',
             "language" => 'en-US',
             'strict_datafields' => false,
             'meeting_details_href' => '',
@@ -1168,6 +1168,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
              
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
+            
+            $params = apply_filters('crouton_configuration', $params);
             
             return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
         }
