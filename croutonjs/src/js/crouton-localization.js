@@ -102,6 +102,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Sichtbare Meetings als Tabelle',
 			'enter a city or zip code': 'Stadt oder PLZ',
 			'toggle fullscreen mode': 'Umschalten Vollbildmodus',
+			'close': "Schliessen",
+			'meeting page': "Meeting Seite",
+			'meeting details': "Genaueres zu Meeting"
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -151,6 +154,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -201,6 +207,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -251,6 +260,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -301,6 +313,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -351,6 +366,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -401,6 +419,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -451,6 +472,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -501,6 +525,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -551,6 +578,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Elenco riunioni visibile',
 			'enter a city or zip code': 'Inserire una città o un codice postale',
 			'toggle fullscreen mode': 'Attiva/disattiva la modalità a schermo intero',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -601,6 +631,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -651,6 +684,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -701,6 +737,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -751,6 +790,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -801,6 +843,9 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
+			'close': "Close",
+			'meeting page': "Meeting Page",
+			'meeting details': "Meeting Details"
 		}
 	};
 }

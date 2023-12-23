@@ -277,12 +277,13 @@ div.bmlt_map_container_div  button {
 .table-close {
   color: white;
   float: right;
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
 }
 .map-list-title {
   color: white;
   font-weight:bold;
+  font-size: 20px;
 }
 .modal-close:hover,
 .modal-close:focus {

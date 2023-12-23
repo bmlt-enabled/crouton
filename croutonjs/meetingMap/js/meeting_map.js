@@ -322,6 +322,7 @@ function MeetingMap(inConfig) {
 		jQuery("#table_page").removeClass("hide");
 		jQuery("#bmlt-map").css("display", "none");
 		jQuery("#table_page").css("max-height", jQuery("#bmlt-map").height());
+		jQuery("#bmlt-maptable-div").css("height", jQuery("#bmlt-map").height()-jQuery("#bmlt-maptable-header").height());
 		document.getElementById("map-menu-dropdown").style.display = "none";
 	}
 	function hideListView(e=null) {

@@ -38,7 +38,7 @@ function MapDelegate(in_config) {
             'minZoom': config.minZoom,
             'maxZoom': config.maxZoom,
             'mapTypeControl': false,
-            'streetViewControl': false,
+            'streetViewControl': true,
             'disableDoubleClickZoom' : true,
             'draggableCursor': "pointer",
             'scaleControl' : true,

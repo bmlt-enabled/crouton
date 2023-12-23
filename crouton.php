@@ -980,6 +980,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 if (isset($this->options['meeting_data_template'])) {
                     $this->options['meeting_data_template'] = str_replace('{{> meetingLink this}}', "{{> meetingModal this}}", $this->options['meeting_data_template']);
                 }
+                if (!empty($this->options['google_api_key']) && !isset($this->options['tile_provider'])) {
+                    $this->options['api_key'] = $this->options['google_api_key'];
+                    $this->options['tile_provider'] = "google";
+                }
             }
             if (isset($this->options['meetingpage_contents_template'])) {
                 $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
