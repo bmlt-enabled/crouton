@@ -590,7 +590,7 @@ function MeetingMap(inConfig) {
 		gDelegate.invalidateSize();
 	}
 	function showMap(isModal=false) {
-		if (isModal) {
+		if (isModal && gModalDelegate) {
 			gModalDelegate.invalidateSize();
 			return;
 		}

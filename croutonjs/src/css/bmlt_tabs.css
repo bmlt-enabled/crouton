@@ -625,3 +625,12 @@ table.tablesaw {
 .gm-svpc div img {
 	position: relative !important;
 }
+#meeting-details-table td {
+	vertical-align: top;
+}
+#meeting-details-table h4 {
+	margin-top: 0;
+}
+#meeting-details-title {
+	font-size: 1.5em;
+}
