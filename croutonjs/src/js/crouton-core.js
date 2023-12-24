@@ -1004,6 +1004,9 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.searchMap = function() {
 	self = this;
+	self.config['map_search'] = true;
+	self.config['map_page'] = false;
+	self.config['show_map'] = false;
 	var body = jQuery("body");
 	if (self.config['theme'] !== '') {
 		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");

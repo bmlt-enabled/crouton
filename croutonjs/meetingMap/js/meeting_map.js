@@ -40,7 +40,7 @@ function MeetingMap(inConfig) {
 		if (inDiv) {
 			gInDiv = inDiv;
 			createThrobber(inDiv);
-			showThrobber()
+			if (!config.map_search) showThrobber();
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
 			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc)) {
@@ -193,6 +193,7 @@ function MeetingMap(inConfig) {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(
 				function (position) {
+					showThrobber();
 					crouton.searchByCoordinates(position.coords.latitude, position.coords.longitude, config.map_search.width);
 				},
 				showBmltSearchDialog
@@ -201,7 +202,10 @@ function MeetingMap(inConfig) {
 		closeModalWindow(gSearchModal);
 	}
 	function clickSearch(e) {
-		gDelegate.clickSearch(e, (lat,lng)=>crouton.searchByCoordinates(lat, lng, config.map_search.width));
+		gDelegate.clickSearch(e, function(lat,lng) {
+			showThrobber();
+			crouton.searchByCoordinates(lat, lng, config.map_search.width);
+		});
 		closeModalWindow(gSearchModal);
 	}
 	function createThrobber(inDiv) {
@@ -238,13 +242,18 @@ function MeetingMap(inConfig) {
 	};
 	function mapSearchGeocode(resp) {
 		let latlng = gDelegate.getGeocodeCenter(resp);
-		document.getElementById("bmltsearch-goto-text").value = ""
+		document.getElementById("bmltsearch-goto-text").value = "";
+		showThrobber();
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function loadAllMeetings(meetings_responseObject, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
 			if (config.map_search.auto) nearMeSearch();
-			else if (config.map_search.coordinates_search) crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude);
+			else if (config.map_search.coordinates_search) {
+				showThrobber();
+				config.map_search.coordinates_search = false;
+				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude);
+			}
 			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, null, mapSearchGeocode);
 			else showBmltSearchDialog();
 			return;
