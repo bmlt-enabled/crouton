@@ -27,14 +27,14 @@ function Crouton(config) {
 		],
 		button_format_filters: [],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
-		show_map: false,              // Shows the map with pins
+		show_map: "embed",            // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
 		has_days: false,			  // Shows the days of the week dropdown
 		has_cities: true,             // Shows the cities dropdown
 		has_formats: true,            // Shows the formats dropdown
-		has_groups: true,             // Shows the groups dropdown
+		has_groups: false,            // Shows the groups dropdown
 		has_locations: true,          // Shows the locations dropdown
-		has_zip_codes: true,          // Shows the zip codes dropdown
+		has_zip_codes: false,         // Shows the zip codes dropdown
 		has_areas: false,             // Shows the areas dropdown
 		has_regions: false,			  // Shows the regions dropdown
 		has_states: false,            // Shows the states dropdown
