@@ -7,18 +7,6 @@ function MeetingMap(inConfig) {
 	var gModalDelegate = null;
 	var gInDiv = null;
 	const config = inConfig;
-	if (config.map_search) {
-		if (!config.map_search.width) config.map_search.width = -50;
-		if (!config.map_search.location && !config.map_search.coordinates_search)
-			config.map_search.auto = true;
-		if (config.map_search.latitude || config.map_search.longitude) {
-			config.lat = config.map_search.latitude;
-			config.lng = config.map_search.longitude;
-		}
-		if (config.map_search.zoom) {
-			config.zoom = config.map_search.zoom;
-		}
-	}
 	if (!config.maxZoom) config.maxZoom = 17;
 	if (!config.minZoom) config.minZoom = 6;
 	var gAllMeetings = null;
@@ -41,8 +29,20 @@ function MeetingMap(inConfig) {
 			gInDiv = inDiv;
 			createThrobber(inDiv);
 			if (!config.map_search) showThrobber();
+			else {
+				if (!config.map_search.width) config.map_search.width = -50;
+				if (!config.map_search.location && !config.map_search.coordinates_search)
+					config.map_search.auto = true;
+				if (config.map_search.latitude || config.map_search.longitude) {
+					config.lat = config.map_search.latitude;
+					config.lng = config.map_search.longitude;
+				}
+				if (config.map_search.zoom) {
+					config.zoom = config.map_search.zoom;
+				}	
+			}
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
-			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
+			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};		
 			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {

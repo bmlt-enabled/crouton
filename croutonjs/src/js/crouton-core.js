@@ -1004,7 +1004,14 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.searchMap = function() {
 	self = this;
-	self.config['map_search'] = true;
+	if (!self.config['map_search']) {
+		if (!self.config.map_search.width) self.config.map_search.width = -50;
+		if (!self.config.map_search.location && !self.config.map_search.coordinates_search)
+			self.config.map_search.auto = true;
+		if (!self.config.map_search.zoom) {
+			self.config.map_search.zoom = 14;
+		}
+	}
 	self.config['map_page'] = false;
 	self.config['show_map'] = false;
 	var body = jQuery("body");
