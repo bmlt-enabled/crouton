@@ -4,7 +4,7 @@ var croutonDefaultTemplates = {
 		"{{#isTemporarilyClosed this}}",
 		"    <div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>",
 		"{{/isTemporarilyClosed}}",
-		"<div class='meeting-name'>{{> meetingLink this}}</div>",
+		"<div class='meeting-name'>{{> meetingModal this}}</div>",
 		"<div class='location-text'>{{this.location_text}}</div>",
 		"<div class='meeting-address'>{{this.formatted_address}}</div>",
 		"<div class='location-information'>{{this.formatted_location_info}}</div>",
