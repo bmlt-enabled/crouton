@@ -1004,7 +1004,13 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.searchMap = function() {
 	self = this;
-	if (!self.config['map_search']) {
+	if (!self.config.map_search || typeof self.config.map_search !== 'object') {
+		self.config.map_search = {
+			width: -50,
+			auto: true,
+			zoom: 14
+		};
+	} else {
 		if (!self.config.map_search.width) self.config.map_search.width = -50;
 		if (!self.config.map_search.location && !self.config.map_search.coordinates_search)
 			self.config.map_search.auto = true;
@@ -1038,6 +1044,7 @@ Crouton.prototype.searchMap = function() {
 }
 Crouton.prototype.render = function(doMeetingMap = false) {
 	var self = this;
+	self.config.map_search = null;
 	self.lock(function() {
 		var body = jQuery("body");
 		if (self.config['theme'] !== '') {

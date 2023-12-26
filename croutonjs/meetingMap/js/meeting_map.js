@@ -242,7 +242,8 @@ function MeetingMap(inConfig) {
 	};
 	function mapSearchGeocode(resp) {
 		let latlng = gDelegate.getGeocodeCenter(resp);
-		document.getElementById("bmltsearch-goto-text").value = "";
+		if (document.getElementById("bmltsearch-goto-text"))
+			document.getElementById("bmltsearch-goto-text").value = "";
 		showThrobber();
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}

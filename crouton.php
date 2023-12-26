@@ -1070,7 +1070,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         private function getCroutonJsConfig($atts, $croutonMap = false)
         {
             // Pulling simple values from options
-            $defaults = $this->shortCodeOptions;
+            $defaults = array_merge($this->shortCodeOptions, $this->meetingMapController->getDefaultOptions());
             foreach ($defaults as $key => $value) {
                 $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
             }

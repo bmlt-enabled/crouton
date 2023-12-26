@@ -26,8 +26,13 @@ if (!class_exists("MeetingMap/Controller")) {
             'bounds_south' => '',
             'bounds_west' => '',
             'map_search_width' => '-50',
+            'map_search_auto' => '',
+            'map_search_latitude' => '',
+            'map_search_longitude' => '',
+            'map_search_location' => '',
+            'map_search_coordinate_search' => '',
+            'map_search_zoom' => '',
         );
-        // phpcs:enable PSR1.Classes.ClassDeclaration.MissingNamespace
         public $options = array();
 
         public function __construct(&$options)
@@ -39,7 +44,10 @@ if (!class_exists("MeetingMap/Controller")) {
             }
             $this->options = $options;
         }
-        // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+        public function getDefaultOptions()
+        {
+            return $this->defaultOptions;
+        }
         public function enqueueFrontendFiles()
         {
             $this->options['tile_provider'] = isset($this->options['tile_provider']) ? $this->options['tile_provider'] : 'OSM';
@@ -65,28 +73,22 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig($atts, $croutonMap = false)
+        public function getMapJSConfig($params, $croutonMap = false)
         {
-            // Pulling simple values from options
-            $defaults = $this->defaultOptions;
-            foreach ($defaults as $key => $value) {
-                $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
-            }
-
-            switch ($defaults['tile_provider']) {
+            switch ($params['tile_provider']) {
                 case 'MapBox':
-                    $defaults['tile_url'] =
+                    $params['tile_url'] =
                     'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}';
-                    $defaults['tile_params'] = array(
+                    $params['tile_params'] = array(
                     'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
                     'id'            => 'mapbox.streets',
-                    'accessToken'   => $defaults['api_key']
+                    'accessToken'   => $params['api_key']
                     );
                     break;
                 case "OSM DE":
-                    $defaults['tile_url'] =
+                    $params['tile_url'] =
                     'https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png';
-                    $defaults['tile_params'] = array(
+                    $params['tile_params'] = array(
                     'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.de/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
                     "maxZoom"       => '18',
                     //'subdomains'    => '["a","b","c"]'
@@ -94,31 +96,26 @@ if (!class_exists("MeetingMap/Controller")) {
                     break;
                 case 'custom':
                     // http://tileserver.maptiler.com/campus/{z}/{x}/{y}.png
-                    $defaults['tile_params'] = array(
-                    'attribution'   => $defaults['tile_attribution'],
+                    $params['tile_params'] = array(
+                    'attribution'   => $params['tile_attribution'],
                     "maxZoom"       => '18',
                     );
                     break;
                 case "OSM":
                 default:
-                    $defaults['tile_url'] =
+                    $params['tile_url'] =
                         'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-                    $defaults['tile_params'] = array(
+                    $params['tile_params'] = array(
                         'attribution'   => 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
                         "maxZoom"       => '18',
                     );
                     break;
             }
-            $params = shortcode_atts($defaults, $atts);
-            
-            // Pulling from querystring
-            foreach ($params as $key => $value) {
-                $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
-            }
+            unset($params['map_search']);
             if ($croutonMap) {
                 $this->addCroutonMapParameters($params);
             }
-            $params['marker_contents_template'] = $this->templateToParameter($atts, 'marker_contents_template');
+            $params['marker_contents_template'] = $this->templateToParameter($params, 'marker_contents_template');
             return $this->createJavascriptConfig($params);
         }
         private function templateToParameter($atts, $name)
