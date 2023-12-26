@@ -1044,7 +1044,6 @@ Crouton.prototype.searchMap = function() {
 }
 Crouton.prototype.render = function(doMeetingMap = false) {
 	var self = this;
-	self.config.map_search = null;
 	self.lock(function() {
 		var body = jQuery("body");
 		if (self.config['theme'] !== '') {

@@ -70,6 +70,7 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector("#bmltsearch-text-button").addEventListener('click', function () {
 			let text = document.getElementById("bmltsearch-goto-text").value.trim();
 			if (text === "") return;
+			showThrobber();
 			gDelegate.callGeocoder(text, null, mapSearchGeocode);
 			closeModalWindow(gSearchModal);
 		});
