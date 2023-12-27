@@ -261,6 +261,8 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
+		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+		gDelegate.fitBounds(lat_lngs);
 		searchResponseCallback();
 		hideThrobber();
 		if (config.centerMe) {
@@ -278,8 +280,6 @@ function MeetingMap(inConfig) {
 		} else if (config.goto) {
 			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
 		}
-		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
-		gDelegate.fitBounds(lat_lngs);
 	}
 	function createCityHash(allMeetings) {
 		return allMeetings.reduce(function(prev, meeting) {
