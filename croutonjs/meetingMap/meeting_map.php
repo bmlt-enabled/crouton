@@ -17,7 +17,7 @@ if (!class_exists("MeetingMap/Controller")) {
             'tile_provider' => 'OSM',
             'tile_url' => '',
             'tile_attribution' => '',
-            'nominatim_url' => '',
+            'nominatim_url' => 'https://nominatim.openstreetmap.org/',
             'api_key' => '',
             'clustering' => 12,
             'region_bias' => 'us',
@@ -243,6 +243,10 @@ if (!class_exists("MeetingMap/Controller")) {
                         <h3>GeoCoding Parameters</h3>
                         <div id="nominatim_div">
                             <label for="nominatim_url">Nominatim URL: </label>
+                            <?php if (empty($this->options['nominatim_url'])) {
+                                $this->options['nominatim_url'] = $this->defaultOptions['nominatim_url'];
+                            }
+                            ?>
                             <input id="nominatim_url" type="text" size="40" name="nominatim_url" value="<?php echo $this->options['nominatim_url']; ?>" />
                         </div>
                         <ul>

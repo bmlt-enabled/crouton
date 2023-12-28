@@ -269,6 +269,7 @@ function addControl(div,pos,cb) {
 	}
 	function geocode(query, params, cb, filterMeetings) {
 		var serviceUrl = config.nominatimUrl;
+		if (!serviceUrl) serviceUrl = 'https://nominatim.openstreetmap.org/';
 		getJSON(
 		  serviceUrl + 'search',
 		  L.extend(
