@@ -189,20 +189,8 @@ if (!class_exists("Crouton")) {
             }
     
             foreach ($matches as $shortcode) {
-                if ($shortcode[2] === 'bmlt_tabs') {
-                    if (isset($_GET['meeting-id'])) {
-                        $this->hasMap = true;
-                    } else {
-                        // This is a bad-smell.  It is a side effect.
-                        // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
-                        echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
-                        $split = explode("show_map", $shortcode[3]);
-                        if (count($split) > 1 || isset($_GET['show_map'])) {
-                            $this->hasMap = true;
-                        }
-                    }
-                }
                 if ($shortcode[2] === 'bmlt_handlebar' ||
+                    $shortcode[2] === 'bmlt_tabs' ||
                     $shortcode[2] === 'crouton_map' ||
                     $shortcode[2] === 'bmlt_map') {
                     $this->hasMap = true;
@@ -326,7 +314,7 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            $this->hasMap = isset($atts['show_map']);
+            $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
@@ -370,7 +358,7 @@ if (!class_exists("Crouton")) {
         private function getMapInitialization($mapConfig)
         {
             $className = $this->meetingMapController->className();
-            if ($this->hasMap || $this->options['show_map']) {
+            if ($this->hasMap) {
                 return  "window.croutonMap = new $className($mapConfig);";
             }
             return "";
