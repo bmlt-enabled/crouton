@@ -55,6 +55,10 @@ jQuery(document).ready(function($) {
 		inherit_select_classes: true,
 		width: "20%"
 	});
+	$("#select_filters").chosen({
+		inherit_select_classes: true,
+		width: "60%"
+	});
 	$("#extra_meetings").chosen({
 		no_results_text: "Oops, nothing found!",
 		width: "60%",
@@ -102,7 +106,7 @@ jQuery(document).ready(function($) {
 		position: 'right',
 		trigger: 'click'
 	});
-	jQuery('.handlebarsCode').each(function(i,textArea) {
+	$('.handlebarsCode').each(function(i,textArea) {
 		let template = textArea.value;
 		textArea.value = template.replace("___DEFAULT___", croutonDefaultTemplates[textArea.id]);
 		textArea.dataset.codeMirror = CodeMirror.fromTextArea(textArea, {
@@ -114,11 +118,83 @@ jQuery(document).ready(function($) {
 			indentWithTabs: true
 		});
 	});
-	jQuery('#custom_css').each(function(i,textArea) {
+	$('#custom_css').each(function(i,textArea) {
 		CodeMirror.fromTextArea(textArea, {
 			lineNumbers: true,
 			mode: 'css',
         	extraKeys: {"Ctrl-Space": "autocomplete"}
       });
 	});
+	showOrHide($("#tile_provider").val());
+    $("#tile_provider").change(function() {
+        showOrHide($("#tile_provider").val());
+    })
+    function showOrHide(val) {
+    	if (val == 'google') {
+        	$("#nominatim_div").hide();
+        	$("#custom_tile_provider").hide();
+        	$("#api_key_div").show();
+    	} else if (val == 'custom') {
+        	$("#nominatim_div").show();
+        	$("#custom_tile_provider").show();
+        	$("#api_key_div").hide();
+    	} else {
+        	$("#nominatim_div").show();
+        	$("#custom_tile_provider").hide();
+        	$("#api_key_div").hide();   
+    	}
+	}
+	var tabs;
+/**
+ * Get Tab Key
+ */
+function getTabKey(href) {
+  return href.replace('#', '');
+}
+/**
+ * Hide all tabs
+ */
+function hideAllTabs() {
+    tabs.each(function(){
+        var href = getTabKey(jQuery(this).attr('href'));
+		console.log(href);
+        jQuery('#' + href).hide();
+    });
+}
+/**
+ * Activate Tab
+ */
+function activateTab(tab) {
+    var href = getTabKey(tab.attr('href'));
+    tabs.removeClass('nav-tab-active');
+    tab.addClass('nav-tab-active');
+    jQuery('#' + href).show();
+}
+jQuery(document).ready(function($){
+    var activeTab, firstTab;
+    // First load, activate first tab or tab with nav-tab-active class
+    firstTab = false;
+    activeTab = false;
+    tabs = $('a.nav-tab');
+    hideAllTabs();
+    tabs.each(function(){
+        var href = $(this).attr('href').replace('#', '');
+        if (!firstTab) {
+            firstTab = $(this);
+        }
+        if ($(this).hasClass('nav-tab-active')) {
+            activeTab = $(this);
+        }
+    });
+    if (!activeTab) {
+        activeTab = firstTab;
+    }
+    activateTab(activeTab);
+    //Click tab
+    tabs.click(function(e) {
+        e.preventDefault();
+        hideAllTabs();
+        activateTab($(this));
+    });
+});
 });

@@ -4,7 +4,7 @@ var croutonDefaultTemplates = {
 		"{{#isTemporarilyClosed this}}",
 		"    <div class='temporarilyClosed'><span class='glyphicon glyphicon-flag'></span> {{temporarilyClosed this}}</div>",
 		"{{/isTemporarilyClosed}}",
-		"<div class='meeting-name'>{{> meetingLink this}}</div>",
+		"<div class='meeting-name'>{{> meetingModal this}}</div>",
 		"<div class='location-text'>{{this.location_text}}</div>",
 		"<div class='meeting-address'>{{this.formatted_address}}</div>",
 		"<div class='location-information'>{{this.formatted_location_info}}</div>",
@@ -64,12 +64,38 @@ var croutonDefaultTemplates = {
 			"{{this.meeting_name}}",
 		"{{/if}}"
 	].join('\n'),
+	meeting_modal_template: [
+		"<a onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
+	].join('\n'),
+	meetingpage_frame_template: `
+	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;">
+	<div class="modal-content">
+        <span class="modal-title">{{getWord "Meeting Details"}}</span><span id="close_meeting_details" class="modal-close">×</span>
+		<table id="meeting-details-table" class="bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
+			<thead>
+        		<th id="meeting-details-title" colspan="2">
+		    		{{> meetingpageTitleTemplate this}}
+	    		</th>
+    		</thead>
+    		<tbody>
+        		<tr id="meeting-details-contents">
+           			{{> meetingpageContentsTemplate this}}
+        		</tr>
+    		</tbody>
+		</table>
+		<div>
+			<a id="map-button" class="btn btn-primary btn-xs" href="{{{this.meeting_details_url}}}" target="_blank" rel="noopener noreferrer" style="float:left">
+				{{getWord "Meeting Page"}}</a>
+			<a id="map-button" class="btn btn-primary btn-xs modal-close" style="float:right">
+				{{getWord "Close"}}</a>
+		</div>
+	</div></div>`,
 	meetingpage_title_template: [
 		"{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}}: {{this.meeting_name}}"
 	].join('\n'),
 
 	meetingpage_contents_template:
-        `<td style="width:500px">
+        `<td id="meetingpage_map_td">
 		{{#isInPersonOrHybrid this}}
             {{{crouton_map}}}
         </td>
@@ -116,4 +142,22 @@ var croutonDefaultTemplates = {
         <h4>Contact:</h4>
         This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a>
         </td>`,
+	marker_contents_template: 
+	`<h4>{{meeting_name}}</h4>
+	<div class="active">
+		<div class="marker_div_location_text">{{{this.location_text}}}</div>
+		<div class="marker_div_location_address">{{this.formatted_address}}</div>
+		<div class="marker_div_location_info">{{{this.formatted_location_info}}}</div>
+		<div class="marker_div_location_maplink">
+		{{#if this.meeting_details_url}}
+			<a href="{{this.meeting_details_url}}" target="_blank">More info</a>
+		{{/if}}
+		</div>
+		<div class="marker_div_formats">
+		{{#each this.formats_expanded}}{{#if @index}}; {{/if}}{{this.name}}{{/each}}
+		</div>
+	</div>
+	`
 }
+
+

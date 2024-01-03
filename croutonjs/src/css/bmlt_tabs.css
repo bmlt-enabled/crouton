@@ -547,6 +547,7 @@ table.tablesaw {
 	}
 	th#meeting-details-title {
 		display: table-cell;
+		text-wrap: balance;
 	}
 }
 
@@ -565,6 +566,9 @@ table.tablesaw {
 	/* Hide the labels in each cell */
 	.tablesaw-stack td .tablesaw-cell-label,.tablesaw-stack th .tablesaw-cell-label {
 		display: none !important;
+	}
+	#meetingpage_map_td {
+		width: 25em;
 	}
 }
 
@@ -620,4 +624,13 @@ table.tablesaw {
 
 .gm-svpc div img {
 	position: relative !important;
+}
+#meeting-details-table td {
+	vertical-align: top;
+}
+#meeting-details-table h4 {
+	margin-top: 0;
+}
+#meeting-details-title {
+	font-size: 1.5em;
 }

@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.17.10
+Version: 3.18.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -52,8 +52,6 @@ if (!class_exists("Crouton")) {
         );
         // crouton includes a map, we need to include the JS files and create the croutonMap object.
         private $hasMap = false;
-        // the [crouton_map] shortcode always uses the internal map.  If we want the other, you can just use its shortcode.
-        private $useInternalMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
@@ -62,7 +60,7 @@ if (!class_exists("Crouton")) {
             "formats" => '',
             "has_tabs" => '1',
             "has_days" => '0',
-            "has_groups" => '1',
+            "has_groups" => '0',
             "has_areas" => '0',
             "has_regions" => '0',
             "has_cities" => '1',
@@ -81,7 +79,7 @@ if (!class_exists("Crouton")) {
             "button_format_filters_option" => "",
             "view_by" => 'weekday',
             "dropdown_width" => 'auto',
-            "has_zip_codes" => '1',
+            "has_zip_codes" => '0',
             "header" => '1',
             "format_key" => '',
             "time_format" => 'h:mm a',
@@ -90,8 +88,7 @@ if (!class_exists("Crouton")) {
             "distance_search" => '0',
             "distance_units" => 'mi',
             "custom_query" => null,
-            "show_map" => '0',
-            "max_zoom_level" => 15,
+            "show_map" => 'embed',
             "language" => 'en-US',
             'strict_datafields' => false,
             'meeting_details_href' => '',
@@ -103,14 +100,6 @@ if (!class_exists("Crouton")) {
             "recurse_service_bodies" => '0',
             "custom_css" => "",
             "theme" => '',
-            "map_search" => null,
-            "map_search_zoom" => 10,
-            "map_search_latitude" => 0,
-            "map_search_longitude" => 0,
-            "map_search_width" => '-50',
-            "map_search_auto" => true,
-            "map_search_location" => null,
-            "map_search_coordinates_search" => false,
             "default_filter_dropdown" => '',
             "meeting_data_template" => null,
             "metadata_template" => null,
@@ -121,10 +110,28 @@ if (!class_exists("Crouton")) {
             "has_meeting_count" => false,
             "google_api_key" => ""
         );
-
+        private $hasFilters = [
+            "has_days",
+            "has_groups",
+            "has_areas",
+            "has_regions",
+            "has_cities",
+            "has_formats",
+            "has_locations",
+            "has_sub_province",
+            "has_neighborhoods",
+            "has_states",
+            "has_languages",
+            "has_zip_codes",
+            "has_venues",
+            "has_common_needs"
+        ];
+        private MeetingMap\Controller $meetingMapController;
         public function __construct()
         {
             $this->getOptions();
+            require_once(__DIR__."/croutonjs/meetingMap/meeting_map.php");
+            $this->meetingMapController = new MeetingMap\Controller($this->options);
             if (is_admin()) {
                 // Back end
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
@@ -143,6 +150,10 @@ if (!class_exists("Crouton")) {
                 add_shortcode('crouton_map', array(
                     &$this,
                     "croutonMap"
+                ));
+                add_shortcode('bmlt_map', array(
+                    &$this,
+                    "meetingMap"
                 ));
                 add_shortcode('bmlt_count', array(
                     &$this,
@@ -171,32 +182,18 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
                 return false;
             }
     
             foreach ($matches as $shortcode) {
-                if ($shortcode[2] === 'bmlt_tabs') {
-                    if (isset($_GET['meeting-id'])) {
-                        $this->hasMap = true;
-                    } else {
-                        // This is a bad-smell.  It is a side effect.
-                        // Also, it seems wrong to output this HTML during the enqueue scripts phase, but that's how 3.15 worked
-                        echo '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
-                        $split = explode("show_map", $shortcode[3]);
-                        if (count($split) > 1 || isset($_GET['show_map'])) {
-                            $this->hasMap = true;
-                        }
-                    }
-                }
-                if ($shortcode[2] === 'bmlt_handlebar') {
+                if ($shortcode[2] === 'bmlt_handlebar' ||
+                    $shortcode[2] === 'bmlt_tabs' ||
+                    $shortcode[2] === 'crouton_map' ||
+                    $shortcode[2] === 'bmlt_map') {
                     $this->hasMap = true;
-                }
-                if ($shortcode[2] === 'crouton_map') {
-                    $this->hasMap = true;
-                    $this->useInternalMap = true;
                 }
             }
 
@@ -244,17 +241,14 @@ if (!class_exists("Crouton")) {
         public function enqueueFrontendFiles()
         {
             if ($this->hasShortcode()) {
-                $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-core.js" : "crouton-core.min.js");
-                wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.min.css"), false);
-                wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
-                if ($this->hasMap) {
-                    if (has_action('crouton_map_enqueue_scripts') && !$this->useInternalMap) {
-                        do_action('crouton_map_enqueue_scripts');
-                    } else {
-                        $jsfilename = (isset($_GET['croutonjsdebug']) ? "crouton-map.js" : "crouton-map.min.js");
-                        wp_enqueue_script("croutonmapjs", plugin_dir_url(__FILE__) . "croutonjs/dist/$jsfilename", array('croutonjs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/$jsfilename"), true);
-                    }
+                wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.css"), false);
+                if (isset($_GET['croutonjsdebug'])) {
+                    wp_enqueue_script("croutonnocorejs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-nocore.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-nocore.js"), true);
+                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-core.js", array('croutonnocorejs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-core.js"), true);
+                } else {
+                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.js"), true);
                 }
+                $this->meetingMapController->enqueueFrontendFiles();
             }
         }
 
@@ -320,7 +314,7 @@ if (!class_exists("Crouton")) {
 
         public function tabbedUi($atts, $content = null)
         {
-            $this->hasMap = isset($atts['show_map']);
+            $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
@@ -348,79 +342,56 @@ if (!class_exists("Crouton")) {
         public function croutonMap($atts, $content = null)
         {
             $this->hasMap = true;
-            $this->useInternalMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
         }
+        public function meetingMap($atts, $content = null)
+        {
+            $this->hasMap = true;
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
+        }
         private function getMapInitialization($mapConfig)
         {
-            $externalMap = "";
+            $className = $this->meetingMapController->className();
             if ($this->hasMap) {
-                $externalMap = "croutonMap =  new CroutonMap($mapConfig);";
-                if (!$this->useInternalMap) {
-                    $externalMap = apply_filters(
-                        "crouton_map_create_control",
-                        $externalMap,
-                        isset($config['language']) ? substr($config['language'], 0, 2) : 'en',
-                        "croutonMap",
-                        $this->options['meeting_details_href']
-                    ).';';
-                }
+                return  "window.croutonMap = new $className($mapConfig);";
             }
-            return $externalMap;
+            return "";
         }
-        private function getInitializeCroutonBlock($config, $mapConfig)
+        private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
-                $externalMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $externalMap crouton = new Crouton($config); });</script>";
+                $croutonMap =  $this->getMapInitialization($mapConfig);
+                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
             } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); });</script>" : "";
+                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
             }
         }
 
         private function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.render(); })</script>";
+            return $this->getInitializeCroutonBlock("crouton.render();", ...$this->getCroutonJsConfig($atts));
         }
 
-        private function renderMap($atts)
+        private function renderMap($atts, $croutonMap = true)
         {
-            if ($atts == null) {
-                $atts = array();
+            if ($croutonMap) {
+                // This loads a map in which BMLT queries can be initiated
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, true));
             }
-            $atts['map_search'] = (object)[
-                "zoom" => isset($atts['map_search_zoom'])
-                    ? intval($atts['map_search_zoom'])
-                    : $this->shortCodeOptions['map_search_zoom'],
-                "latitude" => isset($atts['map_search_latitude'])
-                    ? intval($atts['map_search_latitude'])
-                    : $this->shortCodeOptions['map_search_latitude'],
-                "longitude" => isset($atts['map_search_longitude'])
-                    ? intval($atts['map_search_longitude'])
-                    : $this->shortCodeOptions['map_search_longitude'],
-                "width" => isset($atts['map_search_width'])
-                    ? intval($atts['map_search_width'])
-                    : $this->shortCodeOptions['map_search_width'],
-                "auto" => isset($atts['map_search_auto'])
-                    ? boolval($atts['map_search_auto'])
-                    : $this->shortCodeOptions['map_search_auto'],
-                "location" => isset($atts['map_search_location'])
-                    ? $atts['map_search_location']
-                    : $this->shortCodeOptions['map_search_location'],
-                "coordinates_search" => isset($atts['map_search_coordinates_search'])
-                    ? boolval($atts['map_search_coordinates_search'])
-                    : $this->shortCodeOptions['map_search_coordinates_search']
-            ];
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
+            // This is the map UI, but loading meetings like in the table form, only at startu
+            return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("", ...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
@@ -429,7 +400,7 @@ if (!class_exists("Crouton")) {
                 return '1';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; }) })</script><span id='meeting-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='meeting-count-$random_id'></span>";
         }
 
         public function groupCount($atts)
@@ -438,7 +409,7 @@ if (!class_exists("Crouton")) {
                 return '1';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; }) })</script><span id='group-count-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='group-count-$random_id'></span>";
         }
 
         public function serviceBodyNames($atts)
@@ -447,7 +418,7 @@ if (!class_exists("Crouton")) {
                 return '';
             }
             $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock(...$this->getCroutonJsConfig($atts)) . "<script type='text/javascript'>jQuery(document).ready(function() { crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; }) })</script><span id='service-body-names-$random_id'></span>";
+            return $this->getInitializeCroutonBlock("crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; })", ...$this->getCroutonJsConfig($atts)) . "<span id='service-body-names-$random_id'></span>";
         }
         public function handlebarFooter()
         {
@@ -458,13 +429,13 @@ if (!class_exists("Crouton")) {
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
-            $externalMap =  $this->getMapInitialization($mapConfig);
+            $croutonMap =  $this->getMapInitialization($mapConfig);
             ?>
 <script type='text/javascript'>
 var crouton;
 
 jQuery(document).ready(function() { 
-            <?php echo $externalMap; ?> crouton = new Crouton(<?php echo $config; ?>);
+            <?php echo $croutonMap ?> crouton = new Crouton(<?php echo $config; ?>);
     crouton.doHandlebars();
 });
 </script>
@@ -547,11 +518,22 @@ jQuery(document).ready(function() {
                 $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
                 $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
                 $this->options['theme']          = $_POST['theme'];
+                $this->options['show_map']       = $_POST['show_map'];
+                $this->options['header']         = isset($_POST['header']) ? "1" : "0";
+                $this->options['has_tabs']       = isset($_POST['has_tabs']) ? "1" : "0";
+                $this->options['include_city_button']    = isset($_POST['include_city_button']) ? "1" : "0";
+                $this->options['include_weekday_button'] = isset($_POST['include_weekday_button']) ? "1" : "0";
+                $this->options['view_by']       = $_POST['view_by'];
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
+                $postFilters = isset($_POST['select_filters']) ? $_POST['select_filters'] : array();
+                foreach ($this->hasFilters as $hasFilter) {
+                    $this->options[$hasFilter] = in_array($hasFilter, $postFilters);
+                }
                 $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
-                $this->options['google_api_key'] = $_POST['google_api_key'];
+                $this->meetingMapController->processUpdate($this->options);
                 $this->saveAdminOptions();
+                $this->meetingMapController = new MeetingMap\Controller($this->options);
                 echo "<script type='text/javascript'>jQuery(function(){jQuery('#updated').html('<p>Success! Your changes were successfully saved!</p>').show().fadeOut(5000);});</script>";
             }
             if (!isset($this->options['time_format']) || strlen(trim($this->options['time_format'])) == 0) {
@@ -580,9 +562,6 @@ jQuery(document).ready(function() {
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
             }
-            if (!isset($this->options['disable_tinyMCE'])) {
-                $this->options['disable_tinyMCE'] = false;
-            }
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
@@ -608,7 +587,7 @@ jQuery(document).ready(function() {
                             <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
                             <li><a href="#config-custom-query">Custom Query</a></li>
                             <li><a href="#config-theme">Theme</a></li>
-                            <li><a href="#config-google-api-key">Google API Key</a></li>
+                            <li><a href="#config-google-api-key">Map Options</a></li>
                             <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
                             <li><a href="#config-metadata-data-template">Metadata Template</a></li>
                             <li><a href="#config-meeting-details-page">Meeting Details Page</a></li>
@@ -616,6 +595,13 @@ jQuery(document).ready(function() {
                             <li><a href="#config-documentation">Documentation</a></li>
                         </ul>
                     </div>
+                    <nav class="nav-tab-wrapper">
+                        <a href="#bmlt-query" class="nav-tab nav-tab-active">BMLT Query</a>
+                        <a href="#crouton-ui" class="nav-tab">Crouton UI</a>
+                        <a href="#crouton-map" class="nav-tab">Map</a>
+                        <a href="#crouton-templates" class="nav-tab">Templates</a>
+                    </nav>
+                <div id="bmlt-query" class="tab-content">
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3><a id="config-bmlt-root-server" class="anchor"></a>BMLT Root Server URL</h3>
                         <p>Example: https://bmlt.sezf.org/main_server</p>
@@ -666,80 +652,7 @@ jQuery(document).ready(function() {
                             </li>
                         </ul>
                     </div>
-                    <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
-                        <p>These values will be used when the attributes are not defined in the shortcode</p>
-                        <ul>
-                            <li>
-                                <label for="language">Default language of Crouton UI: </label>
-                                <input id="language" type="text" size="5" name="language" value="<?php echo $this->options['language']; ?>" />
-                            </li>
-                            <li>
-                                <label for="native_lang">Default language of meetings (format code): </label>
-                                <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo $this->options['native_lang']; ?>" />
-                            </li>
-                            <li>
-                                <label for="time_format">Default time format: </label>
-                                <input id="time_format" type="text" size="10" name="time_format" value="<?php echo $this->options['time_format']; ?>" />
-                            </li>
-                            <li>
-                                <?php
-                                if (!isset($this->options["int_start_day_id"])) {
-                                    $this->options["int_start_day_id"] = 1;
-                                }
-                                ?>
-                                <label for="int_start_day_id">Which day does the week start on:</label>
-                                <select name="int_start_day_id" id="int_start_day_id">
-                                    <option value="1" <?php echo ($this->options["int_start_day_id"] == 1) ? 'selected' : ''; ?>>Sunday</option>
-                                    <option value="2" <?php echo ($this->options["int_start_day_id"] == 2) ? 'selected' : ''; ?>>Monday</option>
-                                    <option value="3" <?php echo ($this->options["int_start_day_id"] == 3) ? 'selected' : ''; ?>>Tuesday</option>
-                                    <option value="4" <?php echo ($this->options["int_start_day_id"] == 4) ? 'selected' : ''; ?>>Wedsday</option>
-                                    <option value="5" <?php echo ($this->options["int_start_day_id"] == 5) ? 'selected' : ''; ?>>Thursday</option>
-                                    <option value="6" <?php echo ($this->options["int_start_day_id"] == 6) ? 'selected' : ''; ?>>Friday</option>
-                                    <option value="7" <?php echo ($this->options["int_start_day_id"] == 7) ? 'selected' : ''; ?>>Saturday</option>
-                                </select>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $this->options['strict_datafields'] ? "checked" : '' ?>/>
-                                <label for="strict_datafields">Retrieve only those fields that are directly accessed in the templates</label>
-                            </li>
-                        </ul>
-                    </div>
-                    <div id="examplePopup1" style="display:none">
-<h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
-foreach ($this->getAllFields($this->options['root_server']) as $field) {
-    echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
-}
-?></table>
-<h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
-        <ul style="list-style:disc; padding-inline-start: 20px;">
-    <li>start_time_formatted</li>
-    <li>end_time_formatted</li>
-    <li>formatted_day</li>
-    <li>formats_expanded - which contains:
-        <ul style="padding-inline-start: 20px;">
-            <li>id</li>
-            <li>key</li>
-            <li>name</li>
-            <li>description</li>
-            <li>type</li>
-        </ul>
-    </li>
-    <li>venue_type</li>
-    <li>venue_type_name</li>  
-    <li>formatted_address</li>
-    <li>formatted_location_info</li>
-    <li>serviceBodyUrl</li>
-    <li>serviceBodyPhone</li>
-    <li>serviceBodyName</li>
-    <li>serviceBodyDescription</li>
-    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
-    <li>serviceBodyType</li>
-</ul>
-        </p>
-        <p>To include a crouton map into the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
-            Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
-        </p></div>
+
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
                         <div class="inside">
@@ -779,7 +692,9 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                             </li>
                         </ul>
                     </div>
-                    <div style="padding: 0 15px;" class="postbox">
+            </div>
+            <div id="crouton-ui" class=tab-content>
+            <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-theme" class="anchor"></a>Theme</h3>
                         <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
                         <ul>
@@ -801,19 +716,131 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-google-api-key" class="anchor"></a>Google API Key</h3>
-                        <p>This is only needed when using the companion map feature.  As an alternative to using google maps, get the <a href="https://wordpress.org/plugins/bmlt-meeting-map/" target="_blank">BMLT Meeting Map</a> plugin.
-                        This plugin can be configured to use Open Street Mapps (OSM) as its tile provider.  If BMLT-Meeting-Map is activated, crouton will use it to provide its maps.</p>
-                        <ul>
-                            <li>
-                                <label for="google_api_key">API Key: </label>
-                                <input id="google_api_key" name="google_api_key" size="50" value="<?php echo (isset($this->options['google_api_key']) ? $this->options['google_api_key'] : ""); ?>" />
+                        <h3><a id="config-show-map" class="anchor"></a>Companion Map</h3>
+                        <p>In addition to croutons tabular listing of meetings, the meetings can be be displayed on a map.</p>
+                        <p>You may configure the map by clicking on the "Map" tab, above.</p>
+                                <select id="show_map" name="show_map" style="display:block;">
+                                    <option <?php echo $this->options['show_map']=='0' ? 'selected' : '';?> value="0">No Map</option>
+                                    <option <?php echo $this->options['show_map']=='1' ? 'selected' : '';?> value="1">Show Map and Table</option>
+                                    <option <?php echo $this->options['show_map']=='embed' ? 'selected' : '';?> value="embed">Embed Map as Table Page</option>
+                                </select>
                             </li>
                         </ul>
-                        <p>If you're using Google Maps, you must have the 'Google Maps JavaScript API' enabled on your key. <br> For more information on setting up and configuring a Google Maps API key check out this blog article <br> <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></p>
+                        <br/>
                     </div>
+            <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                        <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
+                        <p>These values will be used when the attributes are not defined in the shortcode</p>
+                        <ul>
+                            <li>
+                                <label for="language">Default language of Crouton UI: </label>
+                                <input id="language" type="text" size="5" name="language" value="<?php echo $this->options['language']; ?>" />
+                            </li>
+                            <li>
+                                <label for="native_lang">Default language of meetings (format code): </label>
+                                <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo $this->options['native_lang']; ?>" />
+                            </li>
+                            <li>
+                                <label for="time_format">Default time format: </label>
+                                <input id="time_format" type="text" size="10" name="time_format" value="<?php echo $this->options['time_format']; ?>" />
+                            </li>
+                            <li>
+                                <?php
+                                if (!isset($this->options["int_start_day_id"])) {
+                                    $this->options["int_start_day_id"] = 1;
+                                }
+                                ?>
+                                <label for="int_start_day_id">Which day does the week start on:</label>
+                                <select name="int_start_day_id" id="int_start_day_id">
+                                    <option value="1" <?php echo ($this->options["int_start_day_id"] == 1) ? 'selected' : ''; ?>>Sunday</option>
+                                    <option value="2" <?php echo ($this->options["int_start_day_id"] == 2) ? 'selected' : ''; ?>>Monday</option>
+                                    <option value="3" <?php echo ($this->options["int_start_day_id"] == 3) ? 'selected' : ''; ?>>Tuesday</option>
+                                    <option value="4" <?php echo ($this->options["int_start_day_id"] == 4) ? 'selected' : ''; ?>>Wedsday</option>
+                                    <option value="5" <?php echo ($this->options["int_start_day_id"] == 5) ? 'selected' : ''; ?>>Thursday</option>
+                                    <option value="6" <?php echo ($this->options["int_start_day_id"] == 6) ? 'selected' : ''; ?>>Friday</option>
+                                    <option value="7" <?php echo ($this->options["int_start_day_id"] == 7) ? 'selected' : ''; ?>>Saturday</option>
+                                </select>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $this->options['strict_datafields'] ? "checked" : '' ?>/>
+                                <label for="strict_datafields">Retrieve only those fields that are directly accessed in the templates</label>
+                            </li>
+                        </ul>
+                    </div>
+            <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-table-headers" class="anchor"></a>Configure Table Headers</h3>
+                        <h4>Header Contents</h4>
+                        <ul>
+                            <li><input type="checkbox" name="header" value="1" <?php echo ($this->options['header'] == 1 ? 'checked' : '') ?> /> Show Header</li>
+                            <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($this->options['has_tabs'] == 1 ? 'checked' : '') ?> /> Separate days into tabs</li>
+                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($this->options['include_city_button'] == 1 ? 'checked' : '') ?> /> Include 'Cities' Button</li>
+                            <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($this->options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> Include 'Weekdays' Button</li>
+                            <li><select name="view_by">
+                                <option value="weekday" <?php echo ($this->options["view_by"] == "weekday") ? 'selected' : ''; ?>>View by Weekday</option>
+                                <option value="city" <?php echo ($this->options["view_by"] == "city") ? 'selected' : ''; ?>>View by City</option>
+                            </select></li>
+                        </ul>
+                        <h4>Select Dropdown Filters</h4>
+                        <div class="inside">
 
+                            <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
+                            foreach ($this->hasFilters as $hasFilter) {?>
+                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo $hasFilter;?>"><?php echo $hasFilter;?></option>
+                                <?php
+                            }?>
+                            </select>
+                        </div>
+                    </div>
                     <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
+                        <p>Allows for custom styling of your crouton.</p>
+                        <ul>
+                            <li>
+                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
+                            </li>
+                        </ul>
+                    </div>
+            </div>
+            <div id="crouton-map">
+                <?php $this->meetingMapController->adminSection(); ?>
+            </div>
+            <div id="crouton-templates">
+                                    <div id="examplePopup1" style="display:none">
+<h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
+foreach ($this->getAllFields($this->options['root_server']) as $field) {
+    echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
+}
+?></table>
+<h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
+        <ul style="list-style:disc; padding-inline-start: 20px;">
+    <li>start_time_formatted</li>
+    <li>end_time_formatted</li>
+    <li>formatted_day</li>
+    <li>formats_expanded - which contains:
+        <ul style="padding-inline-start: 20px;">
+            <li>id</li>
+            <li>key</li>
+            <li>name</li>
+            <li>description</li>
+            <li>type</li>
+        </ul>
+    </li>
+    <li>venue_type</li>
+    <li>venue_type_name</li>  
+    <li>formatted_address</li>
+    <li>formatted_location_info</li>
+    <li>serviceBodyUrl</li>
+    <li>serviceBodyPhone</li>
+    <li>serviceBodyName</li>
+    <li>serviceBodyDescription</li>
+    <li>serviceBodyContactEmail (must be comfigured in root server)</li>
+    <li>serviceBodyType</li>
+</ul>
+        </p>
+        <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+            Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
+        </p></div>
+        <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are
                         <span style="text-align:center;padding:20px 0;"> 
@@ -892,15 +919,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                             </li>
                         </ul>
                     </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
-                        <p>Allows for custom styling of your crouton.</p>
-                        <ul>
-                            <li>
-                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
-                            </li>
-                        </ul>
-                    </div>
+            </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
                 <br/><br/>
@@ -944,6 +963,45 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     $this->options['meeting_data_template'] = str_replace('{{this.meeting_name}}', "{{> meetingLink this}}", $this->options['meeting_data_template']);
                 }
             }
+            if ($this->options['crouton_version'] === "3.17") {
+                $this->options['crouton_version'] = "3.18";
+                if (isset($this->options['meeting_data_template'])) {
+                    $this->options['meeting_data_template'] = str_replace('{{> meetingLink this}}', "{{> meetingModal this}}", $this->options['meeting_data_template']);
+                }
+                if (!empty($this->options['google_api_key']) && !isset($this->options['tile_provider'])) {
+                    $this->options['api_key'] = $this->options['google_api_key'];
+                    $this->options['tile_provider'] = "google";
+                }
+            }
+            if (isset($this->options['meetingpage_contents_template'])) {
+                $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
+            }
+            foreach ($this->hasFilters as $hasFilter) {
+                if (!isset($this->options[$hasFilter])) {
+                    $this->options[$hasFilter] = $this->shortCodeOptions[$hasFilter];
+                }
+            }
+            if (!isset($this->options['show_map'])) {
+                $this->options['show_map'] = $this->shortCodeOptions['show_map'];
+            }
+            if (!isset($this->options['header'])) {
+                $this->options['header'] = $this->shortCodeOptions['header'];
+            }
+            if (!isset($this->options['has_tabs'])) {
+                $this->options['has_tabs'] = $this->shortCodeOptions['has_tabs'];
+            }
+            if (!isset($this->options['include_city_button'])) {
+                $this->options['include_city_button'] = $this->shortCodeOptions['include_city_button'];
+            }
+            if (!isset($this->options['include_weekday_button'])) {
+                $this->options['include_weekday_button'] = $this->shortCodeOptions['include_weekday_button'];
+            }
+            if (!isset($this->options['view_by'])) {
+                $this->options['view_by'] = $this->shortCodeOptions['view_by'];
+            }
+            if (!isset($this->options['theme'])) {
+                $this->options['theme'] = $this->shortCodeOptions['theme'];
+            }
         }
         /**
          * Saves the admin options to the database.
@@ -967,7 +1025,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 return [];
             }
         }
-        private function templateToParameter($name)
+        private function templateToParameter($atts, $name)
         {
             if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
                 $template = $atts[$name];
@@ -997,14 +1055,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             return $all_meetings;
         }
-        private function getCroutonJsConfig($atts)
+        private function getCroutonJsConfig($atts, $croutonMap = false)
         {
-            $mapParams = [];
-            if (isset($atts['map_search'])) {
-                $mapParams['map_search'] = $atts['map_search'];
-            }
             // Pulling simple values from options
-            $defaults = $this->shortCodeOptions;
+            $defaults = array_merge($this->shortCodeOptions, $this->meetingMapController->getDefaultOptions());
             foreach ($defaults as $key => $value) {
                 $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
             }
@@ -1068,15 +1122,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 }
             }
 
-            /*$convert_to_int = array("latitude", "longitude", "width", "zoom");
-            $params['map_search'] = null;
-            foreach (explode(",", $params['map_search_option']) as $item) {
-                $setting = explode(":", $item);
-                $key = trim($setting[0]);
-                $value = trim($setting[1]);
-                $params['map_search'][$key] = intval($value);
-            }*/
-
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
 
@@ -1092,16 +1137,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
 
-            $params['meeting_data_template'] = $this->templateToParameter('meeting_data_template');
-            $params['metadata_template'] = $this->templateToParameter('metadata_template');
-            $params['meetingpage_title_template'] = $this->templateToParameter('meetingpage_title_template');
-            $params['meetingpage_contents_template'] = $this->templateToParameter('meetingpage_contents_template');
+            $params['meeting_data_template'] = $this->templateToParameter($atts, 'meeting_data_template');
+            $params['metadata_template'] = $this->templateToParameter($atts, 'metadata_template');
+            $params['meetingpage_title_template'] = $this->templateToParameter($atts, 'meetingpage_title_template');
+            $params['meetingpage_contents_template'] = $this->templateToParameter($atts, 'meetingpage_contents_template');
 
             $mapParams['google_api_key'] = $params['google_api_key'];
-            $params['missing_api_key'] = 0;
-            if (empty($params['google_api_key']) && !has_filter("crouton_map_create_control")) {
-                $params['missing_api_key'] = 1;
-            }
             $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
@@ -1121,9 +1162,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             
             $params = apply_filters('crouton_configuration', $params);
-            $mapParams['theme'] = $params['theme'];
             
-            return [json_encode($params), json_encode($mapParams)];
+            return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
         }
     }
     //End Class Crouton

@@ -8,7 +8,7 @@ const wrap = require('gulp-wrap');
 const declare = require('gulp-declare');
 const notify = require('gulp-notify');
 
-let jsFilesCroutonCore = [
+let jsFilesCroutonNoCore = [
 	'bootstrap.min.js',
 	'transition.js',
 	'select2.full.min.js',
@@ -19,37 +19,49 @@ let jsFilesCroutonCore = [
 	'crouton-localization.js',
 	'templates.js',
 	'crouton-default-templates.js',
-	'crouton-core.js',
 	'punycode.1.4.1.js',
 	'fetch-jsonp.js',
 	'promises-polyfill.js',
 ];
+let jsFilesCroutonNoCoreWithFullPath = jsFilesCroutonNoCore.map((f)=>'croutonjs/src/js/'+f);
+let jsFilesCroutonCore = jsFilesCroutonNoCore.concat(['crouton-core.js']);
+let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/js/'+f);
 let jsFilesCroutonMap = [
-	'crouton-map.js',
-	'markerclusterer.js',
+	'meeting_map.js',
+	'osmDelegate.js',
+	'leaflet.js',
+	'leaflet.markercluster.js'
+];
+let jsFilesGoogleMap = [
+	'meeting_map.js',
+	'gmapsDelegate.js',
+	'google.markercluster.min.js',
 	'oms-1.0.3.min.js',
 ];
-let jsFilesNoJQuery = [
-].concat(jsFilesCroutonCore)
-.concat(jsFilesCroutonMap);
-let jsFilesWithJquery = [
-	'jquery-3.4.1.min.js',
-].concat(jsFilesNoJQuery);
+let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
+let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/meetingMap/js/'+f);
+let jsFilesNoJQueryWithFullPath = [
+].concat(jsFilesCroutonCoreWithFullPath)
+.concat(jsFilesCroutonMapWithFullPath);
+let jsFilesWithJqueryWithFullPath = [
+	'croutonjs/src/js/jquery-3.4.1.min.js',
+].concat(jsFilesNoJQueryWithFullPath);
 
 let cssFiles = [
 	'select2.min.css',
 	'bootstrap.min.css',
 	'bmlt_tabs.css',
 ];
+let cssMapFiles = [
+	'leaflet.css',
+	'MarkerCluster.css',
+	'MarkerCluster.Default.css',
+	'meeting_map.css',
+];
 let distDir = 'croutonjs/dist';
 
 task('js-files-nojquery', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesNoJQuery) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesNoJQueryWithFullPath)
 		.pipe(concat('crouton.nojquery.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -61,12 +73,7 @@ task('js-files-nojquery', () => {
 		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
 });
 task('jsFilesCroutonCore', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesCroutonCore) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesCroutonCoreWithFullPath)
 		.pipe(concat('crouton-core.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -77,13 +84,20 @@ task('jsFilesCroutonCore', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message:"js-files-crouton-core complete", wait: true}));
 });
+task('jsFilesCroutonNoCore', () => {
+	return src(jsFilesCroutonNoCoreWithFullPath)
+		.pipe(concat('crouton-nocore.js'))
+		.pipe(dest(distDir))
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message:"js-files-crouton-nocore complete", wait: true}));
+});
 task('jsFilesCroutonMap', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesCroutonMap) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
-
-	return src(jsFilesWithFullPath)
+	return src(jsFilesCroutonMapWithFullPath)
 		.pipe(concat('crouton-map.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -96,12 +110,8 @@ task('jsFilesCroutonMap', () => {
 });
 
 task('js-files', () => {
-	let jsFilesWithFullPath = [];
-	for (let jsFile of jsFilesWithJquery) {
-		jsFilesWithFullPath.push('croutonjs/src/js/' + jsFile);
-	}
 
-	return src(jsFilesWithFullPath)
+	return src(jsFilesWithJqueryWithFullPath)
 		.pipe(concat('crouton.js'))
 		.pipe(dest(distDir))
 		.pipe(minify({
@@ -112,7 +122,22 @@ task('js-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "js-files complete", wait: true}));
 });
+let jsFilesGoogleWithFullPath = ['croutonjs/src/js/jquery-3.4.1.min.js'
+].concat(jsFilesCroutonCoreWithFullPath)
+.concat(jsFilesGoogleMapWithFullPath);
+task('js-gmaps-files', () => {
 
+	return src(jsFilesGoogleWithFullPath)
+		.pipe(concat('crouton-gmaps.js'))
+		.pipe(dest(distDir))
+		.pipe(minify({
+			ext: {
+				min:'.min.js'
+			},
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message: "js-gmaps-files complete", wait: true}));
+});
 task('templates', function () {
 	return src('croutonjs/src/templates/*.hbs')
 		.pipe(handlebars())
@@ -131,7 +156,9 @@ task('css-files', () => {
 	for (let cssFile of cssFiles) {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
 	}
-
+	for (let cssFile of cssMapFiles) {
+		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
+	}
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton.css'))
 		.pipe(dest(distDir))
@@ -142,8 +169,22 @@ task('css-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "css-files complete", wait: true}));
 });
-
-task('default', series('templates', 'js-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'css-files'));
+task('css-core-files', () => {
+	let cssFilesWithFullPath = [];
+	for (let cssFile of cssFiles) {
+		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
+	}
+	return src(cssFilesWithFullPath)
+		.pipe(concat('crouton-core.css'))
+		.pipe(dest(distDir))
+		.pipe(cleanCSS())
+		.pipe(rename({
+			suffix: '.min'
+		}))
+		.pipe(dest(distDir))
+		.pipe(notify({message: "css-core-files complete", wait: true}));
+});
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files', 'css-core-files'));
 
 task('watch', () => {
 	watch([
