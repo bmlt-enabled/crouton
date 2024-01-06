@@ -32,6 +32,8 @@ if (!class_exists("MeetingMap/Controller")) {
             'map_search_location' => '',
             'map_search_coordinate_search' => '',
             'map_search_zoom' => '',
+            'center_me' => '',
+            'goto' => ''
         );
         public $options = array();
 
@@ -208,6 +210,12 @@ if (!class_exists("MeetingMap/Controller")) {
             $ret .= 'lat:"'.$options['lat'].'",';
             $ret .= 'lng:"'.$options['lng'].'",';
             $ret .= 'zoom:"'.$options['zoom'].'",';
+            if (!empty($options['center_me'])) {
+                $ret .= 'centerMe:"'.$options['center_me'].'",';
+            }
+            if (!empty($options['goto'])) {
+                $ret .= 'goto:"'.$options['goto'].'",';
+            }
             if (isset($options['map_search'])) {
                 $ret .= 'map_search: {';
                 foreach ($options['map_search'] as $key => $value) {
