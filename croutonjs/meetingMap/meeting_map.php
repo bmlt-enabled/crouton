@@ -326,7 +326,8 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             $options['api_key'] = $_POST['api_key'];
             $options['tile_provider'] = $_POST['tile_provider'];
-            $options['tile_url'] = sanitize_url($_POST['tile_url']);
+            // cannot sanitize, because string contains {} characters.
+            $options['tile_url'] = $_POST['tile_url'];
             $options['nominatim_url'] = sanitize_url($_POST['nominatim_url']);
             $options['tile_attribution'] = wp_kses_post($_POST['tile_attribution']);
             $options['lat'] = floatval($_POST['lat']);

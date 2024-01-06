@@ -470,13 +470,13 @@ function Crouton(config) {
 			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
 		});
 	}
-	self.renderStandaloneMap = function (selector, context, callback) {
+	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
 		self.config["hide_byday_headers"] = true;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,callback);
+		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback);
 	}
 	self.getCurrentLocation = function(callback) {
 		if (navigator.geolocation) {
@@ -485,7 +485,7 @@ function Crouton(config) {
 			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
 		}
 	};
-	self.renderView = function (selector, context, callback) {
+	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
@@ -1039,7 +1039,7 @@ Crouton.prototype.searchMap = function() {
 			"meetingData": []
 		},
 		"dropdownData": [],
-		"location": {'latitude':0,'longitude':0,'zoom':10}
+		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
 	});
 }
 Crouton.prototype.render = function(doMeetingMap = false) {
@@ -1349,16 +1349,16 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
-					if (self.config['map_page']) {
+					if (self.config['map_page'] && !doMeetingMap) {
 						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['refresh_map']) {
-						croutonMap.refreshMeetings(self.meetingData, 0, '', true);
+						croutonMap.refreshMeetings(self.meetingData, true, true);
 					}
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
-				});
+				}, !doMeetingMap);
 			});
 		});
 };

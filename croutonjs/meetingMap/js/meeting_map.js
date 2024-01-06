@@ -159,15 +159,15 @@ function MeetingMap(inConfig) {
 		return controlDiv;
 	}
 
-	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null, callback) {
+	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null, fitBounds = true, callback) {
 		if (!gDelegate.isApiLoaded()) {
-			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions, callback]);
+			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions, fitBounds, callback]);
 			gDelegate.loadApi();
 			return;
 		}
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
-		loadAllMeetings(meetings_responseObject, true);
+		loadAllMeetings(meetings_responseObject, fitBounds, true);
 	};
 	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
@@ -248,7 +248,7 @@ function MeetingMap(inConfig) {
 		showThrobber();
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
-	function loadAllMeetings(meetings_responseObject, fitAll=false) {
+	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
 			if (config.map_search.auto) nearMeSearch();
 			else if (config.map_search.coordinates_search) {
@@ -261,8 +261,10 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
-		gDelegate.fitBounds(lat_lngs);
+		if (fitBounds) {
+			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+			gDelegate.fitBounds(lat_lngs);
+		}
 		searchResponseCallback();
 		hideThrobber();
 		if (config.centerMe) {
