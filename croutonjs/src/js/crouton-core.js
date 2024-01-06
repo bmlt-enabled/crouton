@@ -69,7 +69,6 @@ function Crouton(config) {
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
-		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
 		observer_template: croutonDefaultTemplates.observer_template,
 		meeting_count_template: croutonDefaultTemplates.meeting_count_template,
 		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
@@ -77,7 +76,6 @@ function Crouton(config) {
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 		meetingpage_frame_template: croutonDefaultTemplates.meetingpage_frame_template,
-		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
 		lat: 0,
 		lng: 0,
 		zoom: 10,
@@ -680,14 +678,12 @@ function Crouton(config) {
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
-		crouton_Handlebars.registerPartial("popupTemplate", self.config['marker_contents_template']);
 		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
 		crouton_Handlebars.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
 		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
 		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
 		crouton_Handlebars.registerPartial("meetingModal", self.config['meeting_modal_template']);
-		crouton_Handlebars.registerPartial("markerContentsTemplate", self.config['marker_contents_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];

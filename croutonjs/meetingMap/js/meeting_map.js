@@ -9,6 +9,7 @@ function MeetingMap(inConfig) {
 	const config = inConfig;
 	if (!config.maxZoom) config.maxZoom = 17;
 	if (!config.minZoom) config.minZoom = 6;
+	if (!config.marker_contents_template) config.marker_contents_template = croutonDefaultTemplates.marker_contents_template;
 	var gAllMeetings = null;
 	var gMeetingIdsFromCrouton = null;
 	var loadedCallbackFunction = null;
@@ -26,6 +27,7 @@ function MeetingMap(inConfig) {
 
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null) {
 		if (inDiv) {
+			crouton_Handlebars.registerPartial("markerContentsTemplate", config['marker_contents_template']);
 			gInDiv = inDiv;
 			createThrobber(inDiv);
 			if (!config.map_search) showThrobber();

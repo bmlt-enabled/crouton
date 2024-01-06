@@ -223,6 +223,7 @@ if (!class_exists("MeetingMap/Controller")) {
                 }
                 $ret .= '},';
             }
+            $ret .= '"marker_contents_template":'.json_encode($options['marker_contents_template']);
             $ret .= '},';
             return $ret;
         }
