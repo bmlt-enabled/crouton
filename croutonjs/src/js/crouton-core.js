@@ -399,7 +399,7 @@ function Crouton(config) {
 			showingNow.push(rowId[rowId.length-1]);
 		});
 		showingNow = [...new Set(showingNow)];
-		self.updateMeetingCount(showingNow.length);
+		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
 		if (self.config.map_page) {
@@ -438,7 +438,7 @@ function Crouton(config) {
 		} else if (self.config.show_map) croutonMap.fillMap();
 		self.filtering = false; 
 		self.updateFilters();
-		self.updateMeetingCount(self.meetingData.length);
+		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
@@ -495,8 +495,41 @@ function Crouton(config) {
 		jQuery(selector).html(template(context));
 		callback();
 	};
-	self.updateMeetingCount = function(meetingCount) {
-		jQuery('#bmlt_tabs_meeting_count').html(meetingCount);
+	self.updateMeetingCount = function(showingNow=null) {
+		self = this;
+		let meetingCount = self.meetingData.length;
+		if (showingNow !== null) meetingCount = showingNow.length;
+		jQuery('#bmlt_tabs_meeting_count').text(meetingCount);
+		jQuery('#bmlt_tabs_group_count').each(function(){
+			var filteredMeetings = self.meetingData;
+			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
+			var groups = filteredMeetings.map((m)=>m['worldid_mixed'] !== "" ? m['worldid_mixed'] :m['meeting_name']);
+			jQuery(this).text(arrayUnique(groups).length);
+		});
+		jQuery('#bmlt_tabs_service_body_names').each(function() {
+			var filteredMeetings = self.meetingData;
+			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
+			var ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');
+			var me = this;
+			self.getServiceBodies(ids).then(function (service_bodies) {
+				var n = service_bodies.length;
+				var names = service_bodies.map((m)=>m['name']);
+				names.sort();
+				var ret = "";
+				if (n===1) {
+					ret = names[0];
+				}
+				else {
+					ret = names[0];
+					for (var j = 1; j < n-1; j++) {
+						ret += ', ';
+						ret += names[j];
+					}
+					ret += ' and ' + names[n-1];
+				}
+				jQuery(me).text(ret);
+			});
+		});
 	}
 	self.getServiceBodies = function(service_bodies_id) {
 		var requires_parents = self.config.has_regions;
@@ -641,9 +674,6 @@ function Crouton(config) {
 		self.filteredPage();
 	}
 
-	self.isMeetingInTime = function(meeting, dayNow, hour, mins) {
-
-	}
 	self.distance = function(lat1, lon1, lat2, lon2, unit) {
 		if ((lat1 === lat2) && (lon1 === lon2)) {
 			return 0;
@@ -890,52 +920,6 @@ Crouton.prototype.reset = function() {
 	jQuery("#" + self.config["placeholder_id"]).html("");
 };
 
-Crouton.prototype.meetingCount = function(callback) {
-	var self = this;
-	self.lock(function() {
-		callback(self.meetingData.length);
-	});
-};
-
-Crouton.prototype.groupCount = function(callback) {
-	var self = this;
-	self.lock(function() {
-		var groups = [];
-		for (var i = 0; i < self.meetingData.length; i++) {
-			groups.push(self.meetingData[i]['worldid_mixed'] !== "" ? self.meetingData[i]['worldid_mixed'] : self.meetingData[i]['meeting_name']);
-		}
-		callback(arrayUnique(groups).length);
-	});
-};
-
-Crouton.prototype.serviceBodyNames = function(callback) {
-	var self = this;
-	self.lock(function() {
-		var ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint');
-		self.getServiceBodies(ids).then(function (service_bodies) {
-			var n = service_bodies.length;
-			var names = [];
-			for (var i = 0; i < n; i++) {
-				names.push(service_bodies[i]['name']);
-			}
-			names.sort();
-			if (n===1) {
-				callback(names[0]);
-			}
-			else if (n===2) {
-				callback(names[0] + ' and ' + names[1]);
-			}
-			else {
-				var str = '';
-				for (var j = 0; j < n-1; j++) {
-					str += names[j];
-					str += ', ';
-				}
-				callback(str + ' and ' + names[n-1]);
-			}
-		});
-	});
-};
 Crouton.prototype.doFilters = function() {
 	return this.filteredPage();
 }
