@@ -53,7 +53,7 @@ var croutonDefaultTemplates = {
 
 	meeting_count_template: [
 		"{{#if this.config.has_meeting_count}}",
-		"<span class='bmlt_tabs_meeting_count'>{{getWord 'meeting_count'}} <span id='bmlt_tabs_meeting_count'>{{this.meetings.meetingCount}}</span></span>",
+		"<span class='bmlt_tabs_meeting_count'>{{getWord 'meeting_count'}} <span id='bmlt_tabs_meeting_count-live'>{{this.meetings.meetingCount}}</span></span>",
 		"{{/if}}"
 	].join('\n'),
 

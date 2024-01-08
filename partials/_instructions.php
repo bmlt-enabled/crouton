@@ -17,9 +17,6 @@
             use two different pages. The <code>[service_body_names]</code> shortcode is useful for generating tabbed UIs for multiple
             service bodies (see the "URL Parameters" section).</p>
         <p>Detailed instructions for the shortcode parameters follow.</p>
-        <p><strong>Caution!</strong> The parameters supplied to the first shortcode on a page apply to all other shortcodes on that
-            page as well. In particular, if the first shortcode has no parameters, then any parameters on subsequent shortcodes on
-            that page will be silently ignored. To avoid confusion, good practice is to use the same parameters for all of them.</p>
     </div>
 	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
 	<div>
@@ -164,22 +161,23 @@
 	</div>
 	<h3 class="help-accordian"><strong>Meeting Count</strong></h3>
 	<div>
-		<p>Will return the number of meetings for one or more BMLT service bodies.</p>
-		<p><strong>[meeting_count]</strong> <em>Will use the default service body (above).</em></p>
-		<p><strong>[meeting_count service_body="2,3,4"]</strong></p>
-		<p><strong>[meeting_count service_body_parent="1,2,3"]</strong></p>
-		<p>Will return the number of meetings in one or more BMLT parent service bodies.</p>
-		<p><strong>[meeting_count service_body="2" subtract="3"]</strong></p>
-		<p>subtract = number of meetings to subtract from total meetings (optional)</p>
-		<p><em>Subtract is useful when you are using BMLT for subcommittee meetings and do want to count those meetings.</em></p>
+		<p>Will return the number of meetings in the BMLT query.</p>
+		<p><strong>[meeting_count]</strong></p>
+		<p><strong>[meeting_count live="0|1"]</strong></p>
+		<p>By default, [meeting_count] returns the total number of meetings in the BMLT query. By setting "live" to "1", 
+		the number displayed will be updated to reflect the current filters selection.  So, to get the number of meetings in an
+		area, select the area in the appropriate filter and both the table and the meeting count will be updated.
+		</p>
 	</div>
 	<h3 class="help-accordian"><strong>Group Count</strong></h3>
 	<div>
-		<p>Will return the number of Groups for one or more BMLT service bodies.</p>
-		<p><strong>[group_count]</strong> <em>Will use the default service body (above).</em></p>
-		<p><strong>[group_count service_body="2,3,4"]</strong></p>
-		<p><strong>[group_count service_body_parent="1,2,3"]</strong></p>
-		<p>Will return the number of Groups in one or more BMLT parent service bodies.</p>
+	<p>Will return the number of groups in the BMLT query.</p>
+		<p><strong>[group_count]</strong> </p>
+		<p><strong>[group_count live="0|1"]</strong></p>
+		<p>By default, [group_count] returns the total number of groups in the BMLT query. By setting "live" to "1", 
+		the number displayed will be updated to reflect the current filters selection.  So, to get the number of groups in an
+		area, select the area in the appropriate filter and both the table and the group count will be updated.
+		</p>
 	</div>
     <h3 class="help-accordian"><strong>Sorting</strong></h3>
     <div>
