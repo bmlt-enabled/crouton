@@ -498,15 +498,19 @@ function Crouton(config) {
 	self.updateMeetingCount = function(showingNow=null) {
 		self = this;
 		let meetingCount = self.meetingData.length;
-		if (showingNow !== null) meetingCount = showingNow.length;
-		jQuery('#bmlt_tabs_meeting_count').text(meetingCount);
-		jQuery('#bmlt_tabs_group_count').each(function(){
+		addLive = function(id) {return id+", "+id+"-live"};
+		if (showingNow !== null) {
+			meetingCount = showingNow.length;
+			addLive = function(id) {return id+"-live"};
+		}
+		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
+		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;
 			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
 			var groups = filteredMeetings.map((m)=>m['worldid_mixed'] !== "" ? m['worldid_mixed'] :m['meeting_name']);
 			jQuery(this).text(arrayUnique(groups).length);
 		});
-		jQuery('#bmlt_tabs_service_body_names').each(function() {
+		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
 			var filteredMeetings = self.meetingData;
 			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
 			var ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');

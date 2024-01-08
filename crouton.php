@@ -392,7 +392,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '1';
             }
-            return "<span id='bmlt_tabs_meeting_count'>Fetching...</span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_meeting_count$live'>Fetching...</span>";
         }
 
         public function groupCount($atts)
@@ -400,7 +404,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '1';
             }
-            return "<span id='bmlt_tabs_group_count'>Fetching...</span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_group_count$live'>Fetching...</span>";
         }
 
         public function serviceBodyNames($atts)
@@ -408,7 +416,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '';
             }
-            return "<span id='bmlt_tabs_service_body_names'>Fetching...</span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
         }
         public function handlebarFooter()
         {
