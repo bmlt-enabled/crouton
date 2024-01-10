@@ -37,6 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.18.1 =
+* [meeting_count] and [group_count] have new attribute, "live".  If set to 1, the value is updated to reflect the current state of the filters.
+* All other attributes on [meeting_count] and [group_count] are ignored.
 * Bug fix release
 
 = 3.18.0 =
