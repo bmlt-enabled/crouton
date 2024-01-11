@@ -346,7 +346,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            $atts['has_venues'] = '0';
+            if (is_array($atts)) {
+                $atts['has_venues'] = '0';
+            } else {
+                $atts = ["has_venues" => "0"];
+            }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
         }
         private function getMapInitialization($mapConfig)
