@@ -412,6 +412,13 @@ div.bmlt_map_container_div  button {
     color: #2d5c88 !important;
 
 }
+#map-search-button {
+  width: fit-content;
+  height: fit-content;
+}
+#map-search-button .menu-button-label {
+  margin: 10px;
+}
 .menu-button-child {
 	    width: 32px;
 	    height: 32px;

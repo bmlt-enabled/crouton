@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.18.0
+Version: 3.18.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -126,6 +126,7 @@ if (!class_exists("Crouton")) {
             "has_venues",
             "has_common_needs"
         ];
+        private $waitMsg = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
         {
@@ -290,14 +291,6 @@ if (!class_exists("Crouton")) {
             return '';
         }
 
-        public function doQuit($message = '')
-        {
-            ob_flush();
-            flush();
-            $message .= '<script>document.getElementById("please-wait").style.display = "none";</script>';
-            return $message;
-        }
-
         private function sharedRender()
         {
             $output = "";
@@ -318,7 +311,7 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
+            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
         {
@@ -352,6 +345,11 @@ if (!class_exists("Crouton")) {
             $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
+            if (is_array($atts)) {
+                $atts['has_venues'] = '0';
+            } else {
+                $atts = ["has_venues" => "0"];
             }
             return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
         }
@@ -399,8 +397,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '1';
             }
-            $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock("crouton.meetingCount(function(res) { document.getElementById('meeting-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='meeting-count-$random_id'></span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_meeting_count$live'>Fetching...</span>";
         }
 
         public function groupCount($atts)
@@ -408,8 +409,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '1';
             }
-            $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock("crouton.groupCount(function(res) { document.getElementById('group-count-$random_id').innerHTML = res; });", ...$this->getCroutonJsConfig($atts)) . "<span id='group-count-$random_id'></span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_group_count$live'>Fetching...</span>";
         }
 
         public function serviceBodyNames($atts)
@@ -417,8 +421,11 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return '';
             }
-            $random_id = rand(10000, 99999);
-            return $this->getInitializeCroutonBlock("crouton.serviceBodyNames(function(res) { document.getElementById('service-body-names-$random_id').innerHTML = res; })", ...$this->getCroutonJsConfig($atts)) . "<span id='service-body-names-$random_id'></span>";
+            $live = '';
+            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
+                $live = "-live";
+            }
+            return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
         }
         public function handlebarFooter()
         {

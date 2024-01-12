@@ -69,7 +69,6 @@ function Crouton(config) {
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
-		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
 		observer_template: croutonDefaultTemplates.observer_template,
 		meeting_count_template: croutonDefaultTemplates.meeting_count_template,
 		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
@@ -77,7 +76,6 @@ function Crouton(config) {
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 		meetingpage_frame_template: croutonDefaultTemplates.meetingpage_frame_template,
-		marker_contents_template: croutonDefaultTemplates.marker_contents_template,
 		lat: 0,
 		lng: 0,
 		zoom: 10,
@@ -401,7 +399,7 @@ function Crouton(config) {
 			showingNow.push(rowId[rowId.length-1]);
 		});
 		showingNow = [...new Set(showingNow)];
-		self.updateMeetingCount(showingNow.length);
+		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
 		if (self.config.map_page) {
@@ -440,7 +438,7 @@ function Crouton(config) {
 		} else if (self.config.show_map) croutonMap.fillMap();
 		self.filtering = false; 
 		self.updateFilters();
-		self.updateMeetingCount(self.meetingData.length);
+		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".meeting-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
@@ -470,13 +468,13 @@ function Crouton(config) {
 			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
 		});
 	}
-	self.renderStandaloneMap = function (selector, context, callback) {
+	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
 		self.config["hide_byday_headers"] = true;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,callback);
+		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback);
 	}
 	self.getCurrentLocation = function(callback) {
 		if (navigator.geolocation) {
@@ -485,7 +483,7 @@ function Crouton(config) {
 			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
 		}
 	};
-	self.renderView = function (selector, context, callback) {
+	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
@@ -497,8 +495,45 @@ function Crouton(config) {
 		jQuery(selector).html(template(context));
 		callback();
 	};
-	self.updateMeetingCount = function(meetingCount) {
-		jQuery('#bmlt_tabs_meeting_count').html(meetingCount);
+	self.updateMeetingCount = function(showingNow=null) {
+		self = this;
+		let meetingCount = self.meetingData.length;
+		addLive = function(id) {return id+", "+id+"-live"};
+		if (showingNow !== null) {
+			meetingCount = showingNow.length;
+			addLive = function(id) {return id+"-live"};
+		}
+		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
+		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
+			var filteredMeetings = self.meetingData;
+			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
+			var groups = filteredMeetings.map((m)=>m['worldid_mixed'] !== "" ? m['worldid_mixed'] :m['meeting_name']);
+			jQuery(this).text(arrayUnique(groups).length);
+		});
+		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
+			var filteredMeetings = self.meetingData;
+			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
+			var ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');
+			var me = this;
+			self.getServiceBodies(ids).then(function (service_bodies) {
+				var n = service_bodies.length;
+				var names = service_bodies.map((m)=>m['name']);
+				names.sort();
+				var ret = "";
+				if (n===1) {
+					ret = names[0];
+				}
+				else {
+					ret = names[0];
+					for (var j = 1; j < n-1; j++) {
+						ret += ', ';
+						ret += names[j];
+					}
+					ret += ' and ' + names[n-1];
+				}
+				jQuery(me).text(ret);
+			});
+		});
 	}
 	self.getServiceBodies = function(service_bodies_id) {
 		var requires_parents = self.config.has_regions;
@@ -643,9 +678,6 @@ function Crouton(config) {
 		self.filteredPage();
 	}
 
-	self.isMeetingInTime = function(meeting, dayNow, hour, mins) {
-
-	}
 	self.distance = function(lat1, lon1, lat2, lon2, unit) {
 		if ((lat1 === lat2) && (lon1 === lon2)) {
 			return 0;
@@ -680,14 +712,12 @@ function Crouton(config) {
 
 		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
-		crouton_Handlebars.registerPartial("popupTemplate", self.config['marker_contents_template']);
 		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
 		crouton_Handlebars.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
 		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
 		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
 		crouton_Handlebars.registerPartial("meetingModal", self.config['meeting_modal_template']);
-		crouton_Handlebars.registerPartial("markerContentsTemplate", self.config['marker_contents_template']);
 
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
@@ -894,52 +924,6 @@ Crouton.prototype.reset = function() {
 	jQuery("#" + self.config["placeholder_id"]).html("");
 };
 
-Crouton.prototype.meetingCount = function(callback) {
-	var self = this;
-	self.lock(function() {
-		callback(self.meetingData.length);
-	});
-};
-
-Crouton.prototype.groupCount = function(callback) {
-	var self = this;
-	self.lock(function() {
-		var groups = [];
-		for (var i = 0; i < self.meetingData.length; i++) {
-			groups.push(self.meetingData[i]['worldid_mixed'] !== "" ? self.meetingData[i]['worldid_mixed'] : self.meetingData[i]['meeting_name']);
-		}
-		callback(arrayUnique(groups).length);
-	});
-};
-
-Crouton.prototype.serviceBodyNames = function(callback) {
-	var self = this;
-	self.lock(function() {
-		var ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint');
-		self.getServiceBodies(ids).then(function (service_bodies) {
-			var n = service_bodies.length;
-			var names = [];
-			for (var i = 0; i < n; i++) {
-				names.push(service_bodies[i]['name']);
-			}
-			names.sort();
-			if (n===1) {
-				callback(names[0]);
-			}
-			else if (n===2) {
-				callback(names[0] + ' and ' + names[1]);
-			}
-			else {
-				var str = '';
-				for (var j = 0; j < n-1; j++) {
-					str += names[j];
-					str += ', ';
-				}
-				callback(str + ' and ' + names[n-1]);
-			}
-		});
-	});
-};
 Crouton.prototype.doFilters = function() {
 	return this.filteredPage();
 }
@@ -1039,7 +1023,7 @@ Crouton.prototype.searchMap = function() {
 			"meetingData": []
 		},
 		"dropdownData": [],
-		"location": {'latitude':0,'longitude':0,'zoom':10}
+		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
 	});
 }
 Crouton.prototype.render = function(doMeetingMap = false) {
@@ -1349,16 +1333,16 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
-					if (self.config['map_page']) {
+					if (self.config['map_page'] && !doMeetingMap) {
 						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['refresh_map']) {
-						croutonMap.refreshMeetings(self.meetingData, 0, '', true);
+						croutonMap.refreshMeetings(self.meetingData, true, true);
 					}
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
-				});
+				}, !doMeetingMap);
 			});
 		});
 };

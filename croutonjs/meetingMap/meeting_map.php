@@ -32,6 +32,8 @@ if (!class_exists("MeetingMap/Controller")) {
             'map_search_location' => '',
             'map_search_coordinate_search' => '',
             'map_search_zoom' => '',
+            'center_me' => '',
+            'goto' => ''
         );
         public $options = array();
 
@@ -208,6 +210,12 @@ if (!class_exists("MeetingMap/Controller")) {
             $ret .= 'lat:"'.$options['lat'].'",';
             $ret .= 'lng:"'.$options['lng'].'",';
             $ret .= 'zoom:"'.$options['zoom'].'",';
+            if (!empty($options['center_me'])) {
+                $ret .= 'centerMe:"'.$options['center_me'].'",';
+            }
+            if (!empty($options['goto'])) {
+                $ret .= 'goto:"'.$options['goto'].'",';
+            }
             if (isset($options['map_search'])) {
                 $ret .= 'map_search: {';
                 foreach ($options['map_search'] as $key => $value) {
@@ -215,6 +223,7 @@ if (!class_exists("MeetingMap/Controller")) {
                 }
                 $ret .= '},';
             }
+            $ret .= '"marker_contents_template":'.json_encode($options['marker_contents_template']);
             $ret .= '},';
             return $ret;
         }
@@ -326,7 +335,8 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             $options['api_key'] = $_POST['api_key'];
             $options['tile_provider'] = $_POST['tile_provider'];
-            $options['tile_url'] = sanitize_url($_POST['tile_url']);
+            // cannot sanitize, because string contains {} characters.
+            $options['tile_url'] = $_POST['tile_url'];
             $options['nominatim_url'] = sanitize_url($_POST['nominatim_url']);
             $options['tile_attribution'] = wp_kses_post($_POST['tile_attribution']);
             $options['lat'] = floatval($_POST['lat']);
