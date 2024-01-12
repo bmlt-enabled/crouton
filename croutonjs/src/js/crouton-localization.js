@@ -94,7 +94,7 @@ function CroutonLocalization(language) {
 			"no_meetings_for_this_day": "Keine Meetings an diesem Tag.",
 			'css-textalign': '',
 			'css-floatdirection': '',
-			'all': 'All',
+			'all': 'Alle',
 			'menu': 'Menu',
 			'search for meetings': 'Search for meetings',
 			'show meetings near...': 'Meetings in andere Städten',
