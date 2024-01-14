@@ -256,7 +256,7 @@ function MeetingMap(inConfig) {
 			else if (config.map_search.coordinates_search) {
 				showThrobber();
 				config.map_search.coordinates_search = false;
-				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude);
+				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude, config.map_search.width);
 			}
 			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, null, mapSearchGeocode);
 			else showBmltSearchDialog();
