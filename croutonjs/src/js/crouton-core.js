@@ -474,6 +474,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback);
 	}
 	self.getCurrentLocation = function(callback) {
