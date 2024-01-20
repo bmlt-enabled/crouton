@@ -1335,7 +1335,10 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						jQuery("#bmlt-map").removeClass("hide");
 					}
 					if (self.config['map_page'] && !doMeetingMap) {
-						croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
+						if (self.meetingData.filter(m => m.venue_type != 2).length==0) {
+							jQuery('#filterButton_embeddedMapPage').addClass('hide');
+						}
+						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['refresh_map']) {
 						croutonMap.refreshMeetings(self.meetingData, true, true);
