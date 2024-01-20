@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.18.4 =
+* Do not embed map page when list contains only online meetings (fix for bug #460).
+
 = 3.18.3 =
 * Added min_zoom and max_zoom to the shortcode.
 * Changed default template to bring up meeting details rather than going directly to google.
