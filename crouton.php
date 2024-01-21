@@ -311,7 +311,7 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div><script>document.getElementById("please-wait").style.display = "none";</script>', $this->sharedRender(), $this->renderTable($atts));
+            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
         {
@@ -374,7 +374,7 @@ if (!class_exists("Crouton")) {
 
         private function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock("crouton.render();", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", ...$this->getCroutonJsConfig($atts));
         }
 
         private function renderMap($atts, $croutonMap = true)
