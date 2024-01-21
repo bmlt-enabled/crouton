@@ -372,10 +372,10 @@ function addControl(div,pos,cb) {
 		});
 	}
 	function modalOn() {
-		gMainMap.dragging.disable()
+		if (gMainMap) gMainMap.dragging.disable()
 	}
 	function modalOff() {
-		gMainMap.dragging.enable()
+		if (gMainMap) gMainMap.dragging.enable()
 	}
 	function returnTrue() {return true;}
     this.createMap = createMap;

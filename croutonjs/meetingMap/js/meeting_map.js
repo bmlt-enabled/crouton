@@ -360,6 +360,7 @@ function MeetingMap(inConfig) {
 		return true;
 	};
 	function searchResponseCallback(expand = false) {
+		if (!gAllMeetings) return;
 		if (!gAllMeetings.length) {
 			alert ( crouton.localization.getWord("no meetings found") );
 			return;
@@ -611,6 +612,7 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gDelegate.invalidateSize();
+		if (!gAllMeetings) return;
 		gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])
