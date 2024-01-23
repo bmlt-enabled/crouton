@@ -36,7 +36,6 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
-
 = 3.18.5 =
 * Assure croutonMap object created.
 * Add meetingCount and groupCount methods for backwards compatibility in non-wordpress cases.
