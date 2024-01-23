@@ -499,6 +499,10 @@ function Crouton(config) {
 	self.updateMeetingCount = function(showingNow=null) {
 		self = this;
 		let meetingCount = self.meetingData.length;
+		if (self.meetingCountCallback) self.meetingCountCallback(meetingCount);
+		if (self.groupCountCallback) self.groupCountCallback(
+			arrayUnique(self.meetingData.map((m)=>m['worldid_mixed'] !== "" ? m['worldid_mixed'] :m['meeting_name'])).length
+		);
 		addLive = function(id) {return id+", "+id+"-live"};
 		if (showingNow !== null) {
 			meetingCount = showingNow.length;
@@ -643,6 +647,14 @@ function Crouton(config) {
 		if (mustDoMap) {
 			croutonMap.loadPopupMap("bmlt-handlebars-map", meetingDetailsData, self.handlebarMapOptions);
 		}
+	}
+	self.meetingCountCallback = null;
+	self.grouoCountCallback = null;
+	Crouton.prototype.meetingCount = function(f) {
+		self.meetingCountCallback = f;
+	}
+	Crouton.prototype.groupCount = function(f) {
+		self.groupCountCallback = f;
 	}
 	Crouton.prototype.filterNext24 = function(filterNow = true) {
 		if (!filterNow) {
@@ -856,7 +868,7 @@ function Crouton(config) {
 		}
 		return 'bmlt-map';
 	}
-	if ((self.config['show_map'] || self.config['map_search']) && (typeof window.croutonMap === 'undefined')) {
+	if (typeof window.croutonMap === 'undefined') {
 		window.croutonMap = new MeetingMap(self.config);
 		if (self.config['map_search']) self.searchMap();
 	}
