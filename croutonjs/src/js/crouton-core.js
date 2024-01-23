@@ -644,6 +644,13 @@ function Crouton(config) {
 			croutonMap.loadPopupMap("bmlt-handlebars-map", meetingDetailsData, self.handlebarMapOptions);
 		}
 	}
+	Crouton.prototype.meetingCount = function(f) {
+		f(self.meetingData.length);
+	}
+	Crouton.prototype.groupCount = function(f) {
+		var groups = self.meetingData.map((m)=>m['worldid_mixed'] !== "" ? m['worldid_mixed'] :m['meeting_name']);
+		f(arrayUnique(groups).length);
+	}
 	Crouton.prototype.filterNext24 = function(filterNow = true) {
 		if (!filterNow) {
 			jQuery("#filter-dropdown-next24").val('a-');
@@ -856,7 +863,7 @@ function Crouton(config) {
 		}
 		return 'bmlt-map';
 	}
-	if ((self.config['show_map'] || self.config['map_search']) && (typeof window.croutonMap === 'undefined')) {
+	if (typeof window.croutonMap === 'undefined') {
 		window.croutonMap = new MeetingMap(self.config);
 		if (self.config['map_search']) self.searchMap();
 	}

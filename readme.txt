@@ -38,7 +38,8 @@ https://demo.bmlt.app/crouton
 
 
 = 3.18.5 =
-* Version bump because last merge was lost
+* Assure croutonMap object created.
+* Add meetingCount and groupCount methods for backwards compatibility in non-wordpress cases.
 
 = 3.18.4 =
 * Do not embed map page when list contains only online meetings (fix for bug #460).
