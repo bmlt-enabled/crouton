@@ -1162,7 +1162,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['extra_meetings'] = $extra_meetings_array;
 
             if (empty($params['meeting_details_href'])) {
-                $params['meeting_details_href'] = strtok($_SERVER["REQUEST_URI"], '?');
+                $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
             }
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
              
