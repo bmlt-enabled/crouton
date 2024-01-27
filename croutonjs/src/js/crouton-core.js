@@ -734,7 +734,6 @@ function Crouton(config) {
 
 		let queryStringChar = '?';
 		if (self.config.meeting_details_href) {
-			console.log(self.config.meeting_details_href);
 			if (self.config.meeting_details_href.indexOf('?') >= 0) queryStringChar = '&';
 		}
 		for (var m = 0; m < meetingData.length; m++) {
