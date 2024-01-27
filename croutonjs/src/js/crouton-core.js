@@ -732,6 +732,10 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
 		crouton_Handlebars.registerPartial("meetingModal", self.config['meeting_modal_template']);
 
+		let queryStringChar = '?';
+		if (self.config.meeting_details_href) {
+			if (self.config.meeting_details_href.indexOf('?') >= 0) queryStringChar = '&';
+		}
 		for (var m = 0; m < meetingData.length; m++) {
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
@@ -826,7 +830,7 @@ function Crouton(config) {
 				if (meetingData[m]['venue_type'] === 2 && self.config.virtual_meeting_details_href ) {
 					meetingData[m]['meeting_details_url'] = self.config.virtual_meeting_details_href;
 				}
-				meetingData[m]['meeting_details_url'] += ('?meeting-id=' + meetingData[m]['id_bigint']
+				meetingData[m]['meeting_details_url'] += queryStringChar + ('meeting-id=' + meetingData[m]['id_bigint']
 													   + '&language=' + self.config.language
 													   + '&time_format=' + encodeURIComponent(self.config.time_format) 
 													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
