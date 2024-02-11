@@ -763,9 +763,11 @@ function Crouton(config) {
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
 			let formatRootServer = self.formatsData.filter((f)=>f['root_server_uri'] == meetingData[m]['root_server_uri']);
+			meetingData[m]['wheelchar'] = false;
 			for (var f = 0; f < formats.length; f++) {
 				for (var g = 0; g < formatRootServer.length; g++) {
 					if (formats[f] === formatRootServer[g]['key_string']) {
+						if (formatRootServer[g]['world_id'] == 'WCHR') meetingData[m]['wheelchair'] = true;
 						formats_expanded.push(
 							{
 								"id": formatRootServer[g]['id'],
@@ -1641,6 +1643,12 @@ function getUniqueFormatsOfType(array, type){
 		}
 		return carry;
 	},[]);
+}
+Crouton.prototype.renderMeetingCount = function() {
+	self = this;
+	self.lock(function() {
+		self.updateMeetingCount()
+	});
 }
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";

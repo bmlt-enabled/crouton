@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.18.7 =
+* Show wheelchair character in first column for meetings with a format that corresponds to NAWS WHEELCHAIR.
+* Use [init_crouton] for pages with [meeting_count] but no other "main" crouton shortcode.
+
 = 3.18.6 =
 * French translation.
 * Correctly handle links when default permalinks are used.
