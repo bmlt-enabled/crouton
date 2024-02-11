@@ -1644,6 +1644,12 @@ function getUniqueFormatsOfType(array, type){
 		return carry;
 	},[]);
 }
+Crouton.prototype.renderMeetingCount = function() {
+	self = this;
+	self.lock(function() {
+		self.updateMeetingCount()
+	});
+}
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
 	var meeting_date_time_obj;
