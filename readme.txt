@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 8.0
 Tested up to: 6.4.2
-Stable tag: 3.18.7
+Stable tag: 3.18.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.18.8 =
+* Prevent wheelchair icon from confusing screen readers
 
 = 3.18.7 =
 * Show wheelchair character in first column for meetings with a format that corresponds to NAWS WHEELCHAIR.
