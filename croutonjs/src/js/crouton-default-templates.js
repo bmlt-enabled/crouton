@@ -108,7 +108,7 @@ var croutonDefaultTemplates = {
             <div class="location-text">{{{this.location_text}}}</div>
             <div class="meeting-address">{{this.formatted_address}}</div>
             <div class="location-information">{{{this.formatted_location_info}}}</div>
-            <a href="https://www.google.com/maps/dir/?api=1&destination={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "google_directions"}}</div></a>
+            <a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "google_directions"}}</div></a>
             <br/>
         {{/isInPersonOrHybrid}}
         {{#isVirtualOrHybrid this}}
