@@ -36,7 +36,7 @@ var croutonDefaultTemplates = {
 		"{{#isNotTemporarilyClosed this}}",
 		"    {{#unless (hasFormats 'VM' this)}}",
 		"        <div>",
-		"            <a onclick='crouton.meetingModal({{this.id_bigint}})' id='map-button' class='btn btn-primary btn-xs'>",
+		"            <a onclick='crouton.meetingModal({{this.id_bigint}})' tabindex='0' href='#' id='map-button' class='btn btn-primary btn-xs'>",
 		"				<span class='glyphicon glyphicon-search' aria-hidden='true'></span>",
 		"				{{getWord 'meeting details'}}",
 		"			</a>",
@@ -66,10 +66,10 @@ var croutonDefaultTemplates = {
 		"{{/if}}"
 	].join('\n'),
 	meeting_modal_template: [
-		"<a onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
+		"<a tabindex='0' href='#' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>",
 	].join('\n'),
 	meetingpage_frame_template: `
-	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;">
+	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;" tabindex="-1" >
 	<div class="modal-content">
         <span class="modal-title">{{getWord "Meeting Details"}}</span><span id="close_meeting_details" class="modal-close">×</span>
 		<table id="meeting-details-table" class="bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
