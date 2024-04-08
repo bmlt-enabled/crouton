@@ -1535,7 +1535,7 @@ crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
 });
 
 crouton_Handlebars.registerHelper('qrCode', function(link, options) {
-	return "<img alt='qrcode' src='https://quickchart.io/qr?size=100&text=" + encodeURIComponent(link) + "'>";
+	return crouton_Handlebars.SafeString("<img alt='qrcode' src='https://quickchart.io/qr?size=100&text=" + encodeURIComponent(link) + "'>");
 });
 
 crouton_Handlebars.registerHelper('formatDataFromArray', function(arr) {
