@@ -85,9 +85,9 @@ var croutonDefaultTemplates = {
     		</tbody>
 		</table>
 		<div>
-			<a id="map-button" class="btn btn-primary btn-xs" href="{{{this.meeting_details_url}}}" target="_blank" rel="noopener noreferrer" style="float:left">
+			<a id="map-button" class="btn btn-primary btn-xs" href="{{{this.meeting_details_url}}}" tabindex="0" target="_blank" rel="noopener noreferrer" style="float:left">
 				{{getWord "Meeting Page"}}</a>
-			<a id="map-button" class="btn btn-primary btn-xs modal-close" style="float:right">
+			<a id="map-button" class="btn btn-primary btn-xs modal-close" tabindex="0" style="float:right">
 				{{getWord "Close"}}</a>
 		</div>
 	</div></div>`,
