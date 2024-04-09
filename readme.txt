@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.18.11 =
+* Improve accessibility
+
 = 3.18.10 =
 * Move QR code generation to a different service.
 * Arabic Translation
