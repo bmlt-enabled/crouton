@@ -297,6 +297,7 @@ function MeetingMap(inConfig) {
 	var g_suspendedFullscreen = false;
 	function closeModalWindow(modal) {
 		gDelegate.modalOff();
+		activeModal = null;
 		if (!modal.classList.contains("modal"))
 			return closeModalWindow(modal.parentNode);
 		modal.style.display = "none";
@@ -307,12 +308,20 @@ function MeetingMap(inConfig) {
 			}
 		}
 	}
+	var activeModal = null;
+	document.addEventListener("keydown", function(event) {
+		if (activeModal && event.key == "Escape") {
+			closeModalWindow(activeModal);
+		}
+	}, true);
 	function openModalWindow(modal) {
 		if (isFullscreen()) {
 			g_suspendedFullscreen = true;
 			toggleFullscreen();
 		}
 		modal.style.display = "block";
+		modal.focus();
+		activeModal = modal;
 		dd = document.getElementById("map-menu-dropdown");
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
