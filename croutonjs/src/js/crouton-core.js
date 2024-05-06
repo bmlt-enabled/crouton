@@ -53,6 +53,7 @@ function Crouton(config) {
 		strict_datafields: true,	  // Only get the datafields that are mentioned in the templates
 		meeting_details_href: '',	  // Link to the meeting details page
 		virtual_meeting_details_href: '', // Link to the virtual meeting details page
+		bmlt2ics: '',				  // URL of feed to generate ICS files from meetings
 		exclude_zip_codes: [],        // List of zip codes to exclude
 		extra_meetings: [],           // List of id_bigint of meetings to include
 		native_lang: '',				  // The implied language of meetings with no explicit language specied.  May be there as second language, but it still doesn't make sense to search for it.
@@ -1597,7 +1598,13 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 		accum += block.fn(i);
 	return accum;
 });
-
+crouton_Handlebars.registerHelper('hasBMLT2ics', function() {
+    return crouton.config['bmlt2ics'].length>0;});
+crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
+crouton_Handlebars.registerPartial('icsButton',
+    '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-sharebutton"><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</div></a>');
+crouton_Handlebars.registerPartial('offerIcsButton',
+    "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }

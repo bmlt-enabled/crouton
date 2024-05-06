@@ -141,7 +141,8 @@ var croutonDefaultTemplates = {
             <br/>
         {{/if}}
         <h4>Contact:</h4>
-        This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a>
+        This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a><br/>
+		{{> offerIcsButton}}
         </td>`,
 	marker_contents_template: 
 	`<h4>{{meeting_name}}</h4>
