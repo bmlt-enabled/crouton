@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.19.0 =
 * Integration with Bmlt2Calendar to provide downloadable ICS files for personal calendars
+* Russian Translation
 
 = 3.18.11 =
 * Improve accessibility
