@@ -643,7 +643,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Inserire una città o un codice postale',
 			'toggle fullscreen mode': 'Attiva/disattiva la modalità a schermo intero',
 			'close': "Close",
-			"bmlt2ics": "Add to your calendar",
+			"bmlt2ics": "Aggiungi al tuo calendario",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
