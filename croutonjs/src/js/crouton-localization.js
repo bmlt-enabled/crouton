@@ -53,6 +53,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'أدخل المدينة أو الرمز البريدي',
 			'toggle fullscreen mode': 'تبديل وضع ملء الشاشة',
 			'close': "قريب",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "صفحة الاجتماع",
 			'meeting details': "تفاصيل الاجتماع"
 		},
@@ -99,6 +100,7 @@ function CroutonLocalization(language) {
 			'google_directions': 'Google directions to meeting',
 			'all': 'All',
 			'menu': 'Menu',
+			"bmlt2ics": "Add to your calendar",
 			'search for meetings': 'Search for meetings',
 			'show meetings near...': 'Show meetings near...',
 			'filter meetings': 'Filter meetings',
@@ -156,6 +158,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Stadt oder PLZ',
 			'toggle fullscreen mode': 'Umschalten Vollbildmodus',
 			'close': "Schliessen",
+			"bmlt2ics": "Zu Kalender hinzufügen",
 			'meeting page': "Meeting Seite",
 			'meeting details': "Genaueres zum Meeting"
 		},
@@ -199,6 +202,7 @@ function CroutonLocalization(language) {
 			"no_meetings_for_this_day": "No meetings for this day.",
 			'css-textalign': '',
 			'css-floatdirection': '',
+			"bmlt2ics": "Add to your calendar",
 			'all': 'All',
 			'menu': 'Menu',
 			'search for meetings': 'Search for meetings',
@@ -261,6 +265,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -314,6 +319,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -360,6 +366,7 @@ function CroutonLocalization(language) {
 			'css-floatdirection': '',
 			'all': 'All',
 			'menu': "Menu",
+			"bmlt2ics": "Add to your calendar",
 			'search for meetings': 'Search for meetings',
 			'show meetings near...': 'Show meetings near...',
 			'filter meetings': 'Filter meetings',
@@ -420,6 +427,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -473,6 +481,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -526,6 +535,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -579,6 +589,7 @@ function CroutonLocalization(language) {
 			"enter a city or zip code": "Entrer une ville ou un code postal",
 			"toggle fullscreen mode": "Basculer en mode plein écran",
 			"close": "Fermer",
+			"bmlt2ics": "Ajouter au calendrier",
 			"meeting page": "Page de la réunion",
 			"meeting details": "Détails de la réunion"
 		},
@@ -632,6 +643,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Inserire una città o un codice postale',
 			'toggle fullscreen mode': 'Attiva/disattiva la modalità a schermo intero',
 			'close': "Close",
+			"bmlt2ics": "Aggiungi al tuo calendario",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -685,6 +697,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -738,6 +751,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		},
@@ -784,6 +798,7 @@ function CroutonLocalization(language) {
 			'css-floatdirection': '',
 			'all': 'All',
 			'menu': "Menu",
+			"bmlt2ics": "Add to your calendar",
 			'search for meetings': 'Search for meetings',
 			'show meetings near...': 'Show meetings near...',
 			'filter meetings': 'Filter meetings',
@@ -815,12 +830,15 @@ function CroutonLocalization(language) {
 			"pan_and_zoom": "Pan + Zoom",
 			"languages": "Языки",
 			"common_needs": "Common Needs",
-			"meeting_count": "Weekly Meetings:",
-			"venue_types": "Venue Types",
-			"venue_type_choices": {
-				IN_PERSON: "In Person",
-				VIRTUAL: "Virtual",
-			},
+			"meeting_count": "Еженедельные собрания:",
+			"venue_types": "Типы собрания",
+            "venue_type_choices": {
+                IN_PERSON: "Офлайн",
+                VIRTUAL: "Онлайн",
+            },
+            "share": "поделиться",
+            'tabular': "Как таблица",
+            'google_directions': 'На карте',
 			"service_body_types": {
 				AS: "Area Service Committee",
 				RS: "Regional Service Committee",
@@ -829,23 +847,21 @@ function CroutonLocalization(language) {
 				LS: "Local Service Forum",
 				GS: "Group Support Forum"
 			},
-			"share": "share",
-			'tabular': "As table",
-			'google_directions': 'Google directions to meeting',
-			"no_meetings_for_this_day": "No meetings for this day.",
+			"no_meetings_for_this_day": "В этот день собраний нет",
 			'css-textalign': '',
 			'css-floatdirection': '',
 			'all': 'All',
-			'menu': "Menu",
-			'search for meetings': 'Search for meetings',
-			'show meetings near...': 'Show meetings near...',
-			'filter meetings': 'Filter meetings',
-			'visible meeting list': 'Visible meetings as list',
-			'enter a city or zip code': 'Enter a city or zip code',
-			'toggle fullscreen mode': 'Toggle fullscreen mode',
-			'close': "Close",
-			'meeting page': "Meeting Page",
-			'meeting details': "Meeting Details"
+			'menu': "Меню",
+			"bmlt2ics": "Добавить в календарь",
+			'search for meetings': 'Поиск собраний',
+			'show meetings near...': 'Показывать собрания рядом с...',
+			'filter meetings': 'Фильтровать собрания',
+			'visible meeting list': 'Собрания в виде списка',
+			'enter a city or zip code': 'Введите город или почтовый индек',
+			'toggle fullscreen mode': 'Включить полноэкранный режим',
+			'close': "Закрыть",
+			'meeting page': "Страница собрания",
+			'meeting details': "Подробности собрания"
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -897,6 +913,7 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
+			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details"
 		}

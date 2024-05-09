@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.18.12
+Version: 3.19.0
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -1171,7 +1171,10 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
              
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
-            
+            if (!function_exists('is_plugin_active')) {
+                include_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+            $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php')) ? get_feed_link('bmlt2ics') : "";
             $params = apply_filters('crouton_configuration', $params);
             
             return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
