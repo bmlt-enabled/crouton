@@ -24,7 +24,7 @@ if (!class_exists("Crouton")) {
          * @var mixed[]
          */
         public $options = array();
-        public $croutonBlockInitialized = false;
+        public $footerScript = '';
         public static $HOUR_IN_SECONDS = 3600;
         public $has_handlebars = false;
         public $themes = [
@@ -361,11 +361,12 @@ if (!class_exists("Crouton")) {
             }
             return "";
         }
-        private $footerScript;
         private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
-            $this->footerScript = $this->computeInitializeCroutonBlock($renderCmd, $config, $mapConfig);
-            add_action('wp_footer', array($this, 'printFooterScript'), 99, 0);
+            if (empty($this->footerScript)) {
+                $this->footerScript = $this->computeInitializeCroutonBlock($renderCmd, $config, $mapConfig);
+                add_action('wp_footer', array($this, 'printFooterScript'), 99, 0);
+            }
             return '';
         }
         public function printFooterScript()
@@ -374,13 +375,8 @@ if (!class_exists("Crouton")) {
         }
         private function computeInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
-            if (!$this->croutonBlockInitialized) {
-                $this->croutonBlockInitialized = true;
-                $croutonMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
-            } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
-            }
+            $croutonMap =  $this->getMapInitialization($mapConfig);
+            return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
         }
 
         private function renderTable($atts)
