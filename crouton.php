@@ -361,7 +361,18 @@ if (!class_exists("Crouton")) {
             }
             return "";
         }
+        private $footerScript;
         private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
+        {
+            $this->footerScript = $this->computeInitializeCroutonBlock($renderCmd, $config, $mapConfig);
+            add_action('wp_footer', array($this, 'printFooterScript'), 99, 0);
+            return '';
+        }
+        public function printFooterScript()
+        {
+            echo $this->footerScript;
+        }
+        private function computeInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
