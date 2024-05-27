@@ -291,7 +291,7 @@ function Crouton(config) {
 				clearInterval(lock_id);
 				callback();
 			}
-		}, 100)
+		}, 100);
 	};
 
 	self.dayTab = function(day_id) {
@@ -498,7 +498,7 @@ function Crouton(config) {
 		callback();
 	};
 	self.updateMeetingCount = function(showingNow=null) {
-		self = this;
+		var self = this;
 		let meetingCount = self.meetingData.length;
 		if (self.meetingCountCallback) self.meetingCountCallback(meetingCount);
 		if (self.groupCountCallback) self.groupCountCallback(
@@ -1007,7 +1007,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	croutonMap.showMap(true);
 }
 Crouton.prototype.searchMap = function() {
-	self = this;
+	var self = this;
 	if (!self.config.map_search || typeof self.config.map_search !== 'object') {
 		self.config.map_search = {
 			width: -50,
@@ -1652,7 +1652,7 @@ function getUniqueFormatsOfType(array, type){
 	},[]);
 }
 Crouton.prototype.renderMeetingCount = function() {
-	self = this;
+	var self = this;
 	self.lock(function() {
 		self.updateMeetingCount()
 	});

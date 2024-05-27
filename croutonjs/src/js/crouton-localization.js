@@ -132,7 +132,7 @@ function CroutonLocalization(language) {
 			"meeting_count": "Wöchentliche Meetings:",
 			"venue_types": "Treffpunktarten",
 			"venue_type_choices": {
-				IN_PERSON: "Präsens-Meetings",
+				IN_PERSON: "Präsenz-Meetings",
 				VIRTUAL: "Online-Meetings",
 			},
 			"service_body_types": {
