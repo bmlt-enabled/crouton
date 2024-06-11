@@ -21,6 +21,27 @@ function MeetingMap(inConfig) {
 	function apiLoadedCallback() {
 		loadedCallbackFunction(...loadedCallbackArgs);
 	}
+
+	function retrieveGeolocation() {
+		return new Promise((resolve, reject) => {
+			if (window.storedGeolocation) {
+				resolve(window.storedGeolocation);
+			} else if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition((position) => {
+					window.storedGeolocation = {
+						latitude: position.coords.latitude,
+						longitude: position.coords.longitude
+					};
+					resolve(window.storedGeolocation);
+				}, (error) => {
+					reject(new Error('Error getting geolocation: ' + error.message));
+				});
+			} else {
+				reject(new Error('Geolocation is not supported by this browser.'));
+			}
+		});
+	}
+
 	/************************************************************************************//**
 	 *	\brief Load the map and set it up.													*
 	 ****************************************************************************************/
@@ -126,14 +147,15 @@ function MeetingMap(inConfig) {
 		var controlDiv = document.createElement('div');
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(function (position) {
-					coords = position.coords;
-					gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
-				});
-			}
+			retrieveGeolocation().then(position => {
+				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
+			}).catch(error => {
+				console.error(error.message);
+				$('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
+			});
 			dropdownContent = document.getElementById("map-menu-dropdown").style.display = "none";
 		});
+
 		controlDiv.querySelector("#lookupLocation").addEventListener('click', showGeocodingDialog);
 		controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
 		controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
@@ -193,17 +215,15 @@ function MeetingMap(inConfig) {
 			searchResponseCallback(fitDuringFilter);
 	};
 	function nearMeSearch() {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				function (position) {
-					showThrobber();
-					crouton.searchByCoordinates(position.coords.latitude, position.coords.longitude, config.map_search.width);
-				},
-				showBmltSearchDialog
-			)
-		}
+		retrieveGeolocation().then(position => {
+			showThrobber();
+			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
+		}).catch(error => {
+			console.error(error.message);
+		});
+		showBmltSearchDialog();
 		closeModalWindow(gSearchModal);
-	}
+	};
 	function clickSearch(e) {
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
