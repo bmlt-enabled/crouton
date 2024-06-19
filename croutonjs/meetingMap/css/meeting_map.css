@@ -272,6 +272,9 @@ div.bmlt_map_container_div  button {
   float: right;
   font-size: 28px;
   font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 5px;
   line-height: 0;
 }
 .table-close {
@@ -284,6 +287,16 @@ div.bmlt_map_container_div  button {
   color: white;
   font-weight:bold;
   font-size: 20px;
+}
+.modal-search {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.modal-search .filter-button {
+  width: 100%
+}
+#goto-button {
+  margin-top: 10px;
 }
 .modal-close:hover,
 .modal-close:focus {
