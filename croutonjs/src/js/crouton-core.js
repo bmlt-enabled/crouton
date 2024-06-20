@@ -4,6 +4,27 @@ crouton_Handlebars.registerHelper("startup", () => '');
 crouton_Handlebars.registerHelper("enrich", () => '');
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
+
+const retrieveGeolocation = () => {
+	return new Promise((resolve, reject) => {
+		if (window.storedGeolocation) {
+			resolve(window.storedGeolocation);
+		} else if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition((position) => {
+				window.storedGeolocation = {
+					latitude: position.coords.latitude,
+					longitude: position.coords.longitude
+				};
+				resolve(window.storedGeolocation);
+			}, (error) => {
+				reject(new Error('Error getting geolocation: ' + error.message));
+			});
+		} else {
+			reject(new Error('Geolocation is not supported by this browser.'));
+		}
+	});
+};
+
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -250,18 +271,14 @@ function Crouton(config) {
 		}
 
 		if (self.config['distance_search'] !== 0) {
-			if (navigator.geolocation) {
-				return new Promise(function (resolve, reject) {
-					navigator.geolocation.getCurrentPosition(resolve, reject);
-				}).then(function(position) {
-					url += '&lat_val=' + position.coords.latitude
-						+ '&long_val=' + position.coords.longitude
-						+ '&sort_results_by_distance=1';
-
-					url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
-					return self.getMeetings(url);
-				});
-			}
+			return retrieveGeolocation().then((position) => {
+				url += '&lat_val=' + position.latitude + '&long_val=' + position.longitude + '&sort_results_by_distance=1';
+				url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
+				return self.getMeetings(url);
+			}).catch((error) => {
+				console.error(error.message);
+				return self.getMeetings(url); // Proceed without geolocation if error occurs
+			});
 		} else if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
 			return self.getMeetings(url);
@@ -479,11 +496,11 @@ function Crouton(config) {
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback);
 	}
 	self.getCurrentLocation = function(callback) {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(callback, self.errorHandler);
-		} else {
-			$('.geo').removeClass("hide").addClass("show").html('<p>Geolocation is not supported by your browser</p>');
-		}
+		retrieveGeolocation().then(position => {
+			callback(position);
+		}).catch(error => {
+			jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
+		});
 	};
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
@@ -561,8 +578,8 @@ function Crouton(config) {
 	}
 
 	self.showLocation = function(position) {
-		var latitude = position.coords.latitude;
-		var longitude = position.coords.longitude;
+		var latitude = position.latitude;
+		var longitude = position.longitude;
 		var distanceUnit;
 		var distanceCalculation;
 
