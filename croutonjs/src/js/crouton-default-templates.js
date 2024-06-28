@@ -72,7 +72,7 @@ var croutonDefaultTemplates = {
 	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;" tabindex="-1" >
 	<div class="modal-content">
         <span class="modal-title">{{getWord "Meeting Details"}}</span><span id="close_meeting_details" class="modal-close">×</span>
-		<table id="meeting-details-table" class="bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
+		<table id="meeting-details-table" class="bmlt-table  {{getWord 'css-direction'}} table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
 			<thead>
         		<th id="meeting-details-title" colspan="2">
 		    		{{> meetingpageTitleTemplate this}}
