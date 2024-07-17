@@ -1,25 +1,25 @@
 <div id="bmlt-tabs-table">
-    <div id="bmlt-header" class="bmlt-header hide" {{{getWord 'css-textAlign'}}}>
+    <div id="bmlt-header" class="bmlt-header {{getWord 'css-direction'}} hide">
         {{> header}}
     </div>
 	{{#each this.meetings.buttonFilters}}
-		<div id="byfield_{{ @key }}" class="bmlt-page hide" >
+		<div id="byfield_{{ @key }}" class="bmlt-page {{getWord 'css-direction'}} hide" >
 			{{> byfields this }}
 		</div>
 	{{/each}}
     {{#each this.meetings.buttonFormatFilters}}
-		<div id="byfield_{{ @key }}" class="bmlt-page hide">
+		<div id="byfield_{{ @key }}" class="bmlt-page {{getWord 'css-direction'}} hide">
 			{{> byfields this }}
 		</div>
 	{{/each}}
     {{#if this.config.map_page }}
-    	<div id="byfield_embeddedMapPage" class="bmlt-map bmlt-page hide">
+    	<div id="byfield_embeddedMapPage" class="bmlt-map bmlt-page {{getWord 'css-direction'}} hide">
 		</div>
     {{/if}}
-    <div id="byday" class="bmlt-page hide">
+    <div id="byday" class="bmlt-page {{getWord 'css-direction'}} hide">
         {{> bydays this.meetings.bydays}}
     </div>
-    <div id="tabs-content" class="bmlt-page">
+    <div id="tabs-content" class="bmlt-page {{getWord 'css-direction'}}">
         {{> weekdays this.meetings.weekdays}}
     </div>
     {{> meetingCountTemplate }}

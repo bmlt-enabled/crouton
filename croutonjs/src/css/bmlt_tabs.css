@@ -634,3 +634,30 @@ table.tablesaw {
 #meeting-details-title {
 	font-size: 1.5em;
 }
+.bmlt-rtl {
+	direction: rtl;
+}
+#bmlt-header.bmlt-rtl {
+	text-align:right; 
+}
+#nav-days.bmlt-rtl {
+	float:right; 
+}
+#nav-days.bmlt-rtl li {
+	float:right; 
+}
+#bmlt-tabs .bmlt-rtl .bmlt-column1 {
+    text-align: right;
+}
+#bmlt-tabs .bmlt-rtl .bmlt-column2 {
+    text-align: right;
+}
+.bmlt-rtl .marker_div_meeting {
+    text-align: right !important;
+}
+.bmlt-rtl #meeting-details-title {
+    text-align: right;
+}
+.bmlt-rtl #meeting-details-contents td {
+    text-align: right !important;
+}

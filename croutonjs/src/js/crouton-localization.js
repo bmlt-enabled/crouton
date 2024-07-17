@@ -38,8 +38,7 @@ function CroutonLocalization(language) {
 				LS: "خدمة المنتديات المحلية",	
 				GS: "Group Support Forum",
 			},
-			'css-textalign': 'style="text-align:right;"',
-			'css-floatdirection': 'style="float:right;"',
+			"css-direction": 'bmlt-rtl',
 			"share": "مشاركة",
 			'tabular': "جدول",
 			'google_directions': 'اتجاهات جوجل للاجتماع',
@@ -524,8 +523,7 @@ function CroutonLocalization(language) {
 			'tabular': "As table",
 			'google_directions': 'Google directions to meeting',
 			"no_meetings_for_this_day": "No meetings for this day.",
-			'css-textalign': 'style="text-align:right;"',
-			'css-floatdirection': 'style="float:right;"',
+			"css-direction": 'bmlt-rtl',
 			'all': 'All',
 			'menu': "Menu",
 			'search for meetings': 'Search for meetings',
@@ -926,7 +924,10 @@ CroutonLocalization.prototype.getDayOfTheWeekWord = function(day_id) {
 
 CroutonLocalization.prototype.getWord = function(word) {
 	const ret = this.words[this.language][word.toLowerCase()];
-	if (typeof ret === 'undefined') return word;
+	if (typeof ret === 'undefined') {
+		if (word === 'css-direction') return '';
+		return word;
+	}
 	return ret;
 };
 

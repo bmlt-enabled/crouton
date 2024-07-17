@@ -24,11 +24,11 @@
         {{/each}}
     </div>
 </div>
-<div id="table_page" class="bmlt-page hide" >
+<div id="table_page" class="bmlt-page {{getWord 'css-direction'}} hide" >
     <div id="bmlt-maptable-header"><span class="map-list-title">{{getWord 'Visible meeting list'}}</span><span id="close_table" class="table-close">X</span></div>
     <div id="bmlt-maptable-div"  style="position:relative; overflow-y:scroll;">
         
-        <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+        <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
         {{#each this.meetings.bydays}}
             {{> meetings this.meetings }}
         {{/each}}

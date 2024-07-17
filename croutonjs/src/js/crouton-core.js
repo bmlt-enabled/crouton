@@ -888,7 +888,7 @@ function Crouton(config) {
 	};
 	self.createBmltMapElement = function() {
 		if (!document.getElementById('bmlt-map')) {
-			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bootstrap-bmlt bmlt-map bmlt_map_container_div'></div>");
+			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bootstrap-bmlt bmlt-map "+self.localization.getWord('css-direction')+" bmlt_map_container_div'></div>");
 		}
 		return 'bmlt-map';
 	}

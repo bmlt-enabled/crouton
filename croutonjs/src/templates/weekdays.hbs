@@ -2,7 +2,7 @@
     {{#each this}}
         <div id='tab{{ day }}' class='tab-pane'>
             <div id="bmlt-table-div">
-                <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+                <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
                     <tbody class="weekdays.hbs">
 						{{#greaterThan this.meetings.length 0}}
 							{{> meetings this.meetings }}

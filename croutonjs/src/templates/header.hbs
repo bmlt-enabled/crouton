@@ -29,9 +29,9 @@
 
 {{#if this.config.has_tabs}}
     {{#ifEquals this.config.view_by "weekdays"}}
-        <div class="bmlt-page show" id="nav-days" {{{getWord 'css-floatDirection'}}}>
+        <div class="bmlt-page {{getWord 'css-direction'}} show" id="nav-days">
     {{else}}
-        <div class="bmlt-page hide" id="nav-days" {{{getWord 'css-floatDirection'}}}>
+        <div class="bmlt-page {{getWord 'css-direction'}} hide" id="nav-days">
     {{/ifEquals}}
         <ul class="nav nav-tabs">
             {{#each this.config.day_sequence}}

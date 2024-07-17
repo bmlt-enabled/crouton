@@ -1,5 +1,5 @@
 <div id="bmlt-table-div">
-    <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack'>
+    <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
         {{#each this}}
             <tbody class="bmlt-data-rows h-{{this.day}}">
 			{{#unless this.hide}}
