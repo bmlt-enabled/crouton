@@ -189,7 +189,7 @@ if (!class_exists("MeetingMap/Controller")) {
         private function createJavascriptConfig($options, $encode_flags = 0)
         {
             $ret = [];
-            $templatesDir = empty($options['templatesDir']) ? $this->hsc(plugin_dir_url(__FILE__)) : $options['templatesDir'];
+            $templatesDir = $this->hsc($options['template_path']);
             //$ret .= 'BMLTPlugin_files_uri:\''.$this->hsc($this->getPluginPath()).'?\',' . (defined('_DEBUG_MODE_') ? "\n" : '');
             $ret["BMLTPlugin_images"] = $templatesDir."map_images";
             $ret["BMLTPlugin_lang_dir"] = $templatesDir."lang";

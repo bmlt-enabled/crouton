@@ -186,7 +186,19 @@ if (!class_exists("Crouton")) {
             if (!isset($_GET["croutonjs-emitter"])) {
                 return;
             }
-            $content = $this->renderTable([], JSON_PRETTY_PRINT);
+            $shortcode = isset($_GET["shortcode"]) ? $_GET["shortcode"] : 'bmlt_tabs';
+            $content = "";
+            switch ($shortcode) {
+                case 'crouton_map':
+                    $content = $this->renderMap([], true, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_map':
+                    $content = $this->renderMap([], false, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_tabs':
+                    $content = $this->renderTable([], JSON_PRETTY_PRINT);
+                    break;
+            }
             header('Content-Type: text/javascript');
             header('Content-Length: '.strlen($content));
             header('Cache-Control: public, must-revalidate, max-age=0');
@@ -378,35 +390,43 @@ if (!class_exists("Crouton")) {
             }
             return "";
         }
-        private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
+        private function getInitializeCroutonBlock($renderCmd, $scriptTag, $config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 $croutonMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
+                $str = "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
+                return $scriptTag ? $this->addScriptTag($str) : $str;
             } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
+                if (isset($config)) {
+                    $str = "jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });";
+                    return $scriptTag ? $this->addScriptTag($str) : $str;
+                }
+                return "";
             }
         }
-
+        private function addScriptTag($str)
+        {
+            return "<script type='text/javascript'>$str</script>";
+        }
         private function renderTable($atts, $encode_flags = 0)
         {
-            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", ...$this->getCroutonJsConfig($atts, false, $encode_flags));
+            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", $encode_flags==0, ...$this->getCroutonJsConfig($atts, false, $encode_flags));
         }
 
-        private function renderMap($atts, $croutonMap = true)
+        private function renderMap($atts, $croutonMap = true, $encode_flags = 0)
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, true));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", $encode_flags==0, ...$this->getCroutonJsConfig($atts, true, $encode_flags));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
-            return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render(true);", $encode_flags==0, ...$this->getCroutonJsConfig($atts, false, $encode_flags));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", true, ...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
@@ -949,6 +969,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                     <ul>
                         <li>
+                            Enter a shortcode<br/>
+                            <select id="shortcode">
+                                <option value="bmlt_tabs" selected>bmlt_tabs</option>
+                                <option value="crouton_map">crouton_map</option>
+                                <option value="bmlt_map">bmlt_map</option>
+                            </select>
                             <input type="button" id="emitJS" value="Generate JS" class="button-secondary" />
                         </li>
                         <li>
@@ -961,7 +987,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     </ul>
                     <script type="text/javascript">
                         jQuery("#emitJS").click(async function() {
-                            const url = "<?php echo get_site_url()."?croutonjs-emitter=1"; ?>";
+                            let url = "<?php echo get_site_url()."?croutonjs-emitter=1"; ?>"+'&shortcode='+jQuery("#shortcode").val();
                             try {
                                 const response = await fetch(url);
                                 if (!response.ok) {
@@ -969,7 +995,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                                 }
 
                                 const emitted = await response.text();
-                                jQuery("#emittedJS").val(emitted);
+                                jQuery("#emittedJS").val("<div id='bmlt-tabs' class='bmlt-tabs hide'></div>\n<script type='text/javascript'>"+emitted+"<\/script>");
                             } catch (error) {
                                 console.error(error.message);
                             }
@@ -1117,7 +1143,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         }
         private function getCroutonJsConfig($atts, $croutonMap = false, $encode_flags = 0)
         {
-            $encode_flags = JSON_PRETTY_PRINT;
             // Pulling simple values from options
             $defaults = array_merge($this->shortCodeOptions, $this->meetingMapController->getDefaultOptions());
             foreach ($defaults as $key => $value) {
@@ -1193,7 +1218,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
-            $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
+            $params['template_path'] = $encode_flags ? "https://cdn.jsdelivr.net/npm/@bmlt-enabled/croutonjs/templates"
+                : plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : 'jack';
             $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
