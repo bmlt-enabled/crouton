@@ -967,6 +967,19 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             </div>
             <div id="croutonjs-config" class="tab-content">
                 <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                    <h3>Crouton outside of Wordpress</h3>
+                    <p>This is intended as a tool to help people properly configure Crouton on another site,
+                        generally one that uses a framework other than Wordpress.</p>
+                    <p>There are two alternatives.  You may use the form below to generate a fragment of HTML 
+                        that you can copy to your clipboard and paste into the external site.  Alternatively, you can 
+                        insert the Crouton configuration using a HTML &lt;script&gt; tag as follows 
+                    </p>
+                    <code>
+                    &lt;script type="text/javascript" src="<?php echo get_site_url()."?croutonjs-emitter=1&shortcode=bmlt_tabs"; ?>"&gt;  &lt;/script&gt;
+                    </code>
+                    <p>Any of the three shortcodes given below can replace the "bmlt_tabs" in this string, and additional parameters in the query string are also allowed,
+                    just like any other crouton call.</p>
+                    <p></p>
                     <ul>
                         <li>
                             Enter a shortcode<br/>
