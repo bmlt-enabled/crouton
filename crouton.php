@@ -176,9 +176,38 @@ if (!class_exists("Crouton")) {
                     &$this,
                     "bmltHandlebar"
                 ));
+                add_action('plugins_loaded', array(
+                    &$this,
+                    'emitJavascript' ));
             }
         }
-
+        public function emitJavascript()
+        {
+            if (!isset($_GET["croutonjs-emitter"])) {
+                return;
+            }
+            $shortcode = isset($_GET["shortcode"]) ? $_GET["shortcode"] : 'bmlt_tabs';
+            $content = "";
+            switch ($shortcode) {
+                case 'crouton_map':
+                    $content = $this->renderMap([], true, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_map':
+                    $content = $this->renderMap([], false, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_tabs':
+                    $content = $this->renderTable([], JSON_PRETTY_PRINT);
+                    break;
+            }
+            header('Content-Type: text/javascript');
+            header('Content-Length: '.strlen($content));
+            header('Cache-Control: public, must-revalidate, max-age=0');
+            header('Pragma: public');
+            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+            header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+            echo $content;
+            exit;
+        }
         private function hasShortcode()
         {
             $post_to_check = get_post(get_the_ID());
@@ -361,35 +390,43 @@ if (!class_exists("Crouton")) {
             }
             return "";
         }
-        private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
+        private function getInitializeCroutonBlock($renderCmd, $scriptTag, $config, $mapConfig)
         {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 $croutonMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
+                $str = "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
+                return $scriptTag ? $this->addScriptTag($str) : $str;
             } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
+                if (isset($config)) {
+                    $str = "jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });";
+                    return $scriptTag ? $this->addScriptTag($str) : $str;
+                }
+                return "";
             }
         }
-
-        private function renderTable($atts)
+        private function addScriptTag($str)
         {
-            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", ...$this->getCroutonJsConfig($atts));
+            return "<script type='text/javascript'>$str</script>";
+        }
+        private function renderTable($atts, $encode_flags = 0)
+        {
+            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", $encode_flags==0, ...$this->getCroutonJsConfig($atts, false, $encode_flags));
         }
 
-        private function renderMap($atts, $croutonMap = true)
+        private function renderMap($atts, $croutonMap = true, $encode_flags = 0)
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, true));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", $encode_flags==0, ...$this->getCroutonJsConfig($atts, true, $encode_flags));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
-            return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render(true);", $encode_flags==0, ...$this->getCroutonJsConfig($atts, false, $encode_flags));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", true, ...$this->getCroutonJsConfig($atts));
         }
 
         public function meetingCount($atts)
@@ -607,6 +644,7 @@ jQuery(document).ready(function() {
                         <a href="#crouton-ui" class="nav-tab">Crouton UI</a>
                         <a href="#crouton-map" class="nav-tab">Map</a>
                         <a href="#crouton-templates" class="nav-tab">Templates</a>
+                        <a href="#croutonjs-config" class="nav-tab">CroutonJS Configuration</a>
                     </nav>
                 <div id="bmlt-query" class="tab-content">
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
@@ -927,6 +965,60 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         </ul>
                     </div>
             </div>
+            <div id="croutonjs-config" class="tab-content">
+                <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
+                    <h3>Crouton outside of Wordpress</h3>
+                    <p>This is intended as a tool to help people properly configure Crouton on another site,
+                        generally one that uses a framework other than Wordpress.</p>
+                    <p>There are two alternatives.  You may use the form below to generate a fragment of HTML 
+                        that you can copy to your clipboard and paste into the external site.  Alternatively, you can 
+                        insert the Crouton configuration using a HTML &lt;script&gt; tag as follows 
+                    </p>
+                    <code>
+                    &lt;script type="text/javascript" src="<?php echo get_site_url()."?croutonjs-emitter=1&shortcode=bmlt_tabs"; ?>"&gt;  &lt;/script&gt;
+                    </code>
+                    <p>Any of the three shortcodes given below can replace the "bmlt_tabs" in this string, and additional parameters in the query string are also allowed,
+                    just like any other crouton call.</p>
+                    <p></p>
+                    <ul>
+                        <li>
+                            Enter a shortcode<br/>
+                            <select id="shortcode">
+                                <option value="bmlt_tabs" selected>bmlt_tabs</option>
+                                <option value="crouton_map">crouton_map</option>
+                                <option value="bmlt_map">bmlt_map</option>
+                            </select>
+                            <input type="button" id="emitJS" value="Generate JS" class="button-secondary" />
+                        </li>
+                        <li>
+                            <textarea id="emittedJS" class="javascriptCode" cols="100" rows="40" readonly></textarea>
+                        </li>
+
+                        <li>
+                                <input type="button" id="copyToClipboard" value="Copy to clipboard" class="button-secondary" />
+                        </li>
+                    </ul>
+                    <script type="text/javascript">
+                        jQuery("#emitJS").click(async function() {
+                            let url = "<?php echo get_site_url()."?croutonjs-emitter=1"; ?>"+'&shortcode='+jQuery("#shortcode").val();
+                            try {
+                                const response = await fetch(url);
+                                if (!response.ok) {
+                                       throw new Error(`Response status: ${response.status}`);
+                                }
+
+                                const emitted = await response.text();
+                                jQuery("#emittedJS").val("<div id='bmlt-tabs' class='bmlt-tabs hide'></div>\n<script type='text/javascript'>"+emitted+"<\/script>");
+                            } catch (error) {
+                                console.error(error.message);
+                            }
+                        });
+                        jQuery("#copyToClipboard").click(async function() {
+                            navigator.clipboard.writeText(jQuery("#emittedJS").val());
+                        });
+                    </script>
+                </div>
+            </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
                 <br/><br/>
@@ -1062,7 +1154,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
             return $all_meetings;
         }
-        private function getCroutonJsConfig($atts, $croutonMap = false)
+        private function getCroutonJsConfig($atts, $croutonMap = false, $encode_flags = 0)
         {
             // Pulling simple values from options
             $defaults = array_merge($this->shortCodeOptions, $this->meetingMapController->getDefaultOptions());
@@ -1139,7 +1231,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             }
 
             $params['custom_query'] = $this->getCustomQuery($params['custom_query']);
-            $params['template_path'] = plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
+            $params['template_path'] = $encode_flags ? "https://cdn.jsdelivr.net/npm/@bmlt-enabled/croutonjs/templates"
+                : plugin_dir_url(__FILE__) . 'croutonjs/dist/templates/';
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : 'jack';
             $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
@@ -1152,7 +1245,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $mapParams['google_api_key'] = $params['google_api_key'];
             $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
-            if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
+            if (isset($this->options['extra_meetings']) && is_array($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
                     $data = array(" [", "]");
                     array_push($extra_meetings_array, str_replace($data, "", $value));
@@ -1177,7 +1270,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php')) ? get_feed_link('bmlt2ics') : "";
             $params = apply_filters('crouton_configuration', $params);
             
-            return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
+            return [json_encode($params, $encode_flags), $this->meetingMapController->getMapJSConfig($params, $croutonMap, $encode_flags)];
         }
     }
     //End Class Crouton
