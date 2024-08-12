@@ -315,6 +315,7 @@ function MeetingMap(inConfig) {
 		}, {});
 	}
 	var g_suspendedFullscreen = false;
+	var g_overflowX;
 	function closeModalWindow(modal) {
 		gDelegate.modalOff();
 		activeModal = null;
@@ -327,6 +328,7 @@ function MeetingMap(inConfig) {
 				toggleFullscreen();
 			}
 		}
+		document.getElementsByTagName("BODY")[0].style.overflowX = g_overflowX;
 	}
 	var activeModal = null;
 	document.addEventListener("keydown", function(event) {
@@ -345,6 +347,8 @@ function MeetingMap(inConfig) {
 		dd = document.getElementById("map-menu-dropdown");
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
+		g_overflowX = document.getElementsByTagName("BODY")[0].style.overflowX;
+		document.getElementsByTagName("BODY")[0].style.overflowX = 'hidden';
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
