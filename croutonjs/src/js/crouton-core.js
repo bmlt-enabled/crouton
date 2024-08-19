@@ -898,7 +898,6 @@ function Crouton(config) {
 		window.croutonMap = new MeetingMap(self.config);
 		if (self.config['map_search']) self.searchMap();
 	}
-	self.meetingSearch();
 }
 
 Crouton.prototype.setConfig = function(config) {

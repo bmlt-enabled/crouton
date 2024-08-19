@@ -218,11 +218,11 @@ function MeetingMap(inConfig) {
 		retrieveGeolocation().then(position => {
 			showThrobber();
 			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
+			if (activeModal == gSearchModal) closeModalWindow(gSearchModal);
 		}).catch(error => {
 			console.error(error.message);
+			if (activeModal != gSearchModal) showBmltSearchDialog();
 		});
-		showBmltSearchDialog();
-		closeModalWindow(gSearchModal);
 	};
 	function clickSearch(e) {
 		gDelegate.clickSearch(e, function(lat,lng) {
