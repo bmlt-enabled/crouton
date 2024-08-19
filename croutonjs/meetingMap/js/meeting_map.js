@@ -329,6 +329,10 @@ function MeetingMap(inConfig) {
 			}
 		}
 		document.getElementsByTagName("BODY")[0].style.overflowX = g_overflowX;
+		const scrollY = document.body.style.top;
+		document.getElementsByTagName("BODY")[0].style.position = '';
+		document.getElementsByTagName("BODY")[0].style.top = '';
+		window.scrollTo(0, parseInt(scrollY || '0') * -1);
 	}
 	var activeModal = null;
 	document.addEventListener("keydown", function(event) {
@@ -348,7 +352,10 @@ function MeetingMap(inConfig) {
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
 		g_overflowX = document.getElementsByTagName("BODY")[0].style.overflowX;
+		const newTop = -window.scrollY+'px';
 		document.getElementsByTagName("BODY")[0].style.overflowX = 'hidden';
+		document.getElementsByTagName("BODY")[0].style.position = 'fixed';
+		document.getElementsByTagName("BODY")[0].style.top = newTop;
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
