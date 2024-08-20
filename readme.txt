@@ -37,7 +37,7 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.19.3 =
-* Retrieve parent service body when using [crouton_map].
+* Retrieve infos regarding parent service body.
 * On mobile devices, the meeting details modal can be swiped left or right to iterate through the list. 
 
 = 3.19.2 =

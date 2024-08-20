@@ -842,6 +842,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
     <li>serviceBodyDescription</li>
     <li>serviceBodyContactEmail (must be comfigured in root server)</li>
     <li>serviceBodyType</li>
+    <li>parentServiceBodyUrl</li>
+    <li>parentServiceBodyPhone</li>
+    <li>parentServiceBodyName</li>
+    <li>parentServiceBodyDescription</li>
+    <li>parentServiceBodyType</li>
 </ul>
         </p>
         <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  

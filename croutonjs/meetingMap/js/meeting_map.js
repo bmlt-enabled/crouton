@@ -225,6 +225,7 @@ function MeetingMap(inConfig) {
 		});
 	};
 	function clickSearch(e) {
+		croutonMap.showMap();
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);

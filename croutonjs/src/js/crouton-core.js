@@ -67,7 +67,6 @@ function Crouton(config) {
 		has_meeting_count: false,	  // Shows the meeting count
 		show_distance: false,         // Determines distance on page load
 		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
-		force_service_body_parents: false, // Always get the service body parent data
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
 		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
@@ -124,7 +123,6 @@ function Crouton(config) {
 				self.config.refresh_map=1;
 				self.config.show_map = 1;
 				self.reset();
-				self.config.force_service_body_parents = true;
 				self.render();
 				/*
 				croutonMap.reload(self.meetingData);
@@ -561,7 +559,7 @@ function Crouton(config) {
 		});
 	}
 	self.getServiceBodies = function(service_bodies_id) {
-		var requires_parents = self.config.has_regions || self.config.force_service_body_parents;
+		const requires_parents = true;
 
 		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
 			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
