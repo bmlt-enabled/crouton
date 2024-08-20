@@ -1025,7 +1025,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
 	document.body.appendChild(mm);
-	croutonMap.openModalWindow(mm);
+	croutonMap.openModalWindow(mm, true);
 	croutonMap.showMap(true);
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
 	let index = -1;

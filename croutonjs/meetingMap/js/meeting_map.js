@@ -317,6 +317,8 @@ function MeetingMap(inConfig) {
 	}
 	var g_suspendedFullscreen = false;
 	var g_overflowX;
+	var activeModal = null;
+	var swipableModal = false;
 	function closeModalWindow(modal) {
 		gDelegate.modalOff();
 		activeModal = null;
@@ -329,34 +331,43 @@ function MeetingMap(inConfig) {
 				toggleFullscreen();
 			}
 		}
-		document.getElementsByTagName("BODY")[0].style.overflowX = g_overflowX;
-		const scrollY = document.body.style.top;
-		document.getElementsByTagName("BODY")[0].style.position = '';
-		document.getElementsByTagName("BODY")[0].style.top = '';
-		window.scrollTo(0, parseInt(scrollY || '0') * -1);
+		if (swipableModal) {
+			const body = document.getElementsByTagName("BODY")[0];
+			const scrollY = body.style.top;
+			body.style.overflowX = g_overflowX;
+			body.style.position = '';
+			body.style.top = '';
+			body.style.width = '';
+			window.scrollTo(0, parseInt(scrollY || '0') * -1);
+		}
 	}
-	var activeModal = null;
 	document.addEventListener("keydown", function(event) {
 		if (activeModal && event.key == "Escape") {
 			closeModalWindow(activeModal);
 		}
 	}, true);
-	function openModalWindow(modal) {
+	function openModalWindow(modal,swipe=false) {
 		if (isFullscreen()) {
 			g_suspendedFullscreen = true;
 			toggleFullscreen();
 		}
 		modal.style.display = "block";
+		swipableModal = swipe;
 		modal.focus();
 		activeModal = modal;
 		dd = document.getElementById("map-menu-dropdown");
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
-		g_overflowX = document.getElementsByTagName("BODY")[0].style.overflowX;
-		const newTop = -window.scrollY+'px';
-		document.getElementsByTagName("BODY")[0].style.overflowX = 'hidden';
-		document.getElementsByTagName("BODY")[0].style.position = 'fixed';
-		document.getElementsByTagName("BODY")[0].style.top = newTop;
+		if (swipableModal) {
+			const body = document.getElementsByTagName("BODY")[0];
+			g_overflowX = body.style.overflowX;
+			const newTop = -window.scrollY+'px';
+			const newWidth = window.width+'px';
+			body.style.overflowX = 'hidden';
+			body.style.position = 'fixed';
+			body.style.top = newTop;
+			body.style.width = newWidth;
+		}
 	}
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
