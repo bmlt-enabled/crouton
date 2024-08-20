@@ -994,8 +994,10 @@ Crouton.prototype.doHandlebars = function() {
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
 				self.all_service_bodies = [];
-				var service_body = data[0][0];
-				self.all_service_bodies.push(service_body);
+				var service_bodies = data[0];
+				for (var i = 0; i < service_bodies.length; i++) {
+					self.all_service_bodies.push(service_bodies[i]);
+				}
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
 				customStartupTemplate(enrichedMeetingData);
