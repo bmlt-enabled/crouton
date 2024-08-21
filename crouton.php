@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.19.2
+Version: 3.19.3
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -842,6 +842,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
     <li>serviceBodyDescription</li>
     <li>serviceBodyContactEmail (must be comfigured in root server)</li>
     <li>serviceBodyType</li>
+    <li>parentServiceBodyUrl</li>
+    <li>parentServiceBodyPhone</li>
+    <li>parentServiceBodyName</li>
+    <li>parentServiceBodyDescription</li>
+    <li>parentServiceBodyType</li>
 </ul>
         </p>
         <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  

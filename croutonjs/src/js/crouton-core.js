@@ -559,7 +559,7 @@ function Crouton(config) {
 		});
 	}
 	self.getServiceBodies = function(service_bodies_id) {
-		var requires_parents = self.config.has_regions;
+		const requires_parents = true;
 
 		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
 			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
@@ -896,7 +896,7 @@ function Crouton(config) {
 		window.croutonMap = new MeetingMap(self.config);
 		if (self.config['map_search']) self.searchMap();
 	}
-	self.meetingSearch();
+	else if (!self.config['map_search']) self.meetingSearch();
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -994,8 +994,10 @@ Crouton.prototype.doHandlebars = function() {
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
 				self.all_service_bodies = [];
-				var service_body = data[0][0];
-				self.all_service_bodies.push(service_body);
+				var service_bodies = data[0];
+				for (var i = 0; i < service_bodies.length; i++) {
+					self.all_service_bodies.push(service_bodies[i]);
+				}
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
 				customStartupTemplate(enrichedMeetingData);
@@ -1010,18 +1012,59 @@ Crouton.prototype.doHandlebars = function() {
 
 Crouton.prototype.meetingModal = function(meetingId) {
 	let self = this;
+	const tabs = document.getElementById('bmlt-tabs');
+	
 	let el = document.createElement('bmlt-handlebar');
-	let tabs = document.getElementById('bmlt-tabs');
 	tabs.appendChild(el);
 	let span = document.createElement('span');
-	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	el.appendChild(span);
 	span.textContent = self.config.meetingpage_frame_template;
+	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
+
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
-	document.body.appendChild(document.getElementById('meeting_modal'));
-	croutonMap.openModalWindow(document.getElementById('meeting_modal'));
+	let mm = document.getElementById('meeting_modal');
+	document.body.appendChild(mm);
+	croutonMap.openModalWindow(mm, true);
 	croutonMap.showMap(true);
+	let visibleMeetings = jQuery('.bmlt-data-row:visible');
+	let index = -1;
+	const prefix = "meeting-data-row-";
+	for (k=0; k<visibleMeetings.length; k++) {
+		if (visibleMeetings[k].id===prefix+meetingId) {
+			index = k;
+			break;
+		}
+	};
+	let doSwipe = function(swipedir) {
+		switch(swipedir) {
+			case 'left':
+				index = index+1; 
+				break;
+			case 'right':
+				index = index-1;
+				break;
+			default:
+				index = -1;
+		}
+		if (index >= 0 && index < visibleMeetings.length) {
+			const newMeeting = visibleMeetings[index];
+			meetingId = newMeeting.id.substring(prefix.length);
+			mm.getElementsByClassName('modal-close').item(0).dispatchEvent(new MouseEvent("click"));
+			self.meetingModal(meetingId);
+		}
+	}
+	swipedetect(mm, doSwipe);
+	if (index <= 0) {
+		jQuery(".modal-left").addClass("hide");
+	} else {
+		mm.getElementsByClassName('modal-left').item(0).addEventListener("click", ev=>doSwipe("right"));
+	}
+	if (index >= visibleMeetings.length-1) {
+		jQuery(".modal-right").addClass("hide");
+	} else {
+		mm.getElementsByClassName('modal-right').item(0).addEventListener("click", ev=>doSwipe("left"));
+	}
 }
 Crouton.prototype.searchMap = function() {
 	var self = this;
@@ -1798,3 +1841,35 @@ Array.prototype.sortByKey = function (key) {
 	});
 	return this;
 };
+function swipedetect(el, callback){
+  
+    var touchsurface = el,
+    swipedir,
+    startX,
+    startY,
+    distX,
+    distY,
+    threshold = 150, //required min distance traveled to be considered swipe
+    restraint = 100, // maximum distance allowed at the same time in perpendicular direction
+    handleswipe = callback || function(swipedir){}
+  
+    touchsurface.addEventListener('touchstart', function(e){
+        var touchobj = e.changedTouches[0]
+        swipedir = 'none'
+        startX = touchobj.pageX
+        startY = touchobj.pageY
+    }, false)
+  
+  
+    touchsurface.addEventListener('touchend', function(e){
+		if (!e.cancelable) return;
+        var touchobj = e.changedTouches[0]
+        distX = touchobj.pageX - startX // get horizontal dist traveled by finger while in contact with surface
+        distY = touchobj.pageY - startY // get vertical dist traveled by finger while in contact with surface
+    	if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint){ // 2nd condition for horizontal swipe met
+            swipedir = (distX < 0)? 'left' : 'right' // if dist traveled is negative, it indicates left swipe
+			handleswipe(swipedir)
+			e.preventDefault()
+        }
+    }, false)
+}

@@ -71,7 +71,7 @@ var croutonDefaultTemplates = {
 	meetingpage_frame_template: `
 	<div id="meeting_modal" class="modal bootstrap-bmlt" style="display: none;" tabindex="-1" >
 	<div class="modal-content">
-        <span class="modal-title">{{getWord "Meeting Details"}}</span><span id="close_meeting_details" class="modal-close">×</span>
+        <span class="modal-title">{{getWord "Meeting Details"}}</span><span id="close_meeting_details" class="modal-close" style="position: absolute;right: 5px;top:10px;">×</span>
 		<table id="meeting-details-table" class="bmlt-table  {{getWord 'css-direction'}} table table-striped table-hover table-bordered tablesaw tablesaw-stack meeting-details">
 			<thead>
         		<th id="meeting-details-title" colspan="2">
@@ -89,6 +89,10 @@ var croutonDefaultTemplates = {
 				{{getWord "Meeting Page"}}</a>
 			<a id="map-button" class="btn btn-primary btn-xs modal-close" tabindex="0" style="float:right">
 				{{getWord "Close"}}</a>
+		</div>
+		<div class="swipe-buttons">
+			<span class="modal-right">&gt;</span>
+			<span class="modal-left">&lt;</span>
 		</div>
 	</div></div>`,
 	meetingpage_title_template: [

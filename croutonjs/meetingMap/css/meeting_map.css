@@ -264,6 +264,7 @@ div.bmlt_map_container_div  button {
   left: 8%;
   max-width: 85%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* The Close Button */
@@ -272,10 +273,31 @@ div.bmlt_map_container_div  button {
   float: right;
   font-size: 28px;
   font-weight: bold;
-  position: absolute;
-  top: 10px;
-  right: 5px;
   line-height: 0;
+}
+.modal-right {
+  color: #aaa;
+  font-size: 35px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  right: 2px;
+  line-height: 38px;
+  opacity: 30%;
+  border-radius: 10px;
+  background-color: black;
+}
+.modal-left {
+  color: #aaa;
+  font-size: 35px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  line-height: 38px;
+  opacity: 30%;
+  border-radius: 10px;
+  background-color: black;
 }
 .table-close {
   color: white;
