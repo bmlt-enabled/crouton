@@ -895,6 +895,7 @@ function Crouton(config) {
 	if (typeof window.croutonMap === 'undefined') {
 		window.croutonMap = new MeetingMap(self.config);
 		if (self.config['map_search']) self.searchMap();
+		else self.meetingSearch();
 	}
 	else if (!self.config['map_search']) self.meetingSearch();
 }
