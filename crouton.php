@@ -304,14 +304,18 @@ if (!class_exists("Crouton")) {
 
             return $output;
         }
-
+        private function inlineScript($s)
+        {
+            wp_add_inline_script('croutonjs', $s);
+        }
         public function tabbedUi($atts, $content = null)
         {
             $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderTable($atts));
+            $this->inlineScript($this->renderTable($atts));
+            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
         }
         public function bmltHandlebar($atts, $template = null)
         {
@@ -338,7 +342,8 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
+            $this->inlineScript($this->renderMap($atts));
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
         }
         public function meetingMap($atts, $content = null)
         {
@@ -351,7 +356,8 @@ if (!class_exists("Crouton")) {
             } else {
                 $atts = ["has_venues" => "0"];
             }
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
+            $this->inlineScript($this->renderMap($atts, false));
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender());
         }
         private function getMapInitialization($mapConfig)
         {
