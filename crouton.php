@@ -331,7 +331,7 @@ if (!class_exists("Crouton")) {
                 }
             }
             if (!$this->has_handlebars) {
-                add_action("wp_footer", [$this,'handlebarFooter']);
+                $this->handlebarFooter();
             }
             $this->has_handlebars = true;
             return sprintf('<bmlt-handlebar style="display:none;"><span style="display:none;">%s</span>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
@@ -443,16 +443,9 @@ if (!class_exists("Crouton")) {
                      'strict_datafields' => false];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
             $croutonMap =  $this->getMapInitialization($mapConfig);
-            ?>
-<script type='text/javascript'>
-var crouton;
-
-jQuery(document).ready(function() { 
-            <?php echo $croutonMap ?> crouton = new Crouton(<?php echo $config; ?>);
-    crouton.doHandlebars();
-});
-</script>
-            <?php
+            $ret = "var crouton;"
+            ."jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); crouton.doHandlebars();})";
+            $this->inlineScript($ret);
         }
         /**
          * @desc Adds the options sub-panel
