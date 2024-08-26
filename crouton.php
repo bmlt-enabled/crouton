@@ -1039,13 +1039,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         private function templateToParameter($atts, $name)
         {
             if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
-                $template = $atts[$name];
+                return $atts[$name];
             } elseif (isset($this->options[$name])) {
-                $template = $this->options[$name];
+                return $this->options[$name];
             } else {
-                $template = "";
+                return "";
             }
-            return html_entity_decode($template);
         }
         private function getAllMeetings($root_server)
         {

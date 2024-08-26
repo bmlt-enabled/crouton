@@ -188,48 +188,39 @@ if (!class_exists("MeetingMap/Controller")) {
         }
         private function createJavascriptConfig($options)
         {
-            $ret = '{';
+            $ret = [];
             //$ret .= 'BMLTPlugin_files_uri:\''.$this->hsc($this->getPluginPath()).'?\',' . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret .= "BMLTPlugin_images:'".$this->hsc(plugin_dir_url(__FILE__)."map_images")."'," . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret .= "BMLTPlugin_lang_dir:'".$this->hsc(plugin_dir_url(__FILE__)."lang")."'," . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret .= "BMLTPlugin_throbber_img_src:'".$this->hsc(plugin_dir_url(__FILE__)."map_images/Throbber.gif")."'," . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret .= 'region:"'.$options['region_bias'].'",';
-            $ret .= 'bounds:{';
-            $ret .= ' "north": "'.$options['bounds_north'].'",';
-            $ret .= ' "east": "'.$options['bounds_east'].'",';
-            $ret .= ' "south": "'.$options['bounds_south'].'",';
-            $ret .= ' "west": "'.$options['bounds_west'].'"';
-            $ret .= '},';
-            $ret .= 'tileUrl:"'.$options['tile_url'].'",';
-            $ret .= 'clustering:"'.$options['clustering'].'",';
-            $ret .= 'nominatimUrl:"'.$options['nominatim_url'].'",';
-            $ret .= 'tileOptions:{';
-            foreach ($options['tile_params'] as $key => $value) {
-                $ret .= " '".$key."': '".$value."',";
-            }
-            $ret .= '},';
-            $ret .= 'api_key:"'.$options['api_key'].'",';
-            $ret .= 'lat:"'.$options['lat'].'",';
-            $ret .= 'lng:"'.$options['lng'].'",';
-            $ret .= 'zoom:"'.$options['zoom'].'",';
-            $ret .= 'minZoom:"'.$options['min_zoom'].'",';
-            $ret .= 'maxZoom:"'.$options['max_zoom'].'",';
+            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__FILE__)."map_images");
+            $ret["BMLTPlugin_lang_dir"] = $this->hsc(plugin_dir_url(__FILE__)."lang");
+            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__FILE__)."map_images/Throbber.gif");
+            $ret['region'] = $options['region_bias'];
+            $ret['bounds'] = [
+                "north" => $options['bounds_north'],
+                "east"  => $options['bounds_east'],
+                "south" => $options['bounds_south'],
+                "west"  => $options['bounds_west']
+            ];
+            $ret['tileUrl'] = $options['tile_url'];
+            $ret['clustering'] = $options['clustering'];
+            $ret['nominatimUrl'] = $options['nominatim_url'];
+            $ret['tileOptions'] = $options['tile_params'];
+            $ret['api_key'] = $options['api_key'];
+            $ret['lat'] = $options['lat'];
+            $ret['lng'] = $options['lng'];
+            $ret['zoom'] = $options['zoom'];
+            $ret['minZoom'] = $options['min_zoom'];
+            $ret['maxZoom'] = $options['max_zoom'];
             if (!empty($options['center_me'])) {
-                $ret .= 'centerMe:"'.$options['center_me'].'",';
+                $ret['centerMe'] = $options['center_me'];
             }
             if (!empty($options['goto'])) {
-                $ret .= 'goto:"'.$options['goto'].'",';
+                $ret['goto'] = $options['goto'];
             }
             if (isset($options['map_search'])) {
-                $ret .= 'map_search: {';
-                foreach ($options['map_search'] as $key => $value) {
-                    $ret .= $key.':"'.$value.'",';
-                }
-                $ret .= '},';
+                $ret['map_search'] = $options['map_search'];
             }
-            $ret .= '"marker_contents_template":'.json_encode($options['marker_contents_template']);
-            $ret .= '},';
-            return $ret;
+            $ret["marker_contents_template"] = $options['marker_contents_template'];
+            return json_encode($ret);
         }
         public function adminSection()
         {
