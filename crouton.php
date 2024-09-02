@@ -357,7 +357,7 @@ if (!class_exists("Crouton")) {
                 $atts = ["has_venues" => "0"];
             }
             $this->inlineScript($this->renderMap($atts, false));
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender());
+            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
         }
         private function getMapInitialization($mapConfig)
         {

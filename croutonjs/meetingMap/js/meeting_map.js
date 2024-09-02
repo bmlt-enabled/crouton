@@ -303,7 +303,7 @@ function MeetingMap(inConfig) {
 				showGeocodingDialog();
 			}
 		} else if (config.goto) {
-			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
+			gDelegate.callGeocoder(config.goto, filterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
