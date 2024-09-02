@@ -36,7 +36,6 @@ function numbersonly(myfield, e, dec)
 	   return false;
 };
 function resetCodemirrorToDefault(textAreaId) {
-	console.log("in Function");
 	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
 	cm.setValue(croutonDefaultTemplates[textAreaId]);
 }
