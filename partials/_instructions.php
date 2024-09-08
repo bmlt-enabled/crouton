@@ -164,7 +164,7 @@
 		<p>Will return the number of meetings in the BMLT query.</p>
 		<p><strong>[meeting_count]</strong></p>
 		<p><strong>[meeting_count live="0|1"]</strong></p>
-		<p>By default, [meeting_count] returns the total number of meetings in the BMLT query. By setting "live" to "1", 
+		<p>By default, [meeting_count] returns the total number of meetings in the BMLT query. By setting "live" to "1",
 		the number displayed will be updated to reflect the current filters selection.  So, to get the number of meetings in an
 		area, select the area in the appropriate filter and both the table and the meeting count will be updated.
 		</p>
@@ -174,7 +174,7 @@
 	<p>Will return the number of groups in the BMLT query.</p>
 		<p><strong>[group_count]</strong> </p>
 		<p><strong>[group_count live="0|1"]</strong></p>
-		<p>By default, [group_count] returns the total number of groups in the BMLT query. By setting "live" to "1", 
+		<p>By default, [group_count] returns the total number of groups in the BMLT query. By setting "live" to "1",
 		the number displayed will be updated to reflect the current filters selection.  So, to get the number of groups in an
 		area, select the area in the appropriate filter and both the table and the group count will be updated.
 		</p>
@@ -268,7 +268,7 @@
     </div>
 	<h3 class="help-accordian"><strong>Extending Crouton</strong></h3>
     <div>
-        <p>Handlebars is the template system used by Crouton.  You can add Helpers and Partials to Handlebars, and use 
+        <p>Handlebars is the template system used by Crouton.  You can add Helpers and Partials to Handlebars, and use
 			them in your templates, or to modify meeting data.  An sample for doing this is available <a href="https://github.com/otrok7/CroutonExtensionsTemplate">here</a>.
 			</p>
     </div>
@@ -287,5 +287,10 @@
     <h3 class="help-accordian"><strong>Temporarily Closed</strong></h3>
     <div>
         <p>If you use the format code "TC" it will render the format description for that format above the meeting name with a flag icon.  It will show in the defined language (assuming that it was set in the root server).  This behavior is overridable through the meeting data template functionality.</p>
+    </div>
+    <h3 class="help-accordian"><strong>Suggest Change</strong></h3>
+    <div>
+        <p>You can set a short setting so that a button that says "Suggest Change" appears.  When the button is clicked, it links back to a BMLT workflow page with that meeting.</p>
+        <p><strong>[bmlt_tabs suggest_change_url="/edit-meeting"]</strong></p>
     </div>
 </div>
