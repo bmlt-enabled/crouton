@@ -109,7 +109,8 @@ if (!class_exists("Crouton")) {
             "hide_byday_headers" => false,
             "native_lang" => '',
             "has_meeting_count" => false,
-            "google_api_key" => ""
+            "google_api_key" => "",
+            "suggest_change_url" => "",
         );
         private $hasFilters = [
             "has_days",
@@ -189,7 +190,7 @@ if (!class_exists("Crouton")) {
             if (empty($matches)) {
                 return false;
             }
-    
+
             foreach ($matches as $shortcode) {
                 if ($shortcode[2] === 'bmlt_handlebar' ||
                     $shortcode[2] === 'bmlt_tabs' ||
@@ -222,7 +223,7 @@ if (!class_exists("Crouton")) {
                 add_thickbox();
                 wp_enqueue_script('jquery-ui-accordion');
                 wp_enqueue_script("crouton-default-templates", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-default-templates.js"), true);
-            
+
                 wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/codemirror.css", false, "5.65.15", 'all');
                 wp_enqueue_style("codemirror", plugin_dir_url(__FILE__) . "css/show-hint.css", false, "5.65.15", 'all');
                 wp_enqueue_script('codemirror', plugins_url('js/codemirror/codemirror.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . "js/codemirror/codemirror.js"), false);
@@ -849,7 +850,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         </ul>
     </li>
     <li>venue_type</li>
-    <li>venue_type_name</li>  
+    <li>venue_type_name</li>
     <li>formatted_address</li>
     <li>formatted_location_info</li>
     <li>serviceBodyUrl</li>
@@ -865,14 +866,14 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
     <li>parentServiceBodyType</li>
 </ul>
         </p>
-        <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.  
+        <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.
             Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
         </p></div>
         <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
                         <p>This allows a customization of the meeting data template.  A list of available fields are
-                        <span style="text-align:center;padding:20px 0;"> 
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <span style="text-align:center;padding:20px 0;">
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
                                 <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
@@ -890,8 +891,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
                         <p>This allows a customization of the metadata template (3rd column).  A list of available fields are
-                        <span style="text-align:center;padding:20px 0;"> 
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <span style="text-align:center;padding:20px 0;">
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
                                 <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
@@ -909,8 +910,8 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-details-page" class="anchor"></a>Meeting Details Page</h3>
                         <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are
-                        <span style="text-align:center;padding:20px 0;"> 
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <span style="text-align:center;padding:20px 0;">
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
                                 <label for="meetingpage_title_template">Title</label>
@@ -1189,14 +1190,14 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                 }
             }
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
-             
+
             $params['force_rootserver_in_querystring'] = ($params['root_server'] !== $this->options['root_server']);
             if (!function_exists('is_plugin_active')) {
                 include_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
             $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php')) ? get_feed_link('bmlt2ics') : "";
             $params = apply_filters('crouton_configuration', $params);
-            
+
             return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
         }
     }
