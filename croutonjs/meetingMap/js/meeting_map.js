@@ -363,6 +363,7 @@ function MeetingMap(inConfig) {
 			const newTop = -window.scrollY+'px';
 			body.style.overflowX = 'hidden';
 			body.style.position = 'fixed';
+			body.style.width="100%";
 			body.style.setProperty('top', newTop, 'important');
 		}
 	}
