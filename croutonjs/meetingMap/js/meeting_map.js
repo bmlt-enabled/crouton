@@ -358,12 +358,12 @@ function MeetingMap(inConfig) {
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
 		if (swipableModal) {
-			const body = document.getElementsByTagName("BODY")[0];
+			const body = document.body;
 			g_overflowX = body.style.overflowX;
 			const newTop = -window.scrollY+'px';
 			body.style.overflowX = 'hidden';
 			body.style.position = 'fixed';
-			document.body.style.setProperty('top', newTop, 'important');
+			body.style.setProperty('top', newTop, 'important');
 		}
 	}
 	function showFilterDialog(e) {
