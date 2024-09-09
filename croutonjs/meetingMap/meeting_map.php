@@ -215,6 +215,9 @@ if (!class_exists("MeetingMap/Controller")) {
             }
             if (!empty($options['goto'])) {
                 $ret['goto'] = $options['goto'];
+                if (isset($_GET['goto'])) {
+                    $ret['centerMe'] = '';
+                }
             }
             if (isset($options['map_search'])) {
                 $ret['map_search'] = $options['map_search'];
