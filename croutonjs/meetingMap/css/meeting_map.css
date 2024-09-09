@@ -510,3 +510,17 @@ background-color: #EEEEEE;
   .gm-style .gm-style-iw-c {
     padding: 0px;
   }
+  #bmlt-map button.gm-ui-hover-effect {
+    right: 0px;
+    z-index: 999;
+    width: 20px !important;
+    height: 20px !important;
+  }
+  .gm-ui-hover-effect>span {
+    position: relative;
+    bottom: 13px;
+    right: 13px;
+}
+  #bmlt-map .gm-style-iw-chr {
+    height: 0 !important;
+  }

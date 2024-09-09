@@ -572,12 +572,6 @@ table.tablesaw {
 	}
 }
 
-@media only screen and (max-width: 480px) {
-	#bmlt-tabs .bmlt-column3 {
-		width: auto;
-	}
-}
-
 .mapcontrolslabel {
 	font-size: 12px;
 	cursor: pointer;

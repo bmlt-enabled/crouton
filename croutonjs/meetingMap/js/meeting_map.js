@@ -332,12 +332,11 @@ function MeetingMap(inConfig) {
 			}
 		}
 		if (swipableModal) {
-			const body = document.getElementsByTagName("BODY")[0];
+			const body = document.body;
 			const scrollY = body.style.top;
 			body.style.overflowX = g_overflowX;
 			body.style.position = '';
 			body.style.top = '';
-			body.style.width = '';
 			window.scrollTo(0, parseInt(scrollY || '0') * -1);
 		}
 	}
@@ -362,11 +361,9 @@ function MeetingMap(inConfig) {
 			const body = document.getElementsByTagName("BODY")[0];
 			g_overflowX = body.style.overflowX;
 			const newTop = -window.scrollY+'px';
-			const newWidth = window.width+'px';
 			body.style.overflowX = 'hidden';
 			body.style.position = 'fixed';
-			body.style.top = newTop;
-			body.style.width = newWidth;
+			document.body.style.setProperty('top', newTop, 'important');
 		}
 	}
 	function showFilterDialog(e) {
