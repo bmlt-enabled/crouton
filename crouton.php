@@ -56,6 +56,7 @@ if (!class_exists("Crouton")) {
             "root_server" => '',
             "service_body" => '',
             "service_body_parent" => '',
+            "jsInFooter" => true,
             "venue_types" => '',
             "formats" => '',
             "has_tabs" => '1',
@@ -308,14 +309,21 @@ if (!class_exists("Crouton")) {
         {
             wp_add_inline_script('croutonjs', $s);
         }
+        private function outputScript($s)
+        {
+            if ($this->options['jsInFooter']) {
+                wp_add_inline_script('croutonjs', $s);
+                $s = "";
+            }
+            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $s);
+        }
         public function tabbedUi($atts, $content = null)
         {
             $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            $this->inlineScript($this->renderTable($atts));
-            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
+            return $this->outputScript($this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
         {
@@ -342,8 +350,7 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            $this->inlineScript($this->renderMap($atts));
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
+            return $this->outputScript($this->renderMap($atts));
         }
         public function meetingMap($atts, $content = null)
         {
@@ -356,8 +363,7 @@ if (!class_exists("Crouton")) {
             } else {
                 $atts = ["has_venues" => "0"];
             }
-            $this->inlineScript($this->renderMap($atts, false));
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide"></div>', $this->sharedRender());
+            return $this->outputScript($this->renderMap($atts, false));
         }
         private function getMapInitialization($mapConfig)
         {
@@ -510,6 +516,7 @@ if (!class_exists("Crouton")) {
                 }
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
+                $this->options['jsInFooter'] = $_POST['jsInFooter'];
                 $this->options['time_format'] = $_POST['time_format'];
                 $this->options['language'] = $_POST['language'];
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
@@ -567,6 +574,9 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
+            }
+            if (!isset($this->options['jsInFooter'])) {
+                $this->options['jsInFooter'] = true;
             }
             ?>
             <div class="wrap">
@@ -697,6 +707,13 @@ if (!class_exists("Crouton")) {
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
                             </li>
                         </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-advanced" class="anchor"></a>Advanced Options</h3>
+                        <p>Should the generated Javascript be placed in the footer or in the body.</p>
+                        <div>
+                                <input type="checkbox" name="jsInFooter" value="1" <?php echo ($this->options['jsInFooter'] == 1 ? 'checked' : '') ?> />Place Javascript in Footer
+                        </div>
                     </div>
             </div>
             <div id="crouton-ui" class=tab-content>
