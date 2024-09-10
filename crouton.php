@@ -516,7 +516,7 @@ if (!class_exists("Crouton")) {
                 }
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
-                $this->options['jsInFooter'] = $_POST['jsInFooter'];
+                $this->options['jsInFooter'] = isset($_POST['jsInFooter']);
                 $this->options['time_format'] = $_POST['time_format'];
                 $this->options['language'] = $_POST['language'];
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
