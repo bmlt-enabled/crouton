@@ -37,7 +37,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.19.5 =
-* Fix InfoWindow close button on GoogleMaps 
+* Fix InfoWindow close button on GoogleMaps
+* Add option to place generated JavaScript in footer
 
 = 3.19.4 =
 * Bug fix

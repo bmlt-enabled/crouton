@@ -303,7 +303,7 @@ function MeetingMap(inConfig) {
 				showGeocodingDialog();
 			}
 		} else if (config.goto) {
-			gDelegate.callGeocoder(goto, filterMeetingsAndBounds);
+			gDelegate.callGeocoder(config.goto, filterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -363,6 +363,7 @@ function MeetingMap(inConfig) {
 			const newTop = -window.scrollY+'px';
 			body.style.overflowX = 'hidden';
 			body.style.position = 'fixed';
+			body.style.width="100%";
 			body.style.setProperty('top', newTop, 'important');
 		}
 	}

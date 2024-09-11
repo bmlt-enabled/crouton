@@ -56,6 +56,7 @@ if (!class_exists("Crouton")) {
             "root_server" => '',
             "service_body" => '',
             "service_body_parent" => '',
+            "jsInFooter" => true,
             "venue_types" => '',
             "formats" => '',
             "has_tabs" => '1',
@@ -304,14 +305,25 @@ if (!class_exists("Crouton")) {
 
             return $output;
         }
-
+        private function inlineScript($s)
+        {
+            wp_add_inline_script('croutonjs', $s);
+        }
+        private function outputScript($s)
+        {
+            if ($this->options['jsInFooter']) {
+                wp_add_inline_script('croutonjs', $s);
+                $s = "";
+            }
+            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $s);
+        }
         public function tabbedUi($atts, $content = null)
         {
             $this->hasMap = true;
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderTable($atts));
+            return $this->outputScript($this->renderTable($atts));
         }
         public function bmltHandlebar($atts, $template = null)
         {
@@ -327,7 +339,7 @@ if (!class_exists("Crouton")) {
                 }
             }
             if (!$this->has_handlebars) {
-                add_action("wp_footer", [$this,'handlebarFooter']);
+                $this->handlebarFooter();
             }
             $this->has_handlebars = true;
             return sprintf('<bmlt-handlebar style="display:none;"><span style="display:none;">%s</span>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
@@ -338,7 +350,7 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts));
+            return $this->outputScript($this->renderMap($atts));
         }
         public function meetingMap($atts, $content = null)
         {
@@ -351,7 +363,7 @@ if (!class_exists("Crouton")) {
             } else {
                 $atts = ["has_venues" => "0"];
             }
-            return sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $this->renderMap($atts, false));
+            return $this->outputScript($this->renderMap($atts, false));
         }
         private function getMapInitialization($mapConfig)
         {
@@ -437,16 +449,9 @@ if (!class_exists("Crouton")) {
                      'strict_datafields' => false];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
             $croutonMap =  $this->getMapInitialization($mapConfig);
-            ?>
-<script type='text/javascript'>
-var crouton;
-
-jQuery(document).ready(function() { 
-            <?php echo $croutonMap ?> crouton = new Crouton(<?php echo $config; ?>);
-    crouton.doHandlebars();
-});
-</script>
-            <?php
+            $ret = "var crouton;"
+            ."jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); crouton.doHandlebars();})";
+            $this->inlineScript($ret);
         }
         /**
          * @desc Adds the options sub-panel
@@ -511,6 +516,7 @@ jQuery(document).ready(function() {
                 }
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
+                $this->options['jsInFooter'] = isset($_POST['jsInFooter']);
                 $this->options['time_format'] = $_POST['time_format'];
                 $this->options['language'] = $_POST['language'];
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
@@ -568,6 +574,9 @@ jQuery(document).ready(function() {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
+            }
+            if (!isset($this->options['jsInFooter'])) {
+                $this->options['jsInFooter'] = true;
             }
             ?>
             <div class="wrap">
@@ -698,6 +707,13 @@ jQuery(document).ready(function() {
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
                             </li>
                         </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-advanced" class="anchor"></a>Advanced Options</h3>
+                        <p>Should the generated Javascript be placed in the footer or in the body.</p>
+                        <div>
+                                <input type="checkbox" name="jsInFooter" value="1" <?php echo ($this->options['jsInFooter'] == 1 ? 'checked' : '') ?> />Place Javascript in Footer
+                        </div>
                     </div>
             </div>
             <div id="crouton-ui" class=tab-content>
@@ -1040,13 +1056,12 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
         private function templateToParameter($atts, $name)
         {
             if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
-                $template = $atts[$name];
+                return $atts[$name];
             } elseif (isset($this->options[$name])) {
-                $template = $this->options[$name];
+                return $this->options[$name];
             } else {
-                $template = "";
+                return "";
             }
-            return html_entity_decode($template);
         }
         private function getAllMeetings($root_server)
         {
