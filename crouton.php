@@ -312,7 +312,7 @@ if (!class_exists("Crouton")) {
         }
         private function outputScript($s)
         {
-            if ($this->options['jsInFooter']) {
+            if (isset($this->options['jsInFooter'])) {
                 wp_add_inline_script('croutonjs', $s);
                 $s = "";
             }
