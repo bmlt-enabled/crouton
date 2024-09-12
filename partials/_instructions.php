@@ -290,7 +290,7 @@
     </div>
     <h3 class="help-accordian"><strong>Suggest Change</strong></h3>
     <div>
-        <p>You can set a short setting so that a button that says "Suggest Change" appears.  When the button is clicked, it links back to a BMLT workflow page with that meeting.</p>
-        <p><strong>[bmlt_tabs suggest_change_url="/edit-meeting"]</strong></p>
+        <p>You can set a short setting so that a button that says "Report an Update" appears.  When the button is clicked, it links back to a BMLT workflow page with that meeting.</p>
+        <p><strong>[bmlt_tabs report_update_url="/edit-meeting"]</strong></p>
     </div>
 </div>

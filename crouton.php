@@ -110,7 +110,7 @@ if (!class_exists("Crouton")) {
             "native_lang" => '',
             "has_meeting_count" => false,
             "google_api_key" => "",
-            "suggest_change_url" => "",
+            "report_update_url" => "",
         );
         private $hasFilters = [
             "has_days",

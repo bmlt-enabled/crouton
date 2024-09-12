@@ -89,7 +89,7 @@ function Crouton(config) {
 		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
-		suggest_change_url: "",   	  // URL to edit a meeting for BMLT-workflow plugin
+		report_update_url: "",   	  // URL to edit a meeting for BMLT-workflow plugin
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
 		observer_template: croutonDefaultTemplates.observer_template,
@@ -216,7 +216,7 @@ function Crouton(config) {
 			"parentServiceBodyType",
 			"map_word",
 			"share_word",
-			"suggest_change_word",
+			"report_update_word",
 			"show_qrcode",
 			"formatted_day",
 			"formatted_address",
@@ -818,7 +818,7 @@ function Crouton(config) {
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
 			meetingData[m]['share_word'] = self.localization.getWord('share').toUpperCase();
-			meetingData[m]['suggest_change_word'] = self.localization.getWord('suggest change');
+			meetingData[m]['report_update_word'] = self.localization.getWord('report update');
 			meetingData[m]['show_qrcode'] = self.config['show_qrcode'];
 			for (var k in meetingData[m]) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
@@ -1505,11 +1505,11 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
 });
 
 crouton_Handlebars.registerHelper('editEnabled', function(data, options) {
-	return crouton.config.suggest_change_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
+	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
 });
 
 crouton_Handlebars.registerHelper('editUrl', function() {
-	return crouton.config.suggest_change_url;
+	return crouton.config.report_update_url;
 });
 
 /**
