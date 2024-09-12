@@ -1504,11 +1504,11 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
 	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
-crouton_Handlebars.registerHelper('editEnabled', function(data, options) {
+crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
 	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
 });
 
-crouton_Handlebars.registerHelper('editUrl', function() {
+crouton_Handlebars.registerHelper('reportUpdateUrl', function() {
 	return crouton.config.report_update_url;
 });
 
