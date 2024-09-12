@@ -55,7 +55,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "صفحة الاجتماع",
 			'meeting details': "تفاصيل الاجتماع",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"da-DK": {
 			"days_of_the_week": ["", "Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
@@ -107,7 +107,7 @@ function CroutonLocalization(language) {
 			'visible meeting list': 'Visible meetings as list',
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -162,7 +162,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Zu Kalender hinzufügen",
 			'meeting page': "Meeting Seite",
 			'meeting details': "Genaueres zum Meeting",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -216,7 +216,7 @@ function CroutonLocalization(language) {
 			'close': "Close",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -271,7 +271,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -326,7 +326,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -381,7 +381,7 @@ function CroutonLocalization(language) {
 			'close': "Close",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -436,7 +436,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -491,7 +491,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -545,7 +545,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -600,7 +600,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Ajouter au calendrier",
 			"meeting page": "Page de la réunion",
 			"meeting details": "Détails de la réunion",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -655,7 +655,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Aggiungi al tuo calendario",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -710,7 +710,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -765,7 +765,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -820,7 +820,7 @@ function CroutonLocalization(language) {
 			'close': "Close",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -875,7 +875,7 @@ function CroutonLocalization(language) {
 			'close': "Закрыть",
 			'meeting page': "Страница собрания",
 			'meeting details': "Подробности собрания",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -930,7 +930,7 @@ function CroutonLocalization(language) {
 			"bmlt2ics": "Add to your calendar",
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
-			'suggest change': "Suggest Change",
+			'report update': "Report an Update",
 		}
 	};
 }
