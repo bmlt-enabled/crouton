@@ -1736,7 +1736,8 @@ Crouton.prototype.simulateFilterDropdown = function() {
 		self.hidePage(this);
 	});
 	self.filteredPage();
-	if (!self.filtering) self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+	if (!self.filtering && !self.config.map_page)
+		 self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
 }
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
