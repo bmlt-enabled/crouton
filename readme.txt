@@ -4,7 +4,7 @@ Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N,
 Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
 Requires at least: 4.0
 Required PHP: 8.0
-Tested up to: 6.6.1
+Tested up to: 6.6.2
 Stable tag: 3.19.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.20.0 =
+* Added edit button to 3rd column so user can submit changes to the meeting.
+* Associated maps (created using show_map in shortcode) have menus for geolocation and filtering the meeting list.
+
 = 3.19.5 =
 * Fix InfoWindow close button on GoogleMaps
 * Add option to place generated JavaScript in footer
@@ -45,7 +49,7 @@ https://demo.bmlt.app/crouton
 
 = 3.19.3 =
 * Retrieve infos regarding parent service body.
-* On mobile devices, the meeting details modal can be swiped left or right to iterate through the list. 
+* On mobile devices, the meeting details modal can be swiped left or right to iterate through the list.
 
 = 3.19.2 =
 * Only ask for user's location one time
@@ -161,7 +165,7 @@ https://demo.bmlt.app/crouton
   The meeting that will be used when executing the template is determined from the page's query_string, eg,
   query string "?meeting-id=123" means that meeting 123 will supply the data.  Multiple uses of the shortcode are
   allowed on the page.  These pages can be used to provide a detailed web presence for the meeting.
-* New partial "> meetingLink" will generate a link to the meeting details page.  The next for the link is the 
+* New partial "> meetingLink" will generate a link to the meeting details page.  The next for the link is the
   meeting name.
 * A map can be added to the meeting detail pages by using the {{{crouton_map}}} helper function.
 * Am API has been added for creating custom partials and helpers for use in Handlebars templates, or to customise
