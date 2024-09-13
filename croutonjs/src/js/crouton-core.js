@@ -89,6 +89,7 @@ function Crouton(config) {
 		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
+		report_update_url: "",   	  // URL to edit a meeting for BMLT-workflow plugin
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,
 		observer_template: croutonDefaultTemplates.observer_template,
@@ -215,6 +216,7 @@ function Crouton(config) {
 			"parentServiceBodyType",
 			"map_word",
 			"share_word",
+			"report_update_word",
 			"show_qrcode",
 			"formatted_day",
 			"formatted_address",
@@ -454,7 +456,7 @@ function Crouton(config) {
 			jQuery('#displayTypeButton_tablePages').addClass('hide');
 			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
 		} else if (self.config.show_map) croutonMap.fillMap();
-		self.filtering = false; 
+		self.filtering = false;
 		self.updateFilters();
 		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
@@ -638,7 +640,7 @@ function Crouton(config) {
 				templateString = element.firstChild.textContent;
 			}
 			var handlebarResult;
-			try { 
+			try {
 				var template = crouton_Handlebars.compile(templateString);
 				handlebarResult = template(meetingDetailsData);
 			} catch (e) {
@@ -735,7 +737,7 @@ function Crouton(config) {
 	};
 	self.toFarsinNumber = function( n ) {
 		const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-		
+
 		return n.replace(/\d/g, x => farsiDigits[x]);
 	}
 	self.enrichMeetings = function (meetingData) {
@@ -771,7 +773,7 @@ function Crouton(config) {
 				.format(self.config['time_format']);
 			if (self.config.language === 'fa-IR') {
 				meetingData[m]['start_time_formatted'] = self.toFarsinNumber(meetingData[m]['start_time_formatted']);
-				meetingData[m]['end_time_formatted'] = self.toFarsinNumber(meetingData[m]['end_time_formatted']);				
+				meetingData[m]['end_time_formatted'] = self.toFarsinNumber(meetingData[m]['end_time_formatted']);
 			}
 
 			// back to bmlt day
@@ -816,6 +818,7 @@ function Crouton(config) {
 					: "";
 			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
 			meetingData[m]['share_word'] = self.localization.getWord('share').toUpperCase();
+			meetingData[m]['report_update_word'] = self.localization.getWord('report update');
 			meetingData[m]['show_qrcode'] = self.config['show_qrcode'];
 			for (var k in meetingData[m]) {
 				if (meetingData[m].hasOwnProperty(k) && typeof meetingData[m][k] === 'string') {
@@ -852,9 +855,9 @@ function Crouton(config) {
 				}
 				meetingData[m]['meeting_details_url'] += queryStringChar + ('meeting-id=' + meetingData[m]['id_bigint']
 													   + '&language=' + self.config.language
-													   + '&time_format=' + encodeURIComponent(self.config.time_format) 
+													   + '&time_format=' + encodeURIComponent(self.config.time_format)
 													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
-													); 
+													);
 			}
 
 			meetings.push(meetingData[m])
@@ -1014,7 +1017,7 @@ Crouton.prototype.doHandlebars = function() {
 Crouton.prototype.meetingModal = function(meetingId) {
 	let self = this;
 	const tabs = document.getElementById('bmlt-tabs');
-	
+
 	let el = document.createElement('bmlt-handlebar');
 	tabs.appendChild(el);
 	let span = document.createElement('span');
@@ -1040,7 +1043,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	let doSwipe = function(swipedir) {
 		switch(swipedir) {
 			case 'left':
-				index = index+1; 
+				index = index+1;
 				break;
 			case 'right':
 				index = index-1;
@@ -1227,68 +1230,68 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 				self.dayNamesSequenced = self.config.day_sequence.map((d)=>self.localization.getDayOfTheWeekWord(d));
 				self.dropdownData = [];
 				if (self.config.has_days) self.dropdownData.push(
-					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays", 
-					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced), 
+					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays",
+					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced),
 					 objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_states) self.dropdownData.push(
-					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(), 
+					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states",
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_province').sort(),
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_sub_province) self.dropdownData.push(
-					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+					{placeholder: self.localization.getWord('counties'), pointer: 'Counties', elementId: "filter-dropdown-sub_province",
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_sub_province').sort(),
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_cities) self.dropdownData.push(
-					{placeholder: self.localization.getWord('cities'), pointer: 'Cities', elementId: "filter-dropdown-cities", 
-					 uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_municipality').sort(), 
+					{placeholder: self.localization.getWord('cities'), pointer: 'Cities', elementId: "filter-dropdown-cities",
+					 uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_municipality').sort(),
 					 objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_neighborhoods) self.dropdownData.push(
-					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(), 
-						objectPointer: convertToPunyCode, optionName: (s)=>s});	
+					{placeholder: self.localization.getWord('neighborhood'), pointer: 'Neighborhoods', elementId: "filter-dropdown-neighborhoods",
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_neighborhood').sort(),
+						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_zip_codes) self.dropdownData.push(
-					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(), 
+					{placeholder: self.localization.getWord('postal_codes'), pointer: 'Zips', elementId: "filter-dropdown-zipcodes",
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_postal_code_1').sort(),
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_locations) self.dropdownData.push(
-					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations", 
-						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').map((s)=>s.replace(/(<([^>]+)>)/gi, "")).sort(), 
+					{placeholder: self.localization.getWord('locations'), pointer: 'Locations', elementId: "filter-dropdown-locations",
+						uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'location_text').map((s)=>s.replace(/(<([^>]+)>)/gi, "")).sort(),
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_regions) self.dropdownData.push(
-					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions", 
-						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'parentServiceBodyId').includes(sb.id)).sortByKey('name'), 
+					{placeholder: self.localization.getWord('regions'), pointer: 'Regions', elementId: "filter-dropdown-regions",
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'parentServiceBodyId').includes(sb.id)).sortByKey('name'),
 						objectPointer: (a) => convertToPunyCode(a.name), optionName: (a)=>a.name});
 				if (self.config.has_areas) self.dropdownData.push(
-					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas", 
-						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'), 
+					{placeholder: self.localization.getWord('areas'), pointer: 'Areas', elementId: "filter-dropdown-areas",
+						uniqueData: (meetings) => self.all_service_bodies.filter((sb)=>getUniqueValuesOfKey(meetings,'service_body_bigint').includes(sb.id)).sortByKey('name'),
 						objectPointer: (a) => a.id, optionName: (a)=>a.name});
 				if (self.config.has_groups) self.dropdownData.push(
-					{placeholder: self.localization.getWord('groups'), pointer: 'Groups', elementId: "filter-dropdown-groups", 
-					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(), 
+					{placeholder: self.localization.getWord('groups'), pointer: 'Groups', elementId: "filter-dropdown-groups",
+					uniqueData: (meetings) => getUniqueValuesOfKey(meetings, 'meeting_name').sort(),
 					objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_venues) self.dropdownData.push(
-					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues", 
-						uniqueData: (meetings) => self.getUsedVenueType(meetings), 
+					{placeholder: self.localization.getWord('venue_types'), pointer: 'Venues', elementId: "filter-dropdown-venues",
+						uniqueData: (meetings) => self.getUsedVenueType(meetings),
 						objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_formats) self.dropdownData.push(
-					{placeholder: self.localization.getWord('formats'), pointer: 'Formats', elementId: "filter-dropdown-formats", 
-						uniqueData: (meetings) => getUniqueFormats(meetings), 
+					{placeholder: self.localization.getWord('formats'), pointer: 'Formats', elementId: "filter-dropdown-formats",
+						uniqueData: (meetings) => getUniqueFormats(meetings),
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
 				if (self.config.has_languages) self.dropdownData.push(
-					{placeholder: self.localization.getWord('languages'), pointer: 'Formats', elementId: "filter-dropdown-languages", 
-						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'LANG').filter((f)=>f.key!==self.config.native_lang), 
+					{placeholder: self.localization.getWord('languages'), pointer: 'Formats', elementId: "filter-dropdown-languages",
+						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'LANG').filter((f)=>f.key!==self.config.native_lang),
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
 				if (self.config.has_common_needs) self.dropdownData.push(
-					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds", 
-						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'), 
+					{placeholder: self.localization.getWord('common_needs'), pointer: 'Formats', elementId: "filter-dropdown-commonneeds",
+						uniqueData: (meetings) => getUniqueFormatsOfType(meetings, 'FC3'),
 						objectPointer: (f) => convertToPunyCode(f.name), optionName: (f)=>f.name});
 				if (doMeetingMap) self.dropdownData.push(
-					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile", 
-						uniqueData: (meetings) => self.getUsedVisibility(meetings), 
+					{placeholder: '', pointer: 'visible', elementId: "filter-dropdown-visibile",
+						uniqueData: (meetings) => self.getUsedVisibility(meetings),
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				if (doMeetingMap) self.dropdownData.push(
-					{placeholder: '', pointer: 'next24', elementId: "filter-dropdown-next24", 
-						uniqueData: (meetings) => self.getUsedNext24(meetings), 
+					{placeholder: '', pointer: 'next24', elementId: "filter-dropdown-next24",
+						uniqueData: (meetings) => self.getUsedNext24(meetings),
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				let renderer = doMeetingMap ? self.renderStandaloneMap : self.renderView;
 				renderer("#" + self.config['placeholder_id'], {
@@ -1496,8 +1499,17 @@ crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
 crouton_Handlebars.registerHelper('call', function(fn, str) {
 	return fn(str);
 });
+
 crouton_Handlebars.registerHelper('canShare', function(data, options) {
 	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+
+crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
+	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
+});
+
+crouton_Handlebars.registerHelper('reportUpdateUrl', function() {
+	return crouton.config.report_update_url;
 });
 
 /**
@@ -1843,7 +1855,7 @@ Array.prototype.sortByKey = function (key) {
 	return this;
 };
 function swipedetect(el, callback){
-  
+
     var touchsurface = el,
     swipedir,
     startX,
@@ -1853,15 +1865,15 @@ function swipedetect(el, callback){
     threshold = 150, //required min distance traveled to be considered swipe
     restraint = 100, // maximum distance allowed at the same time in perpendicular direction
     handleswipe = callback || function(swipedir){}
-  
+
     touchsurface.addEventListener('touchstart', function(e){
         var touchobj = e.changedTouches[0]
         swipedir = 'none'
         startX = touchobj.pageX
         startY = touchobj.pageY
     }, false)
-  
-  
+
+
     touchsurface.addEventListener('touchend', function(e){
 		if (!e.cancelable) return;
         var touchobj = e.changedTouches[0]
