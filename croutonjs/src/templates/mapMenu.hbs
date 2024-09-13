@@ -9,7 +9,7 @@
         <button id="filterMeetings" style="display: block;">{{getWord 'Filter meetings'}}</button>
         <button id="showAsTable" style="display: block;">{{getWord 'visible meeting list'}}</button>
         {{else}}
-        <button id="filterTable" style="display: block;">{{getWord 'filter by visibility'}}</button>
+        <button id="filterTable" style="display: block;"><span id="filteringByVisibility"></span>{{getWord 'filter by visibility'}}</button>
         {{/if}}
         <button id="fullscreenMode" style="display: block;">{{getWord 'Toggle fullscreen mode'}}</button>
     </div>
@@ -46,7 +46,7 @@
         <div class="modal-search">
             {{getWord 'Enter a city or zip code'}}
             <input id="goto-text" type="text">
-            <button id="goto-button" class="filter-button">Los</button>
+            <button id="goto-button" class="filter-button">{{getWord "go"}}</button>
         </div>
   	</div>
 </div>

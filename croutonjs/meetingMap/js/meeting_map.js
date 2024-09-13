@@ -151,6 +151,7 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
+				filterVisible(false);
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
 			}).catch(error => {
 				console.error(error.message);
@@ -164,14 +165,15 @@ function MeetingMap(inConfig) {
 			controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
 			controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
 		} else {
-			controlDiv.querySelector("#filterTable").addEventListener('click', filterVisible);
+			controlDiv.querySelector("#filterTable").addEventListener('click', toggleVisible);
 		}
 		controlDiv.querySelector("#fullscreenMode").addEventListener('click', toggleFullscreen);
 		controlDiv.querySelector("#map-menu-button").addEventListener('click', function (e) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
-			if (dropdownContent.style.display == "inline-block")
+			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
-			else
+				filterVisible(false);
+			} else
 				dropdownContent.style.display = "inline-block";
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
@@ -571,20 +573,27 @@ function MeetingMap(inConfig) {
 			(meetings.length > 1),
 			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
+	var listOnlyVisible = false;
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
 	function filterVisible(on=true) {
+		if (on===listOnlyVisible) return;
 		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
 			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
 		});
 		jQuery("#byday").removeClass('hide');
-		jQuery("#filter-dropdown-visibile").val('a-1');
-		fitDuringFilter = false;
-		crouton.doFilters();
+		jQuery("#filter-dropdown-visibile").val(on?'a-1':'');
+		fitDuringFilter = !on;
+		crouton.simulateFilterDropdown();
 		fitDuringFilter = true;
+		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
+		listOnlyVisible = on;
+	}
+	function toggleVisible() {
+		filterVisible(!listOnlyVisible);
 	}
 	function filterBounds(bounds) {
 		var ret = gAllMeetings.filter((meeting) =>

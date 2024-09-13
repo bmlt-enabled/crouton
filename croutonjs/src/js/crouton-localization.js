@@ -492,6 +492,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],

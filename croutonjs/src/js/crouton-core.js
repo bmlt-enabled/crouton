@@ -1730,6 +1730,14 @@ Crouton.prototype.renderMeetingCount = function() {
 		self.updateMeetingCount()
 	});
 }
+Crouton.prototype.simulateFilterDropdown = function() {
+	self = this;
+	jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
+		self.hidePage(this);
+	});
+	self.filteredPage();
+	if (!self.filtering) self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+}
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
 	var meeting_date_time_obj;
