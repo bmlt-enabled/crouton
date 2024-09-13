@@ -5,8 +5,12 @@
     <div id="map-menu-dropdown" class="menu-dropdown">
         <button id="lookupLocation" style="display: block;">{{getWord 'Show meetings near...'}}</button>
         <button id="nearbyMeetings" style="display: block;">{{getWord 'near_me'}}</button>
+        {{#if this.dropdownData}}
         <button id="filterMeetings" style="display: block;">{{getWord 'Filter meetings'}}</button>
         <button id="showAsTable" style="display: block;">{{getWord 'visible meeting list'}}</button>
+        {{else}}
+        <button id="filterTable" style="display: block;">{{getWord 'filter by visibility'}}</button>
+        {{/if}}
         <button id="fullscreenMode" style="display: block;">{{getWord 'Toggle fullscreen mode'}}</button>
     </div>
 <div id="filter_modal" class="modal" style="display: none;">
@@ -27,7 +31,7 @@
 <div id="table_page" class="bmlt-page {{getWord 'css-direction'}} hide" >
     <div id="bmlt-maptable-header"><span class="map-list-title">{{getWord 'Visible meeting list'}}</span><span id="close_table" class="table-close">X</span></div>
     <div id="bmlt-maptable-div"  style="position:relative; overflow-y:scroll;">
-        
+
         <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
         {{#each this.meetings.bydays}}
             {{> meetings this.meetings }}
@@ -44,6 +48,6 @@
             <input id="goto-text" type="text">
             <button id="goto-button" class="filter-button">Los</button>
         </div>
-  	</div>	
+  	</div>
 </div>
 

@@ -62,10 +62,10 @@ function MeetingMap(inConfig) {
 				}
 				if (config.map_search.zoom) {
 					config.zoom = config.map_search.zoom;
-				}	
+				}
 			}
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
-			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};		
+			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
@@ -79,7 +79,10 @@ function MeetingMap(inConfig) {
 					menuContext.imageDir = config.BMLTPlugin_images;
 					gDelegate.addControl(createNext24Toggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
-				};
+				}else {
+					menuContext = {imageDir: config.BMLTPlugin_images, config: config, dropdownData:false};
+					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
+				}
 			}
 		};
 	};
@@ -157,8 +160,12 @@ function MeetingMap(inConfig) {
 		});
 
 		controlDiv.querySelector("#lookupLocation").addEventListener('click', showGeocodingDialog);
-		controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
-		controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
+		if (menuContext.dropdownData) {
+			controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
+			controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
+		} else {
+			controlDiv.querySelector("#filterTable").addEventListener('click', filterVisible);
+		}
 		controlDiv.querySelector("#fullscreenMode").addEventListener('click', toggleFullscreen);
 		controlDiv.querySelector("#map-menu-button").addEventListener('click', function (e) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
@@ -454,12 +461,12 @@ function MeetingMap(inConfig) {
 			? filtered.map((m)=>[m])
 			: mapOverlappingMarkersInCity(filtered);
 
-		if (useMarkerCluster()) gDelegate.createClusterLayer(); 
+		if (useMarkerCluster()) gDelegate.createClusterLayer();
 		// Draw the meeting markers.
 		overlap_map.forEach(function (marker) {
 			createMapMarker(marker);
 		});
-		gDelegate.addClusterLayer(); 
+		gDelegate.addClusterLayer();
 		if (expand) {
 			const lat_lngs = filtered.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);
