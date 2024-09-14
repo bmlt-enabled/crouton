@@ -56,6 +56,8 @@ function CroutonLocalization(language) {
 			'meeting page': "صفحة الاجتماع",
 			'meeting details': "تفاصيل الاجتماع",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"da-DK": {
 			"days_of_the_week": ["", "Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
@@ -108,6 +110,8 @@ function CroutonLocalization(language) {
 			'enter a city or zip code': 'Enter a city or zip code',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -163,6 +167,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Seite",
 			'meeting details': "Genaueres zum Meeting",
 			'report update': "Report an Update",
+			'filter by visibility': "Zeige nur Meetings, die gerade auf dem Karte stehen",
+			'go': "Los!"
 		},
 		"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -217,6 +223,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -272,6 +280,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -327,6 +337,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -382,6 +394,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -437,6 +451,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"es-US": {
 			"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -548,6 +564,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -603,6 +621,8 @@ function CroutonLocalization(language) {
 			"meeting page": "Page de la réunion",
 			"meeting details": "Détails de la réunion",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -658,6 +678,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -713,6 +735,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -768,6 +792,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -823,6 +849,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -878,6 +906,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Страница собрания",
 			'meeting details': "Подробности собрания",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -933,6 +963,8 @@ function CroutonLocalization(language) {
 			'meeting page': "Meeting Page",
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
+			'filter by visibility': "List only these meetings",
+			'go': "Go!"
 		}
 	};
 }

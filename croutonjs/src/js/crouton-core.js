@@ -1675,7 +1675,7 @@ crouton_Handlebars.registerHelper('hasBMLT2ics', function() {
     return crouton.config['bmlt2ics'].length>0;});
 crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
 crouton_Handlebars.registerPartial('icsButton',
-    '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-sharebutton"><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</div></a>');
+    '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
 crouton_Handlebars.registerPartial('offerIcsButton',
     "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
 function convertToPunyCode(str) {

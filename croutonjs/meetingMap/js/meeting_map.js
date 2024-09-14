@@ -161,7 +161,7 @@ function MeetingMap(inConfig) {
 		});
 
 		controlDiv.querySelector("#lookupLocation").addEventListener('click', showGeocodingDialog);
-		if (menuContext.dropdownData) {
+		if (menuContext && menuContext.dropdownData) {
 			controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
 			controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
 		} else {
@@ -586,7 +586,7 @@ function MeetingMap(inConfig) {
 		});
 		jQuery("#byday").removeClass('hide');
 		jQuery("#filter-dropdown-visibile").val(on?'a-1':'');
-		fitDuringFilter = !on;
+		fitDuringFilter = false;
 		crouton.simulateFilterDropdown();
 		fitDuringFilter = true;
 		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
