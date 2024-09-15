@@ -79,7 +79,8 @@ function MeetingMap(inConfig) {
 					menuContext.imageDir = config.BMLTPlugin_images;
 					gDelegate.addControl(createNext24Toggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
-				}else {
+				}
+				else {
 					menuContext = {imageDir: config.BMLTPlugin_images, config: config, dropdownData:false};
 					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 				}
