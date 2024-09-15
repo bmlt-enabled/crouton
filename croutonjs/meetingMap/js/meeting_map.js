@@ -62,10 +62,10 @@ function MeetingMap(inConfig) {
 				}
 				if (config.map_search.zoom) {
 					config.zoom = config.map_search.zoom;
-				}	
+				}
 			}
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
-			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};		
+			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
@@ -79,7 +79,10 @@ function MeetingMap(inConfig) {
 					menuContext.imageDir = config.BMLTPlugin_images;
 					gDelegate.addControl(createNext24Toggle(), 'topleft');
 					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
-				};
+				}else {
+					menuContext = {imageDir: config.BMLTPlugin_images, config: config, dropdownData:false};
+					gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
+				}
 			}
 		};
 	};
@@ -148,6 +151,7 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
+				filterVisible(false);
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
 			}).catch(error => {
 				console.error(error.message);
@@ -157,14 +161,19 @@ function MeetingMap(inConfig) {
 		});
 
 		controlDiv.querySelector("#lookupLocation").addEventListener('click', showGeocodingDialog);
-		controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
-		controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
+		if (menuContext && menuContext.dropdownData) {
+			controlDiv.querySelector("#filterMeetings").addEventListener('click', showFilterDialog);
+			controlDiv.querySelector("#showAsTable").addEventListener('click', showListView);
+		} else {
+			controlDiv.querySelector("#filterTable").addEventListener('click', toggleVisible);
+		}
 		controlDiv.querySelector("#fullscreenMode").addEventListener('click', toggleFullscreen);
 		controlDiv.querySelector("#map-menu-button").addEventListener('click', function (e) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
-			if (dropdownContent.style.display == "inline-block")
+			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
-			else
+				filterVisible(false);
+			} else
 				dropdownContent.style.display = "inline-block";
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
@@ -395,14 +404,18 @@ function MeetingMap(inConfig) {
 		jQuery("#table_page").addClass("hide");
 		jQuery("#bmlt-map").css("display", "block");
 	}
+	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
+		filterVisible(false);
+		filterMeetingsAndBounds(bounds);
+	}
 	function lookupLocation(fullscreen) {
 		if (document.getElementById('goto-text').value != '') {
 			if (fullscreen) {
 				gDelegate.addListener('idle', function () {
-					gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+					gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
 				}, true);
 			} else {
-				gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+				gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
 			}
 		} else {
 			alert("");
@@ -454,12 +467,12 @@ function MeetingMap(inConfig) {
 			? filtered.map((m)=>[m])
 			: mapOverlappingMarkersInCity(filtered);
 
-		if (useMarkerCluster()) gDelegate.createClusterLayer(); 
+		if (useMarkerCluster()) gDelegate.createClusterLayer();
 		// Draw the meeting markers.
 		overlap_map.forEach(function (marker) {
 			createMapMarker(marker);
 		});
-		gDelegate.addClusterLayer(); 
+		gDelegate.addClusterLayer();
 		if (expand) {
 			const lat_lngs = filtered.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);
@@ -564,20 +577,27 @@ function MeetingMap(inConfig) {
 			(meetings.length > 1),
 			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
+	var listOnlyVisible = false;
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
 	function filterVisible(on=true) {
+		if (on===listOnlyVisible) return;
 		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
 			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
 		});
 		jQuery("#byday").removeClass('hide');
-		jQuery("#filter-dropdown-visibile").val('a-1');
+		jQuery("#filter-dropdown-visibile").val(on?'a-1':'');
 		fitDuringFilter = false;
-		crouton.doFilters();
+		crouton.simulateFilterDropdown();
 		fitDuringFilter = true;
+		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
+		listOnlyVisible = on;
+	}
+	function toggleVisible() {
+		filterVisible(!listOnlyVisible);
 	}
 	function filterBounds(bounds) {
 		var ret = gAllMeetings.filter((meeting) =>
