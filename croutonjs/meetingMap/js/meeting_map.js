@@ -404,14 +404,18 @@ function MeetingMap(inConfig) {
 		jQuery("#table_page").addClass("hide");
 		jQuery("#bmlt-map").css("display", "block");
 	}
+	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
+		filterVisible(false);
+		filterMeetingsAndBounds(bounds);
+	}
 	function lookupLocation(fullscreen) {
 		if (document.getElementById('goto-text').value != '') {
 			if (fullscreen) {
 				gDelegate.addListener('idle', function () {
-					gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+					gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
 				}, true);
 			} else {
-				gDelegate.callGeocoder(document.getElementById('goto-text').value, filterMeetingsAndBounds);
+				gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
 			}
 		} else {
 			alert("");
