@@ -69,7 +69,11 @@ function MeetingMap(inConfig) {
 			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
-						searchResponseCallback();
+						if (listOnlyVisible) {
+							const oldValue = filterVisible(false);
+							searchResponseCallback();
+							filterVisible(oldValue);
+						} else searchResponseCallback();
 					}
 				}, false);
 				if (config.map_search) {
@@ -152,8 +156,9 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
-				filterVisible(false);
+				const oldValue = filterVisible(false);
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
+				filterVisible(oldValue);
 			}).catch(error => {
 				console.error(error.message);
 				$('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
@@ -173,7 +178,6 @@ function MeetingMap(inConfig) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
 			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
-				filterVisible(false);
 			} else
 				dropdownContent.style.display = "inline-block";
 		});
@@ -406,8 +410,10 @@ function MeetingMap(inConfig) {
 		jQuery("#bmlt-map").css("display", "block");
 	}
 	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
-		filterVisible(false);
-		filterMeetingsAndBounds(bounds);
+		const oldValue = filterVisible(false);
+		const ret = filterMeetingsAndBounds(bounds);
+		filterVisible(oldValue);
+		return ret;
 	}
 	function lookupLocation(fullscreen) {
 		if (document.getElementById('goto-text').value != '') {
@@ -582,8 +588,12 @@ function MeetingMap(inConfig) {
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
+	function showAllMeetings() {
+		filterVisible(false);
+		gDelegate.addListener('dragend', filterVisible, true);
+	}
 	function filterVisible(on=true) {
-		if (on===listOnlyVisible) return;
+		if (on===listOnlyVisible) return on;
 		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
@@ -596,6 +606,12 @@ function MeetingMap(inConfig) {
 		fitDuringFilter = true;
 		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
 		listOnlyVisible = on;
+		if (on) listener = gDelegate.addListener('dragstart', showAllMeetings, true);
+		else if (listener) {
+			gDelegate.removeListener(listener);
+			listener = null;
+		}
+		return !on;
 	}
 	function toggleVisible() {
 		filterVisible(!listOnlyVisible);

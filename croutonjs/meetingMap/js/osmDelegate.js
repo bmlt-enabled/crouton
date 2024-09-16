@@ -65,12 +65,22 @@ function MapDelegate(config) {
 		if (ev=='idle') {
 			ev = 'moveend';
 		}
+		if (ev=='dragstart') {
+			ev = 'movestart';
+		}
+		if (ev=='dragend') {
+			ev = 'moveend';
+		}
         if (once) {
 			gMainMap.once(ev, f);
 		} else {
 			gMainMap.on(ev, f);
 		}
+		return {'event': ev, 'f': f};
     }
+	function removeListener(o) {
+		gMainMap.off(o.event, o.f);
+	}
     function setViewToPosition(position, filterMeetings, extra=null) {
         var latlng = L.latLng(position.latitude, position.longitude);
 		gMainMap.flyTo(latlng);
@@ -80,7 +90,7 @@ function MapDelegate(config) {
 			if (gMainMap.getZoom() != newZoom) {
 				gMainMap.setZoom(newZoom);
 				gMainMap.on('zoomend',function() {
-					gMainMap.off('zoomend'); 
+					gMainMap.off('zoomend');
 					gMainMap.invalidateSize();
 					if (extra) {
 						gMainMap.on('load moveend', extra);
@@ -137,7 +147,7 @@ function MapDelegate(config) {
 			if (knt == 0) {
 				ret -= 1;
 			}
-		} 
+		}
 		return ret;
 	}
     function setZoom(filterMeetings, force=0) {
@@ -380,6 +390,7 @@ function addControl(div,pos,cb) {
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
+	this.removeListener = removeListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
     this.clearAllMarkers = clearAllMarkers;
@@ -405,6 +416,7 @@ function addControl(div,pos,cb) {
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
+MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
 MapDelegate.prototype.clearAllMarkers = null;
