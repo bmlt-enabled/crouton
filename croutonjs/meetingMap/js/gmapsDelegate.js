@@ -43,7 +43,6 @@ function MapDelegate(in_config) {
             'draggableCursor': "pointer",
             'scaleControl' : true,
             'fullscreenControl': config.map_search ? true : false,
-            'mapId': "DEMO_MAP_ID",
         };
         if (inCenter) {
             myOptions = Object.assign(myOptions, {
