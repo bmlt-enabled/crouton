@@ -39,7 +39,7 @@ function Crouton(config) {
 		time_format: "h:mm a",        // The format for time
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
-		filter_tabs: false,   		  // Whether to show weekday tabs on filtering.
+		filter_tabs: 0,   		  // Whether to show weekday tabs on filtering.
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
 		int_include_unpublished: 0,	  // Includes unpublished meeting
@@ -430,12 +430,12 @@ function Crouton(config) {
 		}
 
 		if (!self.config.map_page || jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
-			self.showFilteredMeetingsAsTable();
+			self.showFilteredMeetingsAsTable(showingNow.length);
 		}
 		self.filtering = true;
 	};
-	self.showFilteredMeetingsAsTable = function () {
-		if (self.config['filter_tabs']) {
+	self.showFilteredMeetingsAsTable = function (showingNow) {
+		if (self.config['filter_tabs'] && self.config['filter_tabs'] <= showingNow) {
 			self.showPage("#nav-days");
 			self.showPage("#tabs-content");
 		} else {
@@ -1373,7 +1373,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 					jQuery('#displayTypeButton_tablePages').on('click', function (e) {
 						self.hidePage('#byfield_embeddedMapPage');
-						self.showFilteredMeetingsAsTable();
+						self.showFilteredMeetingsAsTable(self.meetingData.length);
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
