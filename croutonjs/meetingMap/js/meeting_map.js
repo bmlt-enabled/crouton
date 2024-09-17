@@ -156,9 +156,8 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
-				const oldValue = filterVisible(false);
-				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
-				filterVisible(oldValue);
+				filterVisible(false);
+				gDelegate.setViewToPosition(position, filterMeetingsAndBounds, filterVisible);
 			}).catch(error => {
 				console.error(error.message);
 				$('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
@@ -206,8 +205,8 @@ function MeetingMap(inConfig) {
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
 		loadAllMeetings(meetings_responseObject, fitBounds, true);
-		config.filter_visible = config.filter_visible || config.goto || config.centerMe;
-		gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+		config.filter_visible = config.filter_visible;
+		if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
 	};
 	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
@@ -228,7 +227,7 @@ function MeetingMap(inConfig) {
 	function filterFromCrouton(filter) {
 		gMeetingIdsFromCrouton = filter;
 		if (gAllMeetings)
-			searchResponseCallback(fitDuringFilter);
+			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
 	};
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
@@ -311,7 +310,8 @@ function MeetingMap(inConfig) {
 				navigator.geolocation.getCurrentPosition(
 					function (position) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
+						filterVisible(false);
+						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, filterVisible);
 					},
 					showGeocodingDialog
 				);
@@ -319,7 +319,8 @@ function MeetingMap(inConfig) {
 				showGeocodingDialog();
 			}
 		} else if (config.goto) {
-			gDelegate.callGeocoder(config.goto, filterMeetingsAndBounds);
+			if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+			gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -412,9 +413,9 @@ function MeetingMap(inConfig) {
 		jQuery("#bmlt-map").css("display", "block");
 	}
 	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
-		const oldValue = filterVisible(false);
+		filterVisible(false);
 		const ret = filterMeetingsAndBounds(bounds);
-		filterVisible(oldValue);
+		filterVisible(true);
 		return ret;
 	}
 	function lookupLocation(fullscreen) {

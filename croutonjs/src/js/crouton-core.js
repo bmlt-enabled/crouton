@@ -528,6 +528,7 @@ function Crouton(config) {
 			meetingCount = showingNow.length;
 			addLive = function(id) {return id+"-live"};
 		}
+		self.showingNowCount = meetingCount;
 		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;
@@ -1373,7 +1374,8 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 					jQuery('#displayTypeButton_tablePages').on('click', function (e) {
 						self.hidePage('#byfield_embeddedMapPage');
-						self.showFilteredMeetingsAsTable(self.meetingData.length);
+						const knt = self.showingNowCount ? self.showingNowCount : self.meetingData.length;
+						self.showFilteredMeetingsAsTable(knt);
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);

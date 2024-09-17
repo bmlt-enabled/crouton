@@ -84,16 +84,14 @@ function MapDelegate(config) {
     function setViewToPosition(position, filterMeetings, extra=null) {
         var latlng = L.latLng(position.latitude, position.longitude);
 		gMainMap.flyTo(latlng);
-        gMainMap.on('moveend', function(ev) {
-			gMainMap.off('moveend');
+        gMainMap.once('moveend', function(ev) {
 			newZoom = getZoomAdjust(false, filterMeetings);
 			if (gMainMap.getZoom() != newZoom) {
 				gMainMap.setZoom(newZoom);
-				gMainMap.on('zoomend',function() {
-					gMainMap.off('zoomend');
+				gMainMap.once('zoomend',function() {
 					gMainMap.invalidateSize();
 					if (extra) {
-						gMainMap.on('load moveend', extra);
+						gMainMap.once('load moveend', extra);
 					}
 				});
 			} else {
@@ -319,7 +317,7 @@ function addControl(div,pos,cb) {
             gMainMap.on('moveend', function(ev) {
 				gMainMap.off('moveend');
 				gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
-				gMainMap.on('moveend',function() {
+				gMainMap.once('moveend',function() {
 					gTileLayer.redraw();
 				});
 			});
