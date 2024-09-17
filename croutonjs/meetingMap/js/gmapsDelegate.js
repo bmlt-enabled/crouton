@@ -15,15 +15,15 @@ function MapDelegate(in_config) {
     function isApiLoaded() {
         return gIsLoaded;
     }
-    async function loadApi(f, args) {
-        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-            key: config['api_key'],
-            v: "weekly",
-          });
-        const { Map } = await google.maps.importLibrary("maps");
-        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    function loadApi(f, args) {
+        var tag = document.createElement('script');
         gIsLoaded = true;
-        croutonMap.apiLoadedCallback();
+        if (typeof config['api_key'] === 'undefined') config['api_key'] = "";
+        tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&callback=croutonMap.apiLoadedCallback";
+        tag.defer = true;
+        tag.async = true;
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     };
     function createMap(inDiv, inCenter) {
     g_icon_image_single = new google.maps.MarkerImage ( config.BMLTPlugin_images+"/NAMarker.png", new google.maps.Size(23, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
@@ -382,6 +382,11 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
+    function afterInit(f) {
+        addListener('idle', function () {
+			f();
+        }, true);
+    }
     function modalOn() {}
     function modalOff() {}
     this.createMap = createMap;
@@ -410,6 +415,7 @@ function geoCallback( in_geocode_response ) {
     this.modalOn = modalOn;
     this.modalOff = modalOff;
     this.removeListener = removeListener;
+    this.afterInit = afterInit;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -437,3 +443,4 @@ MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
+MapDelegate.prototype.afterInit = null;

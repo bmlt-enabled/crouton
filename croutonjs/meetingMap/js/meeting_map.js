@@ -206,6 +206,7 @@ function MeetingMap(inConfig) {
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
 		loadAllMeetings(meetings_responseObject, fitBounds, true);
+		gDelegate.afterInit(()=>filterVisible(config.filter_visible));
 	};
 	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
