@@ -464,10 +464,10 @@ table.tablesaw {
 }
 
 .bmlt-map {
-	height: 400px;
+	height: 500px;
 }
 #byfield_embeddedMapPage{
-	height: 400px;
+	height: 500px;
 }
 .bmlt-observer {
 	font-size: 14px;
@@ -632,13 +632,13 @@ table.tablesaw {
 	direction: rtl;
 }
 #bmlt-header.bmlt-rtl {
-	text-align:right; 
+	text-align:right;
 }
 #nav-days.bmlt-rtl {
-	float:right; 
+	float:right;
 }
 #nav-days.bmlt-rtl li {
-	float:right; 
+	float:right;
 }
 #bmlt-tabs .bmlt-rtl .bmlt-column1 {
     text-align: right;
