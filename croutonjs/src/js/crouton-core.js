@@ -1380,7 +1380,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
 						self.filteredView(e.target.attributes['data-field'].value, false);
-						croutonMap.showMap();
+						croutonMap.showMap(false,false);
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
