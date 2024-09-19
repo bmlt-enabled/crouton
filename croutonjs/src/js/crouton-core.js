@@ -451,6 +451,7 @@ function Crouton(config) {
 		}
 	}
 	self.resetFilter = function () {
+		croutonMap.filterVisible(false);
 		if (self.config.map_page) {
 			if (self.filtering) croutonMap.fillMap();
 			jQuery('#displayTypeButton_tablePages').addClass('hide');

@@ -722,6 +722,7 @@ function MeetingMap(inConfig) {
 	this.openModalWindow = openModalWindow;
 	this.closeModalWindow = closeModalWindow;
 	this.loadPopupMap = loadPopupMap;
+	this.filterVisible = filterVisible;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -733,3 +734,4 @@ MeetingMap.prototype.refreshMeetings = null;
 MeetingMap.prototype.openModalWindow = null;
 MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
+MeetingMap.prototype.filterVisible = null;
