@@ -1434,6 +1434,11 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 				}, !doMeetingMap);
 			});
 		});
+	Crouton.prototype.forceShowMap = function() {
+		if (self.config.map_page && jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+			jQuery('#filterButton_embeddedMapPage').click();
+		}
+	}
 };
 
 

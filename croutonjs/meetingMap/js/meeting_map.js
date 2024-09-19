@@ -177,8 +177,10 @@ function MeetingMap(inConfig) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
 			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
-			} else
+			} else {
+				jQuery("#filteringByVisibility").html(listOnlyVisible?'&#10004;':'');
 				dropdownContent.style.display = "inline-block";
+			}
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		controlDiv.querySelector("#close_table").addEventListener('click', hideListView);
@@ -205,7 +207,6 @@ function MeetingMap(inConfig) {
 		let inDiv = document.getElementById(inDiv_id);
 		loadMap(inDiv, menuContext, handlebarMapOptions,callback);
 		loadAllMeetings(meetings_responseObject, fitBounds, true);
-		if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
 	};
 	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
@@ -304,6 +305,7 @@ function MeetingMap(inConfig) {
 		}
 		searchResponseCallback();
 		hideThrobber();
+		if (config.filter_visible || config.centerMe || config.goto) crouton.forceShowMap();
 		if (config.centerMe) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -317,9 +319,9 @@ function MeetingMap(inConfig) {
 			} else if (fitAll) {
 				showGeocodingDialog();
 			}
-		} else if (config.goto) {
+		} else {
 			if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
-			gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
+			if (config.goto) gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
