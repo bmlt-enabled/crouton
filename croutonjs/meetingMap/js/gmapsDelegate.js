@@ -382,9 +382,8 @@ function geoCallback( in_geocode_response ) {
         })
     };
     function afterInit(f) {
-        addListener('idle', function () {
-			f();
-        }, true);
+        if (typeof gMainMap.getBounds()  !== 'undefined') f();
+        else addListener('idle', f, true);
     }
     function modalOn() {}
     function modalOff() {}

@@ -239,7 +239,7 @@ function MeetingMap(inConfig) {
 		});
 	};
 	function clickSearch(e) {
-		croutonMap.showMap();
+		croutonMap.showMap(false,false);
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
@@ -695,14 +695,14 @@ function MeetingMap(inConfig) {
 		}
 		gDelegate.invalidateSize();
 	}
-	function showMap(isModal=false) {
+	function showMap(isModal=false, fitBounds=true) {
 		if (isModal && gModalDelegate) {
 			gModalDelegate.invalidateSize();
 			return;
 		}
 		gDelegate.invalidateSize();
 		if (!gAllMeetings) return;
-		gDelegate.fitBounds(
+		if (fitBounds) gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])
 		);
