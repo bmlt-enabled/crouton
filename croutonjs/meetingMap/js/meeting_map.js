@@ -69,7 +69,11 @@ function MeetingMap(inConfig) {
 			if (gDelegate.createMap(inDiv, loc)) {
 				gDelegate.addListener('zoomend', function (ev) {
 					if (shouldRedrawMarkers() && gAllMeetings) {
-						searchResponseCallback();
+						if (listOnlyVisible) {
+							const oldValue = filterVisible(false);
+							searchResponseCallback();
+							filterVisible(oldValue);
+						} else searchResponseCallback();
 					}
 				}, false);
 				if (config.map_search) {
@@ -153,7 +157,7 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
 				filterVisible(false);
-				gDelegate.setViewToPosition(position, filterMeetingsAndBounds);
+				gDelegate.setViewToPosition(position, filterMeetingsAndBounds, filterVisible);
 			}).catch(error => {
 				console.error(error.message);
 				$('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
@@ -173,9 +177,10 @@ function MeetingMap(inConfig) {
 			let dropdownContent = document.getElementById("map-menu-dropdown");
 			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
-				filterVisible(false);
-			} else
+			} else {
+				jQuery("#filteringByVisibility").html(listOnlyVisible?'&#10004;':'');
 				dropdownContent.style.display = "inline-block";
+			}
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		controlDiv.querySelector("#close_table").addEventListener('click', hideListView);
@@ -222,7 +227,7 @@ function MeetingMap(inConfig) {
 	function filterFromCrouton(filter) {
 		gMeetingIdsFromCrouton = filter;
 		if (gAllMeetings)
-			searchResponseCallback(fitDuringFilter);
+			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
 	};
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
@@ -235,7 +240,7 @@ function MeetingMap(inConfig) {
 		});
 	};
 	function clickSearch(e) {
-		croutonMap.showMap();
+		croutonMap.showMap(false,false);
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
@@ -300,20 +305,23 @@ function MeetingMap(inConfig) {
 		}
 		searchResponseCallback();
 		hideThrobber();
+		if (config.filter_visible || config.centerMe || config.goto) crouton.forceShowMap();
 		if (config.centerMe) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 					function (position) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds);
+						filterVisible(false);
+						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, filterVisible);
 					},
 					showGeocodingDialog
 				);
 			} else if (fitAll) {
 				showGeocodingDialog();
 			}
-		} else if (config.goto) {
-			gDelegate.callGeocoder(config.goto, filterMeetingsAndBounds);
+		} else {
+			if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+			if (config.goto) gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -407,7 +415,9 @@ function MeetingMap(inConfig) {
 	}
 	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
 		filterVisible(false);
-		filterMeetingsAndBounds(bounds);
+		const ret = filterMeetingsAndBounds(bounds);
+		filterVisible(true);
+		return ret;
 	}
 	function lookupLocation(fullscreen) {
 		if (document.getElementById('goto-text').value != '') {
@@ -582,8 +592,12 @@ function MeetingMap(inConfig) {
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
+	function showAllMeetings() {
+		filterVisible(false);
+		gDelegate.addListener('dragend', filterVisible, true);
+	}
 	function filterVisible(on=true) {
-		if (on===listOnlyVisible) return;
+		if (on===listOnlyVisible) return on;
 		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
@@ -596,6 +610,12 @@ function MeetingMap(inConfig) {
 		fitDuringFilter = true;
 		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
 		listOnlyVisible = on;
+		if (on) listener = gDelegate.addListener('dragstart', showAllMeetings, true);
+		else if (listener) {
+			gDelegate.removeListener(listener);
+			listener = null;
+		}
+		return !on;
 	}
 	function toggleVisible() {
 		filterVisible(!listOnlyVisible);
@@ -677,14 +697,14 @@ function MeetingMap(inConfig) {
 		}
 		gDelegate.invalidateSize();
 	}
-	function showMap(isModal=false) {
+	function showMap(isModal=false, fitBounds=true) {
 		if (isModal && gModalDelegate) {
 			gModalDelegate.invalidateSize();
 			return;
 		}
 		gDelegate.invalidateSize();
 		if (!gAllMeetings) return;
-		gDelegate.fitBounds(
+		if (fitBounds) gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])
 		);
@@ -702,6 +722,7 @@ function MeetingMap(inConfig) {
 	this.openModalWindow = openModalWindow;
 	this.closeModalWindow = closeModalWindow;
 	this.loadPopupMap = loadPopupMap;
+	this.filterVisible = filterVisible;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -713,3 +734,4 @@ MeetingMap.prototype.refreshMeetings = null;
 MeetingMap.prototype.openModalWindow = null;
 MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
+MeetingMap.prototype.filterVisible = null;

@@ -5,7 +5,7 @@ Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, b
 Requires at least: 4.0
 Required PHP: 8.0
 Tested up to: 6.6.2
-Stable tag: 3.20.0
+Stable tag: 3.20.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,10 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.20.1 =
+* Filter by visibility survives pan, zoom, geolocation.
+* If filter_tab has a positive value, it is the limit where we switch between having day-tabs or not.
 
 = 3.20.0 =
 * Added edit button to 3rd column so user can submit changes to the meeting.

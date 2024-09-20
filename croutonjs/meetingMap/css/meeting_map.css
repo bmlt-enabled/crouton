@@ -474,7 +474,7 @@ div.bmlt_map_container_div  button {
 }
 .menu-dropdown {
 		display: none;
-background-color: #EEEEEE;
+    background-color: #EEEEEE;
     color: #2d5c88;
 	    position: absolute;
 	    top: 45px;
@@ -491,6 +491,7 @@ background-color: #EEEEEE;
   text-decoration: none;
   display: block;
   width: 100%;
+  background-color: #EEEEEE;
 }
 .leaflet-popup-content {
   margin: 0px 0px;

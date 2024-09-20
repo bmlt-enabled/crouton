@@ -210,6 +210,7 @@ if (!class_exists("MeetingMap/Controller")) {
             $ret['zoom'] = $options['zoom'];
             $ret['minZoom'] = $options['min_zoom'];
             $ret['maxZoom'] = $options['max_zoom'];
+            $ret['filter_visible'] = $options['filter_visible'];
             if (!empty($options['center_me'])) {
                 $ret['centerMe'] = $options['center_me'];
             }
@@ -296,7 +297,7 @@ if (!class_exists("MeetingMap/Controller")) {
                             <li>
                                 <label for="zoom">zoom: </label>
                                 <input id="zoom" type="text" size="3" name="zoom" value="<?php echo $this->options['zoom']; ?>" />
-                            </li>                           
+                            </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
@@ -305,14 +306,14 @@ if (!class_exists("MeetingMap/Controller")) {
                             <li>
                                 <label for="clustering">Use clustering below zoom level: </label>
                                 <input id="clustering" type="text" size="2" name="clustering" value="<?php echo $this->options['clustering']; ?>" />
-                            </li>                        
+                            </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-popup-template" class="anchor"></a>Popup Template</h3>
                         <p>This allows a customization of the fields displayed when you click on a map icon.  A list of available fields are
-                        <span style="text-align:center;padding:20px 0;"> 
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p> 
+                        <span style="text-align:center;padding:20px 0;">
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
                                 <textarea id="marker_contents_template" class="handlebarsCode" name="marker_contents_template" cols="100" rows="10"><?php echo isset($this->options['marker_contents_template']) ? html_entity_decode($this->options['marker_contents_template']) : "___DEFAULT___"; ?></textarea>

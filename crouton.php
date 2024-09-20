@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.0
+Version: 3.20.1
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -73,6 +73,7 @@ if (!class_exists("Crouton")) {
             "has_languages" => '0',
             "has_common_needs" => '0',
             "has_venues" => '1',
+            "filter_visible" => '0',
             "include_city_button" => '1',
             "include_weekday_button" => '1',
             "include_unpublished" => '0',
@@ -126,6 +127,7 @@ if (!class_exists("Crouton")) {
             "has_languages",
             "has_zip_codes",
             "has_venues",
+            "filter_visible",
             "has_common_needs"
         ];
         private $waitMsg = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';

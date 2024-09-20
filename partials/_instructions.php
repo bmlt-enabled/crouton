@@ -116,6 +116,7 @@
         <p>0 = display meetings without tabs on dropdown filtering.</p>
         <p>1 = display meetings with tabs on dropdown filtering.</p>
         <p><em>Displaying tabs on filtering is useful when you have a large amount of results for each day on a dropdown selection.</em></p>
+		<p>If the value is a number greater than 1, then if the number of meetings to be displayed is greater than this number, we will use the tabbed display.</p>
     </div>
 	<h3 class="help-accordian"><strong>Header or No Header</strong></h3>
 	<div>
@@ -251,8 +252,17 @@
 		<p>embed = display map in a pane, and have it listen for filtering requests.</p>
         <p>You can specify the maximum zoom level at which clustering is enabled, 15 is the default. This may be desirable with smaller data sets in which you don't want to cluster at all.</p>
         <p><strong>[bmlt_tabs show_map="1" max_zoom_level="7"]</strong></p>
-        <p><em>The Google API Key must be entered on the crouton settings page for this to work. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
-		<p>As an alternative to using google maps, you may install and activate the plugin "bmlt-meeting-map".  In the settings for this plugin, you may select Open Street Maps, or any other standard conform map tile service.  Upon activation, crouton companion maps will use this functionality, rather than the native google maps.
+		<p>Crouton allows the user to choose between a variety of map providers, including Google and OSM.  A list of compatible providers is available <a href="https://leaflet-extras.github.io/leaflet-providers/preview/">here.</a></p>
+        <p><em>If you choose Google as your provider, the Google API Key must be entered on the crouton settings page. You must have the 'Google Maps JavaScript API' enabled on your key. For more information on setting up and configuring a Google Maps API key check out this blog article <a target="_blank" href="https://bmlt.app/google-api-key/">https://bmlt.app/google-api-key/</a></em></p>
+		<p>OSM does not require an API Key.</p>
+    </div>
+	<h3 class="help-accordian"><strong>Companion Map as Filter</strong></h3>
+    <div>
+        <p>With this parameter you can have crouton display a companion map of all the meetings.</p>
+        <p><strong>[bmlt_tabs filter_visible=1"]</strong></p>
+        <p>0 = the table includes all meetings, whether or not they are currently visible in the map (default)</p>
+        <p>1 = the table includes only those meetings that are currently visible in the map</p>
+        <p>The value may be modified "live" using the menu button in the map.</p>
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>

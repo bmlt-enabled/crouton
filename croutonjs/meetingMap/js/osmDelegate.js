@@ -65,25 +65,33 @@ function MapDelegate(config) {
 		if (ev=='idle') {
 			ev = 'moveend';
 		}
+		if (ev=='dragstart') {
+			ev = 'movestart';
+		}
+		if (ev=='dragend') {
+			ev = 'moveend';
+		}
         if (once) {
 			gMainMap.once(ev, f);
 		} else {
 			gMainMap.on(ev, f);
 		}
+		return {'event': ev, 'f': f};
     }
+	function removeListener(o) {
+		gMainMap.off(o.event, o.f);
+	}
     function setViewToPosition(position, filterMeetings, extra=null) {
         var latlng = L.latLng(position.latitude, position.longitude);
 		gMainMap.flyTo(latlng);
-        gMainMap.on('moveend', function(ev) {
-			gMainMap.off('moveend');
+        gMainMap.once('moveend', function(ev) {
 			newZoom = getZoomAdjust(false, filterMeetings);
 			if (gMainMap.getZoom() != newZoom) {
 				gMainMap.setZoom(newZoom);
-				gMainMap.on('zoomend',function() {
-					gMainMap.off('zoomend'); 
+				gMainMap.once('zoomend',function() {
 					gMainMap.invalidateSize();
 					if (extra) {
-						gMainMap.on('load moveend', extra);
+						gMainMap.once('load moveend', extra);
 					}
 				});
 			} else {
@@ -137,7 +145,7 @@ function MapDelegate(config) {
 			if (knt == 0) {
 				ret -= 1;
 			}
-		} 
+		}
 		return ret;
 	}
     function setZoom(filterMeetings, force=0) {
@@ -150,7 +158,7 @@ function MapDelegate(config) {
 		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
     }
 	function createMarker (	inCoords,		///< The long/lat for the marker.
-        multi,	///< The URI for the main icon
+        multi,	///< Flag if marker has multiple meetings
         in_html,		///< The info window HTML
         in_title,        ///< The tooltip
 		in_ids
@@ -165,10 +173,10 @@ function MapDelegate(config) {
 		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
 	}
     var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title}).bindPopup(in_html);
+	marker.isMulti = multi;
 	if (gClusterLayer) gClusterLayer.addLayer(marker);
 	else marker.addTo(gMainMap);
 	marker.on('popupopen', function(e) {
-        marker.oldIcon = marker.getIcon();
 		marker.setIcon(g_icon_image_selected);
 		gMainMap.on('zoomstart',function(){
 			marker.closePopup();
@@ -181,7 +189,7 @@ function MapDelegate(config) {
         });
 	});
     marker.on('popupclose', function(e) {
-        marker.setIcon(marker.oldIcon);
+        marker.setIcon(marker.isMulti ? g_icon_image_multi : g_icon_image_single);
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
     gAllMarkers.push( {ids: in_ids, marker: marker} );
@@ -309,7 +317,7 @@ function addControl(div,pos,cb) {
             gMainMap.on('moveend', function(ev) {
 				gMainMap.off('moveend');
 				gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
-				gMainMap.on('moveend',function() {
+				gMainMap.once('moveend',function() {
 					gTileLayer.redraw();
 				});
 			});
@@ -377,9 +385,13 @@ function addControl(div,pos,cb) {
 	function modalOff() {
 		if (gMainMap) gMainMap.dragging.enable()
 	}
+	function afterInit(f) {
+		f();
+	}
 	function returnTrue() {return true;}
     this.createMap = createMap;
     this.addListener = addListener;
+	this.removeListener = removeListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
     this.clearAllMarkers = clearAllMarkers;
@@ -402,9 +414,11 @@ function addControl(div,pos,cb) {
 	this.getGeocodeCenter = getGeocodeCenter;
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
+	this.afterInit = afterInit;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
+MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
 MapDelegate.prototype.clearAllMarkers = null;
@@ -427,3 +441,4 @@ MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
+MapDelegate.prototype.afterInit = null;

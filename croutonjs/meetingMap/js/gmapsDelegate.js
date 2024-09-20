@@ -52,16 +52,16 @@ function MapDelegate(in_config) {
         }
         var	pixel_width = inDiv.offsetWidth;
         var	pixel_height = inDiv.offsetHeight;
-        
+
         if ( (pixel_width < 640) || (pixel_height < 640) ) {
-            myOptions.scrollwheel = true;                    
+            myOptions.scrollwheel = true;
             myOptions.zoomControlOptions = { 'style': google.maps.ZoomControlStyle.SMALL };
         } else {
             myOptions.zoomControlOptions = { 'style': google.maps.ZoomControlStyle.LARGE };
         };
         gInfoWindow = new google.maps.InfoWindow();
         gMainMap = new google.maps.Map ( inDiv, myOptions );
-        
+
         return gMainMap;
     }
     function addListener(ev,f,once) {
@@ -74,10 +74,13 @@ function MapDelegate(in_config) {
                 ;
         }
         if (once) {
-            google.maps.event.addListenerOnce( gMainMap, e, f);
+            return google.maps.event.addListenerOnce( gMainMap, e, f);
         } else {
-            google.maps.event.addListener( gMainMap, e, f);
+            return google.maps.event.addListener( gMainMap, e, f);
         }
+    }
+    function removeListener(f) {
+        f.remove();
     }
     function fitBounds(locations) {
         google.maps.event.addListenerOnce(gMainMap, "bounds_changed", function () {
@@ -141,11 +144,11 @@ function MapDelegate(in_config) {
             if (knt == 0) {
                 ret -= 1;
             }
-        } 
+        }
         return ret;
     }
     function setZoom(filterMeetings, force=0) {
-        (force > 0) ? gMainMap.setZoom(force) : 
+        (force > 0) ? gMainMap.setZoom(force) :
         gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
     }
     function getZoom() {
@@ -214,7 +217,7 @@ function MapDelegate(in_config) {
                     }
                 });
             });
-        
+
             // This is necessary to make the Spiderfy work
             gOms.addListener('click', function (marker) {
                 marker.zIndex = 999;
@@ -222,11 +225,11 @@ function MapDelegate(in_config) {
                 gInfoWindow.open(gMainMap, marker);
             });
             markers.forEach((marker)=>gOms.addMarker(marker));
-        
+
         } else markers.forEach((m)=>m.setMap(gMainMap));
    }
 function createMarker (	inCoords,		///< The long/lat for the marker.
-        multi, 
+        multi,
         inHtml,		///< The info window HTML
         inTitle,        ///< The tooltip
         inIds
@@ -237,7 +240,7 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
 
     var	is_clickable = (inHtml ? true : false);
 
-    var marker = new google.maps.Marker ( 
+    var marker = new google.maps.Marker (
         { 'position':		new google.maps.LatLng(...inCoords),
             'shadow':		g_icon_shadow,
             'icon':			in_main_icon,
@@ -349,7 +352,7 @@ function geoCallback( in_geocode_response ) {
             &&  config.bounds.south && config.bounds.south.trim()!== ''
             &&  config.bounds.west && config.bounds.west.trim()!== '') {
                 geoCodeParams.bounds = new google.maps.LatLngBounds(
-                    new google.maps.LatLng(config.bounds.south, config.bounds.west), 
+                    new google.maps.LatLng(config.bounds.south, config.bounds.west),
                     new google.maps.LatLng(config.bounds.north, config.bounds.east));
             }
             if (filterMeetings)
@@ -378,6 +381,10 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
+    function afterInit(f) {
+        if (typeof gMainMap.getBounds()  !== 'undefined') f();
+        else addListener('idle', f, true);
+    }
     function modalOn() {}
     function modalOff() {}
     this.createMap = createMap;
@@ -405,9 +412,12 @@ function geoCallback( in_geocode_response ) {
     this.getGeocodeCenter = getGeocodeCenter;
     this.modalOn = modalOn;
     this.modalOff = modalOff;
+    this.removeListener = removeListener;
+    this.afterInit = afterInit;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
+MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
 MapDelegate.prototype.clearAllMarkers = null;
@@ -431,3 +441,4 @@ MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
+MapDelegate.prototype.afterInit = null;
