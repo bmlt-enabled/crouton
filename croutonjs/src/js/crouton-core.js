@@ -326,7 +326,10 @@ function Crouton(config) {
 		jQuery(id).removeClass("hide").addClass("show");
 	};
 
-	self.showView = function (viewName) {
+	self.showView = function (viewName, resetFilters=true) {
+		if (resetFilters) {
+			self.resetFilter();
+		}
 		if (viewName === "byday") {
 			self.byDayView();
 		} else if (viewName === "day" || viewName === "weekday") {
@@ -339,7 +342,6 @@ function Crouton(config) {
 	};
 
 	self.byDayView = function () {
-		self.resetFilter();
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -351,7 +353,6 @@ function Crouton(config) {
 	};
 
 	self.dayView = function () {
-		self.resetFilter();
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
@@ -363,10 +364,7 @@ function Crouton(config) {
 		});
 	};
 
-	self.filteredView = function (field, resetFilters=true) {
-		if (resetFilters) {
-			self.resetFilter();
-		}
+	self.filteredView = function (field) {
 		self.lowlightButton("#day");
 		self.lowlightButton(".filterButton");
 		self.highlightButton("#filterButton_" + field);
@@ -409,8 +407,6 @@ function Crouton(config) {
 		});
 		if (!filteringDropdown) {
 			self.filtering = false;
-			if (croutonMap) croutonMap.fillMap();
-			return;
 		}
 		var showingNow = [];
 		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
@@ -1745,7 +1741,7 @@ Crouton.prototype.simulateFilterDropdown = function() {
 	});
 	self.filteredPage();
 	if (!self.filtering && !self.config.map_page)
-		 self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day');
+		 self.showView(self.config['view_by'] === 'byday' ? 'byday' : 'day', false);
 }
 Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meeting_time_zone) {
 	var timeZoneAware = this.config['auto_tz_adjust'] === true || this.config['auto_tz_adjust'] === "true";
