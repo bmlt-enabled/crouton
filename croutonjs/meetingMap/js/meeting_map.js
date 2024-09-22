@@ -160,7 +160,7 @@ function MeetingMap(inConfig) {
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds, filterVisible);
 			}).catch(error => {
 				console.error(error.message);
-				$('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
+				jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
 			});
 			dropdownContent = document.getElementById("map-menu-dropdown").style.display = "none";
 		});
@@ -589,6 +589,7 @@ function MeetingMap(inConfig) {
 			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
 	};
 	var listOnlyVisible = false;
+	var listener = null;
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
@@ -597,7 +598,7 @@ function MeetingMap(inConfig) {
 		gDelegate.addListener('dragend', filterVisible, true);
 	}
 	function filterVisible(on=true) {
-		if (on===listOnlyVisible) return on;
+		if (on==listOnlyVisible) return on;
 		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {

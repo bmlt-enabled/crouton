@@ -73,7 +73,7 @@ if (!class_exists("Crouton")) {
             "has_languages" => '0',
             "has_common_needs" => '0',
             "has_venues" => '1',
-            "filter_visible" => '0',
+            "filter_visible" => 0,
             "include_city_button" => '1',
             "include_weekday_button" => '1',
             "include_unpublished" => '0',

@@ -1401,7 +1401,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
-					self.showView(self.config['view_by']);
+					self.showView(self.config['view_by'], false);
 
 					if (self.config['default_filter_dropdown'] !== "") {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
