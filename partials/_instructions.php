@@ -232,7 +232,7 @@
 	<h3 class="help-accordian"><strong>Query: Select by venue type</strong></h3>
 	<div>
 		<p>With this parameter you can add restrictions to root server query, as an alternative to specifying a custom query.
-		<p><strong>[bmlt_tabs venues="1|2|3"]</strong></p>
+		<p><strong>[bmlt_tabs venue_types="1|2|3"]</strong></p>
 		<p>Where<ul><li>1 = In-Person Meetings</li><li>2 = Virtual Meetings</li><li>3 = Hybrid Meetings</li></ul>
 		<p>The values can also be negative, which means that the venue type should be excluded from the results. To specify more the one type, use a comma separated list.</p>
 	</div>
