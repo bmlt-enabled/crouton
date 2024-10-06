@@ -1305,6 +1305,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					},
 					"dropdownData": self.dropdownData
 				}, function () {
+					self.updateMeetingCount();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
 						jQuery(".bmlt-data-row").click(function (e) {
