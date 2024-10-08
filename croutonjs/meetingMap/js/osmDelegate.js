@@ -51,7 +51,6 @@ function MapDelegate(config) {
 		}
 		if (pixel_height > pixel_width*1.4) {
 			inDiv.style.height = (pixel_width*1.6)+'px';
-			inDiv.parentNode.style.height = inDiv.style.height;
 		}
         gMainMap = new L.Map ( inDiv, myOptions );
         gTileLayer = L.tileLayer(config.tileUrl,config.tileOptions).addTo(gMainMap);
