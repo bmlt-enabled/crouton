@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.4
+Version: 3.20.5
 */
 /* Disallow direct access to the plugin file */
 if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
@@ -314,9 +314,11 @@ if (!class_exists("Crouton")) {
         }
         private function outputScript($s)
         {
-            if (isset($this->options['jsInFooter'])) {
+            if ($this->options['jsInFooter']) {
                 wp_add_inline_script('croutonjs', $s);
                 $s = "";
+            } else {
+                $s = "<script type='text/javascript'>$s</script>";
             }
             return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $s);
         }
@@ -381,9 +383,9 @@ if (!class_exists("Crouton")) {
             if (!$this->croutonBlockInitialized) {
                 $this->croutonBlockInitialized = true;
                 $croutonMap =  $this->getMapInitialization($mapConfig);
-                return "<script type='text/javascript'>var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });</script>";
+                return "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
             } else {
-                return isset($config) ? "<script type='text/javascript'>jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });</script>" : "";
+                return isset($config) ? "jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });" : "";
             }
         }
 
@@ -715,7 +717,7 @@ if (!class_exists("Crouton")) {
                         <h3><a id="config-advanced" class="anchor"></a>Advanced Options</h3>
                         <p>Should the generated Javascript be placed in the footer or in the body.</p>
                         <div>
-                                <input type="checkbox" name="jsInFooter" value="1" <?php echo ($this->options['jsInFooter'] == 1 ? 'checked' : '') ?> />Place Javascript in Footer
+                                <input type="checkbox" name="jsInFooter" value="1" <?php echo ($this->options['jsInFooter'] ? 'checked' : '') ?> />Place Javascript in Footer
                         </div>
                     </div>
             </div>
