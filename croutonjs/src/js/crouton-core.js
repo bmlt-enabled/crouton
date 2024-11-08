@@ -539,7 +539,7 @@ function Crouton(config) {
 			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
 			var ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');
 			var me = this;
-			self.getServiceBodies(ids).then(function (service_bodies) {
+			self.getServiceBodies(ids, false).then(function (service_bodies) {
 				var n = service_bodies.length;
 				var names = service_bodies.map((m)=>m['name']);
 				names.sort();
@@ -559,9 +559,7 @@ function Crouton(config) {
 			});
 		});
 	}
-	self.getServiceBodies = function(service_bodies_id) {
-		const requires_parents = true;
-
+	self.getServiceBodies = function(service_bodies_id, requires_parents=true) {
 		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
 			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
