@@ -336,7 +336,7 @@ if (!class_exists("Crouton")) {
          * When we are processing the main shortcodes themselves, we can just insert standard tags, because the difference is
          * in how we initialize the JS Crouton object.  And we do that when deciding whether to enqueue scripts or not.
          *
-         * @return void
+         * @return string
          */
         public function replaceShortcodeWithStandardTags()
         {

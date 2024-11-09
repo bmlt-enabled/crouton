@@ -39,8 +39,6 @@ https://demo.bmlt.app/crouton
 = 3.20.5 =
 * Fix list_service_bodies including the parent service body.
 * Correctly call add_inline_script, and always use it.
-
-= 3.20.4 =
 * Bug fix for checkbox placing JS in footer
 * Accessibility improvements
 
