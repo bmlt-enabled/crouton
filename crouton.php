@@ -24,9 +24,7 @@ if (!class_exists("Crouton")) {
          * @var mixed[]
          */
         public $options = array();
-        public $croutonBlockInitialized = false;
         public static $HOUR_IN_SECONDS = 3600;
-        public $has_handlebars = false;
         public $themes = [
             "asheboro",
             "florida-nights",
@@ -51,12 +49,10 @@ if (!class_exists("Crouton")) {
             'timeout' => 60
         );
         // crouton includes a map, we need to include the JS files and create the croutonMap object.
-        private $hasMap = false;
         public $shortCodeOptions = array(
             "root_server" => '',
             "service_body" => '',
             "service_body_parent" => '',
-            "jsInFooter" => true,
             "venue_types" => '',
             "formats" => '',
             "has_tabs" => '1',
@@ -130,7 +126,6 @@ if (!class_exists("Crouton")) {
             "filter_visible",
             "has_common_needs"
         ];
-        private $waitMsg = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
         private MeetingMap\Controller $meetingMapController;
         public function __construct()
         {
@@ -146,19 +141,19 @@ if (!class_exists("Crouton")) {
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
                 add_shortcode('init_crouton', array(
                     &$this,
-                    "initCrouton"
+                    "blank"
                 ));
                 add_shortcode('bmlt_tabs', array(
                     &$this,
-                    "tabbedUi"
+                    "replaceShortcodeWithStandardTags"
                 ));
                 add_shortcode('crouton_map', array(
                     &$this,
-                    "croutonMap"
+                    "replaceShortcodeWithStandardTags"
                 ));
                 add_shortcode('bmlt_map', array(
                     &$this,
-                    "meetingMap"
+                    "replaceShortcodeWithStandardTags"
                 ));
                 add_shortcode('bmlt_count', array(
                     &$this,
@@ -182,26 +177,55 @@ if (!class_exists("Crouton")) {
                 ));
             }
         }
-
-        private function hasShortcode()
+        /**
+         *
+         * @return string
+         */
+        private function croutonInitializationScript()
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_count', 'meeting_count', 'group_count', 'service_body_names', 'bmlt_handlebar'];
+            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_handlebar'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
-                return false;
+                return '';
             }
 
             foreach ($matches as $shortcode) {
-                if ($shortcode[2] === 'bmlt_handlebar' ||
-                    $shortcode[2] === 'bmlt_tabs' ||
-                    $shortcode[2] === 'crouton_map' ||
-                    $shortcode[2] === 'bmlt_map') {
-                    $this->hasMap = true;
+                if (isset($_GET['meeting-id'])) {
+                    $shortcode[2] = 'bmlt_handlebar';
+                    $shortcode[3] = '';
+                }
+                switch ($shortcode[2]) {
+                    case 'bmlt_tabs':
+                        $script = $this->renderTable(wp_parse_args($shortcode[3]));
+                        break;
+                    case 'init_crouton':
+                        $script = $this->initCrouton(wp_parse_args($shortcode[3]));
+                        break;
+                    case 'crouton_map':
+                        $script = $this->renderMap(wp_parse_args($shortcode[3]));
+                        break;
+                    case 'bmlt_map':
+                        $atts = wp_parse_args($shortcode[3]);
+                        if (is_array($atts)) {
+                            $atts['has_venues'] = '0';
+                        } else {
+                            $atts = ["has_venues" => "0"];
+                        }
+                        $script = $this->renderMap($atts, false);
+                        break;
+                    case 'bmlt_handlebar':
+                        $script = $this->handlebarFooterScript();
+                        break;
+                    default:
+                        $script = '';
+                        break;
+                }
+                if ($script != '') {
+                    return $script;
                 }
             }
-
             return true;
         }
 
@@ -245,7 +269,8 @@ if (!class_exists("Crouton")) {
         */
         public function enqueueFrontendFiles()
         {
-            if ($this->hasShortcode()) {
+            $script = $this->croutonInitializationScript();
+            if ($script !== '') {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.css"), false);
                 if (isset($_GET['croutonjsdebug'])) {
                     wp_enqueue_script("croutonnocorejs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-nocore.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-nocore.js"), true);
@@ -254,6 +279,7 @@ if (!class_exists("Crouton")) {
                     wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.js"), true);
                 }
                 $this->meetingMapController->enqueueFrontendFiles();
+                wp_add_inline_script("croutonjs", $script);
             }
         }
 
@@ -294,10 +320,9 @@ if (!class_exists("Crouton")) {
 
             return '';
         }
-
-        private function sharedRender()
+        private function outputTag()
         {
-            $output = "";
+            $output = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
             if (isset($_GET['this_title'])) {
                 $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
             }
@@ -305,34 +330,22 @@ if (!class_exists("Crouton")) {
             if (isset($_GET['sub_title'])) {
                 $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
             }
-
-            return $output;
+            return $output.'<div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
         }
-        private function inlineScript($s)
-        {
-            wp_add_inline_script('croutonjs', $s);
-        }
-        private function outputScript($s)
-        {
-            if ($this->options['jsInFooter']) {
-                wp_add_inline_script('croutonjs', $s);
-                $s = "";
-            } else {
-                $s = "<script type='text/javascript'>$s</script>";
-            }
-            return $this->waitMsg.sprintf('%s<div id="bmlt-tabs" class="bmlt-tabs hide">%s</div>', $this->sharedRender(), $s);
-        }
-        public function tabbedUi($atts, $content = null)
-        {
-            $this->hasMap = true;
+        /**
+         * When we are processing the main shortcodes themselves, we can just insert standard tags, because the difference is
+         * in how we initialize the JS Crouton object.  And we do that when deciding whether to enqueue scripts or not.
+         *
+         * @return void
+         */
+        public function replaceShortcodeWithStandardTags() {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
-            return $this->outputScript($this->renderTable($atts));
+            return $this->outputTag();
         }
         public function bmltHandlebar($atts, $template = null)
         {
-            $this->hasMap = true;
             if (!isset($_GET['meeting-id'])) {
                 return "Meeting-ID not set in query-string";
             }
@@ -343,50 +356,17 @@ if (!class_exists("Crouton")) {
                     return '';
                 }
             }
-            if (!$this->has_handlebars) {
-                $this->handlebarFooter();
-            }
-            $this->has_handlebars = true;
             return sprintf('<bmlt-handlebar style="display:none;"><span style="display:none;">%s</span>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
-        }
-        public function croutonMap($atts, $content = null)
-        {
-            $this->hasMap = true;
-            if (isset($_GET['meeting-id'])) {
-                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
-            }
-            return $this->outputScript($this->renderMap($atts));
-        }
-        public function meetingMap($atts, $content = null)
-        {
-            $this->hasMap = true;
-            if (isset($_GET['meeting-id'])) {
-                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
-            }
-            if (is_array($atts)) {
-                $atts['has_venues'] = '0';
-            } else {
-                $atts = ["has_venues" => "0"];
-            }
-            return $this->outputScript($this->renderMap($atts, false));
         }
         private function getMapInitialization($mapConfig)
         {
             $className = $this->meetingMapController->className();
-            if ($this->hasMap) {
-                return  "window.croutonMap = new $className($mapConfig);";
-            }
-            return "";
+            return  "window.croutonMap = new $className($mapConfig);";
         }
         private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
         {
-            if (!$this->croutonBlockInitialized) {
-                $this->croutonBlockInitialized = true;
-                $croutonMap =  $this->getMapInitialization($mapConfig);
-                return "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
-            } else {
-                return isset($config) ? "jQuery(document).ready(function() { crouton.setConfig($config); $renderCmd });" : "";
-            }
+            $croutonMap =  $this->getMapInitialization($mapConfig);
+            return "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
         }
 
         private function renderTable($atts)
@@ -407,6 +387,11 @@ if (!class_exists("Crouton")) {
         public function initCrouton($atts)
         {
             return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", ...$this->getCroutonJsConfig($atts));
+        }
+
+        public function blank()
+        {
+            return '';
         }
 
         public function meetingCount($atts)
@@ -444,7 +429,7 @@ if (!class_exists("Crouton")) {
             }
             return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
         }
-        public function handlebarFooter()
+        public function handlebarFooterScript()
         {
             if (!isset($_GET['meeting-id'])) {
                 return;
@@ -456,7 +441,7 @@ if (!class_exists("Crouton")) {
             $croutonMap =  $this->getMapInitialization($mapConfig);
             $ret = "var crouton;"
             ."jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); crouton.doHandlebars();})";
-            $this->inlineScript($ret);
+            return $ret;
         }
         /**
          * @desc Adds the options sub-panel
@@ -521,7 +506,6 @@ if (!class_exists("Crouton")) {
                 }
                 $this->options['root_server']    = $_POST['root_server'];
                 $this->options['service_body_1'] = $_POST['service_body_1'];
-                $this->options['jsInFooter'] = isset($_POST['jsInFooter']);
                 $this->options['time_format'] = $_POST['time_format'];
                 $this->options['language'] = $_POST['language'];
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
@@ -579,9 +563,6 @@ if (!class_exists("Crouton")) {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
-            }
-            if (!isset($this->options['jsInFooter'])) {
-                $this->options['jsInFooter'] = true;
             }
             ?>
             <div class="wrap">
@@ -712,14 +693,7 @@ if (!class_exists("Crouton")) {
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
                             </li>
                         </ul>
-                    </div>
-                    <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-advanced" class="anchor"></a>Advanced Options</h3>
-                        <p>Should the generated Javascript be placed in the footer or in the body.</p>
-                        <div>
-                                <input type="checkbox" name="jsInFooter" value="1" <?php echo ($this->options['jsInFooter'] ? 'checked' : '') ?> />Place Javascript in Footer
-                        </div>
-                    </div>
+                 </div>
             </div>
             <div id="crouton-ui" class=tab-content>
             <div style="padding: 0 15px;" class="postbox">
