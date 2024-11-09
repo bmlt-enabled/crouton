@@ -338,7 +338,8 @@ if (!class_exists("Crouton")) {
          *
          * @return void
          */
-        public function replaceShortcodeWithStandardTags() {
+        public function replaceShortcodeWithStandardTags()
+        {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
