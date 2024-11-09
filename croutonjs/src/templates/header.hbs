@@ -1,17 +1,17 @@
 {{startup this}}
 {{#if this.config.header}}
     {{#if this.config.include_weekday_button}}
-        <div class="bmlt-button-container"><a id="day" class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
+        <div class="bmlt-button-container"><a id="day" tabindex=0 class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
     {{/if}}
     {{#each this.config.button_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" tabindex=0 data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
     {{#each this.config.button_format_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}"tabindex=0 data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
     {{/each}}
     {{#if this.config.map_page}}
-        <div class="bmlt-button-container"><a id="filterButton_embeddedMapPage" data-field="embeddedMapPage" class="filterButton displayTypeLogic btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
-        <div class="bmlt-button-container"><a id="displayTypeButton_tablePages" data-field="tablePages" class="filterButton displayTypeLogic btn btn-primary btn-sm hide">{{getWord 'tabular'}}</a></div>
+        <div class="bmlt-button-container"><a id="filterButton_embeddedMapPage" tabindex=0 data-field="embeddedMapPage" class="filterButton displayTypeLogic btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
+        <div class="bmlt-button-container"><a id="displayTypeButton_tablePages" tabindex=0 data-field="tablePages" class="filterButton displayTypeLogic btn btn-primary btn-sm hide">{{getWord 'tabular'}}</a></div>
     {{/if}}
 
     {{#each this.dropdownData}}
