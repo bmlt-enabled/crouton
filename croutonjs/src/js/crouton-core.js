@@ -897,7 +897,7 @@ function Crouton(config) {
 		if (self.config['map_search']) self.searchMap();
 		else self.meetingSearch();
 	}
-	else if (!self.config['map_search']) self.meetingSearch();
+	else if (!window.croutonMap.hasMapSearch()) self.meetingSearch();
 }
 
 Crouton.prototype.setConfig = function(config) {
