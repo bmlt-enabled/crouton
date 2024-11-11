@@ -48,6 +48,7 @@ if (!class_exists("Crouton")) {
             ),
             'timeout' => 60
         );
+        const END_WAIT_MESSAGE = "document.getElementById('please-wait').style.display='none';";
         // crouton includes a map, we need to include the JS files and create the croutonMap object.
         public $shortCodeOptions = array(
             "root_server" => '',
@@ -372,17 +373,17 @@ if (!class_exists("Crouton")) {
 
         private function renderTable($atts)
         {
-            return $this->getInitializeCroutonBlock("crouton.render();document.getElementById('please-wait').style.display='none';", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render();".Crouton::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts));
         }
 
         private function renderMap($atts, $croutonMap = true)
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, true));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();".Crouton::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, true));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
-            return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render(true);".Crouton::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts));
         }
 
         public function initCrouton($atts)
