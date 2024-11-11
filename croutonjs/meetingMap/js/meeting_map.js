@@ -197,7 +197,9 @@ function MeetingMap(inConfig) {
 
 		return controlDiv;
 	}
-
+	function hasMapSearch() {
+		return 'map_search' in config;
+	}
 	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null, fitBounds = true, callback) {
 		if (!gDelegate.isApiLoaded()) {
 			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions, fitBounds, callback]);
@@ -724,6 +726,7 @@ function MeetingMap(inConfig) {
 	this.closeModalWindow = closeModalWindow;
 	this.loadPopupMap = loadPopupMap;
 	this.filterVisible = filterVisible;
+	this.hasMapSearch = hasMapSearch;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -736,3 +739,4 @@ MeetingMap.prototype.openModalWindow = null;
 MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
 MeetingMap.prototype.filterVisible = null;
+MeetingMap.prototype.hasMapSearch = null;
