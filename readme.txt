@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.20.8 =
+* Add a class for edit button.
+
 = 3.20.7 =
 * Assure "Fetching" message is deleted.
 * Remove unnecessary call to root server.
