@@ -202,7 +202,8 @@ if (!class_exists("Crouton")) {
                 'manage_options',
                 basename(__FILE__),
                 array(&$this, 'adminOptionsPage'),
-                2);
+                2
+            );
         }
         /**
          *
