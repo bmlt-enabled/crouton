@@ -1,4 +1,4 @@
-﻿function getValueSelected() 
+﻿function getValueSelected()
 {
 	var x = document.bmlt_tabs_options.service_body_1.selectedIndex;
 	var res = document.bmlt_tabs_options.service_body_1.options[x].value.split(",");
@@ -6,34 +6,6 @@
 	//document.getElementById("txtSelectedValues2").value = '[bmlt_tabs service_body_parent="' + res[2] + '"]';
 	document.getElementById("txtSelectedValues1").innerHTML = '<b>Service Body ID:</b> <span class="bmlt_sb">' + res[1] + '</span>';
 	document.getElementById("txtSelectedValues2").innerHTML = '<b>Service Body Parent:</b> <span class="bmlt_sb">' + res[3] + '</span>, <b>Service Body Parent ID:</b> <span class="bmlt_sb">' + res[2] + '</span>';
-};
-
-function numbersonly(myfield, e, dec)
-{
-	var key;
-	var keychar;
-	if (window.event)
-	   key = window.event.keyCode;
-	else if (e)
-	   key = e.which;
-	else
-	   return true;
-	keychar = String.fromCharCode(key);
-	// control keys
-	if ((key==null) || (key==0) || (key==8) || 
-		(key==9) || (key==13) || (key==27) )
-	   return true;
-	// numbers
-	else if ((("0123456789").indexOf(keychar) > -1))
-	   return true;
-	// decimal point jump
-	else if (dec && (keychar == "."))
-	   {
-	   myfield.form.elements[dec].focus();
-	   return false;
-	   }
-	else
-	   return false;
 };
 function resetCodemirrorToDefault(textAreaId) {
 	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
@@ -140,7 +112,7 @@ jQuery(document).ready(function($) {
     	} else {
         	$("#nominatim_div").show();
         	$("#custom_tile_provider").hide();
-        	$("#api_key_div").hide();   
+        	$("#api_key_div").hide();
     	}
 	}
 	var tabs;
@@ -156,7 +128,6 @@ function getTabKey(href) {
 function hideAllTabs() {
     tabs.each(function(){
         var href = getTabKey(jQuery(this).attr('href'));
-		console.log(href);
         jQuery('#' + href).hide();
     });
 }

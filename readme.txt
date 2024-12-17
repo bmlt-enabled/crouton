@@ -37,7 +37,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 3.20.8 =
-* Add a class for edit button.
+* Add a CSS class for edit button.
+* Spanish Translations
+* Crouton in Admin Menu not in "Settings"
 
 = 3.20.7 =
 * Assure "Fetching" message is deleted.
