@@ -136,9 +136,9 @@ if (!class_exists("Crouton")) {
             if (is_admin()) {
                 // Back end
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
-                add_action("admin_menu", array(&$this, "admin_menu_link"));
-                add_action("BmltEnabled_Submenu", array(&$this, "admin_submenu_link"));
-                add_filter("BmltEnabled_Slugs", array(&$this, "submenu_slug"));
+                add_action("admin_menu", array(&$this, "adminMenuLink"));
+                add_action("BmltEnabled_Submenu", array(&$this, "adminSubmenuLink"));
+                add_filter("BmltEnabled_Slugs", array(&$this, "submenuSlug"));
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -180,7 +180,7 @@ if (!class_exists("Crouton")) {
                 ));
             }
         }
-        function submenu_slug($slugs)
+        public function submenuSlug($slugs)
         {
             if (!is_array($slugs)) {
                 $slugs = array();
@@ -191,8 +191,8 @@ if (!class_exists("Crouton")) {
                 /**
                  * @desc Adds the options sub-panel
                  */
-        var $menu_created = false;
-        function admin_submenu_link($parent_slug)
+        private $menu_created = false;
+        public function adminSubmenuLink($parent_slug)
         {
             $this->menu_created = true;
             add_submenu_page(
@@ -503,7 +503,7 @@ if (!class_exists("Crouton")) {
             }
             return $unique_areas;
         }
-        function admin_menu_link()
+        public function adminMenuLink()
         {
             if ($this->menu_created) {
                 return;
@@ -521,15 +521,6 @@ if (!class_exists("Crouton")) {
                 null
             );
             do_action('BmltEnabled_Submenu', $slug);
-        }
-        public function adminMenuLink()
-        {
-            // If you change this from add_options_page, MAKE SURE you change the filterPluginActions function (below) to
-            // reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(
-                &$this,
-                'filterPluginActions'
-            ), 10, 2);
         }
         private function getDefaultMeetingDetailsPageContents()
         {
