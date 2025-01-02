@@ -224,7 +224,8 @@ function CroutonLocalization(language) {
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
-			'go': "Go!"
+			'go': "Go!",
+			'open search dialog': "Open Search Dialog",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -281,6 +282,7 @@ function CroutonLocalization(language) {
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
+			'open search dialog': "Open Search Dialog",
 			'go': "Go!"
 		},
 		"en-NZ": {
@@ -338,6 +340,7 @@ function CroutonLocalization(language) {
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
+			'open search dialog': "Open Search Dialog",
 			'go': "Go!"
 		},
 		"en-UK": {
@@ -395,6 +398,7 @@ function CroutonLocalization(language) {
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
+			'open search dialog': "Open Search Dialog",
 			'go': "Go!"
 		},
 		"en-US": {
@@ -452,6 +456,7 @@ function CroutonLocalization(language) {
 			'meeting details': "Meeting Details",
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
+			'open search dialog': "Open Search Dialog",
 			'go': "Go!"
 		},
 		"es-US": {
