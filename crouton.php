@@ -137,6 +137,8 @@ if (!class_exists("Crouton")) {
                 // Back end
                 add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
                 add_action("admin_menu", array(&$this, "adminMenuLink"));
+                add_action("BmltEnabled_Submenu", array(&$this, "adminSubmenuLink"));
+                add_filter("BmltEnabled_Slugs", array(&$this, "submenuSlug"));
             } else {
                 // Front end
                 add_action("wp_enqueue_scripts", array(&$this, "enqueueFrontendFiles"));
@@ -178,6 +180,31 @@ if (!class_exists("Crouton")) {
                 ));
             }
         }
+        public function submenuSlug($slugs)
+        {
+            if (!is_array($slugs)) {
+                $slugs = array();
+            }
+            $slugs[] = basename(__FILE__);
+            return $slugs;
+        }
+                /**
+                 * @desc Adds the options sub-panel
+                 */
+        private $menu_created = false;
+        public function adminSubmenuLink($parent_slug)
+        {
+            $this->menu_created = true;
+            add_submenu_page(
+                $parent_slug,
+                'Online Meeting List',
+                'Online Meeting List',
+                'manage_options',
+                basename(__FILE__),
+                array(&$this, 'adminOptionsPage'),
+                2
+            );
+        }
         /**
          *
          * @return string
@@ -208,7 +235,7 @@ if (!class_exists("Crouton")) {
                         $script = $this->renderMap(shortcode_parse_atts($shortcode[3]));
                         break;
                     case 'bmlt_map':
-                        $atts = wp_parse_args($shortcode[3]);
+                        $atts = shortcode_parse_atts($shortcode[3]);
                         if (is_array($atts)) {
                             $atts['has_venues'] = '0';
                         } else {
@@ -239,7 +266,7 @@ if (!class_exists("Crouton")) {
 
         public function enqueueBackendFiles($hook)
         {
-            if ($hook == 'settings_page_crouton') {
+            if (str_ends_with($hook, '_page_crouton')) {
                 wp_enqueue_style('bmlt-tabs-admin-ui-css', plugins_url('css/south-street/jquery-ui.css', __FILE__), false, '1.11.4', false);
                 wp_enqueue_style("chosen", plugin_dir_url(__FILE__) . "css/chosen.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__FILE__) . "css/crouton-admin.css", false, "1.1", 'all');
@@ -476,19 +503,24 @@ if (!class_exists("Crouton")) {
             }
             return $unique_areas;
         }
-
         public function adminMenuLink()
         {
-            // If you change this from add_options_page, MAKE SURE you change the filterPluginActions function (below) to
-            // reflect the page file name (i.e. - options-general.php) of the page your plugin is under!
-            add_options_page('crouton', 'crouton', 'activate_plugins', basename(__FILE__), array(
-                &$this,
-                'adminOptionsPage'
-            ));
-            add_filter('plugin_action_links_' . plugin_basename(__FILE__), array(
-                &$this,
-                'filterPluginActions'
-            ), 10, 2);
+            if ($this->menu_created) {
+                return;
+            }
+            $slugs = apply_filters('BmltEnabled_Slugs', []);
+            $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
+            $slug = $slugs[0];
+            add_menu_page(
+                'Meeting List',
+                'Meeting List',
+                'manage_options',
+                $slug,
+                '',
+                $icon,
+                null
+            );
+            do_action('BmltEnabled_Submenu', $slug);
         }
         private function getDefaultMeetingDetailsPageContents()
         {
