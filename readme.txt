@@ -36,13 +36,11 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
-= 3.20.9 =
-* Fix to release activity...assure svn is installed.
-
-= 3.20.8 =
+= 3.20.10 =
 * Add a CSS class for edit button.
 * Spanish Translations
 * Crouton in Admin Menu not in "Settings"
+* 3.20.9-10: Fix to release activity...assure svn is installed.
 
 = 3.20.7 =
 * Assure "Fetching" message is deleted.
