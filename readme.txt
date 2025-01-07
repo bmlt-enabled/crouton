@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.20.9 =
+* Fix to release activity...assure svn is installed.
+
 = 3.20.8 =
 * Add a CSS class for edit button.
 * Spanish Translations
