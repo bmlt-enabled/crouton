@@ -543,7 +543,7 @@ if (!class_exists("Crouton")) {
                 $_POST['bmlttabssave'] = false;
             }
             if ($_POST['bmlttabssave']) {
-                if (!wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['_wpnonce'])), 'bmlttabsupdate-options')) {
+                if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'bmlttabsupdate-options')) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
                 $this->options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
