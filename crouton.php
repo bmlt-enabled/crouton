@@ -316,7 +316,7 @@ if (!class_exists("Crouton")) {
         private function getCustomQuery($custom_query)
         {
             if (isset($_GET['custom_query'])) {
-                return $_GET['custom_query'];
+                return sanitize_text_field(wp_unslash($_GET['custom_query']));
             } elseif (isset($custom_query) && $custom_query != null) {
                 return html_entity_decode($custom_query);
             } elseif (isset($this->options['custom_query']) && strlen($this->options['custom_query']) > 0) {
@@ -354,11 +354,13 @@ if (!class_exists("Crouton")) {
         {
             $output = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
             if (isset($_GET['this_title'])) {
-                $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
+                $title =  sanitize_text_field(wp_unslash($_GET['this_title']));
+                $output .= '<div class="bmlt_tabs_title">' . $title . '</div>';
             }
 
             if (isset($_GET['sub_title'])) {
-                $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
+                $title =  sanitize_text_field(wp_unslash($_GET['sub_title']));
+                $output .= '<div class="bmlt_tabs_sub_title">' . $title . '</div>';
             }
             return $output.'<div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
         }
@@ -465,7 +467,7 @@ if (!class_exists("Crouton")) {
             if (!isset($_GET['meeting-id'])) {
                 return;
             }
-            $meetingId = $_GET['meeting-id'];
+            $meetingId = intval($_GET['meeting-id']);
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
@@ -528,6 +530,10 @@ if (!class_exists("Crouton")) {
         {
             return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
         }
+        private function sanitize_handlebars($field)
+        {
+            return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';
+        }
         /**
          * Adds settings/options page
          */
@@ -537,37 +543,37 @@ if (!class_exists("Crouton")) {
                 $_POST['bmlttabssave'] = false;
             }
             if ($_POST['bmlttabssave']) {
-                if (!wp_verify_nonce($_POST['_wpnonce'], 'bmlttabsupdate-options')) {
+                if (!wp_verify_nonce(sanitize_text_field( wp_unslash($_POST['_wpnonce'])), 'bmlttabsupdate-options')) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
-                $this->options['root_server']    = $_POST['root_server'];
-                $this->options['service_body_1'] = $_POST['service_body_1'];
-                $this->options['time_format'] = $_POST['time_format'];
-                $this->options['language'] = $_POST['language'];
+                $this->options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
+                $this->options['service_body_1'] = isset($_POST['service_body_1']) ? sanitize_text_field(wp_unslash($_POST['service_body_1'])) : '';
+                $this->options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
+                $this->options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $this->options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
-                $this->options['native_lang'] = trim($_POST['native_lang']);
-                $this->options['meeting_details_href'] = trim($_POST['meeting_details_href']);
-                $this->options['virtual_meeting_details_href'] = trim($_POST['virtual_meeting_details_href']);
-                $this->options['custom_query']   = $_POST['custom_query'];
-                $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
-                $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
-                $this->options['metadata_template'] = isset($_POST['metadata_template']) ? str_replace('\\', '', $_POST['metadata_template']) : "";
-                $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
-                $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
-                $this->options['theme']          = $_POST['theme'];
-                $this->options['show_map']       = $_POST['show_map'];
+                $this->options['native_lang'] = trim(sanitize_text_field(wp_unslash($_POST['native_lang'])));
+                $this->options['meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['meeting_details_href'])));
+                $this->options['virtual_meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['virtual_meeting_details_href'])));
+                $this->options['custom_query']   = isset($_POST['custom_query']) ? sanitize_text_field(wp_unslash($_POST['custom_query'])) : '';
+                $this->options['custom_css']     = $this->sanitize_handlebars('custom_css');
+                $this->options['meeting_data_template'] = $this->sanitize_handlebars('meeting_data_template');
+                $this->options['metadata_template'] = $this->sanitize_handlebars('metadata_template');
+                $this->options['meetingpage_title_template'] = $this->sanitize_handlebars('meetingpage_title_template');
+                $this->options['meetingpage_contents_template'] =$this->sanitize_handlebars('meetingpage_contents_template');
+                $this->options['theme']          = sanitize_text_field(wp_unslash($_POST['theme']));
+                $this->options['show_map']       = sanitize_text_field(wp_unslash($_POST['show_map']));
                 $this->options['header']         = isset($_POST['header']) ? "1" : "0";
                 $this->options['has_tabs']       = isset($_POST['has_tabs']) ? "1" : "0";
                 $this->options['include_city_button']    = isset($_POST['include_city_button']) ? "1" : "0";
                 $this->options['include_weekday_button'] = isset($_POST['include_weekday_button']) ? "1" : "0";
-                $this->options['view_by']       = $_POST['view_by'];
-                $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
-                $postFilters = isset($_POST['select_filters']) ? $_POST['select_filters'] : array();
+                $this->options['view_by']       = sanitize_text_field(wp_unslash($_POST['view_by']));
+                $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? intval($_POST['recurse_service_bodies']) : "0";
+                $postFilters = isset($_POST['select_filters']) ? array_map('sanitize_text_field', wp_unslash($_POST['select_filters'])) : array();
                 foreach ($this->hasFilters as $hasFilter) {
                     $this->options[$hasFilter] = in_array($hasFilter, $postFilters);
                 }
-                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
+                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? array_map('sanitize_text_field', wp_unslash($_POST['sextra_meetings'])) : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->meetingMapController->processUpdate($this->options);
                 $this->saveAdminOptions();
@@ -595,7 +601,7 @@ if (!class_exists("Crouton")) {
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
                 $this->options['extra_meetings_enabled'] = 0;
             }
-            if (!isset($this->options['extra_meetings']) || count($this->options['extra_meetings']) == 0) {
+            if (!is_array($this->options['extra_meetings']) || count($this->options['extra_meetings']) == 0) {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
@@ -603,7 +609,7 @@ if (!class_exists("Crouton")) {
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
-                    <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo esc_url(plugin_dir_url(__FILE__)); ?>css/images/banner.png"/>
+                    <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo esc_url(plugin_dir_url(__FILE__).'css/images/banner.png');?>"/>
                 </div>
                 <div id="updated"></div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
@@ -1192,10 +1198,11 @@ foreach ($all_fields as $field) {
             $params['extra_meetings'] = $extra_meetings_array;
 
             if (empty($params['meeting_details_href'])) {
+                $request_uri = sanitize_url(wp_unslash($_SERVER["REQUEST_URI"]));
                 if (empty(get_option('permalink_structure'))) {
-                    $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
+                    $params['meeting_details_href'] = $request_uri;
                 } else {
-                    $params['meeting_details_href'] = strtok($_SERVER["REQUEST_URI"], '?');
+                    $params['meeting_details_href'] = strtok($request_uri, '?');
                 }
             }
             $this->options['meeting_details_href'] = $params['meeting_details_href'];

@@ -2,10 +2,9 @@
 namespace MeetingMap;
 
 /* Disallow direct access to the plugin file */
-if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-    // die('Sorry, but you cannot access this page directly.');
+if (! defined('WPINC')) {
+    die;
 }
-
 
 if (!class_exists("MeetingMap/Controller")) {
     class Controller
@@ -330,14 +329,22 @@ if (!class_exists("MeetingMap/Controller")) {
                     </div>
             <?php
         }
+        private function sanitize_text_field($field)
+        {
+            return isset($_POST[$field]) ? sanitize_text_field(wp_unslash($_POST[$field])) : '';
+        }
+        private function sanitize_handlebars($field)
+        {
+            return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';
+        }
         public function processUpdate(&$options)
         {
-            $options['api_key'] = $_POST['api_key'];
-            $options['tile_provider'] = $_POST['tile_provider'];
+            $options['api_key'] = $this->sanitize_text_field('api_key');
+            $options['tile_provider'] = $this->sanitize_text_field('tile_provider');
             // cannot sanitize, because string contains {} characters.
-            $options['tile_url'] = sanitize_url($_POST['tile_url']);
-            $options['nominatim_url'] = sanitize_url($_POST['nominatim_url']);
-            $options['tile_attribution'] = wp_kses_post($_POST['tile_attribution']);
+            $options['tile_url'] = isset($_POST['tile_url']) ? sanitize_url(wp_unslash($_POST['tile_url'])) : '';
+            $options['nominatim_url'] = isset($_POST['nominatim_url']) ? sanitize_url(wp_unslash($_POST['nominatim_url'])) : '';
+            $options['tile_attribution'] = wp_kses_post(wp_unslash($_POST['tile_attribution']));
             $options['lat'] = floatval($_POST['lat']);
             $options['lng'] = floatval($_POST['lng']);
             $options['zoom'] = intval($_POST['zoom']);
@@ -347,7 +354,7 @@ if (!class_exists("MeetingMap/Controller")) {
             $options['bounds_west'] = ((trim($_POST['bounds_west']))==='') ? '' : floatval($_POST['bounds_west']);
             $options['region_bias'] = $_POST['region_bias'];
             $options['clustering'] = intval($_POST['clustering']);
-            $options['marker_contents_template'] = isset($_POST['marker_contents_template']) ? str_replace('\\', '', $_POST['marker_contents_template']) : "";
+            $options['marker_contents_template'] = $this->sanitize_handlebars('marker_contents_template');
         }
     }
 }
