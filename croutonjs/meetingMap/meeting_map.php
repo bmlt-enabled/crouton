@@ -329,10 +329,12 @@ if (!class_exists("MeetingMap/Controller")) {
                     </div>
             <?php
         }
+        // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         private function sanitize_text_field($field)
         {
             return isset($_POST[$field]) ? sanitize_text_field(wp_unslash($_POST[$field])) : '';
         }
+        // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         private function sanitize_handlebars($field)
         {
             return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';

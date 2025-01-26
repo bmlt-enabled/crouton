@@ -530,6 +530,7 @@ if (!class_exists("Crouton")) {
         {
             return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
         }
+        // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         private function sanitize_handlebars($field)
         {
             return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';
