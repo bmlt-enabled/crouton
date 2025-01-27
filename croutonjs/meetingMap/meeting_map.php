@@ -238,7 +238,7 @@ if (!class_exists("MeetingMap/Controller")) {
                         </select>
                         <div id="custom_tile_provider">
                             <label for="tile_url">URL for tiles: </label>
-                            <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo esc_url($this->options['tile_url']); ?>" />
+                            <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo esc_html($this->options['tile_url']); ?>" />
                             <br>
                             <label for="tile_attribution">Attribution: </label>
                             <input id="tile_attribution" type="text" size="60" name="tile_attribution" value="<?php echo esc_html($this->options['tile_attribution']); ?>" />
@@ -344,7 +344,7 @@ if (!class_exists("MeetingMap/Controller")) {
             $options['api_key'] = $this->sanitize_text_field('api_key');
             $options['tile_provider'] = $this->sanitize_text_field('tile_provider');
             // cannot sanitize, because string contains {} characters.
-            $options['tile_url'] = isset($_POST['tile_url']) ? sanitize_url(wp_unslash($_POST['tile_url'])) : '';
+            $options['tile_url'] = isset($_POST['tile_url']) ? sanitize_text_field(wp_unslash($_POST['tile_url'])) : '';
             $options['nominatim_url'] = isset($_POST['nominatim_url']) ? sanitize_url(wp_unslash($_POST['nominatim_url'])) : '';
             $options['tile_attribution'] = wp_kses_post(wp_unslash($_POST['tile_attribution']));
             $options['lat'] = floatval($_POST['lat']);

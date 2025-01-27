@@ -574,7 +574,7 @@ if (!class_exists("Crouton")) {
                 foreach ($this->hasFilters as $hasFilter) {
                     $this->options[$hasFilter] = in_array($hasFilter, $postFilters);
                 }
-                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? array_map('sanitize_text_field', wp_unslash($_POST['sextra_meetings'])) : array();
+                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? array_map('sanitize_text_field', wp_unslash($_POST['extra_meetings'])) : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->meetingMapController->processUpdate($this->options);
                 $this->saveAdminOptions();
@@ -720,9 +720,9 @@ if (!class_exists("Crouton")) {
                                     $extra_meetings_array = $this->getAllMeetings($this->options['root_server']);
                                     foreach ($extra_meetings_array as $extra_meeting) {
                                         $extra_meeting_x = explode('|||', $extra_meeting);
-                                        $extra_meeting_id = $extra_meeting_x[3];
+                                        $extra_meeting_id = trim($extra_meeting_x[3]);
                                         $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
-                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo esc_attr($extra_meeting_id) ?>"><?php echo esc_html($extra_meeting_display) ?></option>
+                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected' : '') ?> value="<?php echo esc_attr($extra_meeting_id) ?>"><?php echo esc_html($extra_meeting_display) ?></option>
                                         <?php
                                     }
                                 } ?>
