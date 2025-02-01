@@ -1,11 +1,11 @@
 === crouton ===
 
 Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718, jbraswell
-Tags: na, meeting list, meeting finder, maps, recovery, addiction, webservant, bmlt
+Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
 Required PHP: 8.0
-Tested up to: 6.6.2
-Stable tag: 3.20.10
+Tested up to: 6.7.1
+Stable tag: 3.20.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,9 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.20.11 =
+* Code quality checks
 
 = 3.20.10 =
 * Add a CSS class for edit button.

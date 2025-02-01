@@ -5,11 +5,13 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.10
+Version: 3.20.11
+License:           GPL-2.0+
+License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
 /* Disallow direct access to the plugin file */
-if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
-    // die('Sorry, but you cannot access this page directly.');
+if (! defined('WPINC')) {
+    die;
 }
 ini_set('max_execution_time', 120);
 if (!class_exists("Crouton")) {
@@ -314,7 +316,7 @@ if (!class_exists("Crouton")) {
         private function getCustomQuery($custom_query)
         {
             if (isset($_GET['custom_query'])) {
-                return $_GET['custom_query'];
+                return sanitize_text_field(wp_unslash($_GET['custom_query']));
             } elseif (isset($custom_query) && $custom_query != null) {
                 return html_entity_decode($custom_query);
             } elseif (isset($this->options['custom_query']) && strlen($this->options['custom_query']) > 0) {
@@ -352,11 +354,13 @@ if (!class_exists("Crouton")) {
         {
             $output = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
             if (isset($_GET['this_title'])) {
-                $output .= '<div class="bmlt_tabs_title">' . $_GET['this_title'] . '</div>';
+                $title =  sanitize_text_field(wp_unslash($_GET['this_title']));
+                $output .= '<div class="bmlt_tabs_title">' . $title . '</div>';
             }
 
             if (isset($_GET['sub_title'])) {
-                $output .= '<div class="bmlt_tabs_sub_title">' . $_GET['sub_title'] . '</div>';
+                $title =  sanitize_text_field(wp_unslash($_GET['sub_title']));
+                $output .= '<div class="bmlt_tabs_sub_title">' . $title . '</div>';
             }
             return $output.'<div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
         }
@@ -463,7 +467,7 @@ if (!class_exists("Crouton")) {
             if (!isset($_GET['meeting-id'])) {
                 return;
             }
-            $meetingId = $_GET['meeting-id'];
+            $meetingId = intval($_GET['meeting-id']);
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
@@ -480,7 +484,7 @@ if (!class_exists("Crouton")) {
             $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", Crouton::HTTP_RETRIEVE_ARGS);
             $result = json_decode(wp_remote_retrieve_body($results), true);
             if (is_wp_error($results)) {
-                echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . $root_server . '</p><p>Error: ' . $result->get_error_message() . '</p><p>Please try again later</p></div>';
+                echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . esc_url($root_server) . '</p><p>Error: ' . esc_html($result->get_error_message()) . '</p><p>Please try again later</p></div>';
                 return 0;
             }
 
@@ -526,6 +530,11 @@ if (!class_exists("Crouton")) {
         {
             return file_get_contents(plugin_dir_path(__FILE__) . "partials/default_meeting_details.html");
         }
+        // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+        private function sanitize_handlebars($field)
+        {
+            return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';
+        }
         /**
          * Adds settings/options page
          */
@@ -535,37 +544,37 @@ if (!class_exists("Crouton")) {
                 $_POST['bmlttabssave'] = false;
             }
             if ($_POST['bmlttabssave']) {
-                if (!wp_verify_nonce($_POST['_wpnonce'], 'bmlttabsupdate-options')) {
+                if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'bmlttabsupdate-options')) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
-                $this->options['root_server']    = $_POST['root_server'];
-                $this->options['service_body_1'] = $_POST['service_body_1'];
-                $this->options['time_format'] = $_POST['time_format'];
-                $this->options['language'] = $_POST['language'];
+                $this->options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
+                $this->options['service_body_1'] = isset($_POST['service_body_1']) ? sanitize_text_field(wp_unslash($_POST['service_body_1'])) : '';
+                $this->options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
+                $this->options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $this->options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $this->options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
-                $this->options['native_lang'] = trim($_POST['native_lang']);
-                $this->options['meeting_details_href'] = trim($_POST['meeting_details_href']);
-                $this->options['virtual_meeting_details_href'] = trim($_POST['virtual_meeting_details_href']);
-                $this->options['custom_query']   = $_POST['custom_query'];
-                $this->options['custom_css']     = isset($_POST['custom_css']) ? str_replace('\\', '', $_POST['custom_css']) : "";
-                $this->options['meeting_data_template'] = isset($_POST['meeting_data_template']) ? str_replace('\\', '', $_POST['meeting_data_template']) : "";
-                $this->options['metadata_template'] = isset($_POST['metadata_template']) ? str_replace('\\', '', $_POST['metadata_template']) : "";
-                $this->options['meetingpage_title_template'] = isset($_POST['meetingpage_title_template']) ? str_replace('\\', '', $_POST['meetingpage_title_template']) : "";
-                $this->options['meetingpage_contents_template'] = isset($_POST['meetingpage_contents_template']) ? str_replace('\\', '', $_POST['meetingpage_contents_template']) : "";
-                $this->options['theme']          = $_POST['theme'];
-                $this->options['show_map']       = $_POST['show_map'];
+                $this->options['native_lang'] = trim(sanitize_text_field(wp_unslash($_POST['native_lang'])));
+                $this->options['meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['meeting_details_href'])));
+                $this->options['virtual_meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['virtual_meeting_details_href'])));
+                $this->options['custom_query']   = isset($_POST['custom_query']) ? sanitize_text_field(wp_unslash($_POST['custom_query'])) : '';
+                $this->options['custom_css']     = $this->sanitize_handlebars('custom_css');
+                $this->options['meeting_data_template'] = $this->sanitize_handlebars('meeting_data_template');
+                $this->options['metadata_template'] = $this->sanitize_handlebars('metadata_template');
+                $this->options['meetingpage_title_template'] = $this->sanitize_handlebars('meetingpage_title_template');
+                $this->options['meetingpage_contents_template'] =$this->sanitize_handlebars('meetingpage_contents_template');
+                $this->options['theme']          = sanitize_text_field(wp_unslash($_POST['theme']));
+                $this->options['show_map']       = sanitize_text_field(wp_unslash($_POST['show_map']));
                 $this->options['header']         = isset($_POST['header']) ? "1" : "0";
                 $this->options['has_tabs']       = isset($_POST['has_tabs']) ? "1" : "0";
                 $this->options['include_city_button']    = isset($_POST['include_city_button']) ? "1" : "0";
                 $this->options['include_weekday_button'] = isset($_POST['include_weekday_button']) ? "1" : "0";
-                $this->options['view_by']       = $_POST['view_by'];
-                $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? $_POST['recurse_service_bodies'] : "0";
-                $postFilters = isset($_POST['select_filters']) ? $_POST['select_filters'] : array();
+                $this->options['view_by']       = sanitize_text_field(wp_unslash($_POST['view_by']));
+                $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? intval($_POST['recurse_service_bodies']) : "0";
+                $postFilters = isset($_POST['select_filters']) ? array_map('sanitize_text_field', wp_unslash($_POST['select_filters'])) : array();
                 foreach ($this->hasFilters as $hasFilter) {
                     $this->options[$hasFilter] = in_array($hasFilter, $postFilters);
                 }
-                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? $_POST['extra_meetings'] : array();
+                $this->options['extra_meetings'] = isset($_POST['extra_meetings']) ? array_map('sanitize_text_field', wp_unslash($_POST['extra_meetings'])) : array();
                 $this->options['extra_meetings_enabled'] = isset($_POST['extra_meetings_enabled']) ? intval($_POST['extra_meetings_enabled']) : "0";
                 $this->meetingMapController->processUpdate($this->options);
                 $this->saveAdminOptions();
@@ -593,7 +602,7 @@ if (!class_exists("Crouton")) {
             if (!isset($this->options['extra_meetings_enabled']) || $this->options['extra_meetings_enabled'] == "0" || strlen(trim($this->options['extra_meetings_enabled'])) == 0) {
                 $this->options['extra_meetings_enabled'] = 0;
             }
-            if (!isset($this->options['extra_meetings']) || count($this->options['extra_meetings']) == 0) {
+            if (!is_array($this->options['extra_meetings']) || count($this->options['extra_meetings']) == 0) {
                 $this->options['extra_meetings'] = '';
             } else {
                 $this->options['extra_meetings_enabled'] = 1;
@@ -601,16 +610,20 @@ if (!class_exists("Crouton")) {
             ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
-                    <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo plugin_dir_url(__FILE__); ?>css/images/banner.png"/>
+                    <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo esc_url(plugin_dir_url(__FILE__).'css/images/banner.png');?>"/>
                 </div>
                 <div id="updated"></div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
                     <?php
                     wp_nonce_field('bmlttabsupdate-options');
                     $this_connected = $this->testRootServer($this->options['root_server']);
-                    $connect = "<p><div style='color: #f00;font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></div><span style='color: #f00;'>Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.</span></p>";
+                    $connect_color = '#ff0000';
+                    $connect_dashicon = 'dashicons-no';
+                    $connect_message = 'Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.';
                     if ($this_connected != false) {
-                        $connect = "<span style='color: #00AD00;'><div style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-smiley'></div>Version ".$this_connected."</span>";
+                        $connect_color = ' #00AD00';
+                        $connect_dashicon = 'dashicons-smiley';
+                        $connect_message = 'Version '.$this_connected;
                         $this_connected = true;
                     }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
@@ -644,7 +657,9 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <label for="root_server">Default Root Server: </label>
-                                <input id="root_server" type="text" size="50" name="root_server" value="<?php echo $this->options['root_server']; ?>" /> <?php echo $connect; ?>
+                                <input id="root_server" type="text" size="50" name="root_server" value="<?php echo esc_url($this->options['root_server']); ?>" />
+                                <?php echo $this_connected ? '' : '<br/>'; ?>
+                                <span style='color:<?php echo esc_html($connect_color);?>;'><span style='font-size: 16px;vertical-align: text-top;' class='dashicons <?php echo esc_html($connect_dashicon);?>'></span><?php echo esc_html($connect_message);?></span>
                             </li>
                             <li>
                                 <input type="checkbox" id="use_aggregator" name="use_aggregator" value="1"/>
@@ -672,13 +687,13 @@ if (!class_exists("Crouton")) {
                                         $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
                                         $is_data = explode(',', esc_html($this->options['service_body_1']));
                                         if ($area_id == $is_data[1]) {?>
-                                            <option selected="selected" value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
+                                            <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
                                         <?php } else { ?>
-                                            <option value="<?php echo $unique_area; ?>"><?php echo $option_description; ?></option>
+                                            <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
                                         <?php } ?>
                                     <?php } ?>
                                 <?php } else { ?>
-                                    <option selected="selected" value="<?php echo $this->options['service_body_1']; ?>"><?php echo 'Not Connected - Can not get Service Bodies'; ?></option>
+                                    <option selected="selected" value="<?php echo esc_attr($this->options['service_body_1']); ?>">Not Connected - Can not get Service Bodies</option>
                                 <?php } ?>
                                 </select>
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
@@ -705,9 +720,9 @@ if (!class_exists("Crouton")) {
                                     $extra_meetings_array = $this->getAllMeetings($this->options['root_server']);
                                     foreach ($extra_meetings_array as $extra_meeting) {
                                         $extra_meeting_x = explode('|||', $extra_meeting);
-                                        $extra_meeting_id = $extra_meeting_x[3];
+                                        $extra_meeting_id = trim($extra_meeting_x[3]);
                                         $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
-                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected="selected"' : '') ?> value="<?php echo $extra_meeting_id ?>"><?php echo esc_html($extra_meeting_display) ?></option>
+                                        <option <?php echo ($this->options['extra_meetings'] != '' && in_array($extra_meeting_id, $this->options['extra_meetings']) ? 'selected' : '') ?> value="<?php echo esc_attr($extra_meeting_id) ?>"><?php echo esc_html($extra_meeting_display) ?></option>
                                         <?php
                                     }
                                 } ?>
@@ -724,7 +739,7 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <label for="custom_query">Custom Query: </label>
-                                <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? $this->options['custom_query'] : ""); ?>" />
+                                <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($this->options['custom_query']) ? esc_html($this->options['custom_query']) : ""); ?>" />
                             </li>
                         </ul>
                  </div>
@@ -744,7 +759,7 @@ if (!class_exists("Crouton")) {
                                                 } else {
                                                     echo "";
                                                 }
-                                                ?> value="<?php echo $theme ?>"><?php echo $theme == "jack" ? "jack (default)" : $theme ?></option>
+                                                ?> value="<?php echo esc_html($theme) ?>"><?php echo $theme == "jack" ? "jack (default)" : esc_html($theme) ?></option>
                                         <?php
                                     }?>
                                 </select>
@@ -770,15 +785,15 @@ if (!class_exists("Crouton")) {
                         <ul>
                             <li>
                                 <label for="language">Default language of Crouton UI: </label>
-                                <input id="language" type="text" size="5" name="language" value="<?php echo $this->options['language']; ?>" />
+                                <input id="language" type="text" size="5" name="language" value="<?php echo esc_html($this->options['language']); ?>" />
                             </li>
                             <li>
                                 <label for="native_lang">Default language of meetings (format code): </label>
-                                <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo $this->options['native_lang']; ?>" />
+                                <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo esc_html($this->options['native_lang']); ?>" />
                             </li>
                             <li>
                                 <label for="time_format">Default time format: </label>
-                                <input id="time_format" type="text" size="10" name="time_format" value="<?php echo $this->options['time_format']; ?>" />
+                                <input id="time_format" type="text" size="10" name="time_format" value="<?php echo esc_html($this->options['time_format']); ?>" />
                             </li>
                             <li>
                                 <?php
@@ -821,7 +836,7 @@ if (!class_exists("Crouton")) {
 
                             <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
                             foreach ($this->hasFilters as $hasFilter) {?>
-                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo $hasFilter;?>"><?php echo $hasFilter;?></option>
+                                <option <?php echo empty($this->options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo esc_html($hasFilter);?>"><?php echo esc_html($hasFilter);?></option>
                                 <?php
                             }?>
                             </select>
@@ -832,7 +847,7 @@ if (!class_exists("Crouton")) {
                         <p>Allows for custom styling of your crouton.</p>
                         <ul>
                             <li>
-                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? html_entity_decode($this->options['custom_css']) : ""); ?></textarea>
+                                <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($this->options['custom_css']) ? esc_html(html_entity_decode($this->options['custom_css'])) : ""); ?></textarea>
                             </li>
                         </ul>
                     </div>
@@ -843,8 +858,9 @@ if (!class_exists("Crouton")) {
             <div id="crouton-templates">
                                     <div id="examplePopup1" style="display:none">
 <h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
-foreach ($this->getAllFields($this->options['root_server']) as $field) {
-    echo "<tr><td>".$field['key']."</td><td>".$field['description']."</td></tr>";
+$all_fields = $this_connected ? $this->getAllFields($this->options['root_server']) : [];
+foreach ($all_fields as $field) {
+    echo "<tr><td>".esc_html($field['key'])."</td><td>".esc_html($field['description'])."</td></tr>";
 }
 ?></table>
 <h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
@@ -888,7 +904,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
-                                <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? html_entity_decode($this->options['meeting_data_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($this->options['meeting_data_template']) ? esc_html(html_entity_decode($this->options['meeting_data_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
@@ -907,7 +923,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
                         <ul>
                             <li>
-                                <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? html_entity_decode($this->options['metadata_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($this->options['metadata_template']) ? esc_html(html_entity_decode($this->options['metadata_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
@@ -927,11 +943,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         <ul>
                             <li>
                                 <label for="meetingpage_title_template">Title</label>
-                                <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($this->options['meetingpage_title_template']) ? html_entity_decode($this->options['meetingpage_title_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($this->options['meetingpage_title_template']) ? esc_html(html_entity_decode($this->options['meetingpage_title_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <label for="meetingpage_contents_template">Contents</label>
-                                <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($this->options['meetingpage_contents_template']) ? html_entity_decode($this->options['meetingpage_contents_template']) : "___DEFAULT___"; ?></textarea>
+                                <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($this->options['meetingpage_contents_template']) ? esc_html(html_entity_decode($this->options['meetingpage_contents_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meetingpage_templates" value="RESET TO DEFAULT" class="button-secondary" />
@@ -951,11 +967,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         <ul>
                             <li>
                                 <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
-                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo $this->options['meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo esc_url($this->options['meeting_details_href']); ?>" onkeyup='show_create_detail_option(this)'/>
                             </li>
                             <li>
                                 <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
-                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo $this->options['virtual_meeting_details_href']; ?>" onkeyup='show_create_detail_option(this)'/>
+                                <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo esc_url($this->options['virtual_meeting_details_href']); ?>" onkeyup='show_create_detail_option(this)'/>
                                 <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
                             </li>
                         </ul>
@@ -968,18 +984,6 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             </div>
             <script type="text/javascript">getValueSelected();</script>
             <?php
-        }
-        /**
-         * @desc Adds the Settings link to the plugin activate/deactivate page
-         */
-        public function filterPluginActions($links, $file)
-        {
-            // If your plugin is under a different top-level menu than Settings (IE - you changed the function above to something other than add_options_page)
-            // Then you're going to want to change options-general.php below to the name of your top-level page
-            $settings_link = '<a href="options-general.php?page=' . basename(__FILE__) . '">' . __('Settings') . '</a>';
-            array_unshift($links, $settings_link);
-            // before other links
-            return $links;
         }
         /**
          * Retrieves the plugin options from the database.
@@ -1090,7 +1094,7 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
                         $area_name = $area_data[0];
                     }
                 }
-                $value['start_time'] = date("g:iA", strtotime($value['start_time']));
+                $value['start_time'] = gmdate("g:iA", strtotime($value['start_time']));
                 $all_meetings[] = $value['meeting_name'].'||| ['.$value['weekday_tinyint'].'] ['.$value['start_time'].']||| ['.$area_name.']||| ['.$value['id_bigint'].']';
             }
             return $all_meetings;
@@ -1195,10 +1199,11 @@ foreach ($this->getAllFields($this->options['root_server']) as $field) {
             $params['extra_meetings'] = $extra_meetings_array;
 
             if (empty($params['meeting_details_href'])) {
+                $request_uri = sanitize_url(wp_unslash($_SERVER["REQUEST_URI"]));
                 if (empty(get_option('permalink_structure'))) {
-                    $params['meeting_details_href'] = $_SERVER["REQUEST_URI"];
+                    $params['meeting_details_href'] = $request_uri;
                 } else {
-                    $params['meeting_details_href'] = strtok($_SERVER["REQUEST_URI"], '?');
+                    $params['meeting_details_href'] = strtok($request_uri, '?');
                 }
             }
             $this->options['meeting_details_href'] = $params['meeting_details_href'];
