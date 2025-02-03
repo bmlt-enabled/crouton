@@ -498,7 +498,7 @@ function CroutonLocalization(language) {
     		"share": "compartir",
     		"no_meetings_for_this_day": "No hay reuniones en este día",
     		'css-textalign': 'Alineación de texto CSS',
-    		'tabular': "As table",'formato tabla': "Modo tabla",
+    		'tabular': 'Formato tabla',
     		'google_directions': 'Indicaciones de Google',
     		'css-floatdirection': "Dirección float-CSS",
     		'all': 'Todos',
