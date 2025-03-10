@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.11
+Version: 3.20.12
 License:           GPL-2.0+
 License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
@@ -1191,8 +1191,8 @@ foreach ($all_fields as $field) {
             $extra_meetings_array = [];
             if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($this->options['extra_meetings'] as $value) {
-                    $data = array(" [", "]");
-                    array_push($extra_meetings_array, str_replace($data, "", $value));
+                    $data = array("[", "]");
+                    array_push($extra_meetings_array, trim(str_replace($data, "", $value)));
                 }
             }
 
