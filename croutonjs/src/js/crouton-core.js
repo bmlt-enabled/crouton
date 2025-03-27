@@ -111,7 +111,8 @@ function Crouton(config) {
 			maxZoom: 18
 		},
 		minZoom: 6,
-		maxZoom: 17
+		maxZoom: 17,
+		noMap: false
 	};
 
 	self.setConfig(config);
@@ -493,7 +494,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
 		window.crouton = self;
-		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback);
+		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
 	self.getCurrentLocation = function(callback) {
 		retrieveGeolocation().then(position => {

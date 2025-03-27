@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.12
+Version: 3.21.0
 License:           GPL-2.0+
 License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
@@ -111,6 +111,7 @@ if (!class_exists("Crouton")) {
             "has_meeting_count" => false,
             "google_api_key" => "",
             "report_update_url" => "",
+            "noMap" => false,
         );
         private $hasFilters = [
             "has_days",
@@ -153,6 +154,10 @@ if (!class_exists("Crouton")) {
                     "replaceShortcodeWithStandardTags"
                 ));
                 add_shortcode('crouton_map', array(
+                    &$this,
+                    "replaceShortcodeWithStandardTags"
+                ));
+                add_shortcode('crouton_tabs', array(
                     &$this,
                     "replaceShortcodeWithStandardTags"
                 ));
@@ -215,7 +220,7 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_handlebar', 'init_crouton'];
+            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'crouton_tabs', 'bmlt_handlebar', 'init_crouton'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
                 return '';
@@ -235,6 +240,11 @@ if (!class_exists("Crouton")) {
                         break;
                     case 'crouton_map':
                         $script = $this->renderMap(shortcode_parse_atts($shortcode[3]));
+                        break;
+                    case 'crouton_tabs':
+                        $atts = shortcode_parse_atts($shortcode[3]);
+                        $atts['noMap'] = true;
+                        $script = $this->renderMap($atts);
                         break;
                     case 'bmlt_map':
                         $atts = shortcode_parse_atts($shortcode[3]);

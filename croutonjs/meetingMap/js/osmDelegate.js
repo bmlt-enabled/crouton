@@ -30,8 +30,15 @@ function MapDelegate(config) {
 	var gMainMap;
 	var gTileLayer;
 	var gClusterLayer = null;
-    function createMap(inDiv, inCenter) {
+    function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
+		if ( inHidden ) {
+			gDiv = inDiv;
+			gDiv.style.height = 'auto';
+			gDiv.style.marginBottom = '10px';
+			gMainMap = null;
+			return gDiv;
+		}
 		myOptions = {
                 'minZoom': config.minZoom,
                 'maxZoom': config.maxZoom,
@@ -61,6 +68,7 @@ function MapDelegate(config) {
         return gMainMap;
     }
     function addListener(ev,f,once) {
+		if (!gMainMap) return;
 		if (ev=='idle') {
 			ev = 'moveend';
 		}
@@ -78,9 +86,11 @@ function MapDelegate(config) {
 		return {'event': ev, 'f': f};
     }
 	function removeListener(o) {
+		if (!gMainMap) return;
 		gMainMap.off(o.event, o.f);
 	}
     function setViewToPosition(position, filterMeetings, extra=null) {
+		if (!gMainMap) return;
         var latlng = L.latLng(position.latitude, position.longitude);
 		gMainMap.flyTo(latlng);
         gMainMap.once('moveend', function(ev) {
@@ -102,10 +112,12 @@ function MapDelegate(config) {
 	}
 	function clearAllMarkers ( )
 	{
+		if (!gMainMap) return;
 		gAllMarkers && gAllMarkers.forEach((m) => {m.marker.closePopup(); gMainMap.removeLayer(m.marker)});
 		gAllMarkers = [];
 	};
 	function getZoom() {
+		if (!gMainMap) return null;
 		return gMainMap.getZoom();
 	}
 	function getZoomAdjust(only_out,filterMeetings) {
@@ -148,12 +160,15 @@ function MapDelegate(config) {
 		return ret;
 	}
     function setZoom(filterMeetings, force=0) {
+		if (!gMainMap) return;
 		(force > 0) ? gMainMap.setZoom(force) : gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
 	}
 	function zoomOut(filterMeetings) {
+		if (!gMainMap) return;
         gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
 	}
 	function fromLatLngToPoint(lat, lng) {
+		if (!gMainMap) return null;
 		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
     }
 	function createMarker (	inCoords,		///< The long/lat for the marker.
@@ -163,6 +178,7 @@ function MapDelegate(config) {
 		in_ids
 )
 {
+	if (!gMainMap) return;
     var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single);
 
 	let highlightRow = function(target) {
@@ -194,6 +210,7 @@ function MapDelegate(config) {
     gAllMarkers.push( {ids: in_ids, marker: marker} );
 }
 function openMarker(id) {
+	if (!gMainMap) return;
 	marker = gAllMarkers.find((m) => m.ids.includes(id));
 	if (marker) {
 		marker.marker.openPopup();
@@ -204,6 +221,10 @@ function openMarker(id) {
 	jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 }
 function addControl(div,pos,cb) {
+	if (!gMainMap) {
+        gDiv.appendChild(div);
+        return;
+    }
 		var ControlClass =  L.Control.extend({
 	  		onAdd: function (map) {
 				return div;
@@ -347,25 +368,32 @@ function addControl(div,pos,cb) {
         geocode(in_loc, geoCodeParams, callback, filterMeetings);
     }
 	function contains(bounds, lat, lng) {
+		if (!gMainMap) return true;
 		return bounds.contains(L.latLng ( lat, lng ));
 	}
 	function getBounds() {
+		if (!gMainMap) return null;
 		return gMainMap.getBounds();
 	}
 	function invalidateSize() {
+		if (!gMainMap) return;
 		gMainMap.invalidateSize();
 	}
 	function fitBounds(locations) {
+		if (!gMainMap) return;
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
 		gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
+		if (!gMainMap) return;
 		gClusterLayer = L.markerClusterGroup();
 	}
 	function addClusterLayer() {
+		if (!gMainMap) return;
 		gClusterLayer && gMainMap.addLayer(gClusterLayer);
 	}
 	function removeClusterLayer() {
+		if (!gMainMap) return;
 		gClusterLayer && gMainMap.removeLayer(gClusterLayer);
 		gClusterLayer = null;
 	}
@@ -388,6 +416,9 @@ function addControl(div,pos,cb) {
 		f();
 	}
 	function returnTrue() {return true;}
+	function hasClickSearch() {
+		return gMainMap != null;
+	}
     this.createMap = createMap;
     this.addListener = addListener;
 	this.removeListener = removeListener;
@@ -414,6 +445,7 @@ function addControl(div,pos,cb) {
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
+	this.hasClickSearch = hasClickSearch;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -441,3 +473,4 @@ MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
+MapDelegate.prototype.hasClickSearch = null;

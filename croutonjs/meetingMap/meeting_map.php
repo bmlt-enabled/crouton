@@ -223,6 +223,9 @@ if (!class_exists("MeetingMap/Controller")) {
                 $ret['map_search'] = $options['map_search'];
             }
             $ret["marker_contents_template"] = $options['marker_contents_template'];
+            if (isset($options['noMap'])) {
+                $ret['noMap'] = $options['noMap'];
+            }
             return json_encode($ret);
         }
         public function adminSection()
