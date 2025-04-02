@@ -170,7 +170,7 @@ function CroutonLocalization(language) {
 			'filter by visibility': "Zeige nur Meetings, die gerade auf dem Karte stehen",
 			'go': "Los!"
 		},
-		"en-AU": {
+"en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
 			"weekday" : "Weekday",
 			"city" : "City",
@@ -184,7 +184,7 @@ function CroutonLocalization(language) {
 			"postal_codes" : "Postcodes",
 			"formats" : "Formats",
 			"map" : "Map",
-			"neighborhood": "Neighborhood",
+			"neighborhood": "Neighbourhood",
 			"near_me": "Near Me",
 			"text_search": "Text Search",
 			"click_search": "Click Search",
@@ -217,7 +217,7 @@ function CroutonLocalization(language) {
 			'show meetings near...': 'Show meetings near...',
 			'filter meetings': 'Filter meetings',
 			'visible meeting list': 'Visible meetings as list',
-			'enter a city or zip code': 'Enter a city or zip code',
+			'enter a city or zip code': 'Enter a city/town and state/territory',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
 			'meeting page': "Meeting Page",

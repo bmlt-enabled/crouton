@@ -7,7 +7,8 @@
             <li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
             <li><code>[crouton_map]</code> -- generates a map-based interface from which geographic queries can be made. See "Map Search" below for details.</li>
 			<li><code>[bmlt_map]</code> -- generates a map-based interface suitible for mobile devices.  Queries to the BMLT database, along with the available filters, are control by the usual <code>[bmlt_tabs]</code> parameters.</li>
-            <li><code>[meeting_count]</code></li>
+			<li><code>[crouton_tabs]</code> -- generates a table-based interface from which geographic (text search or device location) queries can be made. See "Map Search" below for details.</li>
+			<li><code>[meeting_count]</code></li>
             <li><code>[group_count]</code></li>
             <li><code>[service_body_names]</code></li>
 			<li><code>[bmlt_handlebar]</code></li>
@@ -266,8 +267,9 @@
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>
-        <p>With this shortcode you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
+        <p>With these shortcodes you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
         <p><strong>[crouton_map]</strong></p>
+		<p><strong>[crouton_tabs]</strong></p>
         <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs])</p>
         <p><strong>[crouton_map map_search_auto="false"]</strong> - specifies you do NOT want to automatically use your current latitude and longitude to find meetings (default: true).</p>
         <p><strong>[crouton_map map_search_location="Greensboro, NC"]</strong> - specifies the starting search location on the map (default: none).</p>
