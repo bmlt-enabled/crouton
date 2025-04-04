@@ -99,6 +99,12 @@ function MeetingMap(inConfig) {
 		controlDiv.innerHTML = template(params);
 		controlDiv.querySelector("#map-search-button").addEventListener('click', showBmltSearchDialog);
 		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
+		controlDiv.querySelector("#bmltsearch-goto-text").addEventListener('keypress', function (event) {
+			if (event.key === "Enter") {
+				event.preventDefault();
+				document.getElementById("bmltsearch-text-button").click();
+			}
+		});
 		controlDiv.querySelector("#bmltsearch-text-button").addEventListener('click', function () {
 			let text = document.getElementById("bmltsearch-goto-text").value.trim();
 			if (text === "") return;
@@ -283,10 +289,14 @@ function MeetingMap(inConfig) {
 		};
 	};
 	function mapSearchGeocode(resp) {
-		let latlng = gDelegate.getGeocodeCenter(resp);
+		showThrobber();
 		if (document.getElementById("bmltsearch-goto-text"))
 			document.getElementById("bmltsearch-goto-text").value = "";
-		showThrobber();
+		let latlng = gDelegate.getGeocodeCenter(resp);
+		if (!latlng) {
+			hideThrobber();
+			return;
+		}
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {

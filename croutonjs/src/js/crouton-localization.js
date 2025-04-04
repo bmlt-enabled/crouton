@@ -217,7 +217,7 @@ function CroutonLocalization(language) {
 			'show meetings near...': 'Show meetings near...',
 			'filter meetings': 'Filter meetings',
 			'visible meeting list': 'Visible meetings as list',
-			'enter a city or zip code': 'Enter a city/town and state/territory',
+			'enter a city or zip code': 'Enter a city and state',
 			'toggle fullscreen mode': 'Toggle fullscreen mode',
 			'close': "Close",
 			'meeting page': "Meeting Page",
