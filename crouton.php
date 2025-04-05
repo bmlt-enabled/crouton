@@ -1161,7 +1161,7 @@ foreach ($all_fields as $field) {
                     array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
                 }
             }
-            if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'],'distance') == 0) {
+            if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'], 'distance') == 0) {
                 array_push($params['button_filters'], ['title' => 'Distance', 'field' => 'distance_in_km']);
             }
             $tmp_formats = [];
