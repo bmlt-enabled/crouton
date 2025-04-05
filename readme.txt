@@ -36,6 +36,10 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.20.13 =
+* Added the ability to sort by distance.
+* Added the ability to display the distance from a location submitted using the crouton map search feature.
+
 = 3.20.12 =
 * Extra meetings not showing up
 

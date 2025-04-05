@@ -82,6 +82,7 @@ function Crouton(config) {
 		auto_tz_adjust: false,        // Will auto adjust the time zone, by default will assume the timezone is local time
 		base_tz: null,                // In conjunction with auto_tz_adjust the timezone to base from.  Choices are listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/moment-timezone.js#L623
 		custom_query: null,			  // Enables overriding the services related queries for a custom one
+		sort_results_by_distance: false, // Controls sort results by distance
 		sort_keys: "start_time",	  // Controls sort keys on the query
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
 		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
@@ -284,11 +285,10 @@ function Crouton(config) {
 				return self.getMeetings(url); // Proceed without geolocation if error occurs
 			});
 		} else if (self.config['custom_query'] != null) {
-			if (self.config['sort_keys'] === 'distance') {
-				url += self.config['custom_query'] + '&sort_results_by_distance=1';
-			} else {
-				url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
+			if (self.config['sort_results_by_distance']) {
+				url += self.config['custom_query'] + '&sort_results_by_distance=1'
 			}
+			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
 			return self.getMeetings(url);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
@@ -299,12 +299,12 @@ function Crouton(config) {
 				url += '&recursive=1';
 			}
 
-			if (self.config['sort_keys'] === 'distance') {
+			if (self.config['sort_results_by_distance']) {
 				url += '&sort_results_by_distance=1';
-			} else {
-				url += '&sort_keys='  + self.config['sort_keys'];
 			}
 
+			url += '&sort_keys='  + self.config['sort_keys'];
+			
 			return self.getMeetings(url);
 		} else {
 			return new Promise(function(resolve, reject) {
