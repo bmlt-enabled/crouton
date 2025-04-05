@@ -338,6 +338,8 @@ function Crouton(config) {
 			self.dayView();
 		} else if (viewName === "city") {
 			self.filteredView("location_municipality");
+		} else if (viewName === "distance") {
+			self.filteredView("distance_in_km");
 		} else {
 			self.filteredView(viewName);
 		}
@@ -1173,6 +1175,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 					for (var f = 0; f < self.config.button_filters.length; f++) {
 						var groupByName = self.config.button_filters[f]['field'];
+						if (groupByName.startsWith('distance')) continue;
 						var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
@@ -1211,15 +1214,20 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var buttonFiltersDataSorted = {};
 				for (var b = 0; b < self.config.button_filters.length; b++) {
-					var sortKey = [];
 					var groupByName = self.config.button_filters[b]['field'];
+					buttonFiltersDataSorted[groupByName] = {};
+					if (groupByName.startsWith('distance')) {
+						buttonFiltersDataSorted[groupByName]['Sorted by Distance'] = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						continue;
+					}
+					var sortKey = [];
+
 					for (var buttonFiltersDataItem in buttonFiltersData[groupByName]) {
 						sortKey.push(buttonFiltersDataItem);
 					}
 
 					sortKey.sort();
 
-					buttonFiltersDataSorted[groupByName] = {};
 					for (var s = 0; s < sortKey.length; s++) {
 						buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
 					}
