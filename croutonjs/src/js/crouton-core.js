@@ -1149,17 +1149,19 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
-				// enrichedMeetingData.sort(function (a, b) {
-				// 	if (a['start_time_raw'] < b['start_time_raw']) {
-				// 		return -1;
-				// 	}
+				if (!self.config['sort_results_by_distance']) {
+					enrichedMeetingData.sort(function (a, b) {
+						if (a['start_time_raw'] < b['start_time_raw']) {
+							return -1;
+						}
 
-				// 	if (a['start_time_raw'] > b['start_time_raw']) {
-				// 		return 1;
-				// 	}
+						if (a['start_time_raw'] > b['start_time_raw']) {
+							return 1;
+						}
 
-				// 	return 0;
-				// });
+						return 0;
+					});
+				}
 
 				var day_counter = 0;
 				var byDayData = [];
