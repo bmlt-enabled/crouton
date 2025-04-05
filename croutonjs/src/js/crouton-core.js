@@ -116,7 +116,8 @@ function Crouton(config) {
 
 	self.setConfig(config);
 	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width) {
-
+		self.config['current_latitude'] = latitude;
+		self.config['current_longitude'] = longitude;
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
 			+ "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
@@ -283,7 +284,11 @@ function Crouton(config) {
 				return self.getMeetings(url); // Proceed without geolocation if error occurs
 			});
 		} else if (self.config['custom_query'] != null) {
-			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
+			if (self.config['sort_keys'] === 'distance') {
+				url += self.config['custom_query'] + '&sort_results_by_distance=1';
+			} else {
+				url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
+			}
 			return self.getMeetings(url);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
@@ -294,7 +299,11 @@ function Crouton(config) {
 				url += '&recursive=1';
 			}
 
-			url += '&sort_keys=' + self.config['sort_keys'];
+			if (self.config['sort_keys'] === 'distance') {
+				url += '&sort_results_by_distance=1';
+			} else {
+				url += '&sort_keys='  + self.config['sort_keys'];
+			}
 
 			return self.getMeetings(url);
 		} else {
@@ -754,6 +763,7 @@ function Crouton(config) {
 			if (self.config.meeting_details_href.indexOf('?') >= 0) queryStringChar = '&';
 		}
 		for (var m = 0; m < meetingData.length; m++) {
+			meetingData[m]['distance'] = self.distance(self.config.current_latitude, self.config.current_longitude, meetingData[m]['latitude'], meetingData[m]['longitude'], 'M').toFixed(1) + ' mi';
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
 			// convert from bmlt day to iso day
@@ -1139,17 +1149,17 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
 
-				enrichedMeetingData.sort(function (a, b) {
-					if (a['start_time_raw'] < b['start_time_raw']) {
-						return -1;
-					}
+				// enrichedMeetingData.sort(function (a, b) {
+				// 	if (a['start_time_raw'] < b['start_time_raw']) {
+				// 		return -1;
+				// 	}
 
-					if (a['start_time_raw'] > b['start_time_raw']) {
-						return 1;
-					}
+				// 	if (a['start_time_raw'] > b['start_time_raw']) {
+				// 		return 1;
+				// 	}
 
-					return 0;
-				});
+				// 	return 0;
+				// });
 
 				var day_counter = 0;
 				var byDayData = [];
