@@ -585,28 +585,37 @@ function Crouton(config) {
 			});
 	}
 
+	// Get the distance unit and calculation for the distance units selected
+	function getDistanceUnitInfo(distanceUnits) {
+		if (distanceUnits === "km") {
+			return {
+				unit: "km",
+				calculation: "K"
+			};
+		} else if (distanceUnits === "nm") {
+			return {
+				unit: "nm", 
+				calculation: "N"
+			};
+		} else {
+			return {
+				unit: "mi",
+				calculation: "M" 
+			};
+		}
+	}
+
 	self.showLocation = function(position) {
 		var latitude = position.latitude;
 		var longitude = position.longitude;
-		var distanceUnit;
-		var distanceCalculation;
-
-		if (self.config['distance_units'] === "km") {
-			distanceUnit = "km";
-			distanceCalculation = "K";
-		} else if (self.config['distance_units'] === "nm") {
-			distanceUnit = "nm";
-			distanceCalculation = "N";
-		} else {
-			distanceUnit = "mi";
-			distanceCalculation = "M";
-		}
+		
+		var distanceInfo = getDistanceUnitInfo(self.config['distance_units']);
 
 		jQuery( ".geo" ).each(function() {
 			var target = jQuery( this ).html();
 			var arr = target.split(',');
-			var distance_result = self.distance(latitude, longitude, arr[0], arr[1], distanceCalculation);
-			jQuery( this ).removeClass("hide").addClass("show").html(distance_result.toFixed(1) + ' ' + distanceUnit);
+			var distance_result = self.distance(latitude, longitude, arr[0], arr[1], distanceInfo.calculation);
+			jQuery( this ).removeClass("hide").addClass("show").html(distance_result.toFixed(1) + ' ' + distanceInfo.unit);
 		});
 	};
 
@@ -763,7 +772,8 @@ function Crouton(config) {
 			if (self.config.meeting_details_href.indexOf('?') >= 0) queryStringChar = '&';
 		}
 		for (var m = 0; m < meetingData.length; m++) {
-			meetingData[m]['distance'] = self.distance(self.config.current_latitude, self.config.current_longitude, meetingData[m]['latitude'], meetingData[m]['longitude'], 'M').toFixed(1) + ' mi';
+			var distanceInfo = getDistanceUnitInfo(self.config['distance_units']);
+			meetingData[m]['distance'] = self.distance(self.config.current_latitude, self.config.current_longitude, meetingData[m]['latitude'], meetingData[m]['longitude'], distanceInfo.calculation).toFixed(1) + ' ' + distanceInfo.unit;
 			meetingData[m]['formatted_comments'] = meetingData[m]['comments'];
 			var duration = meetingData[m]['duration_time'].split(":");
 			// convert from bmlt day to iso day

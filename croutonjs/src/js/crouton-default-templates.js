@@ -42,6 +42,7 @@ var croutonDefaultTemplates = {
 		"			</a>",
 		"        </div>",
 		"        <div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>",
+		"        <div class='distance'>{{this.distance}}</div>",
 		"    {{/unless}}",
 		"{{/isNotTemporarilyClosed}}"
 	].join('\n'),

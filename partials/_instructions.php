@@ -186,6 +186,11 @@
         <p><strong>[bmlt_tabs sort_keys="start_time"]</strong></p>
         <p>start_time = (default)</p>
         <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
+
+		<p><strong>[bmlt_tabs sort_results_by_distance="0|1"]</strong></p>
+		<p>0 = don't sort by distance (default)</p>
+		<p>1 = sort by distance</p>
+		<p><i>Note: this option is primarly meant for use with map searches.  There may be some issues with it when used with other sorting options.  Also there is a known issue with the root server that prevents combining with other sort types.</i></p>
     </div>
     <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
     <div>
