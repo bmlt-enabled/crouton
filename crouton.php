@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.12
+Version: 3.20.13
 License:           GPL-2.0+
 License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
@@ -111,6 +111,7 @@ if (!class_exists("Crouton")) {
             "has_meeting_count" => false,
             "google_api_key" => "",
             "report_update_url" => "",
+            "sort_results_by_distance" => false
         );
         private $hasFilters = [
             "has_days",
