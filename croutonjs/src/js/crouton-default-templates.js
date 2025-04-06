@@ -10,6 +10,9 @@ var croutonDefaultTemplates = {
 		"<div class='location-information'>{{this.formatted_location_info}}</div>",
 		"{{#if this.virtual_meeting_additional_info}}",
 		"    <div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>",
+		"{{/if}}",
+		"{{#if this.distance}}",
+		"    <div class='meeting-distance'>{{getWord 'Distance'}}: {{this.distance}}</div>",
 		"{{/if}}"
 	].join('\n'),
 
@@ -148,7 +151,7 @@ var croutonDefaultTemplates = {
         This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a><br/>
 		{{> offerIcsButton}}
         </td>`,
-	marker_contents_template: 
+	marker_contents_template:
 	`<h4>{{meeting_name}}</h4>
 	<div class="active">
 		<div class="marker_div_location_text">{{{this.location_text}}}</div>

@@ -245,6 +245,10 @@ function Crouton(config) {
 			}
 		}
 
+		if (self.config.map_search) {
+			self.queryable_data_keys.push('distance_in_km');
+			self.queryable_data_keys.push('distance_in_miles');
+		}
 		self.collectDataKeys(self.config['meeting_data_template']);
 		self.collectDataKeys(self.config['metadata_template']);
 		self.collectDataKeys(self.config['observer_template']);
@@ -262,6 +266,9 @@ function Crouton(config) {
 			url += self.config['formats'].reduce(function(prev,id) {
 				return prev +'&formats[]='+id;
 			}, '');
+		}
+		if (self.config.map_search && self.config['venue_types'].length === 0) {
+			self.config['venue_types'].push('-2');
 		}
 		if (self.config['venue_types']) {
 			url += self.config['venue_types'].reduce(function(prev,id) {
@@ -858,6 +865,22 @@ function Crouton(config) {
 													   + '&time_format=' + encodeURIComponent(self.config.time_format)
 													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
 													);
+			}
+
+			meetingData[m]['distance'] = '';
+			if (self.config['distance_units'] === "km") {
+				if (meetingData[m]['distance_in_km']) {
+					const d = meetingData[m]['distance_in_km'];
+					if (d < 1) {
+						meetingData[m]['distance'] = Math.round( d * 1000) + 'm';
+					}
+					else {
+						meetingData[m]['distance'] = (Math.round(d * 10) / 10).toFixed(1) + 'km';
+					}
+				}
+			} else if (meetingData[m]['distance_in_miles']) {
+				const d = meetingData[m]['distance_in_miles'];
+				meetingData[m]['distance'] = (Math.round(d * 100) / 100).toFixed(2) + ' miles';
 			}
 
 			meetings.push(meetingData[m])
