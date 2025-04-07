@@ -66,8 +66,6 @@ function Crouton(config) {
 		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
 		has_meeting_count: false,	  // Shows the meeting count
-		show_distance: false,         // Determines distance on page load
-		distance_search: 0,			  // Makes a distance based search with results either number of / or distance from coordinates
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
 		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
@@ -281,16 +279,7 @@ function Crouton(config) {
 			url += "&advanced_published=-1"
 		}
 
-		if (self.config['distance_search'] !== 0) {
-			return retrieveGeolocation().then((position) => {
-				url += '&lat_val=' + position.latitude + '&long_val=' + position.longitude + '&sort_results_by_distance=1';
-				url += (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + self.config['distance_search'];
-				return self.getMeetings(url);
-			}).catch((error) => {
-				console.error(error.message);
-				return self.getMeetings(url); // Proceed without geolocation if error occurs
-			});
-		} else if (self.config['custom_query'] != null) {
+		if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
 			return self.getMeetings(url);
 		} else if (self.config['service_body'].length > 0) {
@@ -947,7 +936,6 @@ Crouton.prototype.setConfig = function(config) {
 		self.config.show_map = false;
 		self.config.map_page = true;
 	}
-	self.config["distance_search"] = parseInt(self.config["distance_search"] || 0);
 	self.config["day_sequence"] = [];
 	self.config.day_sequence.push(self.config.int_start_day_id);
 	for (var i = 1; i < 7; i++) {
@@ -1438,10 +1426,6 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					if (self.config['default_filter_dropdown'] !== "") {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
 						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
-					}
-
-					if (self.config['show_distance']) {
-						self.getCurrentLocation(self.showLocation);
 					}
 
 					if (self.config['show_map'] && !self.config['refresh_map'] && !doMeetingMap) {

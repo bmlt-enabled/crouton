@@ -188,23 +188,6 @@
         <p>start_time = (default)</p>
         <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
     </div>
-    <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
-    <div>
-        <p>With this parameter you can display meetings that within the distance of the browser location, or return a number of results from the current distance.</p>
-        <p><strong>[bmlt_tabs distance_search="0"]</strong></p>
-        <p>0 = don't run a distance search (default)</p>
-        <p>1 or higher = the distance in miles of results (or km if distance_units is set to km)</p>
-        <p>-1 or lower = the number of results to return sorted by distance from the location</p>
-    </div>
-	<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
-	<div>
-		<p>With this parameter you can display the users distance to meetings under the map link button.</p>
-		<p><strong>[bmlt_tabs show_distance="0|1"]</strong></p>
-		<p>0 = don't display distance to meeting (default)</p>
-		<p>1 = display distance to meeting</p>
-		<p><em>User has to have geolocation permissions turned on.</em></p>
-        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
-	</div>
     <h3 class="help-accordian"><strong>Time Zone Adjustments</strong></h3>
     <div>
         <p>With these parameters you can adjust the time for a specific timezone.</p>

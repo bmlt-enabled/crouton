@@ -86,8 +86,6 @@ if (!class_exists("Crouton")) {
             "format_key" => '',
             "time_format" => 'h:mm a',
             "exclude_zip_codes" => null,
-            "show_distance" => '0',
-            "distance_search" => '0',
             "distance_units" => 'mi',
             "custom_query" => null,
             "show_map" => 'embed',

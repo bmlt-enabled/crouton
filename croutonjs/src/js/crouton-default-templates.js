@@ -44,7 +44,6 @@ var croutonDefaultTemplates = {
 		"				{{getWord 'meeting details'}}",
 		"			</a>",
 		"        </div>",
-		"        <div class='geo hide'>{{this.latitude}},{{this.longitude}}</div>",
 		"    {{/unless}}",
 		"{{/isNotTemporarilyClosed}}"
 	].join('\n'),
