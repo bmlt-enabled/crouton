@@ -92,9 +92,9 @@ function MeetingMap(inConfig) {
 		};
 	};
 	var gSearchModal;
-	function createSearchButton(menuContext) {
-		var template = hbs_Crouton.templates['mapSearch'];
-		var controlDiv = document.createElement('div');
+	function createSearchButton() {
+		const template = hbs_Crouton.templates['mapSearch'];
+		const controlDiv = document.createElement('div');
 		const params = {'hasClickSearch': gDelegate.hasClickSearch()}
 		controlDiv.innerHTML = template(params);
 		controlDiv.querySelector("#map-search-button").addEventListener('click', showBmltSearchDialog);
@@ -112,6 +112,33 @@ function MeetingMap(inConfig) {
 			gDelegate.callGeocoder(text, null, mapSearchGeocode);
 			closeModalWindow(gSearchModal);
 		});
+		controlDiv.querySelector("#modal-seach-parameters").style.display = 'none';
+		controlDiv.querySelector("#show-search-parameters").addEventListener('click', function (e) {
+			const controlDiv = e.target.parentElement.parentElement;
+			let w = config.map_search.width;
+			let checked = '#search_radius';
+			if (w < 0) {
+				w = -w;
+				checked = '#search_count';
+			}
+			controlDiv.querySelector(checked).checked = true;
+			controlDiv.querySelector('#search_parameter').value = w;
+			controlDiv.querySelector("#modal-seach-parameters").style.display = 'block';
+			controlDiv.querySelector("#modal-search-page").style.display = 'none';
+		});
+		controlDiv.querySelector("#show-search-page").addEventListener('click', function (e) {
+			const controlDiv = e.target.parentElement.parentElement;
+			let w = controlDiv.querySelector('#search_parameter').value;
+			if (controlDiv.querySelector('#search_count')) {
+				w = -Math.round(w);
+				if (w == 0) w = -1;
+			}
+			config.map_search.width = w;
+			controlDiv.querySelector("#modal-seach-parameters").style.display = 'none';
+			controlDiv.querySelector("#modal-search-page").style.display = 'block';
+		});
+
+
 		if (gDelegate.hasClickSearch()) controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");

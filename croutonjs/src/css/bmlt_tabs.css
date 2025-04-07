@@ -655,3 +655,6 @@ table.tablesaw {
 .bmlt-rtl #meeting-details-contents td {
     text-align: right !important;
 }
+input#search_radius, input#search_count {
+    width: auto;
+}

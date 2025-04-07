@@ -38,6 +38,8 @@ https://demo.bmlt.app/crouton
 
 = 3.21.0 =
 * Do geocoding without map.
+* Added sort by distance.
+* Map search can be adjusted in the UI (number of meetings/ radius of search)
 
 = 3.20.12 =
 * Extra meetings not showing up
