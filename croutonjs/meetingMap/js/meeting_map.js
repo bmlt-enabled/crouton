@@ -125,6 +125,7 @@ function MeetingMap(inConfig) {
 			controlDiv.querySelector('#search_parameter').value = w;
 			controlDiv.querySelector("#modal-seach-parameters").style.display = 'block';
 			controlDiv.querySelector("#modal-search-page").style.display = 'none';
+			controlDiv.querySelector("#search_radius_label").innerHTML = crouton.localization.getWord('Radius of search in $$').replace('$$', crouton.config.distance_units);
 		});
 		controlDiv.querySelector("#show-search-page").addEventListener('click', function (e) {
 			const controlDiv = e.target.parentElement.parentElement;

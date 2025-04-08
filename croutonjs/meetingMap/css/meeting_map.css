@@ -311,7 +311,7 @@ div.bmlt_map_container_div  button {
   font-size: 20px;
 }
 .modal-search {
-  padding-top: 10px;
+  padding-top: 20px;
   padding-bottom: 10px;
 }
 .modal-search .filter-button {
@@ -524,4 +524,23 @@ div.bmlt_map_container_div  button {
 }
   #bmlt-map .gm-style-iw-chr, #byfield_embeddedMapPage .gm-style-iw-chr {
     height: 0 !important;
+  }
+  @media (max-width: 767px) {
+    #bmltsearch_content {
+      width: 80%;
+    }
+  }
+  #modal-search-box {
+      padding: 5px;
+      border-style: solid;
+      border-width: 1px;
+      border-color: black;
+    margin-top: 10px;
+  }
+  #bmltsearch_modal .modal-title {
+    margin: 20px 0 10px 0;
+  }
+  button.advanced-search-button {
+    float: right;
+    margin-top: 20px;
   }

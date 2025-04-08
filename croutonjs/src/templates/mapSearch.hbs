@@ -5,43 +5,29 @@
     <div id="bmltsearch_content" class="modal-content">
         <span id="close_search" class="modal-close">x</span>
         <div id="modal-search-page">
-            <span class="modal-title">{{getWord 'Search for meetings'}}</span>
-            <table>
-                <tr>
-                    <td>
-                        <div class="modal-search">
+            <div class="modal-title">{{getWord 'Search for meetings'}}</div>
+                        <div id="modal-search-box" class="modal-search">
                             <input id="bmltsearch-goto-text" type="text"
                                 placeholder="{{getWord 'Enter a city or zip code'}}" style="margin-bottom:5px;">
                             <button id="bmltsearch-text-button" class="filter-button">{{getWord 'text_search'}}</button>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         <div class="modal-search">
                             <button id="bmltsearch-nearbyMeetings" class="filter-button">{{getWord 'near_me'}}</button>
                         </div>
-                    </td>
-                </tr>
                 {{#if this.hasClickSearch}}
-                <tr>
-                    <td>
                         <div class="modal-search">
                             <button id="bmltsearch-clicksearch" class="filter-button">{{getWord
                                 'click_search'}}</button>
                         </div>
-                    </td>
-                </tr>
                 {{/if}}
-            </table>
             <button id="show-search-parameters" class="advanced-search-button">{{getWord 'Adjust Search'}}</button>
         </div>
         <div id="modal-seach-parameters">
-            <span class="modal-title">{{getWord 'Configure Search'}}</span>
-            <input type="number" id="search_parameter" name="search_parameter">
+            <div class="modal-title">{{getWord 'Configure Search'}}</div>
+            <input type="number" id="search_parameter" name="search_parameter" maxlength="3" size="3">
             <p>{{getWord 'This number represents:'}}</p>
             <input type="radio" id="search_radius" name="map_search_type" value="radius">
-            <label for="search_radius">{{getWord 'Radius of search'}}</label><br>
+            <label id="search_radius_label" for="search_radius"></label><br>
             <input type="radio" id="search_count" name="map_search_type" value="count">
             <label for="search_count">{{getWord 'Approx. number of meetings in result'}}</label><br>
             <button id="show-search-page" class="advanced-search-button">{{getWord 'Back'}}</button>

@@ -110,6 +110,7 @@ function Crouton(config) {
 		},
 		minZoom: 6,
 		maxZoom: 17,
+		distance_units: 'miles',
 		noMap: false
 	};
 
@@ -574,31 +575,6 @@ function Crouton(config) {
 				return response.json();
 			});
 	}
-
-	self.showLocation = function(position) {
-		var latitude = position.latitude;
-		var longitude = position.longitude;
-		var distanceUnit;
-		var distanceCalculation;
-
-		if (self.config['distance_units'] === "km") {
-			distanceUnit = "km";
-			distanceCalculation = "K";
-		} else if (self.config['distance_units'] === "nm") {
-			distanceUnit = "nm";
-			distanceCalculation = "N";
-		} else {
-			distanceUnit = "mi";
-			distanceCalculation = "M";
-		}
-
-		jQuery( ".geo" ).each(function() {
-			var target = jQuery( this ).html();
-			var arr = target.split(',');
-			var distance_result = self.distance(latitude, longitude, arr[0], arr[1], distanceCalculation);
-			jQuery( this ).removeClass("hide").addClass("show").html(distance_result.toFixed(1) + ' ' + distanceUnit);
-		});
-	};
 
 	self.errorHandler = function(msg) {
 		jQuery('.geo').removeClass("hide").addClass("show").html('');
