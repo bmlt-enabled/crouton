@@ -46,6 +46,7 @@ function Crouton(config) {
 		int_include_unpublished: 0,	  // Includes unpublished meeting
 		button_filters: [
 			{'title': 'City', 'field': 'location_municipality'},
+			{'title': 'Distance', 'field': 'distance_in_km'},
 		],
 		button_format_filters: [],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.

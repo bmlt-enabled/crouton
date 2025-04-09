@@ -75,7 +75,7 @@ if (!class_exists("Crouton")) {
             "filter_visible" => 0,
             "include_city_button" => '1',
             "include_weekday_button" => '1',
-            "include_distance_button" => '0',
+            "include_distance_button" => '1',
             "include_unpublished" => '0',
             "button_filters_option" => "City:location_municipality",
             "button_format_filters_option" => "",
