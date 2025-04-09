@@ -7,7 +7,8 @@
             <li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
             <li><code>[crouton_map]</code> -- generates a map-based interface from which geographic queries can be made. See "Map Search" below for details.</li>
 			<li><code>[bmlt_map]</code> -- generates a map-based interface suitible for mobile devices.  Queries to the BMLT database, along with the available filters, are control by the usual <code>[bmlt_tabs]</code> parameters.</li>
-            <li><code>[meeting_count]</code></li>
+			<li><code>[crouton_tabs]</code> -- generates a table-based interface from which geographic (text search or device location) queries can be made. See "Map Search" below for details.</li>
+			<li><code>[meeting_count]</code></li>
             <li><code>[group_count]</code></li>
             <li><code>[service_body_names]</code></li>
 			<li><code>[bmlt_handlebar]</code></li>
@@ -187,23 +188,6 @@
         <p>start_time = (default)</p>
         <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
     </div>
-    <h3 class="help-accordian"><strong>Distance Searches</strong></h3>
-    <div>
-        <p>With this parameter you can display meetings that within the distance of the browser location, or return a number of results from the current distance.</p>
-        <p><strong>[bmlt_tabs distance_search="0"]</strong></p>
-        <p>0 = don't run a distance search (default)</p>
-        <p>1 or higher = the distance in miles of results (or km if distance_units is set to km)</p>
-        <p>-1 or lower = the number of results to return sorted by distance from the location</p>
-    </div>
-	<h3 class="help-accordian"><strong>Distance to Meeting</strong></h3>
-	<div>
-		<p>With this parameter you can display the users distance to meetings under the map link button.</p>
-		<p><strong>[bmlt_tabs show_distance="0|1"]</strong></p>
-		<p>0 = don't display distance to meeting (default)</p>
-		<p>1 = display distance to meeting</p>
-		<p><em>User has to have geolocation permissions turned on.</em></p>
-        <p>You can set the distance units by specifying distance_units="mi|km|nm" (Miles are default).</p>
-	</div>
     <h3 class="help-accordian"><strong>Time Zone Adjustments</strong></h3>
     <div>
         <p>With these parameters you can adjust the time for a specific timezone.</p>
@@ -266,8 +250,9 @@
     </div>
     <h3 class="help-accordian"><strong>Map Search</strong></h3>
     <div>
-        <p>With this shortcode you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
+        <p>With these shortcodes you can have crouton start with a map search with auto radius search. The default for the base shortcode is to detect your location and display the ~50 closest meetings (no regard to distance). </p>
         <p><strong>[crouton_map]</strong></p>
+		<p><strong>[crouton_tabs]</strong></p>
         <p>The configurable options are as below to add to this shortcode (in addition to any other ones that you'd normally use on [bmlt_tabs])</p>
         <p><strong>[crouton_map map_search_auto="false"]</strong> - specifies you do NOT want to automatically use your current latitude and longitude to find meetings (default: true).</p>
         <p><strong>[crouton_map map_search_location="Greensboro, NC"]</strong> - specifies the starting search location on the map (default: none).</p>

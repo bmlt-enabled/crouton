@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.20.12
+Version: 3.21.0
 License:           GPL-2.0+
 License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
@@ -75,6 +75,7 @@ if (!class_exists("Crouton")) {
             "filter_visible" => 0,
             "include_city_button" => '1',
             "include_weekday_button" => '1',
+            "include_distance_button" => '1',
             "include_unpublished" => '0',
             "button_filters_option" => "City:location_municipality",
             "button_format_filters_option" => "",
@@ -85,9 +86,7 @@ if (!class_exists("Crouton")) {
             "format_key" => '',
             "time_format" => 'h:mm a',
             "exclude_zip_codes" => null,
-            "show_distance" => '0',
-            "distance_search" => '0',
-            "distance_units" => 'mi',
+            "distance_units" => 'miles',
             "custom_query" => null,
             "show_map" => 'embed',
             "language" => 'en-US',
@@ -111,6 +110,7 @@ if (!class_exists("Crouton")) {
             "has_meeting_count" => false,
             "google_api_key" => "",
             "report_update_url" => "",
+            "noMap" => false,
         );
         private $hasFilters = [
             "has_days",
@@ -153,6 +153,10 @@ if (!class_exists("Crouton")) {
                     "replaceShortcodeWithStandardTags"
                 ));
                 add_shortcode('crouton_map', array(
+                    &$this,
+                    "replaceShortcodeWithStandardTags"
+                ));
+                add_shortcode('crouton_tabs', array(
                     &$this,
                     "replaceShortcodeWithStandardTags"
                 ));
@@ -215,7 +219,7 @@ if (!class_exists("Crouton")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
-            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'bmlt_handlebar', 'init_crouton'];
+            $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'crouton_tabs', 'bmlt_handlebar', 'init_crouton'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
                 return '';
@@ -235,6 +239,11 @@ if (!class_exists("Crouton")) {
                         break;
                     case 'crouton_map':
                         $script = $this->renderMap(shortcode_parse_atts($shortcode[3]));
+                        break;
+                    case 'crouton_tabs':
+                        $atts = shortcode_parse_atts($shortcode[3]);
+                        $atts['noMap'] = true;
+                        $script = $this->renderMap($atts);
                         break;
                     case 'bmlt_map':
                         $atts = shortcode_parse_atts($shortcode[3]);
@@ -533,7 +542,9 @@ if (!class_exists("Crouton")) {
         // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         private function sanitize_handlebars($field)
         {
-            return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses_post(wp_unslash($_POST[$field]))) : '';
+            $allowed = wp_kses_allowed_html('post');
+            $allowed['a']['onclick'] = true;
+            return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses(wp_unslash($_POST[$field]), $allowed)) : '';
         }
         /**
          * Adds settings/options page
@@ -567,6 +578,7 @@ if (!class_exists("Crouton")) {
                 $this->options['header']         = isset($_POST['header']) ? "1" : "0";
                 $this->options['has_tabs']       = isset($_POST['has_tabs']) ? "1" : "0";
                 $this->options['include_city_button']    = isset($_POST['include_city_button']) ? "1" : "0";
+                $this->options['include_distance_button']    = isset($_POST['include_distance_button']) ? "1" : "0";
                 $this->options['include_weekday_button'] = isset($_POST['include_weekday_button']) ? "1" : "0";
                 $this->options['view_by']       = sanitize_text_field(wp_unslash($_POST['view_by']));
                 $this->options['recurse_service_bodies'] = isset($_POST['recurse_service_bodies']) ? intval($_POST['recurse_service_bodies']) : "0";
@@ -826,9 +838,11 @@ if (!class_exists("Crouton")) {
                             <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($this->options['has_tabs'] == 1 ? 'checked' : '') ?> /> Separate days into tabs</li>
                             <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($this->options['include_city_button'] == 1 ? 'checked' : '') ?> /> Include 'Cities' Button</li>
                             <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($this->options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> Include 'Weekdays' Button</li>
+                            <li><input type="checkbox" name="include_distance_button" value="1" <?php echo ($this->options['include_distance_button'] == 1 ? 'checked' : '') ?> /> Include 'Distance' Button</li>
                             <li><select name="view_by">
                                 <option value="weekday" <?php echo ($this->options["view_by"] == "weekday") ? 'selected' : ''; ?>>View by Weekday</option>
                                 <option value="city" <?php echo ($this->options["view_by"] == "city") ? 'selected' : ''; ?>>View by City</option>
+                                <option value="distance" <?php echo ($this->options["view_by"] == "distance") ? 'selected' : ''; ?>>View by Distance</option>
                             </select></li>
                         </ul>
                         <h4>Select Dropdown Filters</h4>
@@ -1041,6 +1055,9 @@ foreach ($all_fields as $field) {
             if (!isset($this->options['include_weekday_button'])) {
                 $this->options['include_weekday_button'] = $this->shortCodeOptions['include_weekday_button'];
             }
+            if (!isset($this->options['include_distance_button'])) {
+                $this->options['include_distance_button'] = $this->shortCodeOptions['include_distance_button'];
+            }
             if (!isset($this->options['view_by'])) {
                 $this->options['view_by'] = $this->shortCodeOptions['view_by'];
             }
@@ -1141,6 +1158,9 @@ foreach ($all_fields as $field) {
                     }
                     array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
                 }
+            }
+            if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'], 'distance') == 0) {
+                array_push($params['button_filters'], ['title' => 'Distance', 'field' => 'distance_in_km']);
             }
             $tmp_formats = [];
             if (strlen($params['formats']) > 0) {
