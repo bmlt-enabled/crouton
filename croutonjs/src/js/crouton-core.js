@@ -335,7 +335,7 @@ function Crouton(config) {
 
 		if (showingNow == 0) showingNow = self.meetingData.length;
 		if (viewName.endsWith('day')) {
-			if (self.config['filter_tabs'] && self.config['filter_tabs'] <= showingNow) {
+			if (!self.config['has_tabs'] || (self.config['filter_tabs'] && self.config['filter_tabs'] <= showingNow)) {
 				self.byDayView();
 
 				jQuery(".bmlt-data-rows").each(function (index, value) {

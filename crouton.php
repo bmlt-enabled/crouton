@@ -203,8 +203,8 @@ if (!class_exists("Crouton")) {
             $this->menu_created = true;
             add_submenu_page(
                 $parent_slug,
-                'Online Meeting List',
-                'Online Meeting List',
+                'Online Meeting Lists',
+                'Online Meeting Lists',
                 'manage_options',
                 basename(__FILE__),
                 array(&$this, 'adminOptionsPage'),
@@ -525,8 +525,8 @@ if (!class_exists("Crouton")) {
             $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
             $slug = $slugs[0];
             add_menu_page(
-                'Meeting List',
-                'Meeting List',
+                'Meeting Lists',
+                'Meeting Lists',
                 'manage_options',
                 $slug,
                 '',
