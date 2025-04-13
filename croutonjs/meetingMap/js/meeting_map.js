@@ -510,6 +510,7 @@ function MeetingMap(inConfig) {
 		return false;
 	}
 	function drawMarkers(expand = false) {
+		if (!gDelegate.hasClickSearch()) return;
 		gDelegate.clearAllMarkers();
 		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.

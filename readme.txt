@@ -5,7 +5,7 @@ Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
 Required PHP: 8.0
 Tested up to: 6.7.2
-Stable tag: 3.21.0
+Stable tag: 3.21.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -35,6 +35,10 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.21.1 =
+* More consistent handling of filter/sort buttons.
+* Small fixes.
 
 = 3.21.0 =
 * Do geocoding without map.
