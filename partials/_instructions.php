@@ -83,7 +83,9 @@
 		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the button_filters_option was added ahead of time.</p>
 		<p><strong>[bmlt_tabs view_by="weekday"]</strong></p>
 		<p>weekday = view meetings by Weekdays (default)</p>
-        <p>Another example could be "location_municipality", which would show city if it were available as a button.</p>
+        <p>Another example could be "city", which would show the meetings organized by city.</p>
+		<p>When using an embedded map, view_by=map works.</p>
+		<p>When using crouton_map or crouton_tab, view_by=distance works.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Show Filter Buttons</strong></h3>
 	<div>

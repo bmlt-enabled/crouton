@@ -346,6 +346,8 @@ function Crouton(config) {
 			} else {
 				self.dayView();
 			}
+		} else if (viewName=='map') {
+			self.forceShowMap();
 		} else {
 			self.filteredView(self.config.button_filters.find((bf) => bf.title.toLowerCase() === viewName).field);
 		}
@@ -1388,7 +1390,6 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 					self.showPage(".bmlt-header");
 					self.showPage(".bmlt-tabs");
-					self.showView(self.config['view_by'], 0, false);
 
 					if (self.config['default_filter_dropdown'] !== "") {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
@@ -1408,6 +1409,13 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					if (self.config['refresh_map']) {
 						croutonMap.refreshMeetings(self.meetingData, true, true);
 					}
+					if (self.config['view_by'] == 'map' && !self.config['map_page'])
+						self.config['view_by'] = 'day';
+					if (self.config['view_by'] == 'map') {
+						self.forceShowMap();
+						self.currentView = 'weekday'; // current view when going back to
+					}
+					else self.showView(self.config['view_by'], 0, false);
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
@@ -1415,7 +1423,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 			});
 		});
 	Crouton.prototype.forceShowMap = function() {
-		if (self.config.map_page && jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
+		if (this.config.map_page && jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
 			jQuery('#filterButton_embeddedMapPage').click();
 		}
 	}
