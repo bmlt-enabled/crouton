@@ -347,7 +347,7 @@ function Crouton(config) {
 				self.dayView();
 			}
 		} else if (viewName=='map') {
-			self.forceShowMap();
+			self.mapView();
 		} else {
 			self.filteredView(self.config.button_filters.find((bf) => bf.title.toLowerCase() === viewName).field);
 		}
@@ -383,9 +383,32 @@ function Crouton(config) {
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byfield_" + field);
+			jQuery("#byfield_" + field).find('.meeting-header').each(function(index) {
+				// This is an awkward way of doing things, but I don't want to mess with
+				// the generated HTML at this point.
+				let flag = false;
+				let item = jQuery(this);
+				const main = item;
+				while(item = item.next()) {
+					if (item.length === 0) break;
+					if (item.hasClass('meeting-header')) break;
+					if (!item.hasClass('hide')) {
+						flag = true;
+						break;
+					}
+				}
+				if (!flag) main.addClass('hide');
+			})
 			return;
 		});
 	};
+	self.mapView = function() {
+		self.lowlightButton("#day");
+		self.lowlightButton(".filterButton");
+		self.highlightButton("#filterButton_embeddedMapPage");
+		self.filteredView("embeddedMapPage", false);
+		croutonMap.showMap(false,false);
+	}
 	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	};
@@ -430,21 +453,12 @@ function Crouton(config) {
 		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
-		if (self.config.map_page && !jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
-			jQuery('#displayTypeButton_tablePages').removeClass('hide');
-			jQuery('#filterButton_embeddedMapPage').addClass('hide');
-		} else {
-			self.showView(self.currentView, showingNow.length, false);
-		}
+		self.showView(self.currentView, showingNow.length, false);
 		self.filtering = true;
 	};
 	self.resetFilter = function () {
 		croutonMap.filterVisible(false);
-		if (self.config.map_page) {
-			if (self.filtering) croutonMap.fillMap();
-			jQuery('#displayTypeButton_tablePages').addClass('hide');
-			jQuery('#filterButton_embeddedMapPage').removeClass('hide');
-		} else if (self.config.show_map) croutonMap.fillMap();
+		if ((self.config.map_page && self.filtering) || self.config.show_map) croutonMap.fillMap();
 		self.filtering = false;
 		self.updateFilters();
 		self.updateMeetingCount();
@@ -1338,34 +1352,19 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
-						jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
-							self.hidePage(this);
-						});
 						self.filteredPage();
 						if (!self.filtering) self.showView(self.currentView);
 					});
 
 					jQuery("#day").on('click', function () {
-						self.showView('day');
+						self.showView('day', 0, false);
 					});
 
 					jQuery(".filterButtonLogic").on('click', function (e) {
-						self.filteredView(e.target.attributes['data-field'].value);
-					});
-					jQuery(".displayTypeLogic").on('click', function (e) {
-						jQuery(".displayTypeLogic").each(function() {
-							if (e.target == this) jQuery(this).addClass("hide");
-							else jQuery(this).removeClass("hide");
-						})
-					});
-					jQuery('#displayTypeButton_tablePages').on('click', function (e) {
-						self.hidePage('#byfield_embeddedMapPage');
-						const knt = self.showingNowCount ? self.showingNowCount : self.meetingData.length;
-						self.showView(self.currentView, knt, false);
+						self.showView(e.target.attributes['data-field'].value.toLowerCase(), 0, false);
 					});
 					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
-						self.filteredView(e.target.attributes['data-field'].value, false);
-						croutonMap.showMap(false,false);
+						self.mapView();
 					});
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
@@ -1411,11 +1410,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';
-					if (self.config['view_by'] == 'map') {
-						self.forceShowMap();
-						self.currentView = 'weekday'; // current view when going back to
-					}
-					else self.showView(self.config['view_by'], 0, false);
+					self.showView(self.config['view_by'], 0, false);
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
@@ -1424,7 +1419,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 		});
 	Crouton.prototype.forceShowMap = function() {
 		if (this.config.map_page && jQuery('#byfield_embeddedMapPage').hasClass('hide')) {
-			jQuery('#filterButton_embeddedMapPage').click();
+			this.mapView();
 		}
 	}
 };
