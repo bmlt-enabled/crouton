@@ -335,7 +335,7 @@ function Crouton(config) {
 
 		if (showingNow == 0) showingNow = self.meetingData.length;
 		if (viewName.endsWith('day')) {
-			if (!self.config['has_tabs'] || (self.config['filter_tabs'] && self.config['filter_tabs'] <= showingNow)) {
+			if (!self.config['has_tabs'] || (self.config['filter_tabs'] && self.config['filter_tabs'] >= showingNow)) {
 				self.byDayView();
 
 				jQuery(".bmlt-data-rows").each(function (index, value) {
@@ -358,8 +358,10 @@ function Crouton(config) {
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
+			self.hidePage("#days");
 			self.showPage("#byday");
-			self.showPage("#nav-days");
+			self.hidePage("#nav-days");
+			self.hidePage("#tabs-content");
 			return;
 		});
 	};
