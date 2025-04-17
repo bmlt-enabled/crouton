@@ -1698,7 +1698,7 @@ function getUniqueFormats(array){
 	return array.reduce(function(carry, val){
 		if (!(val.formats_expanded)) return carry;
 		return carry.concat(val.formats_expanded.filter((item) => carry.map(f => f.key).indexOf(item.key) < 0));
-	},[]);
+	},[]).sortByKey('name');
 }
 function getUniqueFormatsOfType(array, type){
 	return array.reduce(function(carry, val){
@@ -1708,7 +1708,7 @@ function getUniqueFormatsOfType(array, type){
 			carry = carry.concat(fmts.filter((item) => carry.map(f => f.key).indexOf(item.key) < 0));
 		}
 		return carry;
-	},[]);
+	},[]).sortByKey('name');
 }
 Crouton.prototype.renderMeetingCount = function() {
 	var self = this;

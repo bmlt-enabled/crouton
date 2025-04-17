@@ -4,7 +4,7 @@ Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N,
 Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
 Required PHP: 8.0
-Tested up to: 6.7.2
+Tested up to: 6.8
 Stable tag: 3.21.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -38,6 +38,7 @@ https://demo.bmlt.app/crouton
 
 = 3.21.1 =
 * More consistent handling of filter/sort buttons.
+* Formats in dropdown sorted alphabetically.
 * Small fixes.
 
 = 3.21.0 =
