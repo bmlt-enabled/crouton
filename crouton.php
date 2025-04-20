@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 3.21.0
+Version: 3.21.1
 License:           GPL-2.0+
 License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
@@ -203,8 +203,8 @@ if (!class_exists("Crouton")) {
             $this->menu_created = true;
             add_submenu_page(
                 $parent_slug,
-                'Online Meeting List',
-                'Online Meeting List',
+                'Online Meeting Lists',
+                'Online Meeting Lists',
                 'manage_options',
                 basename(__FILE__),
                 array(&$this, 'adminOptionsPage'),
@@ -525,8 +525,8 @@ if (!class_exists("Crouton")) {
             $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
             $slug = $slugs[0];
             add_menu_page(
-                'Meeting List',
-                'Meeting List',
+                'Meeting Lists',
+                'Meeting Lists',
                 'manage_options',
                 $slug,
                 '',
