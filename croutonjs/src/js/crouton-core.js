@@ -347,8 +347,10 @@ function Crouton(config) {
 			}
 		} else if (viewName=='map') {
 			self.mapView();
-		} else {
+		} else if (jQuery('#filterButton_'+viewName.toUpperCase()).length == 0) {
 			self.filteredView(self.config.button_filters.find((bf) => bf.title.toLowerCase() === viewName).field);
+		} else {
+			self.filteredView(viewName.toUpperCase());
 		}
 	};
 
