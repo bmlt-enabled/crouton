@@ -80,7 +80,7 @@
 	</div>
 	<h3 class="help-accordian"><strong>View By City or Weekday</strong></h3>
 	<div>
-		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the button_filters_option was added ahead of time.</p>
+		<p>With this parameter you can initially view meetings by Weekday or any other field, as long as the grouping_buttons_option was added ahead of time.</p>
 		<p><strong>[bmlt_tabs view_by="weekday"]</strong></p>
 		<p>weekday = view meetings by Weekdays (default)</p>
         <p>Another example could be "city", which would show the meetings organized by city.</p>
@@ -90,7 +90,7 @@
 	<h3 class="help-accordian"><strong>Show Filter Buttons</strong></h3>
 	<div>
 		<p>With this parameter you can include specific buttons.</p>
-		<p><strong>[bmlt_tabs button_filters_option="City:location_municipality"]</strong></p>
+		<p><strong>[bmlt_tabs grouping_buttons_option="City:location_municipality"]</strong></p>
         <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
 		<p>The "City" button shown in the example above is defined by default.  To disable it, you may use:</p>
 		<p><strong>[bmlt_tabs include_city_button="0|1"]</strong></p>
@@ -100,8 +100,8 @@
 	<h3 class="help-accordian"><strong>Show Format Filter Buttons</strong></h3>
 	<div>
 		<p>With this parameter you can include specific buttons.</p>
-		<p><strong>[bmlt_tabs button_format_filters_option="Common Needs:FC3"]</strong></p>
-		<p><strong>[bmlt_tabs button_format_filters_option="Languages:LANG"]</strong></p>
+		<p><strong>[bmlt_tabs formattype_grouping_buttons_option="Common Needs:FC3"]</strong></p>
+		<p><strong>[bmlt_tabs formattype_grouping_buttons_option="Languages:LANG"]</strong></p>
         <p>You can also include multiple buttons with a comma after each pair.  Keep in mind that the first part is the word for the button.  If using multilingual option, that word must have a translation.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Tabs or No Tabs</strong></h3>

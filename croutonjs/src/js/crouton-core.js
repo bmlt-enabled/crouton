@@ -45,11 +45,11 @@ function Crouton(config) {
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
 		int_include_unpublished: 0,	  // Includes unpublished meeting
-		button_filters: [
+		grouping_buttons: [
 			{'title': 'City', 'field': 'location_municipality'},
 			{'title': 'Distance', 'field': 'distance_in_km'},
 		],
-		button_format_filters: [],
+		formattype_grouping_buttons: [],
 		default_filter_dropdown: "",  // Sets the default format for the dropdowns, the names will match the `has_` fields dropdowns without `has_.  Example: `formats=closed`.
 		show_map: "embed",            // Shows the map with pins
 		map_search: null, 			  // Start search with map click (ex {"latitude":x,"longitude":y,"width":-10,"zoom":10}
@@ -84,7 +84,7 @@ function Crouton(config) {
 		custom_query: null,			  // Enables overriding the services related queries for a custom one
 		sort_keys: "start_time",	  // Controls sort keys on the query
 		int_start_day_id: 1,          // Controls the first day of the week sequence.  Sunday is 1.
-		view_by: "weekday",           // TODO: replace with using the first choice in button_filters as the default view_by.
+		view_by: "weekday",           // TODO: replace with using the first choice in grouping_buttons as the default view_by.
 		show_qrcode: false,  		  // Determines whether or not to show the QR code for virtual / phone meetings if they exist.
 		force_rootserver_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
@@ -347,15 +347,15 @@ function Crouton(config) {
 			}
 		} else if (viewName=='map') {
 			self.mapView();
-		} else if (jQuery('#filterButton_'+viewName.toUpperCase()).length == 0) {
-			self.filteredView(self.config.button_filters.find((bf) => bf.title.toLowerCase() === viewName).field);
+		} else if (jQuery('#groupingButton_'+viewName.toUpperCase()).length == 0) {
+			self.filteredView(self.config.grouping_buttons.find((bf) => bf.title.toLowerCase() === viewName).field);
 		} else {
 			self.filteredView(viewName.toUpperCase());
 		}
 	};
 
 	self.byDayView = function () {
-		self.lowlightButton(".filterButton");
+		self.lowlightButton(".groupingButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
@@ -368,7 +368,7 @@ function Crouton(config) {
 	};
 
 	self.dayView = function () {
-		self.lowlightButton(".filterButton");
+		self.lowlightButton(".groupingButton");
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
@@ -381,8 +381,8 @@ function Crouton(config) {
 
 	self.filteredView = function (field) {
 		self.lowlightButton("#day");
-		self.lowlightButton(".filterButton");
-		self.highlightButton("#filterButton_" + field);
+		self.lowlightButton(".groupingButton");
+		self.highlightButton("#groupingButton_" + field);
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byfield_" + field);
@@ -407,8 +407,8 @@ function Crouton(config) {
 	};
 	self.mapView = function() {
 		self.lowlightButton("#day");
-		self.lowlightButton(".filterButton");
-		self.highlightButton("#filterButton_embeddedMapPage");
+		self.lowlightButton(".groupingButton");
+		self.highlightButton("#groupingButton_embeddedMapPage");
 		self.filteredView("embeddedMapPage", false);
 		croutonMap.showMap(false,false);
 	}
@@ -897,6 +897,17 @@ function Crouton(config) {
 
 Crouton.prototype.setConfig = function(config) {
 	var self = this;
+	const deprecatedNames = {
+		button_filters: 'grouping_buttons',
+		button_format_filters: 'formattype_grouping_buttons',
+
+	}
+	for (var propertyName in deprecatedNames) {
+		if (config.hasOwnProperty(propertyName)) {
+			config[deprecatedNames[propertyName]] = config[propertyName];
+			delete configconfig[deprecatedNames[propertyName]];
+		}
+	}
 	for (var propertyName in config) {
 		if (propertyName.indexOf("_template") > 0 && config[propertyName].trim() === "") {
 			continue;
@@ -1088,8 +1099,8 @@ Crouton.prototype.searchMap = function() {
 		"config": self.config,
 		"meetings": {
 			"weekdays": [],
-			"buttonFilters": [],
-			"buttonFormatFilters": [],
+			"groupingButtons": [],
+			"formattypeGroupingButtons": [],
 			"bydays": [],
 			"meetingCount": 0,
 			"meetingData": []
@@ -1102,7 +1113,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 	var self = this;
 
 	if (!self.config.map_search) {
-		self.config.button_filters = self.config.button_filters.filter((b) => !b.field.startsWith('distance'));
+		self.config.grouping_buttons = self.config.grouping_buttons.filter((b) => !b.field.startsWith('distance'));
 		if (self.config['view_by'] == 'distance') self.config['view_by'] = 'weekday';
 	}
 	self.lock(function() {
@@ -1149,8 +1160,8 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var day_counter = 0;
 				var byDayData = [];
-				var buttonFiltersData = {};
-				var buttonFormatFiltersData = {};
+				var groupingButtonsData = {};
+				var formattypeGroupingButtonsData = {};
 				var weekdaysData = [];
 				while (day_counter < 7) {
 					var day = self.config.day_sequence[day_counter];
@@ -1166,63 +1177,63 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						"meetings": daysOfTheWeekMeetings
 					});
 
-					for (var f = 0; f < self.config.button_filters.length; f++) {
-						var groupByName = self.config.button_filters[f]['field'];
+					for (var f = 0; f < self.config.grouping_buttons.length; f++) {
+						var groupByName = self.config.grouping_buttons[f]['field'];
 						if (groupByName.startsWith('distance')) continue;
 						var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
-							if (buttonFiltersData.hasOwnProperty(groupByName) && buttonFiltersData[groupByName].hasOwnProperty(groupByData[i])) {
-								buttonFiltersData[groupByName][groupByData[i]] = buttonFiltersData[groupByName][groupByData[i]].concat(groupByMeetings);
-							} else if (buttonFiltersData.hasOwnProperty(groupByName)) {
-								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
+							if (groupingButtonsData.hasOwnProperty(groupByName) && groupingButtonsData[groupByName].hasOwnProperty(groupByData[i])) {
+								groupingButtonsData[groupByName][groupByData[i]] = groupingButtonsData[groupByName][groupByData[i]].concat(groupByMeetings);
+							} else if (groupingButtonsData.hasOwnProperty(groupByName)) {
+								groupingButtonsData[groupByName][groupByData[i]] = groupByMeetings;
 							} else {
-								buttonFiltersData[groupByName] = {};
-								buttonFiltersData[groupByName][groupByData[i]] = groupByMeetings;
+								groupingButtonsData[groupByName] = {};
+								groupingButtonsData[groupByName][groupByData[i]] = groupByMeetings;
 							}
 
 						}
 					}
 
-					for (var f = 0; f < self.config.button_format_filters.length; f++) {
-						var groupByName = self.config.button_format_filters[f]['field'];
+					for (var f = 0; f < self.config.formattype_grouping_buttons.length; f++) {
+						var groupByName = self.config.formattype_grouping_buttons[f]['field'];
 						var groupByData = getUniqueFormatsOfType(daysOfTheWeekMeetings, groupByName);
 						if (groupByName=='LANG' && self.config.native_lang && self.config.native_lang.length > 0) {
 							groupByData = groupByData.filter((f) => f.key != self.config.native_lang);
 						}
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filter((item) => item.formats_expanded.map(f => f.key).indexOf(groupByData[i].key) >= 0);
-							if (buttonFormatFiltersData.hasOwnProperty(groupByName) && buttonFormatFiltersData[groupByName].hasOwnProperty(groupByData[i].description)) {
-								buttonFormatFiltersData[groupByName][groupByData[i].description] = buttonFormatFiltersData[groupByName][groupByData[i].description].concat(groupByMeetings);
-							} else if (buttonFormatFiltersData.hasOwnProperty(groupByName)) {
-								buttonFormatFiltersData[groupByName][groupByData[i].description] = groupByMeetings;
+							if (formattypeGroupingButtonsData.hasOwnProperty(groupByName) && formattypeGroupingButtonsData[groupByName].hasOwnProperty(groupByData[i].description)) {
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = formattypeGroupingButtonsData[groupByName][groupByData[i].description].concat(groupByMeetings);
+							} else if (formattypeGroupingButtonsData.hasOwnProperty(groupByName)) {
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
 							} else {
-								buttonFormatFiltersData[groupByName] = {};
-								buttonFormatFiltersData[groupByName][groupByData[i].description] = groupByMeetings;
+								formattypeGroupingButtonsData[groupByName] = {};
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
 							}
 						}
 					}
 					day_counter++;
 				}
 
-				var buttonFiltersDataSorted = {};
-				for (var b = 0; b < self.config.button_filters.length; b++) {
-					var groupByName = self.config.button_filters[b]['field'];
-					buttonFiltersDataSorted[groupByName] = {};
+				var groupingButtonsDataSorted = {};
+				for (var b = 0; b < self.config.grouping_buttons.length; b++) {
+					var groupByName = self.config.grouping_buttons[b]['field'];
+					groupingButtonsDataSorted[groupByName] = {};
 					if (groupByName.startsWith('distance')) {
-						buttonFiltersDataSorted[groupByName]['Sorted by Distance'] = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
 						continue;
 					}
 					var sortKey = [];
 
-					for (var buttonFiltersDataItem in buttonFiltersData[groupByName]) {
-						sortKey.push(buttonFiltersDataItem);
+					for (var groupingButtonsDataItem in groupingButtonsData[groupByName]) {
+						sortKey.push(groupingButtonsDataItem);
 					}
 
 					sortKey.sort();
 
 					for (var s = 0; s < sortKey.length; s++) {
-						buttonFiltersDataSorted[groupByName][sortKey[s]] = buttonFiltersData[groupByName][sortKey[s]]
+						groupingButtonsDataSorted[groupByName][sortKey[s]] = groupingButtonsData[groupByName][sortKey[s]]
 					}
 				}
 
@@ -1297,8 +1308,8 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					"config": self.config,
 					"meetings": {
 						"weekdays": weekdaysData,
-						"buttonFilters": buttonFiltersDataSorted,
-						"buttonFormatFilters": buttonFormatFiltersData,
+						"groupingButtons": groupingButtonsDataSorted,
+						"formattypeGroupingButtons": formattypeGroupingButtonsData,
 						"bydays": byDayData,
 						"meetingCount": self.meetingData.length,
 						"meetingData": self.meetingData
@@ -1358,10 +1369,10 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						self.showView('day');
 					});
 
-					jQuery(".filterButtonLogic").on('click', function (e) {
+					jQuery(".groupingButtonLogic").on('click', function (e) {
 						self.showView(e.target.attributes['data-field'].value.toLowerCase());
 					});
-					jQuery('#filterButton_embeddedMapPage').on('click', function (e) {
+					jQuery('#groupingButton_embeddedMapPage').on('click', function (e) {
 						self.showView('map')
 					});
 					/****
@@ -1400,7 +1411,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					}
 					if (self.config['map_page'] && !doMeetingMap) {
 						if (self.meetingData.filter(m => m.venue_type != 2).length==0) {
-							jQuery('#filterButton_embeddedMapPage').addClass('hide');
+							jQuery('#groupingButton_embeddedMapPage').addClass('hide');
 						}
 						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}

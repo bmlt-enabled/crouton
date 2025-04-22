@@ -77,8 +77,8 @@ if (!class_exists("Crouton")) {
             "include_weekday_button" => '1',
             "include_distance_button" => '1',
             "include_unpublished" => '0',
-            "button_filters_option" => "City:location_municipality",
-            "button_format_filters_option" => "",
+            "grouping_buttons_option" => "City:location_municipality",
+            "formattype_grouping_buttons_option" => "",
             "view_by" => 'weekday',
             "dropdown_width" => 'auto',
             "has_zip_codes" => '0',
@@ -1032,6 +1032,17 @@ foreach ($all_fields as $field) {
                     $this->options['tile_provider'] = "google";
                 }
             }
+            if ($this->options['crouton_version'] === "3.18") {
+                $this->options['crouton_version'] = "3.21";
+                if (isset($this->options['button_filters_option'])) {
+                    $this->options['grouping_buttons_option'] = $this->options['button_filters_option'];
+                    unset($this->options['button_filters_option']);
+                }
+                if (isset($this->options['button_format_filters_option'])) {
+                    $this->options['formattype_grouping_buttons_option'] = $this->options['button_format_filters_option'];
+                    unset($this->options['button_format_filters_option']);
+                }
+            }
             if (isset($this->options['meetingpage_contents_template'])) {
                 $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
             }
@@ -1123,6 +1134,14 @@ foreach ($all_fields as $field) {
             foreach ($defaults as $key => $value) {
                 $defaults[$key] = (isset($this->options[$key]) ? $this->options[$key] : $value);
             }
+            if (isset($atts['button_filters'])) {
+                $atts['grouping_buttons'] = $atts['button_filters'];
+                unset($atts['button_filters']);
+            }
+            if (isset($atts['button_format_filters'])) {
+                $atts['formattype_grouping_buttons'] = $atts['button_format_filters'];
+                unset($atts['button_format_filters']);
+            }
             $params = shortcode_atts($defaults, $atts);
 
             // Pulling from querystring
@@ -1149,18 +1168,18 @@ foreach ($all_fields as $field) {
                 }
             }
 
-            $params['button_filters'] = [];
-            if (strlen($params['button_filters_option']) > 0) {
-                foreach (explode(",", $params['button_filters_option']) as $item) {
+            $params['grouping_buttons'] = [];
+            if (strlen($params['grouping_buttons_option']) > 0) {
+                foreach (explode(",", $params['grouping_buttons_option']) as $item) {
                     $setting = explode(":", $item);
                     if (strcmp($params['include_city_button'], "0") == 0 && strcmp($setting[0], "City") == 0) {
                         continue;
                     }
-                    array_push($params['button_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
+                    array_push($params['grouping_buttons'], ['title' => $setting[0], 'field' => $setting[1]]);
                 }
             }
             if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'], 'distance') == 0) {
-                array_push($params['button_filters'], ['title' => 'Distance', 'field' => 'distance_in_km']);
+                array_push($params['grouping_buttons'], ['title' => 'Distance', 'field' => 'distance_in_km']);
             }
             $tmp_formats = [];
             if (strlen($params['formats']) > 0) {
@@ -1178,11 +1197,11 @@ foreach ($all_fields as $field) {
             }
             $params['venue_types'] = $tmp_venue;
 
-            $params['button_format_filters'] = [];
-            if (strlen($params['button_format_filters_option']) > 0) {
-                foreach (explode(",", $params['button_format_filters_option']) as $item) {
+            $params['formattype_grouping_buttons'] = [];
+            if (strlen($params['formattype_grouping_buttons_option']) > 0) {
+                foreach (explode(",", $params['formattype_grouping_buttons_option']) as $item) {
                     $setting = explode(":", $item);
-                    array_push($params['button_format_filters'], ['title' => $setting[0], 'field' => $setting[1]]);
+                    array_push($params['formattype_grouping_buttons'], ['title' => $setting[0], 'field' => $setting[1]]);
                 }
             }
 

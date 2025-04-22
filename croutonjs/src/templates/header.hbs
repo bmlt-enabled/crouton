@@ -3,14 +3,14 @@
     {{#if this.config.include_weekday_button}}
         <div class="bmlt-button-container"><a id="day" tabindex=0 class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
     {{/if}}
-    {{#each this.config.button_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}" tabindex=0 data-field="{{this.title}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+    {{#each this.config.grouping_buttons}}
+        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}" tabindex=0 data-field="{{this.title}}" class="groupingButton groupingButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
-    {{#each this.config.button_format_filters}}
-        <div class="bmlt-button-container"><a id="filterButton_{{this.field}}"tabindex=0 data-field="{{this.field}}" class="filterButton filterButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
+    {{#each this.config.formattype_grouping_buttons}}
+        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}"tabindex=0 data-field="{{this.field}}" class="groupingButton groupingButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
     {{/each}}
     {{#if this.config.map_page}}
-        <div class="bmlt-button-container"><a id="filterButton_embeddedMapPage" tabindex=0 data-field="embeddedMapPage" class="filterButton btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
+        <div class="bmlt-button-container"><a id="groupingButton_embeddedMapPage" tabindex=0 data-field="embeddedMapPage" class="groupingButton btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
     {{/if}}
 
     {{#each this.dropdownData}}

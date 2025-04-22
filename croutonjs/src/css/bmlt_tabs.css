@@ -196,7 +196,7 @@ span.bmlt_tabs_group_count {
 	background-color: #F1F1F1;
 }
 
-#bmlt-tabs .filterButton.btn.btn-primary.btn-sm:hover {
+#bmlt-tabs .groupingButton.btn.btn-primary.btn-sm:hover {
 	border-color: #fff;
 }
 
@@ -235,12 +235,12 @@ span.bmlt_tabs_group_count {
 	color: #000;
 }
 
-#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
+#bmlt-tabs .groupingButton.btn.btn-primary.btn-sm.buttonHighlight {
 	background-color: #DB4865;
 	color: #FFF;
 }
 
-#bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
+#bmlt-tabs .groupingButton.btn.btn-primary.btn-sm.buttonLowlight {
 	background-color: #93C3CD;
 	color: #000;
 }
@@ -250,7 +250,7 @@ span.bmlt_tabs_group_count {
 	background-color: #DB4865;
 }
 
-#bmlt-tabs .filterButton {
+#bmlt-tabs .groupingButton {
 	color: #000;
 	background-color: #93c3cd;
 	margin-left: 2px;
@@ -283,7 +283,7 @@ span.bmlt_tabs_group_count {
 	max-width: 800px;
 }
 
-#bmlt-tabs #day.btn-sm,#bmlt-tabs .filterButton.btn-sm {
+#bmlt-tabs #day.btn-sm,#bmlt-tabs .groupingButton.btn-sm {
 	padding: 2px 10px;
 	font-size: inherit;
 	line-height: 1.6;
@@ -336,7 +336,7 @@ span.bmlt_tabs_group_count {
 		display: block !important;
 	}
 
-	#bmlt-tabs #day.btn-sm,#bmlt-tabs .filterButton.btn-sm {
+	#bmlt-tabs #day.btn-sm,#bmlt-tabs .groupingButton.btn-sm {
 		margin-bottom: 4px;
 	}
 
