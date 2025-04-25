@@ -5,25 +5,6 @@ crouton_Handlebars.registerHelper("enrich", () => '');
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
-const retrieveGeolocation = () => {
-	return new Promise((resolve, reject) => {
-		if (window.storedGeolocation) {
-			resolve(window.storedGeolocation);
-		} else if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				window.storedGeolocation = {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude
-				};
-				resolve(window.storedGeolocation);
-			}, (error) => {
-				reject(new Error('Error getting geolocation: ' + error.message));
-			});
-		} else {
-			reject(new Error('Geolocation is not supported by this browser.'));
-		}
-	});
-};
 
 function Crouton(config) {
 	var self = this;
@@ -499,8 +480,27 @@ function Crouton(config) {
 		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
+	self.retrieveGeolocation = function() {
+		return new Promise((resolve, reject) => {
+			if (window.storedGeolocation) {
+				resolve(window.storedGeolocation);
+			} else if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition((position) => {
+					window.storedGeolocation = {
+						latitude: position.coords.latitude,
+						longitude: position.coords.longitude
+					};
+					resolve(window.storedGeolocation);
+				}, (error) => {
+					reject(new Error('Error getting geolocation: ' + error.message));
+				});
+			} else {
+				reject(new Error('Geolocation is not supported by this browser.'));
+			}
+		});
+	};
 	self.getCurrentLocation = function(callback) {
-		retrieveGeolocation().then(position => {
+		self.gretrieveGeolocation().then(position => {
 			callback(position);
 		}).catch(error => {
 			jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);

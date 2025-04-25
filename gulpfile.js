@@ -1,14 +1,15 @@
 const { watch, task, src, dest, series } = require('gulp');
 const concat = require('gulp-concat');
-const minify = require('gulp-minify');
+const uglify = require('gulp-uglify');
 const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
 const handlebars = require('gulp-handlebars');
 const wrap = require('gulp-wrap');
 const declare = require('gulp-declare');
 const notify = require('gulp-notify');
+const sourcemaps = require('gulp-sourcemaps');
 
-let jsFilesCroutonNoCore = [
+let jsFilesCrouton = [
 	'bootstrap.min.js',
 	'transition.js',
 	'select2.full.min.js',
@@ -22,119 +23,88 @@ let jsFilesCroutonNoCore = [
 	'punycode.1.4.1.js',
 	'fetch-jsonp.js',
 	'promises-polyfill.js',
-];
-let jsFilesCroutonNoCoreWithFullPath = jsFilesCroutonNoCore.map((f)=>'croutonjs/src/js/'+f);
-let jsFilesCroutonCore = jsFilesCroutonNoCore.concat(['crouton-core.js']);
-let jsFilesCroutonCoreWithFullPath = jsFilesCroutonCore.map((f)=>'croutonjs/src/js/'+f);
-let jsFilesCroutonMap = [
+	'crouton-core.js',
 	'meeting_map.js',
+];
+let jsFilesCroutonWithFullPath = jsFilesCrouton.map((f)=>'croutonjs/src/js/'+f);
+let jsFilesLeafletMap = [
 	'osmDelegate.js',
 	'leaflet.js',
 	'leaflet.markercluster.js'
 ];
 let jsFilesGoogleMap = [
-	'meeting_map.js',
 	'gmapsDelegate.js',
 	'google.markercluster.min.js',
 	'oms-1.0.3.min.js',
 ];
-let jsFilesCroutonMapWithFullPath = jsFilesCroutonMap.map((f)=>'croutonjs/meetingMap/js/'+f);
+let jsFilesLeafletMapWithFullPath = jsFilesLeafletMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/meetingMap/js/'+f);
 let jsFilesNoJQueryWithFullPath = [
-].concat(jsFilesCroutonCoreWithFullPath)
-.concat(jsFilesCroutonMapWithFullPath);
+].concat(jsFilesCroutonWithFullPath);
+
 let jsFilesWithJqueryWithFullPath = [
 	'croutonjs/src/js/jquery-3.4.1.min.js',
-].concat(jsFilesNoJQueryWithFullPath);
+].concat(jsFilesNoJQueryWithFullPath)
+.concat(jsFilesLeafletMapWithFullPath);
 
 let cssFiles = [
 	'select2.min.css',
 	'bootstrap.min.css',
 	'bmlt_tabs.css',
+	'meeting_map.css',
 ];
-let cssMapFiles = [
+let LeafletCssFiles = [
 	'leaflet.css',
 	'MarkerCluster.css',
 	'MarkerCluster.Default.css',
-	'meeting_map.css',
 ];
 let distDir = 'croutonjs/dist';
 
 task('js-files-nojquery', () => {
 	return src(jsFilesNoJQueryWithFullPath)
+		.pipe(sourcemaps.init())
 		.pipe(concat('crouton.nojquery.js'))
 		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
+		.pipe(rename('crouton.nojquery.min.js'))
+		.pipe(uglify())
+		.pipe(sourcemaps.write("./"))
 		.pipe(dest(distDir))
 		.pipe(notify({message:"js-files-nojquery complete", wait: true}));
 });
-task('jsFilesCroutonCore', () => {
-	return src(jsFilesCroutonCoreWithFullPath)
-		.pipe(concat('crouton-core.js'))
-		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
-		.pipe(dest(distDir))
-		.pipe(notify({message:"js-files-crouton-core complete", wait: true}));
-});
-task('jsFilesCroutonNoCore', () => {
-	return src(jsFilesCroutonNoCoreWithFullPath)
-		.pipe(concat('crouton-nocore.js'))
-		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
-		.pipe(dest(distDir))
-		.pipe(notify({message:"js-files-crouton-nocore complete", wait: true}));
-});
-task('jsFilesCroutonMap', () => {
-	return src(jsFilesCroutonMapWithFullPath)
+task('jsFilesLeafletMap', () => {
+	return src(jsFilesLeafletMapWithFullPath)
+		.pipe(sourcemaps.init())
 		.pipe(concat('crouton-map.js'))
 		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
+		.pipe(rename('crouton-map.min.js'))
+		.pipe(uglify())
+		.pipe(sourcemaps.write("./"))
 		.pipe(dest(distDir))
-		.pipe(notify({message:"jsFilesCroutonMap complete", wait: true}));
+		.pipe(notify({message:"jsFilesLeafletMap complete", wait: true}));
 });
 
 task('js-files', () => {
-
 	return src(jsFilesWithJqueryWithFullPath)
+		.pipe(sourcemaps.init())
 		.pipe(concat('crouton.js'))
 		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
+		.pipe(rename('crouton.min.js'))
+		.pipe(uglify())
+		.pipe(sourcemaps.write("./"))
 		.pipe(dest(distDir))
 		.pipe(notify({message: "js-files complete", wait: true}));
 });
 let jsFilesGoogleWithFullPath = ['croutonjs/src/js/jquery-3.4.1.min.js'
-].concat(jsFilesCroutonCoreWithFullPath)
+].concat(jsFilesCroutonWithFullPath)
 .concat(jsFilesGoogleMapWithFullPath);
 task('js-gmaps-files', () => {
-
 	return src(jsFilesGoogleWithFullPath)
+		.pipe(sourcemaps.init())
 		.pipe(concat('crouton-gmaps.js'))
 		.pipe(dest(distDir))
-		.pipe(minify({
-			ext: {
-				min:'.min.js'
-			},
-		}))
+		.pipe(rename('crouton-gmaps.min.js'))
+		.pipe(uglify())
+		.pipe(sourcemaps.write("./"))
 		.pipe(dest(distDir))
 		.pipe(notify({message: "js-gmaps-files complete", wait: true}));
 });
@@ -156,7 +126,7 @@ task('css-files', () => {
 	for (let cssFile of cssFiles) {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
 	}
-	for (let cssFile of cssMapFiles) {
+	for (let cssFile of LeafletCssFiles) {
 		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
 	}
 	return src(cssFilesWithFullPath)
@@ -184,7 +154,19 @@ task('css-core-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "css-core-files complete", wait: true}));
 });
-task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesCroutonMap', 'jsFilesCroutonCore', 'jsFilesCroutonNoCore', 'css-files', 'css-core-files'));
+task('css-leaflet-files', () => {
+	let cssFilesWithFullPath = [];
+	for (let cssFile of LeafletCssFiles) {
+		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
+	}
+	return src(cssFilesWithFullPath)
+		.pipe(concat('crouton-leaflet.css'))
+		.pipe(cleanCSS())
+		.pipe(rename('crouton-leaflet.min.css'))
+		.pipe(dest(distDir))
+		.pipe(notify({message: "leaflet-css-files complete", wait: true}));
+});
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files'));
 
 task('watch', () => {
 	watch([

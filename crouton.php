@@ -77,8 +77,8 @@ if (!class_exists("Crouton")) {
             "include_weekday_button" => '1',
             "include_distance_button" => '1',
             "include_unpublished" => '0',
-            "grouping_buttons_option" => "City:location_municipality",
-            "formattype_grouping_buttons_option" => "",
+            "grouping_buttons" => "City:location_municipality",
+            "formattype_grouping_buttons" => "",
             "view_by" => 'weekday',
             "dropdown_width" => 'auto',
             "has_zip_codes" => '0',
@@ -133,7 +133,7 @@ if (!class_exists("Crouton")) {
         public function __construct()
         {
             $this->getOptions();
-            require_once(__DIR__."/croutonjs/meetingMap/meeting_map.php");
+            require_once(__DIR__."/meeting_map.php");
             $this->meetingMapController = new MeetingMap\Controller($this->options);
             if (is_admin()) {
                 // Back end
@@ -311,12 +311,7 @@ if (!class_exists("Crouton")) {
             $script = $this->croutonInitializationScript();
             if ($script !== '') {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.css"), false);
-                if (isset($_GET['croutonjsdebug'])) {
-                    wp_enqueue_script("croutonnocorejs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-nocore.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-nocore.js"), true);
-                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/src/js/crouton-core.js", array('croutonnocorejs'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/src/js/crouton-core.js"), true);
-                } else {
-                    wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton-core.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton-core.min.js"), true);
-                }
+                wp_enqueue_script("croutonjs", plugin_dir_url(__FILE__) . "croutonjs/dist/crouton.nojquery.min.js", array('jquery'), filemtime(plugin_dir_path(__FILE__) . "croutonjs/dist/crouton.nojquery.min.js"), true);
                 $this->meetingMapController->enqueueFrontendFiles();
                 wp_add_inline_script("croutonjs", $script);
             }
@@ -1035,11 +1030,11 @@ foreach ($all_fields as $field) {
             if ($this->options['crouton_version'] === "3.18") {
                 $this->options['crouton_version'] = "3.21";
                 if (isset($this->options['button_filters_option'])) {
-                    $this->options['grouping_buttons_option'] = $this->options['button_filters_option'];
+                    $this->options['grouping_buttons'] = $this->options['button_filters_option'];
                     unset($this->options['button_filters_option']);
                 }
                 if (isset($this->options['button_format_filters_option'])) {
-                    $this->options['formattype_grouping_buttons_option'] = $this->options['button_format_filters_option'];
+                    $this->options['formattype_grouping_buttons'] = $this->options['button_format_filters_option'];
                     unset($this->options['button_format_filters_option']);
                 }
             }
@@ -1168,16 +1163,8 @@ foreach ($all_fields as $field) {
                 }
             }
 
-            $params['grouping_buttons'] = [];
-            if (strlen($params['grouping_buttons_option']) > 0) {
-                foreach (explode(",", $params['grouping_buttons_option']) as $item) {
-                    $setting = explode(":", $item);
-                    if (strcmp($params['include_city_button'], "0") == 0 && strcmp($setting[0], "City") == 0) {
-                        continue;
-                    }
-                    array_push($params['grouping_buttons'], ['title' => $setting[0], 'field' => $setting[1]]);
-                }
-            }
+            $params['grouping_buttons'] = $this->convertToArray($params['grouping_buttons']);
+
             if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'], 'distance') == 0) {
                 array_push($params['grouping_buttons'], ['title' => 'Distance', 'field' => 'distance_in_km']);
             }
@@ -1197,13 +1184,7 @@ foreach ($all_fields as $field) {
             }
             $params['venue_types'] = $tmp_venue;
 
-            $params['formattype_grouping_buttons'] = [];
-            if (strlen($params['formattype_grouping_buttons_option']) > 0) {
-                foreach (explode(",", $params['formattype_grouping_buttons_option']) as $item) {
-                    $setting = explode(":", $item);
-                    array_push($params['formattype_grouping_buttons'], ['title' => $setting[0], 'field' => $setting[1]]);
-                }
-            }
+            $params['formattype_grouping_buttons'] = $this->convertToArray($params['formattype_grouping_buttons']);
 
             $params['service_body'] = $service_body;
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
@@ -1255,6 +1236,17 @@ foreach ($all_fields as $field) {
             $params = apply_filters('crouton_configuration', $params);
 
             return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
+        }
+        function convertToArray($str) : array {
+            $ret = [];
+            $str = trim($str);
+            if (strlen($str) > 0) {
+                foreach (explode(",", $str) as $item) {
+                    $setting = explode(":", $item);
+                    array_push($ret, ['title' => $setting[0], 'field' => $setting[1]]);
+                }
+            }
+            return $ret;
         }
     }
     //End Class Crouton

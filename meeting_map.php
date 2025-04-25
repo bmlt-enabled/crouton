@@ -55,21 +55,10 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             $this->options['tile_provider'] = isset($this->options['tile_provider']) ? $this->options['tile_provider'] : 'OSM';
             if ($this->options['tile_provider'] == 'google') {
-                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__)."css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__)."css/meeting_map.css"), false);
-                wp_enqueue_script("gmapsDelegate", plugin_dir_url(__FILE__)."js/gmapsDelegate.js", false, filemtime(plugin_dir_path(__FILE__)."js/gmapsDelegate.js"), false);
-                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__)."js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__)."js/meeting_map.js"), false);
-                wp_enqueue_script("google.markercluster", plugin_dir_url(__FILE__)."js/google.markercluster.min.js", false, filemtime(plugin_dir_path(__FILE__)."js/google.markercluster.min.js"), false);
-                wp_enqueue_script("google.oms", plugin_dir_url(__FILE__)."js/oms-1.0.3.min.js", false, filemtime(plugin_dir_path(__FILE__)."js/oms-1.0.3.min.js"), false);
+                wp_enqueue_script("gmapsDelegate", plugin_dir_url(__FILE__)."croutonjs/dist/crouton-gmaps.min.js", false, filemtime(plugin_dir_path(__FILE__)."croutonjs/dist/crouton-gmaps.min.js"), false);
             } else {
-                wp_enqueue_style("leaflet", plugin_dir_url(__FILE__)."css/leaflet.css", false, filemtime(plugin_dir_path(__FILE__)."css/leaflet.css"), false);
-                wp_enqueue_style("leaflet-markercluster-default", plugin_dir_url(__FILE__)."css/MarkerCluster.Default.css", false, filemtime(plugin_dir_path(__FILE__)."css/MarkerCluster.Default.css"), false);
-                wp_enqueue_style("leaflet-markercluster", plugin_dir_url(__FILE__)."css/MarkerCluster.css", false, filemtime(plugin_dir_path(__FILE__)."css/MarkerCluster.css"), false);
-                wp_enqueue_style("meeting_map", plugin_dir_url(__FILE__)."css/meeting_map.css", false, filemtime(plugin_dir_path(__FILE__)."css/meeting_map.css"), false);
-                wp_enqueue_script("leaflet", plugin_dir_url(__FILE__)."js/leaflet.js", false, filemtime(plugin_dir_path(__FILE__)."js/leaflet.js"), false);
-                wp_enqueue_script("leaflet.markercluster", plugin_dir_url(__FILE__)."js/leaflet.markercluster.js", false, filemtime(plugin_dir_path(__FILE__)."js/leaflet.markercluster.js"), false);
-                //wp_enqueue_script("geocoder", plugin_dir_url(__FILE__) . "js/nominatim.js", false, filemtime(plugin_dir_path(__FILE__) . "js/nominatim.js"), false);
-                wp_enqueue_script("osmDelegate", plugin_dir_url(__FILE__)."js/osmDelegate.js", false, filemtime(plugin_dir_path(__FILE__)."js/osmDelegate.js"), false);
-                wp_enqueue_script("meeting_map", plugin_dir_url(__FILE__)."js/meeting_map.js", false, filemtime(plugin_dir_path(__FILE__)."js/meeting_map.js"), false);
+                wp_enqueue_style("leaflet", plugin_dir_url(__FILE__)."croutonjs/dist/crouton-leaflet.min.css", false, filemtime(plugin_dir_path(__FILE__)."croutonjs/dist/crouton-leaflet.min.css"), false);
+                wp_enqueue_script("leaflet", plugin_dir_url(__FILE__)."croutonjs/dist/crouton-map.min.js", false, filemtime(plugin_dir_path(__FILE__)."croutonjs/dist/crouton-map.min.js"), false);
             }
         }
         public function className()
@@ -189,9 +178,9 @@ if (!class_exists("MeetingMap/Controller")) {
         {
             $ret = [];
             //$ret .= 'BMLTPlugin_files_uri:\''.$this->hsc($this->getPluginPath()).'?\',' . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__FILE__)."map_images");
-            $ret["BMLTPlugin_lang_dir"] = $this->hsc(plugin_dir_url(__FILE__)."lang");
-            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__FILE__)."map_images/Throbber.gif");
+            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/map_images");
+            $ret["BMLTPlugin_lang_dir"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/lang");
+            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/map_images/#f");
             $ret['region'] = $options['region_bias'];
             $ret['bounds'] = [
                 "north" => $options['bounds_north'],
