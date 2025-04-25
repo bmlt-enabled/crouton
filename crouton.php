@@ -1237,7 +1237,8 @@ foreach ($all_fields as $field) {
 
             return [json_encode($params), $this->meetingMapController->getMapJSConfig($params, $croutonMap)];
         }
-        function convertToArray($str) : array {
+        function convertToArray($str) : array
+        {
             $ret = [];
             $str = trim($str);
             if (strlen($str) > 0) {
