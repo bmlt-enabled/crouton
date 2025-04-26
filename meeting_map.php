@@ -177,10 +177,8 @@ if (!class_exists("MeetingMap/Controller")) {
         private function createJavascriptConfig($options)
         {
             $ret = [];
-            //$ret .= 'BMLTPlugin_files_uri:\''.$this->hsc($this->getPluginPath()).'?\',' . (defined('_DEBUG_MODE_') ? "\n" : '');
-            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/map_images");
-            $ret["BMLTPlugin_lang_dir"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/lang");
-            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/meetingMap/map_images/#f");
+            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/mapImages");
+            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__FILE__)."croutonjs/mapImages/#f");
             $ret['region'] = $options['region_bias'];
             $ret['bounds'] = [
                 "north" => $options['bounds_north'],

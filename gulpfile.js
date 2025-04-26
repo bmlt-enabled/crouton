@@ -37,8 +37,8 @@ let jsFilesGoogleMap = [
 	'google.markercluster.min.js',
 	'oms-1.0.3.min.js',
 ];
-let jsFilesLeafletMapWithFullPath = jsFilesLeafletMap.map((f)=>'croutonjs/meetingMap/js/'+f);
-let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/meetingMap/js/'+f);
+let jsFilesLeafletMapWithFullPath = jsFilesLeafletMap.map((f)=>'croutonjs/src/mapDelegates/js/'+f);
+let jsFilesGoogleMapWithFullPath = jsFilesGoogleMap.map((f)=>'croutonjs/src/mapDelegates/js/'+f);
 let jsFilesNoJQueryWithFullPath = [
 ].concat(jsFilesCroutonWithFullPath);
 
@@ -127,7 +127,7 @@ task('css-files', () => {
 		cssFilesWithFullPath.push('croutonjs/src/css/' + cssFile);
 	}
 	for (let cssFile of LeafletCssFiles) {
-		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
+		cssFilesWithFullPath.push('croutonjs/src/mapDelegates/css/' + cssFile);
 	}
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton.css'))
@@ -157,7 +157,7 @@ task('css-core-files', () => {
 task('css-leaflet-files', () => {
 	let cssFilesWithFullPath = [];
 	for (let cssFile of LeafletCssFiles) {
-		cssFilesWithFullPath.push('croutonjs/meetingMap/css/' + cssFile);
+		cssFilesWithFullPath.push('croutonjs/src/mapDelegates/css/' + cssFile);
 	}
 	return src(cssFilesWithFullPath)
 		.pipe(concat('crouton-leaflet.css'))
