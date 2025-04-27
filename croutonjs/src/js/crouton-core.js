@@ -12,7 +12,6 @@ function Crouton(config) {
 	self.filtering = false;
 	self.masterFormatCodes = [];
 	self.currentView = "weekday";
-	self.max_filters = 10;  // TODO: needs to be refactored so that dropdowns are treated dynamically
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.

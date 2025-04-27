@@ -1133,9 +1133,9 @@ foreach ($all_fields as $field) {
                 $atts['grouping_buttons'] = $atts['button_filters'];
                 unset($atts['button_filters']);
             }
-            if (isset($atts['button_format_filters'])) {
-                $atts['formattype_grouping_buttons'] = $atts['button_format_filters'];
-                unset($atts['button_format_filters']);
+            if (isset($atts['button_format_filters_option'])) {
+                $atts['formattype_grouping_buttons'] = $atts['button_format_filters_option'];
+                unset($atts['button_format_filters_option']);
             }
             $params = shortcode_atts($defaults, $atts);
 
