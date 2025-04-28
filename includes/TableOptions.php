@@ -75,22 +75,21 @@ if (!class_exists("Crouton\TableOptions")) {
             'meetingpage_title_template' => '',
             'meetingpage_contents_template' => '',
         );
-        public function getOptions()
+        public function getOptions(): array
         {
             return $this->options;
         }
-        public function set($key, $value)
+        public function set(string $key, $value): void
         {
             $this->options[$key] = $value;
         }
 
-        public function saveOptions($options)
+        public function saveOptions(array $options): void
         {
             $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
             update_option($this->optionsName, $options);
-            return;
         }
-        public function getCustomQuery($custom_query)
+        public function getCustomQuery(string $custom_query): string| null
         {
             if (isset($_GET['custom_query'])) {
                 return sanitize_text_field(wp_unslash($_GET['custom_query']));
@@ -158,7 +157,7 @@ if (!class_exists("Crouton\TableOptions")) {
             $this->map = new MapOptions();
             $this->map->mergeDefaults($this->options);
         }
-        public function getMapOptions()
+        public function getMapOptions(): MapOptions
         {
             return $this->map;
         }

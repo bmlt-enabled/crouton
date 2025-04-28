@@ -58,7 +58,7 @@ if (!class_exists("Crouton\TablePublic")) {
                 "bmltHandlebar"
             ));
         }
-        private function croutonInitializationScript()
+        private function croutonInitializationScript(): string
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
@@ -108,7 +108,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     return $script;
                 }
             }
-            return true;
+            return '';
         }
         /**
         * @desc Adds JS/CSS to the header
@@ -124,7 +124,7 @@ if (!class_exists("Crouton\TablePublic")) {
             }
         }
 
-        private function outputTag()
+        private function outputTag(): string
         {
             $output = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
             if (isset($_GET['this_title'])) {
@@ -144,14 +144,14 @@ if (!class_exists("Crouton\TablePublic")) {
          *
          * @return string
          */
-        public function replaceShortcodeWithStandardTags()
+        public function replaceShortcodeWithStandardTags(): string
         {
             if (isset($_GET['meeting-id'])) {
                 return do_shortcode($this->getDefaultMeetingDetailsPageContents());
             }
             return $this->outputTag();
         }
-        public function bmltHandlebar($atts, $template = null)
+        public function bmltHandlebar(array $atts, $template = null): string
         {
             if (!isset($_GET['meeting-id'])) {
                 return "Meeting-ID not set in query-string";
@@ -165,23 +165,23 @@ if (!class_exists("Crouton\TablePublic")) {
             }
             return sprintf('<bmlt-handlebar style="display:none;"><span style="display:none;">%s</span>Fetching...</bmlt-handlebar>', htmlspecialchars($template));
         }
-        private function getMapInitialization($mapConfig)
+        private function getMapInitialization(string $mapConfig): string
         {
             $className = $this->map->className();
             return  "window.croutonMap = new $className($mapConfig);";
         }
-        private function getInitializeCroutonBlock($renderCmd, $config, $mapConfig)
+        private function getInitializeCroutonBlock(string $renderCmd, string $config, string $mapConfig): string
         {
             $croutonMap =  $this->getMapInitialization($mapConfig);
             return "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
         }
 
-        private function renderTable($atts)
+        private function renderTable(array $atts): string
         {
             return $this->getInitializeCroutonBlock("crouton.render();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts));
         }
 
-        private function renderMap($atts, $croutonMap = true)
+        private function renderMap(array $atts, $croutonMap = true): string
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
@@ -250,21 +250,17 @@ if (!class_exists("Crouton\TablePublic")) {
             ."jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); crouton.doHandlebars();})";
             return $ret;
         }
-        private function getDefaultMeetingDetailsPageContents()
+        private function getDefaultMeetingDetailsPageContents(): string
         {
             return file_get_contents(plugin_dir_path(__DIR__) . "partials/default_meeting_details.html");
         }
-        private function templateToParameter($atts, $name, $options)
-        {
-            if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
-                return $atts[$name];
-            } elseif (isset($this->options[$name])) {
-                return $options[$name];
-            } else {
-                return "";
-            }
-        }
-        private function getCroutonJsConfig($atts, $croutonMap = false)
+        /**
+         *
+         * @param array $atts
+         * @param boolean $croutonMap true if we are processing a crouton_map or crouton_tabs shortcode
+         * @return array return value has 2 elements, the first is the configuration of the main Crouton JS object, the second is the configuration of the Map object.
+         */
+        private function getCroutonJsConfig(array $atts, $croutonMap = false): array
         {
             $options = $this->crouton->getOptions();
             /***  Pulling simple values from options
@@ -344,11 +340,6 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['theme'] = $params['theme'] != '' ? $params['theme'] : 'jack';
             $params['custom_css'] = html_entity_decode($params['custom_css']);
             $params['int_include_unpublished'] = $params['include_unpublished'];
-
-            $params['meeting_data_template'] = $this->templateToParameter($atts, 'meeting_data_template', $options);
-            $params['metadata_template'] = $this->templateToParameter($atts, 'metadata_template', $options);
-            $params['meetingpage_title_template'] = $this->templateToParameter($atts, 'meetingpage_title_template', $options);
-            $params['meetingpage_contents_template'] = $this->templateToParameter($atts, 'meetingpage_contents_template', $options);
 
             $mapParams['google_api_key'] = $params['google_api_key'];
             $mapParams['template_path'] = $params['template_path'];

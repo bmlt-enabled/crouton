@@ -49,7 +49,7 @@ if (!class_exists("Crouton\TableAdmin")) {
             "has_common_needs"
         ];
         private MapAdmin $map_admin;
-        public function __construct($crouton)
+        public function __construct(TableOptions $crouton)
         {
             $this->crouton = $crouton;
             require_once(__DIR__."/MapAdmin.php");
@@ -67,9 +67,6 @@ if (!class_exists("Crouton\TableAdmin")) {
             $slugs[] = basename(__DIR__);
             return $slugs;
         }
-                /**
-                 * @desc Adds the options sub-panel
-                 */
         private $menu_created = false;
         public function adminSubmenuLink($parent_slug)
         {
@@ -112,7 +109,7 @@ if (!class_exists("Crouton\TableAdmin")) {
             }
         }
 
-        private function testRootServer($root_server)
+        private function testRootServer(string $root_server): string| bool
         {
             $args = array(
                 'timeout' => '10',
@@ -137,7 +134,7 @@ if (!class_exists("Crouton\TableAdmin")) {
             return '';
         }
 
-        public function serviceBodyNames($atts)
+        public function serviceBodyNames(array $atts): string
         {
             if (isset($_GET['meeting-id'])) {
                 return '';
@@ -148,16 +145,13 @@ if (!class_exists("Crouton\TableAdmin")) {
             }
             return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
         }
-        /**
-         * @desc Adds the options sub-panel
-         */
-        public function getAreas($root_server, $source)
+        public function getAreas(string $root_server, string $source): array
         {
             $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", TableAdmin::HTTP_RETRIEVE_ARGS);
             $result = json_decode(wp_remote_retrieve_body($results), true);
             if (is_wp_error($results)) {
                 echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . esc_url($root_server) . '</p><p>Error: ' . esc_html($result->get_error_message()) . '</p><p>Please try again later</p></div>';
-                return 0;
+                return [];
             }
 
             if ($source == 'dropdown') {
@@ -658,7 +652,7 @@ foreach ($all_fields as $field) {
             $allowed['a']['onclick'] = true;
             return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses(wp_unslash($_POST[$field]), $allowed)) : '';
         }
-        private function getAllFields($root_server)
+        private function getAllFields(string $root_server): array
         {
             try {
                 $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFieldKeys");
@@ -667,7 +661,7 @@ foreach ($all_fields as $field) {
                 return [];
             }
         }
-        private function getAllMeetings($root_server)
+        private function getAllMeetings(string $root_server): array
         {
             $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
             $result = json_decode(wp_remote_retrieve_body($results), true);

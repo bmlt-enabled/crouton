@@ -39,7 +39,7 @@ if (!class_exists("Crouton\MapOptions")) {
         );
         private bool $isGoogle;
 
-        public function mergeDefaults(&$options)
+        public function mergeDefaults(&$options): void
         {
             foreach (MapOptions::$defaultOptions as $key => $value) {
                 if (!isset($options[$key])) {
@@ -48,7 +48,7 @@ if (!class_exists("Crouton\MapOptions")) {
             }
             $this->isGoogle = ($options['tile_provider'] == 'google');
         }
-        public function isGoogle()
+        public function isGoogle(): bool
         {
             return $this->isGoogle;
         }

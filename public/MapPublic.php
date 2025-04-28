@@ -23,11 +23,11 @@ if (!class_exists("Crouton\MapPublic")) {
                 wp_enqueue_script("leaflet", plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js", false, filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-map.min.js"), false);
             }
         }
-        public function className()
+        public function className(): string
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig($params, $croutonMap = false)
+        public function getMapJSConfig(array $params, $croutonMap = false): string| false
         {
             switch ($params['tile_provider']) {
                 case 'MapBox':
@@ -71,7 +71,7 @@ if (!class_exists("Crouton\MapPublic")) {
             }
             return $this->createJavascriptConfig($params);
         }
-        private function addCroutonMapParameters(&$params)
+        private function addCroutonMapParameters(array &$params): void
         {
             $params['map_search'] = [];
             if (isset($params['map_search_option'])) {
@@ -120,11 +120,11 @@ if (!class_exists("Crouton\MapPublic")) {
             }
         }
         /** Emulates the behavior from PHP 7 */
-        private function hsc($field)
+        private function hsc(string $field): string
         {
             return htmlspecialchars($field, ENT_COMPAT);
         }
-        private function createJavascriptConfig($options)
+        private function createJavascriptConfig(array $options): string| false
         {
             $ret = [];
             $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages");

@@ -23,11 +23,11 @@ if (!class_exists("Crouton\MapAdmin")) {
                 wp_enqueue_script("leaflet", plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js", false, filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-map.min.js"), false);
             }
         }
-        public function className()
+        public function className(): string
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig($params, $croutonMap = false)
+        public function getMapJSConfig(array $params, $croutonMap = false): string
         {
             switch ($params['tile_provider']) {
                 case 'MapBox':
@@ -69,19 +69,7 @@ if (!class_exists("Crouton\MapAdmin")) {
             if ($croutonMap) {
                 $this->addCroutonMapParameters($params);
             }
-            $params['marker_contents_template'] = $this->templateToParameter($params, 'marker_contents_template');
             return $this->createJavascriptConfig($params);
-        }
-        private function templateToParameter($atts, $name)
-        {
-            if (isset($atts[$name]) && $atts[$name] !== null && $atts[$name] !== "") {
-                $template = $atts[$name];
-            } elseif (isset($options[$name])) {
-                $template = $options[$name];
-            } else {
-                $template = "";
-            }
-            return html_entity_decode($template);
         }
         private function addCroutonMapParameters(&$params)
         {
