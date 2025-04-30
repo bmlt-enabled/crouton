@@ -109,7 +109,7 @@ if (!class_exists("Crouton\TableAdmin")) {
             }
         }
 
-        private function testRootServer(string $root_server): string| bool
+        private function testRootServer(string $root_server): string| false
         {
             $args = array(
                 'timeout' => '10',
