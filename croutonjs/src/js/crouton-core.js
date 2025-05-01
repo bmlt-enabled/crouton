@@ -51,7 +51,7 @@ function Crouton(config) {
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
 		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
-		venue_types: '',			  // Return only meetings with this venue type (1, 2 or 3)
+		venue_types: [],			  // Return only meetings with this venue type (1, 2 or 3)
 		strict_datafields: true,	  // Only get the datafields that are mentioned in the templates
 		meeting_details_href: '',	  // Link to the meeting details page
 		virtual_meeting_details_href: '', // Link to the virtual meeting details page
@@ -247,6 +247,9 @@ function Crouton(config) {
 			url += self.config['formats'].reduce(function(prev,id) {
 				return prev +'&formats[]='+id;
 			}, '');
+		}
+		if (self.config.map_search && !Array.isArray(self.config['venue_types'])) {
+			self.config['venue_types'] = [];
 		}
 		if (self.config.map_search && self.config['venue_types'].length === 0) {
 			self.config['venue_types'].push('-2');

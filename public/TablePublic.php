@@ -252,7 +252,7 @@ if (!class_exists("Crouton\TablePublic")) {
         }
         private function getDefaultMeetingDetailsPageContents(): string
         {
-            return file_get_contents(plugin_dir_path(__DIR__) . "partials/default_meeting_details.html");
+            return file_get_contents(plugin_dir_path(__DIR__) . "public/default_meeting_details.html");
         }
         /**
          *
