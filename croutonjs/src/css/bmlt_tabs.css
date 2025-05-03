@@ -320,7 +320,7 @@ span.bmlt_tabs_group_count {
 	border: 0;
 }
 
-#bmlt-tabs tr.meeting-header td {
+.group-header {
 	padding: .5em .8em !important;
 	color: rgba(0,0,0,0.67);
 	background-color: #93C3CD;

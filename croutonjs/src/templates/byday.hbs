@@ -1,17 +1,12 @@
 <div id="bmlt-table-div">
-    <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
         {{#each this}}
-            <tbody class="bmlt-data-rows h-{{this.day}}">
-			{{#unless this.hide}}
-				{{#greaterThan this.meetings.length 0}}
-					<tr class="meeting-header">
-						<td colspan="3" {{{getWord 'css-textAlign'}}}>{{this.day}}</td>
-					</tr>
-				{{/greaterThan}}
-			{{/unless}}
-
-            {{> meetings this.meetings }}
-            </tbody>
+            <div class="meeting-group" {{{getWord 'css-textAlign'}}}>
+                <div class="group-header">{{this.day}}</div>
+                <table class='bmlt-table table table-striped table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
+                    <tbody class="h-{{this.day}}">
+                        {{> meetings this.meetings}}
+                    </tbody>
+                </table>
+            </div>
         {{/each}}
-    </table>
 </div>

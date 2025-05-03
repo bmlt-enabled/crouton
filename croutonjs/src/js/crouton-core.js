@@ -322,7 +322,7 @@ function Crouton(config) {
 
 				jQuery(".bmlt-data-rows").each(function (index, value) {
 					if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-						jQuery(value).find(".meeting-header").addClass("hide");
+						jQuery(value).find(".group-header").hide();
 					}
 				});
 			} else {
@@ -369,25 +369,13 @@ function Crouton(config) {
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byfield_" + field);
-			jQuery("#byfield_" + field).find('.meeting-header').each(function(index) {
-				// This is an awkward way of doing things, but I don't want to mess with
-				// the generated HTML at this point.
-				let flag = false;
-				let item = jQuery(this);
-				const main = item;
-				while(item = item.next()) {
-					if (item.length === 0) break;
-					if (item.hasClass('meeting-header')) break;
-					if (!item.hasClass('hide')) {
-						flag = true;
-						break;
-					}
-				}
-				if (!flag) main.addClass('hide');
-			})
-			return;
+			jQuery("#byfield_" + field).find('.meeting-group').each(function(index) {
+				if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
+					jQuery(this).hide();
+				else jQuery(this).removeClass('hide');
+			});
 		});
-	};
+	}
 	self.mapView = function() {
 		self.lowlightButton("#day");
 		self.lowlightButton(".groupingButton");
@@ -412,13 +400,11 @@ function Crouton(config) {
 	};
 
 	self.filterMeetingsFromView = function () {
-		jQuery(".meeting-header").removeClass("hide");
+		jQuery(".group-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		var filteringDropdown = false;
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
-			filteringDropdown = true;
 			const dataType = filter.getAttribute("data-pointer").toLowerCase();
 			if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
@@ -445,7 +431,7 @@ function Crouton(config) {
 		self.updateFilters();
 		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
-		jQuery(".meeting-header").removeClass("hide");
+		jQuery(".group-header").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		jQuery(".evenRow").removeClass("evenRow");
 		jQuery(".oddRow").removeClass("oddRow");
