@@ -328,9 +328,17 @@ span.bmlt_tabs_group_count {
 	text-transform: uppercase;
 	font-weight: 600;
 	border-top: 0;
-/* border-color: #93C3CD; */
 }
-
+.meeting-group.closed .group-table-div {
+	height: 0px;
+	transition: height 7s;
+	overflow-y: hidden;
+}
+.meeting-group:not(.closed) .group-table-div {
+	height: auto;
+	transition: height 7s;
+	overflow-y: auto;
+}
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
 		display: block !important;

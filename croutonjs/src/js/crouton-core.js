@@ -1339,6 +1339,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					jQuery('#groupingButton_embeddedMapPage').on('click', function (e) {
 						self.showView('map')
 					});
+					jQuery('.meeting-group .group-header').on('click', function(e) {
+						jQuery(e.target.parentElement).toggleClass('closed');
+					})
 					/****
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
