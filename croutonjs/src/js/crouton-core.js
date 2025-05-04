@@ -321,7 +321,7 @@ function Crouton(config) {
 
 				jQuery(".bmlt-data-rows").each(function (index, value) {
 					if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-						jQuery(value).find(".group-header").hide();
+						jQuery(value).find(".group-header").addClass("hide");
 					}
 				});
 			} else {
@@ -370,7 +370,7 @@ function Crouton(config) {
 			self.showPage("#byfield_" + field);
 			jQuery("#byfield_" + field).find('.meeting-group').each(function(index) {
 				if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
-					jQuery(this).hide();
+					jQuery(this).addClass("hide");
 				else jQuery(this).removeClass('hide');
 			});
 		});
@@ -400,6 +400,7 @@ function Crouton(config) {
 
 	self.filterMeetingsFromView = function () {
 		jQuery(".group-header").removeClass("hide");
+		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
