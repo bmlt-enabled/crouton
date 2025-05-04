@@ -329,6 +329,16 @@ span.bmlt_tabs_group_count {
 	font-weight: 600;
 	border-top: 0;
 }
+.group-header::before {
+	content: "\25BC";
+	display: inline;
+	padding: 0 5px;
+  }
+  .meeting-group.closed .group-header::before {
+	content: "\25BA";
+	display: inline;
+	padding: 0 5px;
+  }
 .meeting-group.closed .group-table-div {
 	height: 0px;
 	transition: height .7s;  /* doesn't work because height=auto */
