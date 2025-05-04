@@ -273,6 +273,10 @@ if (!class_exists("Crouton\TablePublic")) {
                 $atts['grouping_buttons'] = $atts['button_filters'];
                 unset($atts['button_filters']);
             }
+            if (isset($atts['button_filters_option'])) {
+                $atts['grouping_buttons'] = $atts['button_filters_option'];
+                unset($atts['button_filters_option']);
+            }
             if (isset($atts['button_format_filters_option'])) {
                 $atts['formattype_grouping_buttons'] = $atts['button_format_filters_option'];
                 unset($atts['button_format_filters_option']);
@@ -379,7 +383,12 @@ if (!class_exists("Crouton\TablePublic")) {
             if (strlen($str) > 0) {
                 foreach (explode(",", $str) as $item) {
                     $setting = explode(":", $item);
-                    array_push($ret, ['title' => $setting[0], 'field' => $setting[1]]);
+                    if (sizeof($setting) == 2) {
+                        array_push($ret, ['title' => $setting[0], 'field' => $setting[1]]);
+                    }
+                    if (sizeof($setting) == 3) {
+                        array_push($ret, ['title' => $setting[0], 'field' => $setting[1], 'accordionState' => $setting[2]]);
+                    }
                 }
             }
             return $ret;

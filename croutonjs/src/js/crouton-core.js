@@ -5,7 +5,6 @@ crouton_Handlebars.registerHelper("enrich", () => '');
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
-
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -1160,7 +1159,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					}
 
 					for (var f = 0; f < self.config.formattype_grouping_buttons.length; f++) {
-						var groupByName = self.config.formattype_grouping_buttons[f]['field'];
+						const groupByName = self.config.formattype_grouping_buttons[f]['field'];
+						const accordionState = self.config.formattype_grouping_buttons[f].hasOwnProperty('accordionState')
+							? self.config.grouping_buttons[b]['accordionState'] : '';
 						var groupByData = getUniqueFormatsOfType(daysOfTheWeekMeetings, groupByName);
 						if (groupByName=='LANG' && self.config.native_lang && self.config.native_lang.length > 0) {
 							groupByData = groupByData.filter((f) => f.key != self.config.native_lang);
@@ -1168,12 +1169,16 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filter((item) => item.formats_expanded.map(f => f.key).indexOf(groupByData[i].key) >= 0);
 							if (formattypeGroupingButtonsData.hasOwnProperty(groupByName) && formattypeGroupingButtonsData[groupByName].hasOwnProperty(groupByData[i].description)) {
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = formattypeGroupingButtonsData[groupByName][groupByData[i].description].concat(groupByMeetings);
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = formattypeGroupingButtonsData[groupByName][groupByData[i].description].group.concat(groupByMeetings);
 							} else if (formattypeGroupingButtonsData.hasOwnProperty(groupByName)) {
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = {};
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].accordionState = accordionState;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = groupByMeetings;
 							} else {
 								formattypeGroupingButtonsData[groupByName] = {};
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = {};
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].accordionState = accordionState;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = groupByMeetings;
 							}
 						}
 					}
@@ -1182,10 +1187,14 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var groupingButtonsDataSorted = {};
 				for (var b = 0; b < self.config.grouping_buttons.length; b++) {
-					var groupByName = self.config.grouping_buttons[b]['field'];
+					const groupByName = self.config.grouping_buttons[b]['field'];
+					const accordionState = self.config.grouping_buttons[b].hasOwnProperty('accordionState')
+						? self.config.grouping_buttons[b]['accordionState'] : '';
 					groupingButtonsDataSorted[groupByName] = {};
 					if (groupByName.startsWith('distance')) {
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = {};
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = '';
 						continue;
 					}
 					var sortKey = [];
@@ -1197,7 +1206,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					sortKey.sort();
 
 					for (var s = 0; s < sortKey.length; s++) {
-						groupingButtonsDataSorted[groupByName][sortKey[s]] = groupingButtonsData[groupByName][sortKey[s]]
+						groupingButtonsDataSorted[groupByName][sortKey[s]] = {};
+						groupingButtonsDataSorted[groupByName][sortKey[s]].group = groupingButtonsData[groupByName][sortKey[s]];
+						groupingButtonsDataSorted[groupByName][sortKey[s]].accordionState = accordionState;
 					}
 				}
 

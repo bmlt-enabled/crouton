@@ -36,6 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
+= 3.21.3 =
+* Header for meeting groupings are accordions, can start in closed state.
+
 = 3.21.2 =
 * Refactoring
 

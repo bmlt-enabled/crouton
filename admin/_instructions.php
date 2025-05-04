@@ -96,6 +96,8 @@
 		<p><strong>[bmlt_tabs include_city_button="0|1"]</strong></p>
 		<p>0 = exclude City button</p>
 		<p>1 = include City button (default)</p>
+		<p>Each group may be shown or hidden by clicking on the group's header (the city name in the above example).  By default, all groups are visible initially.  To hide the groups members, so that only the header (the citiy name in the example above) is shown initially, the format is:</p>
+		<p><strong>[bmlt_tabs grouping_buttons="City:location_municipality:closed"]</strong></p>
 	</div>
 	<h3 class="help-accordian"><strong>Show Format-Type Grouping Buttons</strong></h3>
 	<div>

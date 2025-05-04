@@ -331,13 +331,8 @@ span.bmlt_tabs_group_count {
 }
 .meeting-group.closed .group-table-div {
 	height: 0px;
-	transition: height 7s;
+	transition: height .7s;  /* doesn't work because height=auto */
 	overflow-y: hidden;
-}
-.meeting-group:not(.closed) .group-table-div {
-	height: auto;
-	transition: height 7s;
-	overflow-y: auto;
 }
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
