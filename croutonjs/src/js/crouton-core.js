@@ -432,6 +432,7 @@ function Crouton(config) {
 		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
 		jQuery(".group-header").removeClass("hide");
+		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		jQuery(".evenRow").removeClass("evenRow");
 		jQuery(".oddRow").removeClass("oddRow");
