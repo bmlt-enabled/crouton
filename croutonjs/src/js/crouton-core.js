@@ -1196,7 +1196,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					if (groupByName.startsWith('distance')) {
 						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = {};
 						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = '';
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = 'non-collapsable';
 						continue;
 					}
 					var sortKey = [];
@@ -1352,7 +1352,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					jQuery('#groupingButton_embeddedMapPage').on('click', function (e) {
 						self.showView('map')
 					});
-					jQuery('.meeting-group .group-header').on('click', function(e) {
+					jQuery('.meeting-group:not(.non-collapsable) .group-header').on('click', function(e) {
 						jQuery(e.target.parentElement).toggleClass('closed');
 					})
 					/****
