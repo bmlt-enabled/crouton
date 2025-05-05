@@ -119,8 +119,8 @@ if (!class_exists("Crouton\TablePublic")) {
             if ($script !== '') {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton-core.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", array('jquery'), filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js"), true);
-                $this->map->enqueueFrontendFiles();
-                wp_add_inline_script("croutonjs", $script);
+                $this->map->enqueueFrontendFiles("crouton-delegate");
+                wp_add_inline_script("crouton-delegate", $script);
             }
         }
 
