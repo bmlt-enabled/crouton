@@ -86,7 +86,7 @@ if (!class_exists("Crouton\TableOptions")) {
 
         public function saveOptions(array $options): void
         {
-            $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
+            $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $options['root_server']));
             update_option($this->optionsName, $options);
         }
         public function getCustomQuery(string $custom_query): string| null
