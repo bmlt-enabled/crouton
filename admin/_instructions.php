@@ -98,6 +98,7 @@
 		<p>1 = include City button (default)</p>
 		<p>Each group may be shown or hidden by clicking on the group's header (the city name in the above example).  By default, all groups are visible initially.  To hide the groups members, so that only the header (the citiy name in the example above) is shown initially, the format is:</p>
 		<p><strong>[bmlt_tabs grouping_buttons="City:location_municipality:closed"]</strong></p>
+		<p>If you want to make it impossible to close a group, add "non-collapsable" instead of "closed".
 	</div>
 	<h3 class="help-accordian"><strong>Show Format-Type Grouping Buttons</strong></h3>
 	<div>
