@@ -3,7 +3,7 @@
 Contributors: odathp, otrok7, radius314, pjaudiomv, californiasteve9390, Paul N, alanb2718, jbraswell
 Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
-Required PHP: 8.0
+Requires PHP: 8.0
 Tested up to: 6.8
 Stable tag: 3.21.2
 License: GPLv2 or later
