@@ -258,11 +258,10 @@ if (!class_exists("Crouton\TablePublic")) {
         private function getFormats(string $root_server): array
         {
             if (is_null($this->formats)) {
-                if (strpos($root_server,'aggregator.bmltenabled.org') === false) {
+                if (strpos($root_server, 'aggregator.bmltenabled.org') === false) {
                     $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFormats");
                     $this->formats = json_decode(wp_remote_retrieve_body($results), true);
-                }
-                else {
+                } else {
                     $this->formats = [];
                 }
             }
@@ -341,14 +340,13 @@ if (!class_exists("Crouton\TablePublic")) {
                             $item = substr($item, 1);
                         }
                         $formats = $this->getFormats($params['root_server']);
-                        foreach($formats as $format) {
+                        foreach ($formats as $format) {
                             if ($format['key_string'] == $item) {
                                 array_push($tmp_formats, ($neg ? '-' : '') . $format['id']);
                                 break;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         array_push($tmp_formats, $item);
                     }
                 }
