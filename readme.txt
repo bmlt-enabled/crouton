@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 = 3.22.0 =
 * Header for meeting groupings are accordions, can start in closed state.
 * Multi-Select for service bodies.
+* Use format codes (or numeric IDs) to define the query.
 
 = 3.21.2 =
 * Refactoring

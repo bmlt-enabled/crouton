@@ -209,19 +209,14 @@
         <p>Multiple formats require the use of brackets `[]` which can break shortcodes.  Replace brackets with `%5B%5D`.</p>
 		<p><em>This can be overridden using a querystring parameter as well, but use must URL encode the query.  Example: <a target="_blank" href="about:blank">http://localhost:8080/?page_id=5&custom_query=%26meeting_key%3Dlocation_sub_province%26meeting_key_value%3DSampson</a></em></p>
 	</div>
-	<h3 class="help-accordian"><strong>Query: Select by venue type</strong></h3>
-	<div>
-		<p>With this parameter you can add restrictions to root server query, as an alternative to specifying a custom query.
-		<p><strong>[bmlt_tabs venue_types="1|2|3"]</strong></p>
-		<p>Where<ul><li>1 = In-Person Meetings</li><li>2 = Virtual Meetings</li><li>3 = Hybrid Meetings</li></ul>
-		<p>The values can also be negative, which means that the venue type should be excluded from the results. To specify more the one type, use a comma separated list.</p>
-	</div>
 	<h3 class="help-accordian"><strong>Query: Select by format</strong></h3>
 	<div>
-		<p>With this parameter you can add restrictions to root server query, as an alternative to specifying a custom query.
-		<p><strong>[bmlt_tabs formats="123"]</strong></p>
-		<p>Where the number specified is the shared id code for the format.  Use the semantic workshop to look up format codes.
-		<p>The values can also be negative, which means that the meetings with that format should be excluded from the results. To specify more the one format, use a comma separated list.</p>
+		<p>With this parameter you can add restrictions to root server query as an easy alternative to using a custom query.
+		<p><strong>[bmlt_tabs formats="123,-VM"]</strong></p>
+		<p>The formats are given in a comma separated list.  If an individual format is a number, it is interpreted as the ID of the format.
+		The semantic workshop can be used to look up format ID.  The format's key string (in the default language) can also be used to identify the format.</p>
+		<p>The ID can also be negative, which means that the meetings with that format should be excluded from the results.  Similarly, the key-string can also be prefix with a minus sign to indicate it should be excluded as opposed to being required.</p>
+		<p>Key-strings cannot be used to identify formats if the aggregator is being used as the root server, as the key-strings are not unique in this case.</p>
 	</div>
     <h3 class="help-accordian"><strong>Companion Map</strong></h3>
     <div>
