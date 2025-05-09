@@ -88,7 +88,7 @@ if (!class_exists("Crouton\TableOptions")) {
             $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $options['root_server']));
             update_option($this->optionsName, $options);
         }
-        public function getCustomQuery(string $custom_query): string| null
+        public function getCustomQuery(string|null $custom_query): string| null
         {
             if (isset($_GET['custom_query'])) {
                 return sanitize_text_field(wp_unslash($_GET['custom_query']));
