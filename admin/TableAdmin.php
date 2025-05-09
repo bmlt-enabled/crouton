@@ -206,7 +206,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
                 $options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
-                $options['service_body_1'] = isset($_POST['service_body_1']) ? sanitize_text_field(wp_unslash($_POST['service_body_1'])) : '';
+                $options['service_bodies'] = isset($_POST['service_bodies']) ? array_map('sanitize_text_field', $_POST['service_bodies']) : array();
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $options['strict_datafields'] = isset($_POST['strict_datafields']);
@@ -331,8 +331,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                         <p>This service body will be used when no service body is defined in the shortcode.</p>
                         <ul>
                             <li>
-                                <label for="service_body_1">Default Service Body: </label>
-                                <select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
+                                <label for="service_bodies">Default Service Bodies: </label>
+                                <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select">
                                 <?php if ($this_connected) {
                                     $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
                                     asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
@@ -343,15 +343,19 @@ if (!class_exists("Crouton\TableAdmin")) {
                                         $area_parent = $area_data[2];
                                         $area_parent_name = $area_data[3];
                                         $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
-                                        $is_data = explode(',', esc_html($options['service_body_1']));
-                                        if ($area_id == $is_data[1]) {?>
+                                        $is_data = [];
+                                        foreach ($options['service_bodies'] as $service_body) {
+                                            $is_data[] = explode(',', esc_html($service_body))[1];
+                                        }
+
+                                        if (in_array($area_id, $is_data)) {?>
                                             <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
                                         <?php } else { ?>
                                             <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
                                         <?php } ?>
                                     <?php } ?>
                                 <?php } else { ?>
-                                    <option selected="selected" value="<?php echo esc_attr($options['service_body_1']); ?>">Not Connected - Can not get Service Bodies</option>
+                                    <option selected="selected" value="<?php echo esc_attr($options['service_bodies[]']); ?>">Not Connected - Can not get Service Bodies</option>
                                 <?php } ?>
                                 </select>
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
@@ -642,7 +646,6 @@ foreach ($all_fields as $field) {
                 <br/><br/>
                 <?php include '_instructions.php'; ?>
             </div>
-            <script type="text/javascript">getValueSelected();</script>
             <?php
         }
         // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps

@@ -462,7 +462,6 @@ function Crouton(config) {
 	}
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
-		self.config["hide_byday_headers"] = true;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
@@ -1137,7 +1136,6 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 
 					byDayData.push({
-						"hide": self.config["hide_byday_headers"],
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": daysOfTheWeekMeetings
 					});

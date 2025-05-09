@@ -291,10 +291,14 @@ if (!class_exists("Crouton\TablePublic")) {
             $legacy_force_recurse = false;
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration
-                $area_data       = explode(',', $options['service_body_1']);
-                $service_body = [$area_data[1]];
-                $parent_body_id  = $area_data[2];
-                if ($parent_body_id == '0') {
+                $service_body = [];
+                foreach ($options['service_bodies'] as $single_service_body) {
+                    $area_data       = explode(',', $single_service_body);
+                    $service_body[] = $area_data[1];
+                    $parent_body_id  = $area_data[2];
+                }
+                // No idea.  Old logic.
+                if ($parent_body_id == '0' && sizeof($options['service_bodies']) == 1) {
                     $legacy_force_recurse = true;
                 }
             } else {
@@ -331,6 +335,8 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['formattype_grouping_buttons'] = $this->convertToArray($params['formattype_grouping_buttons']);
 
             $params['service_body'] = $service_body;
+            unset($params['service_bodies']);
+            
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
 
             if ($legacy_force_recurse) {

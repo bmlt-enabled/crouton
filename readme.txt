@@ -5,7 +5,7 @@ Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 3.21.3
+Stable tag: 3.22.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton implements a Tabbed UI for BMLT.
@@ -36,8 +36,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
-= 3.21.3 =
+= 3.22.0 =
 * Header for meeting groupings are accordions, can start in closed state.
+* Multi-Select for service bodies.
 
 = 3.21.2 =
 * Refactoring

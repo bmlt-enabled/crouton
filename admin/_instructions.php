@@ -4,33 +4,34 @@
     <div>
         <p>Crouton defines the following shortcodes.</p>
         <ul>
-            <li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
-            <li><code>[crouton_map]</code> -- generates a map-based interface from which geographic queries can be made. See "Map Search" below for details.</li>
-			<li><code>[bmlt_map]</code> -- generates a map-based interface suitible for mobile devices.  Queries to the BMLT database, along with the available filters, are control by the usual <code>[bmlt_tabs]</code> parameters.</li>
-			<li><code>[crouton_tabs]</code> -- generates a table-based interface from which geographic (text search or device location) queries can be made. See "Map Search" below for details.</li>
-			<li><code>[meeting_count]</code></li>
-            <li><code>[group_count]</code></li>
-            <li><code>[service_body_names]</code></li>
-			<li><code>[bmlt_handlebar]</code></li>
+			<li><b>Main Shortcodes</b>
+			<p>These shortcodes determine which meetings are included.  Only one of them can be included on a single page.</p>
+			<ul>
+            	<li><code>[bmlt_tabs]</code> -- generates a tabbed meeting list</li>
+            	<li><code>[crouton_map]</code> -- generates a map-based interface from which geographic queries can be made. See "Map Search" below for details.</li>
+				<li><code>[bmlt_map]</code> -- generates a map-based interface suitible for mobile devices.  Queries to the BMLT database, along with the available filters, are control by the usual <code>[bmlt_tabs]</code> parameters.</li>
+				<li><code>[crouton_tabs]</code> -- generates a table-based interface from which geographic (text search or device location) queries can be made. See "Map Search" below for details.</li>
+				<li><code>[init_crouton]</code> -- Do not generate a list, but make the seach results available for the summary shortcodes listed below.</li>
+			</ul></li>
+			<li><p><b>Secondary Shortcodes</b><p>
+			<p>These shortcodes can be used to place additional/summary info about the meetings</p>
+			<ul>
+				<li><code>[meeting_count]</code></li>
+            	<li><code>[group_count]</code></li>
+            	<li><code>[service_body_names]</code></li>
+				<li><code>[bmlt_handlebar]</code></li>
+			</ul></li>
         </ul>
         <p>Example: <code>There are currently [group_count] groups, offering a total of [meeting_count] meetings per week.</code></p>
-        <p><strong>Hints:</strong> you can only have one occurrence of <code>[bmlt_tabs]</code> on a page -- if you want two lists,
-            use two different pages. The <code>[service_body_names]</code> shortcode is useful for generating tabbed UIs for multiple
-            service bodies (see the "URL Parameters" section).</p>
         <p>Detailed instructions for the shortcode parameters follow.</p>
     </div>
-	<h3 class="help-accordian"><strong>URL Parameters</strong></h3>
+	<h3 class="help-accordian"><strong>Setting up Crouton</strong></h3>
 	<div>
-		<p>This feature will provide the capability to re-use one page to generate a Tabbed UI that can be used by multiple service bodies.</p>
-		<p>Example: without this feature, a Region might have separate pages for each Area with a Tabbed UI.</p>
-		<p>Instead: One page can be used to display a Tabbed UI for all Areas.</p>
-        <p>This can also be used to provide a reusable meetings page on a regional or zonal site that can be called from area websites that for
-            some reason are having trouble implementing crouton on their own sites.</p>
-        <ol>
-        <li>Use <code>[service_body_names]</code> as part of the page's heading, to say which meetings are listed.</li>
-        <li>Then insert <code>[bmlt_tabs]</code>.</li>
-		<li>Link to that page using parameters as described below, either from another page on the same website or from a different website.</li>
-        </ol>
+		<p>Before any of the shortcodes are useful, you have to set up crouton, at least to tell it where your BMLT root server is, and which service bodies interest you.</p>
+		<p>There are three places where crouton's parameters can be entered: through the WordPress backend, as attributes in the shortcodes, or in the query string of the URL that generates the page</p>
+		<p>However things are set up here, in the WP backend, becomes the default whereever crouton is used on your site.  These defaults can be overridden by attributes in the shortcode.</p>
+		<p>In some cases, though, you don't want to set up a different page for every option.  For instance, the meeting pages for all areas on a regional site might share the same design, the only thing that
+		is changing is the areas being displayed.  In this case, you might want to use a single page, and specify the area in the query string of the URL.</p>
 		<p>You can override any shortcode value.  You can also use two special values `this_title` and `sub_title` to set titles on your querystring to reuse a page easily.  Note: this only works for Wordpress based crouton, not croutonjs.
         <p>Please study the following URLs to get acquainted with the URL parameter structure.</p>
 		<p><strong>Meetings for One Area.</strong></p>
@@ -52,15 +53,13 @@
 	</div>
     <h3 class="help-accordian"><strong>Start of Week</strong></h3>
     <div>
-        <p>With this parameter you can change the first day of the week.  Useful for other countries where the day doesn't start with Sunday.</p>
+        <p>With this parameter you can change the first day of the week.  Useful for other countries where the week doesn't start with Sunday.</p>
         <p><strong>[bmlt_tabs int_start_day_id="1"]</strong></p>
         <p>1 is the default which is Sunday.  2 is Monday and so on.</p>
     </div>
 
 	<h3 class="help-accordian"><strong>Service Body Parameter</strong></h3>
 	<div>
-		<p>For all shortcodes the service_body parameter is optional.</p>
-		<p>When no service_body is specified the default service body will be used.</p>
 		<p><strong>[bmlt_tabs service_body="2,3,4"]</strong></p>
 		<p>service_body = one or more BMLT service body IDs.</p>
 		<p>Using multiple IDs will combine meetings from each service body into the crouton interface.</p>
@@ -131,13 +130,6 @@
 		<p>0 = do not display the header</p>
 		<p>1 = display the header (default)</p>
 	</div>
-    <h3 class="help-accordian"><strong>Hide By Day Filtered Headers</strong></h3>
-    <div>
-        <p>This feature will hide the Weekday headers that are shown if filtering.</p>
-        <p><strong>[bmlt_tabs hide_byday_headers="0|1"]</strong></p>
-        <p>0 = do not display the headers</p>
-        <p>1 = display the headers (default)</p>
-    </div>
 	<h3 class="help-accordian"><strong>Dropdowns</strong></h3>
 	<div>
 		<p>With this parameter you can show or hide the dropdowns.</p>
@@ -191,7 +183,6 @@
         <p>You can sort the results in the response.</p>
         <p><strong>[bmlt_tabs sort_keys="start_time"]</strong></p>
         <p>start_time = (default)</p>
-        <p><i>Note: this option does not work with distance searches that are sorted.</i></p>
     </div>
     <h3 class="help-accordian"><strong>Time Zone Adjustments</strong></h3>
     <div>
