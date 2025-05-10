@@ -1,5 +1,6 @@
 // .eslintrc
 {
+  "version": "latest",
   "extends": ["plugin:compat/recommended"],
   "settings": {
     "polyfills": [

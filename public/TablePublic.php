@@ -11,6 +11,7 @@ if (!class_exists("Crouton\TablePublic")) {
         const END_WAIT_MESSAGE = "document.getElementById('please-wait').style.display='none';";
         private MapPublic $map;
         private TableOptions $crouton;
+        private ?array $formats = null;
         public function __construct($crouton)
         {
             $this->crouton = $crouton;
@@ -119,8 +120,8 @@ if (!class_exists("Crouton\TablePublic")) {
             if ($script !== '') {
                 wp_enqueue_style("croutoncss", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton-core.min.css"), false);
                 wp_enqueue_script("croutonjs", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", array('jquery'), filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js"), true);
-                $this->map->enqueueFrontendFiles();
-                wp_add_inline_script("croutonjs", $script);
+                $this->map->enqueueFrontendFiles("crouton-delegate");
+                wp_add_inline_script("crouton-delegate", $script);
             }
         }
 
@@ -254,6 +255,18 @@ if (!class_exists("Crouton\TablePublic")) {
         {
             return file_get_contents(plugin_dir_path(__DIR__) . "public/default_meeting_details.html");
         }
+        private function getFormats(string $root_server): ?array
+        {
+            if (is_null($this->formats)) {
+                if (strpos($root_server, 'aggregator.bmltenabled.org') === false) {
+                    $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFormats");
+                    $this->formats = json_decode(wp_remote_retrieve_body($results), true);
+                } else {
+                    $this->formats = [];
+                }
+            }
+            return $this->formats;
+        }
         /**
          *
          * @param array $atts
@@ -273,6 +286,10 @@ if (!class_exists("Crouton\TablePublic")) {
                 $atts['grouping_buttons'] = $atts['button_filters'];
                 unset($atts['button_filters']);
             }
+            if (isset($atts['button_filters_option'])) {
+                $atts['grouping_buttons'] = $atts['button_filters_option'];
+                unset($atts['button_filters_option']);
+            }
             if (isset($atts['button_format_filters_option'])) {
                 $atts['formattype_grouping_buttons'] = $atts['button_format_filters_option'];
                 unset($atts['button_format_filters_option']);
@@ -287,10 +304,18 @@ if (!class_exists("Crouton\TablePublic")) {
             $legacy_force_recurse = false;
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration
-                $area_data       = explode(',', $options['service_body_1']);
-                $service_body = [$area_data[1]];
-                $parent_body_id  = $area_data[2];
-                if ($parent_body_id == '0') {
+                $service_body = [];
+                $parent_body_id = '0';
+                foreach ($options['service_bodies'] as $single_service_body) {
+                    $area_data       = explode(',', $single_service_body);
+                    if (sizeof($area_data) < 2) {
+                        continue;
+                    }
+                    $service_body[] = $area_data[1];
+                    $parent_body_id  = $area_data[2];
+                }
+                // No idea.  Old logic.
+                if ($parent_body_id == '0' && sizeof($options['service_bodies']) == 1) {
                     $legacy_force_recurse = true;
                 }
             } else {
@@ -311,7 +336,23 @@ if (!class_exists("Crouton\TablePublic")) {
             $tmp_formats = [];
             if (strlen($params['formats']) > 0) {
                 foreach (explode(",", $params['formats']) as $item) {
-                    array_push($tmp_formats, $item);
+                    if (!is_numeric($item)) {
+                        $item = trim($item);
+                        $neg = false;
+                        if (substr($item, 0, 1) == '-') {
+                            $neg = true;
+                            $item = substr($item, 1);
+                        }
+                        $formats = $this->getFormats($params['root_server']);
+                        foreach ($formats as $format) {
+                            if ($format['key_string'] == $item) {
+                                array_push($tmp_formats, ($neg ? '-' : '') . $format['id']);
+                                break;
+                            }
+                        }
+                    } else {
+                        array_push($tmp_formats, $item);
+                    }
                 }
             }
             $params['formats'] = $tmp_formats;
@@ -327,6 +368,8 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['formattype_grouping_buttons'] = $this->convertToArray($params['formattype_grouping_buttons']);
 
             $params['service_body'] = $service_body;
+            unset($params['service_bodies']);
+
             $params['exclude_zip_codes'] = (!is_null($params['exclude_zip_codes']) ? explode(",", $params['exclude_zip_codes']) : array());
 
             if ($legacy_force_recurse) {
@@ -379,7 +422,12 @@ if (!class_exists("Crouton\TablePublic")) {
             if (strlen($str) > 0) {
                 foreach (explode(",", $str) as $item) {
                     $setting = explode(":", $item);
-                    array_push($ret, ['title' => $setting[0], 'field' => $setting[1]]);
+                    if (sizeof($setting) == 2) {
+                        array_push($ret, ['title' => $setting[0], 'field' => $setting[1]]);
+                    }
+                    if (sizeof($setting) == 3) {
+                        array_push($ret, ['title' => $setting[0], 'field' => $setting[1], 'accordionState' => $setting[2]]);
+                    }
                 }
             }
             return $ret;
