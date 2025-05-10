@@ -19,7 +19,7 @@ function Crouton(config) {
 		time_format: "h:mm a",        // The format for time
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
-		filter_tabs: 0,   		  // Whether to show weekday tabs on filtering.
+		filter_tabs: 20,   		  // Whether to show weekday tabs on filtering.
 		filter_visible: 0,		  // whether entries in table should be limited to those visible in map
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button

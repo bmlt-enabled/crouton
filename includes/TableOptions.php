@@ -62,7 +62,7 @@ if (!class_exists("Crouton\TableOptions")) {
             "default_filter_dropdown" => '',
             "meeting_data_template" => null,
             "metadata_template" => null,
-            "filter_tabs" => false,
+            "filter_tabs" => '20',
             "show_qrcode" => false,
             "native_lang" => '',
             "has_meeting_count" => false,
