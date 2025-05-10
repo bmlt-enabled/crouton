@@ -319,10 +319,10 @@ function Crouton(config) {
 			if (!self.config['has_tabs'] || (self.config['filter_tabs'] && self.config['filter_tabs'] >= showingNow)) {
 				self.byDayView();
 
-				jQuery(".bmlt-data-rows").each(function (index, value) {
-					if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-						jQuery(value).find(".group-header").addClass("hide");
-					}
+				jQuery("#byday").find('.meeting-group').each(function(index) {
+					if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
+						jQuery(this).addClass("hide");
+					else jQuery(this).removeClass('hide');
 				});
 			} else {
 				self.dayView();

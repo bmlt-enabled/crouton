@@ -255,7 +255,7 @@ if (!class_exists("Crouton\TablePublic")) {
         {
             return file_get_contents(plugin_dir_path(__DIR__) . "public/default_meeting_details.html");
         }
-        private function getFormats(string $root_server): array
+        private function getFormats(string $root_server): ?array
         {
             if (is_null($this->formats)) {
                 if (strpos($root_server, 'aggregator.bmltenabled.org') === false) {
@@ -305,8 +305,12 @@ if (!class_exists("Crouton\TablePublic")) {
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
                 // Pulling from configuration
                 $service_body = [];
+                $parent_body_id = '0';
                 foreach ($options['service_bodies'] as $single_service_body) {
                     $area_data       = explode(',', $single_service_body);
+                    if (sizeof($area_data) < 2) {
+                        continue;
+                    }
                     $service_body[] = $area_data[1];
                     $parent_body_id  = $area_data[2];
                 }
