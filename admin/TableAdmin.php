@@ -8,6 +8,7 @@ if (!class_exists("Crouton\TableAdmin")) {
     class TableAdmin
     {
         private TableOptions $crouton;
+        private string $hook;
         private array $themes = [
             "asheboro",
             "florida-nights",
@@ -57,33 +58,23 @@ if (!class_exists("Crouton\TableAdmin")) {
             add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
             add_action("admin_menu", array(&$this, "adminMenuLink"));
             add_action("BmltEnabled_Submenu", array(&$this, "adminSubmenuLink"));
-            add_filter("BmltEnabled_Slugs", array(&$this, "submenuSlug"));
-        }
-        public function submenuSlug($slugs)
-        {
-            if (!is_array($slugs)) {
-                $slugs = array();
-            }
-            $slugs[] = basename(__DIR__);
-            return $slugs;
         }
         private $menu_created = false;
         public function adminSubmenuLink($parent_slug)
         {
             $this->menu_created = true;
-            add_submenu_page(
+            $this->hook = add_submenu_page(
                 $parent_slug,
                 'Online Meeting Lists',
                 'Online Meeting Lists',
                 'manage_options',
-                basename(__DIR__),
-                array(&$this, 'adminOptionsPage'),
-                2
+                'bmlt-enabled-crouton',
+                array(&$this, 'adminOptionsPage')
             );
         }
         public function enqueueBackendFiles($hook)
         {
-            if (str_ends_with($hook, 'meeting-lists_page_admin')) {
+            if (str_ends_with($hook, $this->hook)) {
                 wp_enqueue_style('bmlt-tabs-admin-ui-css', plugin_dir_url(__DIR__).'css/south-street/jquery-ui.css', false, '1.11.4', false);
                 wp_enqueue_style("chosen", plugin_dir_url(__DIR__) . "css/chosen.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
@@ -178,9 +169,8 @@ if (!class_exists("Crouton\TableAdmin")) {
             if ($this->menu_created) {
                 return;
             }
-            $slugs = apply_filters('BmltEnabled_Slugs', []);
             $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
-            $slug = $slugs[0];
+            $slug = 'bmlt-enabled-crouton';
             add_menu_page(
                 'Meeting Lists',
                 'Meeting Lists',

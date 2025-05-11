@@ -27,7 +27,7 @@
     </div>
 	<h3 class="help-accordian"><strong>Configuring Crouton</strong></h3>
 	<div>
-		<p>Before any of the shortcodes are useful, you have to set up crouton, at least to tell it where your BMLT root server is, and which service bodies interest you.</p>
+		<p>Before any of the shortcodes are useful, you have to set up crouton, at least to tell it where your BMLT root server is and which service bodies interest you.</p>
 		<p>There are three places where crouton's parameters can be entered: through the WordPress backend, as attributes in the shortcodes, or in the query string of the URL that generates the page</p>
 		<p>However things are set up here, in the WP backend, becomes the default whereever crouton is used on your site.  These defaults can be overridden by attributes in the shortcode.</p>
 		<p>In some cases, though, you don't want to set up a different page for every option.  For instance, the meeting pages for all areas on a regional site might share the same design, the only thing that
@@ -44,9 +44,9 @@
 	</div>
 	<h3 class="help-accordian"><strong>Root Server</strong></h3>
 	<div>
-		<p>The <strong>root_server</strong> attribute is used to set the BMLT root server.</p>
+		<p>The <strong>root_server</strong> attribute can be used to set the BMLT root server.</p>
 		<p><strong>[bmlt_tabs service_body="2" root_server="https://bmlt.sezf.org/main_server"]</strong></p>
-		<p>When using the WordPress backednd to set the root server, hit save after entering the URL.  This will cause Crouton to load the service bodies.</p>
+		<p>When using the WordPress backednd to set the root server, hit save after entering the URL.  This will cause Crouton to load the service bodies so that you can select one or more of them.</p>
 	</div>
 	<h3 class="help-accordian"><strong>Service Body</strong></h3>
 	<div>
@@ -58,14 +58,6 @@
 		<p>An example parent service body is a Region.  This would be useful to get all meetings from a specific Region.</p>
 		<p>You can find the service body ID (with shortcode) next to the Default Service Body dropdown above.</p>
 		<p><em>You cannot combine the service_body and parent_service_body parameters.</em></p>
-	</div>
-	<h3 class="help-accordian"><strong>Root Server</strong></h3>
-	<div>
-		<p>Use a different Root Server.</p>
-		<p><strong>[bmlt_tabs service_body="2" root_server="https://bmlt.sezf.org/main_server"]</strong></p>
-		<p>Useful for displaying meetings from a different root server.</p>
-		<em><p>Hint: To find service body IDs enter the different root server into the "BMLT Root Server URL" box and save.</p>
-			<p>Remember to enter your current Root Server back into the "BMLT Root Server URL".</p></em>
 	</div>
 	<h3 class="help-accordian"><strong>How Meetings are Organized into Views</strong></h3>
 	<div>
@@ -227,12 +219,12 @@
 	</div>
 	<h3 class="help-accordian"><strong>Group Count</strong></h3>
 	<div>
-	<p>Will return the number of groups in the BMLT query.</p>
-		<p><strong>[group_count]</strong> </p>
+		<p>Will return the number of groups in the BMLT query.</p>
+		<p><strong>[group_count]</strong></p>
 		<p><strong>[group_count live="0|1"]</strong></p>
 		<p>By default, [group_count] returns the total number of groups in the BMLT query. By setting "live" to "1",
-		the number displayed will be updated to reflect the current filters selection.  So, to get the number of groups in an
-		area, select the area in the appropriate filter and both the table and the group count will be updated.
+		the number displayed will be updated to reflect the current filters selection.  So, to get the number of meetings in an
+		area, select the area in the appropriate filter and both the table and the meeting count will be updated.
 		</p>
 	</div>
     <h3 class="help-accordian"><strong>Sorting</strong></h3>

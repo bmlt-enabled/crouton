@@ -8,11 +8,12 @@ Tested up to: 6.8
 Stable tag: 3.22.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
-crouton implements a Tabbed UI for BMLT.
+crouton provides a UI and more for view recovery meetings as stored in a Basic Meeting List Toolbox (BMLT) database.
 
 == Description ==
 
-Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a Tabbed UI and more for the Basic Meeting List Toolbox (BMLT).  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own tabbed interface to BMLT.  Not into a tabbed interface?  There is a shortcode parameter to display meetings without tabs.  This would be useful for Areas that have fewer meetings.  This plugin also provides various shortcodes to return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
+Crouton was forked from BMLT Tabbed UI plugin in 2018 and provides a UI and more for view recovery meetings as stored in a Basic Meeting List Toolbox (BMLT) database.  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own view of the BMLT information.
+This plugin also provides shortcodes to view the meetings in a map or return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
 
 == Installation ==
 
@@ -20,11 +21,11 @@ Crouton was forked from BMLT Tabbed UI plugin in 2018.  This plugin provides a T
 
 2. Activate crouton.
 
-3. Enter BMLT Root Server into Settings - BMLT Tabs
+3. Enter BMLT Root Server and Service Body into Crouton's settings (from the admin menu, under "Meeting Lists").
 
 4. Enter shortcode into a new or existing Wordpress page.
 
-5. For shortcode usage see Settings - BMLT Tabs.
+5. For shortcode usage see Settings.
 
 6. View your site.
 
@@ -40,6 +41,7 @@ https://demo.bmlt.app/crouton
 * Header for meeting groupings are accordions, can start in closed state.
 * Multi-Select for service bodies.
 * Use format codes (or numeric IDs) to define the query.
+* Switch between tabbed view and simple list when there are less than 20 meetings (by default).
 
 = 3.21.2 =
 * Refactoring
