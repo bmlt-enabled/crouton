@@ -864,12 +864,11 @@ Crouton.prototype.setConfig = function(config) {
 	const deprecatedNames = {
 		button_filters: 'grouping_buttons',
 		button_format_filters: 'formattype_grouping_buttons',
-
 	}
 	for (var propertyName in deprecatedNames) {
 		if (config.hasOwnProperty(propertyName)) {
 			config[deprecatedNames[propertyName]] = config[propertyName];
-			delete configconfig[deprecatedNames[propertyName]];
+			delete config[deprecatedNames[propertyName]];
 		}
 	}
 	for (var propertyName in config) {
