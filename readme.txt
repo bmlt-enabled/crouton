@@ -12,8 +12,8 @@ crouton provides a UI and more for view recovery meetings as stored in a Basic M
 
 == Description ==
 
-Crouton was forked from BMLT Tabbed UI plugin in 2018 and provides a UI and more for view recovery meetings as stored in a Basic Meeting List Toolbox (BMLT) database.  Simply put the shortcode [bmlt_tabs] into a Wordpress page to get your very own view of the BMLT information.
-This plugin also provides shortcodes to view the meetings in a map or return the number of meetings and groups in specified service bodies.  Please visit settings - BMLT Tabbed UI for shortcode instructions.
+Crouton provides a UI for viewing recovery meetings stored in a Basic Meeting List Toolbox (BMLT) database.  Simply put a shortcode on a Wordpress page to get an interactive display list of meetings.
+This plugin provides shortcodes to view the meetings as a table, a map or insert the number of meetings and groups in specified service bodies.  Configure Crouton from the Wordpress backend, using attributes in the shortcode or using query string parameters.  The admin UI contains detailed instructions.
 
 == Installation ==
 
