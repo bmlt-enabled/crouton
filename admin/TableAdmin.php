@@ -322,32 +322,36 @@ if (!class_exists("Crouton\TableAdmin")) {
                         <ul>
                             <li>
                                 <label for="service_bodies">Default Service Bodies: </label>
-                                <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select">
-                                <?php if ($this_connected) {
-                                    $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
-                                    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
-                                    foreach ($unique_areas as $key => $unique_area) {
-                                        $area_data = explode(',', $unique_area);
-                                        $area_name = $area_data[0];
-                                        $area_id = $area_data[1];
-                                        $area_parent = $area_data[2];
-                                        $area_parent_name = $area_data[3];
-                                        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
-                                        $is_data = [];
-                                        foreach ($options['service_bodies'] as $service_body) {
-                                            $is_data[] = explode(',', esc_html($service_body))[1];
-                                        }
+                                <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select" data-placeholder="<?php
+                                if (!$this_connected) {
+                                    echo 'Not Connected';
+                                } else {
+                                    echo 'Select Service Bodies';
+                                }
+                                ?>"><?php
+if ($this_connected) {
+    $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
+    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
+    $is_data = [];
+    foreach ($options['service_bodies'] as $service_body) {
+        $is_data[] = explode(',', esc_html($service_body))[1];
+    }
+    foreach ($unique_areas as $key => $unique_area) {
+        $area_data = explode(',', $unique_area);
+        $area_name = $area_data[0];
+        $area_id = $area_data[1];
+        $area_parent = $area_data[2];
+        $area_parent_name = $area_data[3];
+        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
+        if (in_array($area_id, $is_data)) {?>
+                                                <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
+        <?php } else { ?>
+                                                <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
+        <?php }
+    }
+}?>
+                                 </select>
 
-                                        if (in_array($area_id, $is_data)) {?>
-                                            <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-                                        <?php } else { ?>
-                                            <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-                                        <?php } ?>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <option selected="selected" value="<?php echo esc_attr($options['service_bodies[]']); ?>">Not Connected - Can not get Service Bodies</option>
-                                <?php } ?>
-                                </select>
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
                                 <p id="txtSelectedValues2"></p>
                                 <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo (isset($options['recurse_service_bodies']) && $options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
