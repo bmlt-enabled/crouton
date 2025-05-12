@@ -5,7 +5,6 @@ crouton_Handlebars.registerHelper("enrich", () => '');
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
-
 function Crouton(config) {
 	var self = this;
 	self.mutex = false;
@@ -20,7 +19,7 @@ function Crouton(config) {
 		time_format: "h:mm a",        // The format for time
 		language: "en-US",            // Default language translation, available translations listed here: https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/js/crouton-localization.js
 		has_tabs: true,               // Shows the day tabs
-		filter_tabs: 0,   		  // Whether to show weekday tabs on filtering.
+		filter_tabs: 20,   		  // Whether to show weekday tabs on filtering.
 		filter_visible: 0,		  // whether entries in table should be limited to those visible in map
 		header: true,                 // Shows the dropdowns and buttons
 		include_weekday_button: true, // Shows the weekday button
@@ -320,10 +319,10 @@ function Crouton(config) {
 			if (!self.config['has_tabs'] || (self.config['filter_tabs'] && self.config['filter_tabs'] >= showingNow)) {
 				self.byDayView();
 
-				jQuery(".bmlt-data-rows").each(function (index, value) {
-					if (jQuery(value).find(".bmlt-data-row.hide").length === jQuery(value).find(".bmlt-data-row").length) {
-						jQuery(value).find(".meeting-header").addClass("hide");
-					}
+				jQuery("#byday").find('.meeting-group').each(function(index) {
+					if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
+						jQuery(this).addClass("hide");
+					else jQuery(this).removeClass('hide');
 				});
 			} else {
 				self.dayView();
@@ -369,25 +368,13 @@ function Crouton(config) {
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
 			self.showPage("#byfield_" + field);
-			jQuery("#byfield_" + field).find('.meeting-header').each(function(index) {
-				// This is an awkward way of doing things, but I don't want to mess with
-				// the generated HTML at this point.
-				let flag = false;
-				let item = jQuery(this);
-				const main = item;
-				while(item = item.next()) {
-					if (item.length === 0) break;
-					if (item.hasClass('meeting-header')) break;
-					if (!item.hasClass('hide')) {
-						flag = true;
-						break;
-					}
-				}
-				if (!flag) main.addClass('hide');
-			})
-			return;
+			jQuery("#byfield_" + field).find('.meeting-group').each(function(index) {
+				if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
+					jQuery(this).addClass("hide");
+				else jQuery(this).removeClass('hide');
+			});
 		});
-	};
+	}
 	self.mapView = function() {
 		self.lowlightButton("#day");
 		self.lowlightButton(".groupingButton");
@@ -412,13 +399,12 @@ function Crouton(config) {
 	};
 
 	self.filterMeetingsFromView = function () {
-		jQuery(".meeting-header").removeClass("hide");
+		jQuery(".group-header").removeClass("hide");
+		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		var filteringDropdown = false;
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
-			filteringDropdown = true;
 			const dataType = filter.getAttribute("data-pointer").toLowerCase();
 			if (dataType !== "formats" && dataType !== "languages" && dataType !== "venues" && dataType !== "common_needs") {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "='" + dataValue + "']").addClass("hide");
@@ -445,7 +431,8 @@ function Crouton(config) {
 		self.updateFilters();
 		self.updateMeetingCount();
 		jQuery(".filter-dropdown").val(null).trigger("change");
-		jQuery(".meeting-header").removeClass("hide");
+		jQuery(".group-header").removeClass("hide");
+		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
 		jQuery(".evenRow").removeClass("evenRow");
 		jQuery(".oddRow").removeClass("oddRow");
@@ -475,7 +462,6 @@ function Crouton(config) {
 	}
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
-		self.config["hide_byday_headers"] = true;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
@@ -878,12 +864,11 @@ Crouton.prototype.setConfig = function(config) {
 	const deprecatedNames = {
 		button_filters: 'grouping_buttons',
 		button_format_filters: 'formattype_grouping_buttons',
-
 	}
 	for (var propertyName in deprecatedNames) {
 		if (config.hasOwnProperty(propertyName)) {
 			config[deprecatedNames[propertyName]] = config[propertyName];
-			delete configconfig[deprecatedNames[propertyName]];
+			delete config[deprecatedNames[propertyName]];
 		}
 	}
 	for (var propertyName in config) {
@@ -1150,7 +1135,6 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 
 					byDayData.push({
-						"hide": self.config["hide_byday_headers"],
 						"day": self.localization.getDayOfTheWeekWord(day),
 						"meetings": daysOfTheWeekMeetings
 					});
@@ -1174,7 +1158,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					}
 
 					for (var f = 0; f < self.config.formattype_grouping_buttons.length; f++) {
-						var groupByName = self.config.formattype_grouping_buttons[f]['field'];
+						const groupByName = self.config.formattype_grouping_buttons[f]['field'];
+						const accordionState = self.config.formattype_grouping_buttons[f].hasOwnProperty('accordionState')
+							? self.config.grouping_buttons[b]['accordionState'] : '';
 						var groupByData = getUniqueFormatsOfType(daysOfTheWeekMeetings, groupByName);
 						if (groupByName=='LANG' && self.config.native_lang && self.config.native_lang.length > 0) {
 							groupByData = groupByData.filter((f) => f.key != self.config.native_lang);
@@ -1182,12 +1168,16 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						for (var i = 0; i < groupByData.length; i++) {
 							var groupByMeetings = daysOfTheWeekMeetings.filter((item) => item.formats_expanded.map(f => f.key).indexOf(groupByData[i].key) >= 0);
 							if (formattypeGroupingButtonsData.hasOwnProperty(groupByName) && formattypeGroupingButtonsData[groupByName].hasOwnProperty(groupByData[i].description)) {
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = formattypeGroupingButtonsData[groupByName][groupByData[i].description].concat(groupByMeetings);
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = formattypeGroupingButtonsData[groupByName][groupByData[i].description].group.concat(groupByMeetings);
 							} else if (formattypeGroupingButtonsData.hasOwnProperty(groupByName)) {
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = {};
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].accordionState = accordionState;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = groupByMeetings;
 							} else {
 								formattypeGroupingButtonsData[groupByName] = {};
-								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = groupByMeetings;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description] = {};
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].accordionState = accordionState;
+								formattypeGroupingButtonsData[groupByName][groupByData[i].description].group = groupByMeetings;
 							}
 						}
 					}
@@ -1196,10 +1186,14 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 				var groupingButtonsDataSorted = {};
 				for (var b = 0; b < self.config.grouping_buttons.length; b++) {
-					var groupByName = self.config.grouping_buttons[b]['field'];
+					const groupByName = self.config.grouping_buttons[b]['field'];
+					const accordionState = self.config.grouping_buttons[b].hasOwnProperty('accordionState')
+						? self.config.grouping_buttons[b]['accordionState'] : '';
 					groupingButtonsDataSorted[groupByName] = {};
 					if (groupByName.startsWith('distance')) {
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = {};
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = 'non-collapsable';
 						continue;
 					}
 					var sortKey = [];
@@ -1211,7 +1205,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					sortKey.sort();
 
 					for (var s = 0; s < sortKey.length; s++) {
-						groupingButtonsDataSorted[groupByName][sortKey[s]] = groupingButtonsData[groupByName][sortKey[s]]
+						groupingButtonsDataSorted[groupByName][sortKey[s]] = {};
+						groupingButtonsDataSorted[groupByName][sortKey[s]].group = groupingButtonsData[groupByName][sortKey[s]];
+						groupingButtonsDataSorted[groupByName][sortKey[s]].accordionState = accordionState;
 					}
 				}
 
@@ -1353,6 +1349,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					jQuery('#groupingButton_embeddedMapPage').on('click', function (e) {
 						self.showView('map')
 					});
+					jQuery('.meeting-group:not(.non-collapsable) .group-header').on('click', function(e) {
+						jQuery(e.target.parentElement).toggleClass('closed');
+					})
 					/****
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {

@@ -8,6 +8,7 @@ if (!class_exists("Crouton\TableAdmin")) {
     class TableAdmin
     {
         private TableOptions $crouton;
+        private string $hook = '';
         private array $themes = [
             "asheboro",
             "florida-nights",
@@ -57,33 +58,23 @@ if (!class_exists("Crouton\TableAdmin")) {
             add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
             add_action("admin_menu", array(&$this, "adminMenuLink"));
             add_action("BmltEnabled_Submenu", array(&$this, "adminSubmenuLink"));
-            add_filter("BmltEnabled_Slugs", array(&$this, "submenuSlug"));
-        }
-        public function submenuSlug($slugs)
-        {
-            if (!is_array($slugs)) {
-                $slugs = array();
-            }
-            $slugs[] = basename(__DIR__);
-            return $slugs;
         }
         private $menu_created = false;
         public function adminSubmenuLink($parent_slug)
         {
             $this->menu_created = true;
-            add_submenu_page(
+            $this->hook = add_submenu_page(
                 $parent_slug,
                 'Online Meeting Lists',
                 'Online Meeting Lists',
                 'manage_options',
-                basename(__DIR__),
-                array(&$this, 'adminOptionsPage'),
-                2
+                'bmlt-enabled-crouton',
+                array(&$this, 'adminOptionsPage')
             );
         }
         public function enqueueBackendFiles($hook)
         {
-            if (str_ends_with($hook, 'meeting-lists_page_admin')) {
+            if (str_ends_with($hook, $this->hook)) {
                 wp_enqueue_style('bmlt-tabs-admin-ui-css', plugin_dir_url(__DIR__).'css/south-street/jquery-ui.css', false, '1.11.4', false);
                 wp_enqueue_style("chosen", plugin_dir_url(__DIR__) . "css/chosen.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
@@ -178,9 +169,8 @@ if (!class_exists("Crouton\TableAdmin")) {
             if ($this->menu_created) {
                 return;
             }
-            $slugs = apply_filters('BmltEnabled_Slugs', []);
             $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
-            $slug = $slugs[0];
+            $slug = 'bmlt-enabled-crouton';
             add_menu_page(
                 'Meeting Lists',
                 'Meeting Lists',
@@ -206,7 +196,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                     die('Whoops! There was a problem with the data you posted. Please go back and try again.');
                 }
                 $options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
-                $options['service_body_1'] = isset($_POST['service_body_1']) ? sanitize_text_field(wp_unslash($_POST['service_body_1'])) : '';
+                $options['service_bodies'] = isset($_POST['service_bodies']) ? array_map('sanitize_text_field', $_POST['service_bodies']) : array();
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $options['strict_datafields'] = isset($_POST['strict_datafields']);
@@ -331,29 +321,37 @@ if (!class_exists("Crouton\TableAdmin")) {
                         <p>This service body will be used when no service body is defined in the shortcode.</p>
                         <ul>
                             <li>
-                                <label for="service_body_1">Default Service Body: </label>
-                                <select style="display:inline;" onchange="getValueSelected()" id="service_body_1" name="service_body_1"  class="service_body_select">
-                                <?php if ($this_connected) {
-                                    $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
-                                    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
-                                    foreach ($unique_areas as $key => $unique_area) {
-                                        $area_data = explode(',', $unique_area);
-                                        $area_name = $area_data[0];
-                                        $area_id = $area_data[1];
-                                        $area_parent = $area_data[2];
-                                        $area_parent_name = $area_data[3];
-                                        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
-                                        $is_data = explode(',', esc_html($options['service_body_1']));
-                                        if ($area_id == $is_data[1]) {?>
-                                            <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-                                        <?php } else { ?>
-                                            <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-                                        <?php } ?>
-                                    <?php } ?>
-                                <?php } else { ?>
-                                    <option selected="selected" value="<?php echo esc_attr($options['service_body_1']); ?>">Not Connected - Can not get Service Bodies</option>
-                                <?php } ?>
-                                </select>
+                                <label for="service_bodies">Default Service Bodies: </label>
+                                <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select" data-placeholder="<?php
+                                if (!$this_connected) {
+                                    echo 'Not Connected';
+                                } else {
+                                    echo 'Select Service Bodies';
+                                }
+                                ?>"><?php
+if ($this_connected) {
+    $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
+    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
+    $is_data = [];
+    foreach ($options['service_bodies'] as $service_body) {
+        $is_data[] = explode(',', esc_html($service_body))[1];
+    }
+    foreach ($unique_areas as $key => $unique_area) {
+        $area_data = explode(',', $unique_area);
+        $area_name = $area_data[0];
+        $area_id = $area_data[1];
+        $area_parent = $area_data[2];
+        $area_parent_name = $area_data[3];
+        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
+        if (in_array($area_id, $is_data)) {?>
+                                                <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
+        <?php } else { ?>
+                                                <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
+        <?php }
+    }
+}?>
+                                 </select>
+
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
                                 <p id="txtSelectedValues2"></p>
                                 <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo (isset($options['recurse_service_bodies']) && $options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
@@ -642,7 +640,6 @@ foreach ($all_fields as $field) {
                 <br/><br/>
                 <?php include '_instructions.php'; ?>
             </div>
-            <script type="text/javascript">getValueSelected();</script>
             <?php
         }
         // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps

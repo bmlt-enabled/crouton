@@ -62,9 +62,8 @@ if (!class_exists("Crouton\TableOptions")) {
             "default_filter_dropdown" => '',
             "meeting_data_template" => null,
             "metadata_template" => null,
-            "filter_tabs" => false,
+            "filter_tabs" => '20',
             "show_qrcode" => false,
-            "hide_byday_headers" => false,
             "native_lang" => '',
             "has_meeting_count" => false,
             "google_api_key" => "",
@@ -86,15 +85,15 @@ if (!class_exists("Crouton\TableOptions")) {
 
         public function saveOptions(array $options): void
         {
-            $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $this->options['root_server']));
+            $options['root_server'] = untrailingslashit(preg_replace('/^(.*)\/(.*php)$/', '$1', $options['root_server']));
             update_option($this->optionsName, $options);
         }
-        public function getCustomQuery(string $custom_query): string| null
+        public function getCustomQuery(string|null $custom_query): string| null
         {
             if (isset($_GET['custom_query'])) {
                 return sanitize_text_field(wp_unslash($_GET['custom_query']));
             } elseif (isset($custom_query) && $custom_query != null) {
-                return html_entity_decode($custom_query);
+                return html_entity_decode(str_replace('%5B%5D', '[]', $custom_query));
             } elseif (isset($this->options['custom_query']) && strlen($this->options['custom_query']) > 0) {
                 return $this->options['custom_query'];
             } else {
@@ -111,7 +110,6 @@ if (!class_exists("Crouton\TableOptions")) {
             if (!$theOptions = get_option($this->optionsName)) {
                 $theOptions = array(
                     'root_server' => '',
-                    'service_body_1' => ''
                 );
                 update_option($this->optionsName, $theOptions);
             }
@@ -143,6 +141,24 @@ if (!class_exists("Crouton\TableOptions")) {
                 if (isset($this->options['button_format_filters_option'])) {
                     $this->options['formattype_grouping_buttons'] = $this->options['button_format_filters_option'];
                     unset($this->options['button_format_filters_option']);
+                }
+            }
+            if ($this->options['crouton_version'] === "3.18") {
+                $this->options['crouton_version'] = "3.21";
+                if (isset($this->options['button_filters_option'])) {
+                    $this->options['grouping_buttons'] = $this->options['button_filters_option'];
+                    unset($this->options['button_filters_option']);
+                }
+                if (isset($this->options['button_format_filters_option'])) {
+                    $this->options['formattype_grouping_buttons'] = $this->options['button_format_filters_option'];
+                    unset($this->options['button_format_filters_option']);
+                }
+            }
+            if ($this->options['crouton_version'] === "3.21") {
+                $this->options['crouton_version'] = "3.22";
+                if (isset($this->options['service_body_1'])) {
+                    $this->options['service_bodies'] = [$this->options['service_body_1']];
+                    unset($this->options['service_body_1']);
                 }
             }
             if (isset($this->options['meetingpage_contents_template'])) {

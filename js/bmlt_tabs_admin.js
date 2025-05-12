@@ -1,12 +1,4 @@
-﻿function getValueSelected()
-{
-	var x = document.bmlt_tabs_options.service_body_1.selectedIndex;
-	var res = document.bmlt_tabs_options.service_body_1.options[x].value.split(",");
-	//document.getElementById("txtSelectedValues1").innerHTML = '<span class="bmlt_sb">[bmlt_tabs service_body="' + res[1] + '"]</span>';
-	//document.getElementById("txtSelectedValues2").value = '[bmlt_tabs service_body_parent="' + res[2] + '"]';
-	document.getElementById("txtSelectedValues1").innerHTML = '<b>Service Body ID:</b> <span class="bmlt_sb">' + res[1] + '</span>';
-	document.getElementById("txtSelectedValues2").innerHTML = '<b>Service Body Parent:</b> <span class="bmlt_sb">' + res[3] + '</span>, <b>Service Body Parent ID:</b> <span class="bmlt_sb">' + res[2] + '</span>';
-};
+﻿
 function resetCodemirrorToDefault(textAreaId) {
 	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
 	cm.setValue(croutonDefaultTemplates[textAreaId]);

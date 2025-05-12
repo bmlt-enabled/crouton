@@ -320,7 +320,7 @@ span.bmlt_tabs_group_count {
 	border: 0;
 }
 
-#bmlt-tabs tr.meeting-header td {
+.group-header {
 	padding: .5em .8em !important;
 	color: rgba(0,0,0,0.67);
 	background-color: #93C3CD;
@@ -328,9 +328,22 @@ span.bmlt_tabs_group_count {
 	text-transform: uppercase;
 	font-weight: 600;
 	border-top: 0;
-/* border-color: #93C3CD; */
 }
-
+.meeting-group:not(.non-collapsable) .group-header::before {
+	content: "\25BC";
+	display: inline;
+	padding: 0 5px;
+}
+.meeting-group.closed .group-header::before {
+	content: "\25BA";
+	display: inline;
+	padding: 0 5px;
+}
+.meeting-group.closed .group-table-div {
+	height: 0px;
+	transition: height .7s;  /* doesn't work because height=auto */
+	overflow-y: hidden;
+}
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
 		display: block !important;
