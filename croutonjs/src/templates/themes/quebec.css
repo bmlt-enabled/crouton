@@ -14,7 +14,7 @@
 #bmlt.tabs.table #nav-days.bmlt-tabs.show #ul.nac.nav-tabs{
     background-color:#005a87;
 }
-#bmlt-tabs tr.meeting-header td {
+#bmlt-tabs .group-header {
     background-color: #005a87;
 }
 #bmlt-tabs #day {

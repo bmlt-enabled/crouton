@@ -29,7 +29,7 @@
     background-color: #6fb0dd;
 }
 
-#bmlt-tabs tr.meeting-header td {
+#bmlt-tabs .group-header {
     background-color: #d6732d;
     border: 1px solid #d6732d;
 }
@@ -63,7 +63,7 @@
     color: #fff;
 }
 
-#bmlt-tabs tr.meeting-header td {
+#bmlt-tabs .group-header {
     color: #fff;
 }
 
