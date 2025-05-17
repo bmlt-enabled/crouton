@@ -68,7 +68,7 @@ function Crouton(config) {
 		force_rootserver_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_timeformat_in_querystring: true, // Set to false to shorten generated meeting detail query strings
 		force_language_in_querystring: true, // Set to false to shorten generated meeting detail query strings
-		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/dist/templates/themes
+		theme: "jack",                // Allows for setting pre-packaged themes.  Choices are listed here:  https://github.com/bmlt-enabled/crouton/blob/master/croutonjs/src/templates/themes
 		report_update_url: "",   	  // URL to edit a meeting for BMLT-workflow plugin
 		meeting_data_template: croutonDefaultTemplates.meeting_data_template,
 		metadata_template: croutonDefaultTemplates.metadata_template,

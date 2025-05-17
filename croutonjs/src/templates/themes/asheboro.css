@@ -10,7 +10,7 @@
     background-color: #d0d5db;
 }
 
-#bmlt-tabs tr.meeting-header td {
+#bmlt-tabs .group-header {
     background-color: #009;
     color: #d0d5db;
 }

@@ -1,5 +1,5 @@
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
-    background-color: #6a73da;
+    background-color: #EC9335;
 }
 
 #bmlt-tabs .nav-tabs > li > a {
@@ -10,12 +10,12 @@
     background-color: #9FC7EA;
 }
 
-#bmlt-tabs tr.meeting-header td {
-    background-color: rgba(106, 115, 218, 0.65);
+#bmlt-tabs .group-header {
+    background-color: #9FC7EA;
 }
 
 #bmlt-tabs #day {
-    background-color: #6a73da;
+    background-color: #EC9335;
 }
 
 #bmlt-tabs .filterButton {
@@ -23,7 +23,7 @@
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: #6a73da;
+    background-color: #EC9335;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
@@ -31,23 +31,14 @@
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: #6a73da;
+    background-color: #EC9335;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
     background-color: #9FC7EA;
 }
 
-#bmlt-tabs .bmlt-header {
-    padding: 4px 0 0 4px;
-    background-color: rgba(106, 115, 218, 0.65);
-}
-#bmlt-tabs .bmlt-page {
-    background-color: rgba(106, 115, 218, 0.65);
-    padding: 4px;
-}
-
 #bmlt-tabs .rowHighlight {
-    background-color: rgba(106, 115, 218, 0.65);
+    background-color: #EC9335;
     color: black;
 }
