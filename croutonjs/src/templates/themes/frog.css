@@ -87,59 +87,89 @@
 	background-color: #555;
 }
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
-    background-color: #EC8432;
+    background-color: rebeccapurple;
 }
 
 #bmlt-tabs .nav-tabs > li > a {
-    background-color: #7DABD0;
+    background-color: lightseagreen;
 }
 
 #bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
-    background-color: #7DABD0;
+    background-color: lightseagreen;
 }
 
-#bmlt-tabs tr.meeting-header td {
-    background-color: #7DABD0;
+#bmlt-tabs .group-header {
+    background-color: lightseagreen;
 }
 
 #bmlt-tabs #day {
-    background-color: #EC8432;
+    background-color: rebeccapurple;
 }
 
 #bmlt-tabs .filterButton {
-    background-color: #7DABD0;
+    background-color: lightseagreen;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: #EC8432;
+    background-color: rebeccapurple;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: #7DABD0;
+    background-color: lightseagreen;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: #EC8432;
+    background-color: lightseagreen;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: #7DABD0;
+    background-color: lightseagreen;
+
 }
 
 #bmlt-tabs .rowHighlight {
-    background-color: #EC8432;
-    color: black;
+    background-color: rebeccapurple;
+    color: #000;
 }
 
-#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
-    color: #EEE;
+#bmlt-formats.btn-xs, #map-button.btn-xs,#share-button.btn-xs {
+    color: #555;
+    border-color: lightseagreen;
+}
+
+#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover, #share-button.btn-xs:hover {
+    color: #AAA;
+    background-color: #444;
+    border-color: lightseagreen;
 }
 
 .bootstrap-bmlt a {
-    color: #7DABD0;
+    color: lightseagreen;
 }
 
 .bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
-    color: #7DABD0;
+    color: lightseagreen;
     text-decoration: underline;
+}
+
+.mapcontrolslabel {
+    background-color: #555;
+    color: #aaa
+}
+
+.mapcontrolcontainer {
+    background-color: #555;
+    border: 2px solid #000;
+}
+
+.mapcontrols {
+    color: #aaa
+}
+
+.mapcontrols input[type=radio] {
+    background-color: lightseagreen;
+}
+
+.mapcontrols input[type=radio]:checked {
+    background-color: rebeccapurple;
 }

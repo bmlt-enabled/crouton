@@ -166,8 +166,11 @@ task('css-leaflet-files', () => {
 		.pipe(dest(distDir))
 		.pipe(notify({message: "leaflet-css-files complete", wait: true}));
 });
-task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files'));
-
+task('themes', function () {
+    return src('croutonjs/src/templates/themes/*')
+        .pipe(dest('croutonjs/dist/templates/themes'));
+});
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files', 'themes'));
 task('watch', () => {
 	watch([
 		'croutonjs/src/templates/*.hbs'

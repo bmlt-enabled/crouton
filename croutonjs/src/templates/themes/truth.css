@@ -55,7 +55,7 @@
 }
 
 .bootstrap-bmlt .table>tbody+tbody {
-    border-color: #7DABD0;
+    border-color: lightseagreen;
 }
 
 .select2-container--default .select2-selection--single{
@@ -83,27 +83,27 @@
 #bmlt-tabs tr:nth-child(even) {
     background-color: #555;
 }
-#bmlt-tabs #byday .evenRow {
+#bmlt-tabs #byday .evebRow {
 	background-color: #555;
 }
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
-    background-color: rebeccapurple;
+    background-color: mediumvioletred;
 }
 
 #bmlt-tabs .nav-tabs > li > a {
     background-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
+#bmlt-formats.btn-xs, #map-button.btn-xs, #share-button.btn-xs {
     background-color: lightseagreen;
 }
 
-#bmlt-tabs tr.meeting-header td {
+#bmlt-tabs .group-header {
     background-color: lightseagreen;
 }
 
 #bmlt-tabs #day {
-    background-color: rebeccapurple;
+    background-color: mediumvioletred;
 }
 
 #bmlt-tabs .filterButton {
@@ -111,7 +111,7 @@
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: rebeccapurple;
+    background-color: mediumvioletred;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
@@ -119,7 +119,7 @@
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: lightseagreen;
+    background-color: mediumvioletred;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
@@ -128,11 +128,11 @@
 }
 
 #bmlt-tabs .rowHighlight {
-    background-color: rebeccapurple;
+    background-color: mediumvioletred;
     color: #000;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs,#share-button.btn-xs {
+#bmlt-formats.btn-xs, #map-button.btn-xs, #share-button.btn-xs {
     color: #555;
     border-color: lightseagreen;
 }
@@ -171,5 +171,5 @@
 }
 
 .mapcontrols input[type=radio]:checked {
-    background-color: rebeccapurple;
+    background-color: mediumvioletred;
 }

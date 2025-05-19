@@ -55,7 +55,7 @@
 }
 
 .bootstrap-bmlt .table>tbody+tbody {
-    border-color: lightseagreen;
+    border-color: #7DABD0;
 }
 
 .select2-container--default .select2-selection--single{
@@ -83,93 +83,63 @@
 #bmlt-tabs tr:nth-child(even) {
     background-color: #555;
 }
-#bmlt-tabs #byday .evebRow {
+#bmlt-tabs #byday .evenRow {
 	background-color: #555;
 }
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
-    background-color: mediumvioletred;
+    background-color: #EC8432;
 }
 
 #bmlt-tabs .nav-tabs > li > a {
-    background-color: lightseagreen;
+    background-color: #7DABD0;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs, #share-button.btn-xs {
-    background-color: lightseagreen;
+#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
+    background-color: #7DABD0;
 }
 
-#bmlt-tabs tr.meeting-header td {
-    background-color: lightseagreen;
+#bmlt-tabs .group-header {
+    background-color: #7DABD0;
 }
 
 #bmlt-tabs #day {
-    background-color: mediumvioletred;
+    background-color: #EC8432;
 }
 
 #bmlt-tabs .filterButton {
-    background-color: lightseagreen;
+    background-color: #7DABD0;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: mediumvioletred;
+    background-color: #EC8432;
 }
 
 #bmlt-tabs #day.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: lightseagreen;
+    background-color: #7DABD0;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonHighlight {
-    background-color: mediumvioletred;
+    background-color: #EC8432;
 }
 
 #bmlt-tabs .filterButton.btn.btn-primary.btn-sm.buttonLowlight {
-    background-color: lightseagreen;
-
+    background-color: #7DABD0;
 }
 
 #bmlt-tabs .rowHighlight {
-    background-color: mediumvioletred;
-    color: #000;
+    background-color: #EC8432;
+    color: black;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs, #share-button.btn-xs {
-    color: #555;
-    border-color: lightseagreen;
-}
-
-#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover, #share-button.btn-xs:hover {
-    color: #AAA;
-    background-color: #444;
-    border-color: lightseagreen;
+#bmlt-tabs #day.btn.btn-primary.btn-sm.buttonHighlight {
+    color: #EEE;
 }
 
 .bootstrap-bmlt a {
-    color: lightseagreen;
+    color: #7DABD0;
 }
 
 .bootstrap-bmlt a:focus, .bootstrap-bmlt a:hover {
-    color: lightseagreen;
+    color: #7DABD0;
     text-decoration: underline;
-}
-
-.mapcontrolslabel {
-    background-color: #555;
-    color: #aaa
-}
-
-.mapcontrolcontainer {
-    background-color: #555;
-    border: 2px solid #000;
-}
-
-.mapcontrols {
-    color: #aaa
-}
-
-.mapcontrols input[type=radio] {
-    background-color: lightseagreen;
-}
-
-.mapcontrols input[type=radio]:checked {
-    background-color: mediumvioletred;
 }
