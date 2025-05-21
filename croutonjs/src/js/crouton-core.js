@@ -1480,6 +1480,25 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
 	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
 });
 
+crouton_Handlebars.registerHelper('isOS', function(options) {
+	function isIOSDevice() {
+		if (navigator.userAgentData && navigator.userAgentData.platform) {
+			if (navigator.userAgentData.platform === 'iOS') {
+				return true;
+			}
+		}
+		const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+		const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+		const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
+		return isIOS || isIPadOS;
+	}
+	if (isIOSDevice()) {
+		return getTrueResult(options, this);
+	} else {
+		return getFalseResult(options, this);
+	}
+});
+
 crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
 	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
 });

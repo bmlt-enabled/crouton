@@ -114,7 +114,11 @@ var croutonDefaultTemplates = {
             <div class="location-text">{{{this.location_text}}}</div>
             <div class="meeting-address">{{this.formatted_address}}</div>
             <div class="location-information">{{{this.formatted_location_info}}}</div>
-            <a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "google_directions"}}</div></a>
+            {{#isOS}}
+			  <a target="_blank" href="https://maps.apple.com/?daddr={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "apple_directions"}}</div></a>
+			{{else}}
+			  <a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "google_directions"}}</div></a>
+			{{/isOS}}
             <br/>
         {{/isInPersonOrHybrid}}
         {{#isVirtualOrHybrid this}}
