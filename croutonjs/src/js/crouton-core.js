@@ -1481,23 +1481,68 @@ crouton_Handlebars.registerHelper('canShare', function(data, options) {
 });
 
 crouton_Handlebars.registerHelper('isOS', function(options) {
-	function isIOSDevice() {
-		if (navigator.userAgentData && navigator.userAgentData.platform) {
-			if (navigator.userAgentData.platform === 'iOS') {
-				return true;
-			}
-		}
-		const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-		const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-		const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
-		return isIOS || isIPadOS;
-	}
 	if (isIOSDevice()) {
 		return getTrueResult(options, this);
 	} else {
 		return getFalseResult(options, this);
 	}
 });
+
+function isIOSDevice() {
+    if (navigator.userAgentData && navigator.userAgentData.platform) {
+        if (navigator.userAgentData.platform === 'iOS') {
+            return true;
+        }
+    }
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
+    return isIOS || isIPadOS;
+}
+
+function isAndroidDevice() {
+    return /Android/i.test(navigator.userAgent);
+}
+
+function isMobileDevice() {
+    return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
+}
+
+function createMapOptions(latitude, longitude) {
+    const options = [];
+    const isMobile = isMobileDevice();
+    const isIOS = isIOSDevice();
+
+    // Apple Maps (iOS only)
+    if (isIOS) {
+        options.push({
+            name: crouton.localization.getWord('apple_maps'),
+            description: crouton.localization.getWord('apple_maps_desc'),
+            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+            url: `https://maps.apple.com/?daddr=${latitude},${longitude}`
+        });
+    }
+
+    // Google Maps (always available)
+    options.push({
+        name: crouton.localization.getWord('google_maps'),
+        description: crouton.localization.getWord('google_maps_desc_mobile'),
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+        url: `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+    });
+
+    // Waze (mobile devices)
+    if (isMobile) {
+        options.push({
+            name: crouton.localization.getWord('waze'),
+            description: crouton.localization.getWord('waze_desc'),
+            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+            url: `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`
+        });
+    }
+
+    return options;
+}
 
 crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
 	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
@@ -1888,3 +1933,120 @@ function swipedetect(el, callback){
         }
     }, false)
 }
+
+function showMapSelector(latitude, longitude) {
+    // For desktop users, directly open Google Maps
+    if (!isMobileDevice()) {
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
+        return;
+    }
+
+    // For mobile users, show the map selection modal
+    const modal = document.getElementById('mapModal');
+    const optionsContainer = document.getElementById('mapOptions');
+    
+
+    optionsContainer.innerHTML = '';
+
+    const options = createMapOptions(latitude, longitude);
+    
+    options.forEach(option => {
+        const optionElement = document.createElement('div');
+        optionElement.className = 'map-option';
+        optionElement.onclick = () => openMap(option.url);
+        
+        optionElement.innerHTML = `
+            <img src="${option.icon}" alt="${option.name}" class="map-option-icon">
+            <div class="map-option-text">
+                <div class="map-option-title">${option.name}</div>
+                <div class="map-option-desc">${option.description}</div>
+            </div>
+        `;
+        
+        optionsContainer.appendChild(optionElement);
+    });
+    
+    // Show modal
+    modal.style.display = 'block';
+}
+
+function closeMapModal() {
+    document.getElementById('mapModal').style.display = 'none';
+}
+
+function openMap(url) {
+    window.open(url, '_blank');
+    closeMapModal();
+}
+
+// Add CSS for the map selection modal
+const style = document.createElement('style');
+style.textContent = `
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 5px;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .map-option {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+    }
+
+    .map-option:hover {
+        background-color: #f5f5f5;
+    }
+
+    .map-option-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 10px;
+    }
+
+    .map-option-text {
+        flex: 1;
+    }
+
+    .map-option-title {
+        font-weight: bold;
+    }
+
+    .map-option-desc {
+        font-size: 0.9em;
+        color: #666;
+    }
+`;
+document.head.appendChild(style);

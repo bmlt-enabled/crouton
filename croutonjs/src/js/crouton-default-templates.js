@@ -114,11 +114,18 @@ var croutonDefaultTemplates = {
             <div class="location-text">{{{this.location_text}}}</div>
             <div class="meeting-address">{{this.formatted_address}}</div>
             <div class="location-information">{{{this.formatted_location_info}}}</div>
-            {{#isOS}}
-			  <a target="_blank" href="https://maps.apple.com/?daddr={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "apple_directions"}}</div></a>
-			{{else}}
-			  <a target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={{this.latitude}}%2C{{this.longitude}}" class="bootstrap-bmlt" ><div class="btn btn-primary bmlt-xs get-directions"><span class="glyphicon glyphicon-road"></span> {{getWord "google_directions"}}</div></a>
-			{{/isOS}}
+            <div class="bootstrap-bmlt">
+                <button onclick="(function() { if (isMobileDevice()) { showMapSelector({{this.latitude}}, {{this.longitude}}); } else { window.open('https://www.google.com/maps/dir/?api=1&destination={{this.latitude}},{{this.longitude}}', '_blank'); } })()" class="btn btn-primary bmlt-xs get-directions">
+                    <span class="glyphicon glyphicon-road"></span> {{getWord "get_directions"}}
+                </button>
+            </div>
+            <div id="mapModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close" onclick="closeMapModal()">&times;</span>
+                    <h3>{{getWord "select_map_app"}}</h3>
+                    <div id="mapOptions"></div>
+                </div>
+            </div>
             <br/>
         {{/isInPersonOrHybrid}}
         {{#isVirtualOrHybrid this}}
