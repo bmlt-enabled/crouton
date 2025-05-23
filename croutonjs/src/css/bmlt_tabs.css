@@ -671,3 +671,71 @@ table.tablesaw {
 input#search_radius, input#search_count {
     width: auto;
 }
+
+
+.directions-map-modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.4);
+}
+
+.directions-map-modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+	max-width: 500px;
+	border-radius: 5px;
+}
+
+.directions-map-modal-close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.directions-map-modal-close:hover,
+.directions-map-modal-close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.directions-map-map-option {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	border-bottom: 1px solid #eee;
+	cursor: pointer;
+}
+
+.directions-map-option:hover {
+	background-color: #f5f5f5;
+}
+
+.directions-map-option-icon {
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
+}
+
+.directions-map-option-text {
+	flex: 1;
+}
+
+.directions-map-option-title {
+	font-weight: bold;
+}
+
+.directions-map-option-desc {
+	font-size: 0.9em;
+	color: #666;
+}
