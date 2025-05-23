@@ -857,6 +857,21 @@ function Crouton(config) {
 		else self.meetingSearch();
 	}
 	else if (!window.croutonMap.hasMapSearch()) self.meetingSearch();
+
+	jQuery('html').on('click', '.get-directions-modal', function (e) {
+		var lat = jQuery(this).data('latitude');
+		var lng = jQuery(this).data('longitude');
+
+		if (isMobileDevice()) {
+			showMapSelector(lat, lng);
+		} else {
+			window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+		}
+	});
+
+	jQuery('html').on('click', '.directions-map-modal-close', function (e) {
+		closeDirectionsMapModal()
+	});
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -1935,118 +1950,50 @@ function swipedetect(el, callback){
 }
 
 function showMapSelector(latitude, longitude) {
-    // For desktop users, directly open Google Maps
-    if (!isMobileDevice()) {
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
-        return;
-    }
+	// For desktop users, directly open Google Maps
+	if (!isMobileDevice()) {
+		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
+		return;
+	}
 
-    // For mobile users, show the map selection modal
-    const modal = document.getElementById('mapModal');
-    const optionsContainer = document.getElementById('mapOptions');
-    
+	// For mobile users, show the map selection modal
+	const modal = document.getElementById('directionsMapModal');
+	const optionsContainer = document.getElementById('directionsMapOptions');
 
-    optionsContainer.innerHTML = '';
+	if (!optionsContainer) {
+		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
+		return;
+	}
 
-    const options = createMapOptions(latitude, longitude);
-    
-    options.forEach(option => {
-        const optionElement = document.createElement('div');
-        optionElement.className = 'map-option';
-        optionElement.onclick = () => openMap(option.url);
-        
-        optionElement.innerHTML = `
-            <img src="${option.icon}" alt="${option.name}" class="map-option-icon">
-            <div class="map-option-text">
-                <div class="map-option-title">${option.name}</div>
-                <div class="map-option-desc">${option.description}</div>
+	optionsContainer.innerHTML = '';
+
+	const options = createMapOptions(latitude, longitude);
+
+	options.forEach(option => {
+		const optionElement = document.createElement('div');
+		optionElement.className = 'directions-map-option';
+		optionElement.onclick = () => openMap(option.url);
+
+		optionElement.innerHTML = `
+            <img src="${option.icon}" alt="${option.name}" class="directions-map-option-icon">
+            <div class="directions-map-option-text">
+                <div class="directions-map-option-title">${option.name}</div>
+                <div class="directions-map-option-desc">${option.description}</div>
             </div>
         `;
-        
-        optionsContainer.appendChild(optionElement);
-    });
-    
-    // Show modal
-    modal.style.display = 'block';
+
+		optionsContainer.appendChild(optionElement);
+	});
+
+	// Show modal
+	modal.style.display = 'block';
 }
 
-function closeMapModal() {
-    document.getElementById('mapModal').style.display = 'none';
+function closeDirectionsMapModal() {
+	document.getElementById('directionsMapModal').style.display = 'none';
 }
 
 function openMap(url) {
-    window.open(url, '_blank');
-    closeMapModal();
+	window.open(url, '_blank');
+	closeDirectionsMapModal();
 }
-
-// Add CSS for the map selection modal
-const style = document.createElement('style');
-style.textContent = `
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.4);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px;
-        border-radius: 5px;
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .map-option {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-        cursor: pointer;
-    }
-
-    .map-option:hover {
-        background-color: #f5f5f5;
-    }
-
-    .map-option-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 10px;
-    }
-
-    .map-option-text {
-        flex: 1;
-    }
-
-    .map-option-title {
-        font-weight: bold;
-    }
-
-    .map-option-desc {
-        font-size: 0.9em;
-        color: #666;
-    }
-`;
-document.head.appendChild(style);
