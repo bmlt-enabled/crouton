@@ -975,7 +975,7 @@ Crouton.prototype.doHandlebars = function() {
 				self.handlebars(enrichedMeetingData[0], elements)
 			});
 	});
-
+	jQuery('.get-directions-modal').on('click', openDirectionsModal);
 };
 
 Crouton.prototype.meetingModal = function(meetingId) {
@@ -1422,7 +1422,7 @@ function openDirectionsModal(e) {
 	const lng = jQuery(this).data('longitude');
 
 	if (isMobileDevice()) {
-		showMapSelector(lat, lng, e);
+		showDirectionsSelector(lat, lng, e);
 	} else {
 		window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
 	}
@@ -1950,7 +1950,7 @@ function swipedetect(el, callback){
     }, false)
 }
 
-function showMapSelector(latitude, longitude, e) {
+function showDirectionsSelector(latitude, longitude, e) {
 	// For desktop users, directly open Google Maps
 	if (!isMobileDevice()) {
 		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
