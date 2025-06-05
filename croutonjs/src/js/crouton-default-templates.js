@@ -114,18 +114,7 @@ var croutonDefaultTemplates = {
             <div class="location-text">{{{this.location_text}}}</div>
             <div class="meeting-address">{{this.formatted_address}}</div>
             <div class="location-information">{{{this.formatted_location_info}}}</div>
-            <div class="bootstrap-bmlt">
-                <button data-latitude="{{this.latitude}}" data-longitude="{{this.longitude}}" class="btn btn-primary bmlt-xs get-directions-modal">
-                    <span class="glyphicon glyphicon-road"></span> {{getWord "get_directions"}}
-                </button>
-            </div>
-            <div id="directionsMapModal" class="directions-map-modal" style="display: none;">
-                <div class="directions-map-modal-content">
-                    <span class="directions-map-modal-close">&times;</span>
-                    <h3>{{getWord "select_map_app"}}</h3>
-                    <div id="directionsMapOptions"></div>
-                </div>
-            </div>
+			{{> directionsButton this}}
             <br/>
         {{/isInPersonOrHybrid}}
         {{#isVirtualOrHybrid this}}

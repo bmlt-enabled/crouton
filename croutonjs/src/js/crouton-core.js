@@ -465,6 +465,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
@@ -502,6 +503,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
@@ -857,21 +859,6 @@ function Crouton(config) {
 		else self.meetingSearch();
 	}
 	else if (!window.croutonMap.hasMapSearch()) self.meetingSearch();
-
-	jQuery('html').on('click', '.get-directions-modal', function (e) {
-		var lat = jQuery(this).data('latitude');
-		var lng = jQuery(this).data('longitude');
-
-		if (isMobileDevice()) {
-			showMapSelector(lat, lng);
-		} else {
-			window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-		}
-	});
-
-	jQuery('html').on('click', '.directions-map-modal-close', function (e) {
-		closeDirectionsMapModal()
-	});
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -1002,7 +989,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	span.textContent = self.config.meetingpage_frame_template;
 	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
-
+	jQuery(tabs, '.get-directions-modal').on('click', openDirectionsModal);
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
 	document.body.appendChild(mm);
@@ -1366,7 +1353,12 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 					jQuery('.meeting-group:not(.non-collapsable) .group-header').on('click', function(e) {
 						jQuery(e.target.parentElement).toggleClass('closed');
-					})
+					});
+					jQuery('.get-directions-modal').on('click', openDirectionsModal);
+
+					jQuery('.directions-map-modal-close').on('click', function (e) {
+						closeDirectionsMapModal()
+					});
 					/****
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
@@ -1425,7 +1417,16 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 		}
 	}
 };
+function openDirectionsModal(e) {
+	const lat = jQuery(this).data('latitude');
+	const lng = jQuery(this).data('longitude');
 
+	if (isMobileDevice()) {
+		showMapSelector(lat, lng, e);
+	} else {
+		window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+	}
+}
 function getTrueResult(options, ctx) {
 	return options.fn !== undefined ? options.fn(ctx) : true;
 }
@@ -1523,7 +1524,7 @@ function isMobileDevice() {
     return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
 }
 
-function createMapOptions(latitude, longitude) {
+function createDirectionsOptions(latitude, longitude) {
     const options = [];
     const isMobile = isMobileDevice();
     const isIOS = isIOSDevice();
@@ -1949,14 +1950,25 @@ function swipedetect(el, callback){
     }, false)
 }
 
-function showMapSelector(latitude, longitude) {
+function showMapSelector(latitude, longitude, e) {
 	// For desktop users, directly open Google Maps
 	if (!isMobileDevice()) {
 		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
 		return;
 	}
-
 	// For mobile users, show the map selection modal
+	if (!document.getElementById('directionsMapModal')) {
+		const word = crouton.localization.getWord("select_map_app");
+		e.target.insertAdjacentHTML("afterend",
+`<div id="directionsMapModal" class="directions-map-modal remove-after-use">
+                <div class="directions-map-modal-content">
+                    <span class="directions-map-modal-close">×</span>
+                    <h3>`+word+`</h3>
+                    <div id="directionsMapOptions"></div>
+                </div>
+</div>`
+		);
+	}
 	const modal = document.getElementById('directionsMapModal');
 	const optionsContainer = document.getElementById('directionsMapOptions');
 
@@ -1967,12 +1979,12 @@ function showMapSelector(latitude, longitude) {
 
 	optionsContainer.innerHTML = '';
 
-	const options = createMapOptions(latitude, longitude);
+	const options = createDirectionsOptions(latitude, longitude);
 
 	options.forEach(option => {
 		const optionElement = document.createElement('div');
 		optionElement.className = 'directions-map-option';
-		optionElement.onclick = () => openMap(option.url);
+		optionElement.onclick = () => openDirections(option.url);
 
 		optionElement.innerHTML = `
             <img src="${option.icon}" alt="${option.name}" class="directions-map-option-icon">
@@ -1984,16 +1996,18 @@ function showMapSelector(latitude, longitude) {
 
 		optionsContainer.appendChild(optionElement);
 	});
-
+	jQuery('html').on('click', '.directions-map-modal-close', closeDirectionsModal);
 	// Show modal
 	modal.style.display = 'block';
 }
 
-function closeDirectionsMapModal() {
-	document.getElementById('directionsMapModal').style.display = 'none';
+function closeDirectionsModal() {
+		const modal = document.getElementById('directionsMapModal');
+		modal.style.display = 'none';
+		if (modal.className.includes('remove-after-use')) modal.remove();
 }
 
-function openMap(url) {
+function openDirections(url) {
 	window.open(url, '_blank');
-	closeDirectionsMapModal();
+	closeDirectionsModal();
 }
