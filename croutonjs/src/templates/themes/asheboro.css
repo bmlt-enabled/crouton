@@ -6,7 +6,7 @@
     background-color: #d0d5db;
 }
 
-#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs {
+#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs,.bmlt-data-row button.get-directions-modal {
     background-color: #d0d5db;
 }
 
