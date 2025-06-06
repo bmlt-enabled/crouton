@@ -1417,16 +1417,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 		}
 	}
 };
-function openDirectionsModal(e) {
-	const lat = jQuery(this).data('latitude');
-	const lng = jQuery(this).data('longitude');
 
-	if (isMobileDevice()) {
-		showDirectionsSelector(lat, lng, e);
-	} else {
-		window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-	}
-}
 function getTrueResult(options, ctx) {
 	return options.fn !== undefined ? options.fn(ctx) : true;
 }
@@ -1526,7 +1517,6 @@ function isMobileDevice() {
 
 function createDirectionsOptions() {
     const options = [];
-    const isMobile = isMobileDevice();
     const isIOS = isIOSDevice();
 
     // Apple Maps (iOS only)
@@ -1547,15 +1537,13 @@ function createDirectionsOptions() {
         url: 'https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}'
     });
 
-    // Waze (mobile devices)
-    if (isMobile) {
-        options.push({
-            name: crouton.localization.getWord('waze'),
-            description: crouton.localization.getWord('waze_desc'),
-            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
-        });
-    }
+    // Waze (always available)
+    options.push({
+        name: crouton.localization.getWord('waze'),
+        description: crouton.localization.getWord('waze_desc'),
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+        url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
+    });
 
     return options;
 }
@@ -1949,8 +1937,10 @@ function swipedetect(el, callback){
         }
     }, false)
 }
+function openDirectionsModal(e) {
+	const latitude = jQuery(this).data('latitude');
+	const longitude = jQuery(this).data('longitude');
 
-function showDirectionsSelector(latitude, longitude, e) {
 	const savedUrl = localStorage.getItem("croutonDirectionsURL");
 	if (savedUrl && savedUrl != null) {
 		openDirections(savedUrl, latitude, longitude, false);
