@@ -739,3 +739,6 @@ input#search_radius, input#search_count {
 	font-size: 0.9em;
 	color: #666;
 }
+.directions-remember-choice-div {
+    margin-top: 20px;
+}

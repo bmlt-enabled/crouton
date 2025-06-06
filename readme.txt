@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 
 = 3.22.3 =
 * The app selection modal is available from the crouton table, too.
+* Use partial {{> directionsButton this}} to generate button.
 
 = 3.22.2 =
 * Added a modal for selecting map apps (Apple, Google, or Waze) when getting directions on mobile devices.

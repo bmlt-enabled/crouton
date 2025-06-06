@@ -989,10 +989,10 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	span.textContent = self.config.meetingpage_frame_template;
 	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
-	jQuery(tabs, '.get-directions-modal').on('click', openDirectionsModal);
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
 	document.body.appendChild(mm);
+	jQuery('#meeting_modal .get-directions-modal').on('click', openDirectionsModal);
 	croutonMap.openModalWindow(mm, true);
 	croutonMap.showMap(true);
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
@@ -1524,7 +1524,7 @@ function isMobileDevice() {
     return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
 }
 
-function createDirectionsOptions(latitude, longitude) {
+function createDirectionsOptions() {
     const options = [];
     const isMobile = isMobileDevice();
     const isIOS = isIOSDevice();
@@ -1535,7 +1535,7 @@ function createDirectionsOptions(latitude, longitude) {
             name: crouton.localization.getWord('apple_maps'),
             description: crouton.localization.getWord('apple_maps_desc'),
             icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: `https://maps.apple.com/?daddr=${latitude},${longitude}`
+            url: 'https://maps.apple.com/?daddr=${latitude},${longitude}'
         });
     }
 
@@ -1544,7 +1544,7 @@ function createDirectionsOptions(latitude, longitude) {
         name: crouton.localization.getWord('google_maps'),
         description: crouton.localization.getWord('google_maps_desc_mobile'),
         icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-        url: `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+        url: 'https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}'
     });
 
     // Waze (mobile devices)
@@ -1553,7 +1553,7 @@ function createDirectionsOptions(latitude, longitude) {
             name: crouton.localization.getWord('waze'),
             description: crouton.localization.getWord('waze_desc'),
             icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`
+            url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
         });
     }
 
@@ -1951,12 +1951,11 @@ function swipedetect(el, callback){
 }
 
 function showDirectionsSelector(latitude, longitude, e) {
-	// For desktop users, directly open Google Maps
-	if (!isMobileDevice()) {
-		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
+	const savedUrl = localStorage.getItem("croutonDirectionsURL");
+	if (savedUrl && savedUrl != null) {
+		openDirections(savedUrl, latitude, longitude, false);
 		return;
 	}
-	// For mobile users, show the map selection modal
 	if (!document.getElementById('directionsMapModal')) {
 		const word = crouton.localization.getWord("select_map_app");
 		e.target.insertAdjacentHTML("afterend",
@@ -1979,12 +1978,12 @@ function showDirectionsSelector(latitude, longitude, e) {
 
 	optionsContainer.innerHTML = '';
 
-	const options = createDirectionsOptions(latitude, longitude);
+	const options = createDirectionsOptions();
 
 	options.forEach(option => {
 		const optionElement = document.createElement('div');
 		optionElement.className = 'directions-map-option';
-		optionElement.onclick = () => openDirections(option.url);
+		optionElement.onclick = () => openDirections(option.url, latitude, longitude);
 
 		optionElement.innerHTML = `
             <img src="${option.icon}" alt="${option.name}" class="directions-map-option-icon">
@@ -1996,6 +1995,14 @@ function showDirectionsSelector(latitude, longitude, e) {
 
 		optionsContainer.appendChild(optionElement);
 	});
+	const label = crouton.localization.getWord('Remember my choice');
+	const rememberChoiceElement = document.createElement('div');
+	rememberChoiceElement.className = 'directions-remember-choice-div';
+	rememberChoiceElement.innerHTML =
+`<input type="checkbox" id="rememberDirectionsChoice" name="rememberDirectionsChoice" value="1">
+<label for="rememberDirectionsChoice">`+label+`</label>`
+	;
+	optionsContainer.appendChild(rememberChoiceElement);
 	jQuery('html').on('click', '.directions-map-modal-close', closeDirectionsModal);
 	// Show modal
 	modal.style.display = 'block';
@@ -2007,7 +2014,11 @@ function closeDirectionsModal() {
 		if (modal.className.includes('remove-after-use')) modal.remove();
 }
 
-function openDirections(url) {
+function openDirections(url, latitude, longitude, fromModal = true) {
+	const save = jQuery('#rememberDirectionsChoice');
+	if (fromModal && save.length && save.is(":checked")) localStorage.setItem("croutonDirectionsURL", url);
+	url = url.replaceAll('${latitude}', latitude);
+	url = url.replaceAll('${longitude}', longitude);
 	window.open(url, '_blank');
-	closeDirectionsModal();
+	if (fromModal) closeDirectionsModal();
 }
