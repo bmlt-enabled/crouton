@@ -8,7 +8,7 @@ if (!class_exists("Crouton\TableAdmin")) {
     class TableAdmin
     {
         private TableOptions $crouton;
-        private string $hook = '';
+        private string $hook = 'bmlt-enabled-crouton';
         private array $themes = [
             "asheboro",
             "florida-nights",

@@ -465,6 +465,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
@@ -502,6 +503,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
@@ -857,21 +859,6 @@ function Crouton(config) {
 		else self.meetingSearch();
 	}
 	else if (!window.croutonMap.hasMapSearch()) self.meetingSearch();
-
-	jQuery('html').on('click', '.get-directions-modal', function (e) {
-		var lat = jQuery(this).data('latitude');
-		var lng = jQuery(this).data('longitude');
-
-		if (isMobileDevice()) {
-			showMapSelector(lat, lng);
-		} else {
-			window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-		}
-	});
-
-	jQuery('html').on('click', '.directions-map-modal-close', function (e) {
-		closeDirectionsMapModal()
-	});
 }
 
 Crouton.prototype.setConfig = function(config) {
@@ -988,7 +975,7 @@ Crouton.prototype.doHandlebars = function() {
 				self.handlebars(enrichedMeetingData[0], elements)
 			});
 	});
-
+	jQuery('.get-directions-modal').on('click', openDirectionsModal);
 };
 
 Crouton.prototype.meetingModal = function(meetingId) {
@@ -1002,10 +989,10 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	span.textContent = self.config.meetingpage_frame_template;
 	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
-
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
 	document.body.appendChild(mm);
+	jQuery('#meeting_modal .get-directions-modal').on('click', openDirectionsModal);
 	croutonMap.openModalWindow(mm, true);
 	croutonMap.showMap(true);
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
@@ -1366,7 +1353,12 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 					});
 					jQuery('.meeting-group:not(.non-collapsable) .group-header').on('click', function(e) {
 						jQuery(e.target.parentElement).toggleClass('closed');
-					})
+					});
+					jQuery('.get-directions-modal').on('click', openDirectionsModal);
+
+					jQuery('.directions-map-modal-close').on('click', function (e) {
+						closeDirectionsMapModal()
+					});
 					/****
 					jQuery('.custom-ul').on('click', 'a', function (event) {
 						jQuery('.bmlt-page').each(function (index) {
@@ -1523,9 +1515,8 @@ function isMobileDevice() {
     return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
 }
 
-function createMapOptions(latitude, longitude) {
+function createDirectionsOptions() {
     const options = [];
-    const isMobile = isMobileDevice();
     const isIOS = isIOSDevice();
 
     // Apple Maps (iOS only)
@@ -1534,7 +1525,7 @@ function createMapOptions(latitude, longitude) {
             name: crouton.localization.getWord('apple_maps'),
             description: crouton.localization.getWord('apple_maps_desc'),
             icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: `https://maps.apple.com/?daddr=${latitude},${longitude}`
+            url: 'https://maps.apple.com/?daddr=${latitude},${longitude}'
         });
     }
 
@@ -1543,18 +1534,16 @@ function createMapOptions(latitude, longitude) {
         name: crouton.localization.getWord('google_maps'),
         description: crouton.localization.getWord('google_maps_desc_mobile'),
         icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-        url: `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`
+        url: 'https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}'
     });
 
-    // Waze (mobile devices)
-    if (isMobile) {
-        options.push({
-            name: crouton.localization.getWord('waze'),
-            description: crouton.localization.getWord('waze_desc'),
-            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`
-        });
-    }
+    // Waze (always available)
+    options.push({
+        name: crouton.localization.getWord('waze'),
+        description: crouton.localization.getWord('waze_desc'),
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+        url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
+    });
 
     return options;
 }
@@ -1948,15 +1937,27 @@ function swipedetect(el, callback){
         }
     }, false)
 }
+function openDirectionsModal(e) {
+	const latitude = jQuery(this).data('latitude');
+	const longitude = jQuery(this).data('longitude');
 
-function showMapSelector(latitude, longitude) {
-	// For desktop users, directly open Google Maps
-	if (!isMobileDevice()) {
-		window.open(`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`, '_blank');
+	const savedUrl = localStorage.getItem("croutonDirectionsURL");
+	if (savedUrl && savedUrl != null) {
+		openDirections(savedUrl, latitude, longitude, false);
 		return;
 	}
-
-	// For mobile users, show the map selection modal
+	if (!document.getElementById('directionsMapModal')) {
+		const word = crouton.localization.getWord("select_map_app");
+		e.target.insertAdjacentHTML("afterend",
+`<div id="directionsMapModal" class="directions-map-modal remove-after-use">
+                <div class="directions-map-modal-content">
+                    <span class="directions-map-modal-close">×</span>
+                    <h3>`+word+`</h3>
+                    <div id="directionsMapOptions"></div>
+                </div>
+</div>`
+		);
+	}
 	const modal = document.getElementById('directionsMapModal');
 	const optionsContainer = document.getElementById('directionsMapOptions');
 
@@ -1967,12 +1968,12 @@ function showMapSelector(latitude, longitude) {
 
 	optionsContainer.innerHTML = '';
 
-	const options = createMapOptions(latitude, longitude);
+	const options = createDirectionsOptions();
 
 	options.forEach(option => {
 		const optionElement = document.createElement('div');
 		optionElement.className = 'directions-map-option';
-		optionElement.onclick = () => openMap(option.url);
+		optionElement.onclick = () => openDirections(option.url, latitude, longitude);
 
 		optionElement.innerHTML = `
             <img src="${option.icon}" alt="${option.name}" class="directions-map-option-icon">
@@ -1984,16 +1985,30 @@ function showMapSelector(latitude, longitude) {
 
 		optionsContainer.appendChild(optionElement);
 	});
-
+	const label = crouton.localization.getWord('Remember my choice');
+	const rememberChoiceElement = document.createElement('div');
+	rememberChoiceElement.className = 'directions-remember-choice-div';
+	rememberChoiceElement.innerHTML =
+`<input type="checkbox" id="rememberDirectionsChoice" name="rememberDirectionsChoice" value="1">
+<label for="rememberDirectionsChoice">`+label+`</label>`
+	;
+	optionsContainer.appendChild(rememberChoiceElement);
+	jQuery('html').on('click', '.directions-map-modal-close', closeDirectionsModal);
 	// Show modal
 	modal.style.display = 'block';
 }
 
-function closeDirectionsMapModal() {
-	document.getElementById('directionsMapModal').style.display = 'none';
+function closeDirectionsModal() {
+		const modal = document.getElementById('directionsMapModal');
+		modal.style.display = 'none';
+		if (modal.className.includes('remove-after-use')) modal.remove();
 }
 
-function openMap(url) {
+function openDirections(url, latitude, longitude, fromModal = true) {
+	const save = jQuery('#rememberDirectionsChoice');
+	if (fromModal && save.length && save.is(":checked")) localStorage.setItem("croutonDirectionsURL", url);
+	url = url.replaceAll('${latitude}', latitude);
+	url = url.replaceAll('${longitude}', longitude);
 	window.open(url, '_blank');
-	closeDirectionsMapModal();
+	if (fromModal) closeDirectionsModal();
 }

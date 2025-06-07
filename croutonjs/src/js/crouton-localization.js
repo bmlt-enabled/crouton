@@ -193,6 +193,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "In Google Maps App öffnen",
 			"waze": "Waze",
 			"waze_desc": "In Waze App öffnen",
+			"remember my choice": "Auswahl speichern",
 		},
 "en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
