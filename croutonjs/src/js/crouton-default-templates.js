@@ -38,12 +38,7 @@ var croutonDefaultTemplates = {
 		"{{/isVirtualOrHybrid}}",
 		"{{#isNotTemporarilyClosed this}}",
 		"    {{#unless (hasFormats 'VM' this)}}",
-		"        <div>",
-		"            <a onclick='crouton.meetingModal({{this.id_bigint}})' tabindex='0' href='#' id='map-button' class='btn btn-primary btn-xs'>",
-		"				<span class='glyphicon glyphicon-search' aria-hidden='true'></span>",
-		"				{{getWord 'meeting details'}}",
-		"			</a>",
-		"        </div>",
+		"	 {{> meetingDetailsButton this}}",
 		"    {{/unless}}",
 		"{{/isNotTemporarilyClosed}}"
 	].join('\n'),

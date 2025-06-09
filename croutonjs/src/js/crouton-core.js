@@ -465,7 +465,6 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
@@ -503,7 +502,6 @@ function Crouton(config) {
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
@@ -972,10 +970,10 @@ Crouton.prototype.doHandlebars = function() {
 				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
 				customEnrichTemplate(enrichedMeetingData[0]);
 
-				self.handlebars(enrichedMeetingData[0], elements)
+				self.handlebars(enrichedMeetingData[0], elements);
+				jQuery('.get-directions-modal').on('click', openDirectionsModal);
 			});
 	});
-	jQuery('.get-directions-modal').on('click', openDirectionsModal);
 };
 
 Crouton.prototype.meetingModal = function(meetingId) {
@@ -1722,6 +1720,8 @@ crouton_Handlebars.registerPartial('icsButton',
     '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
 crouton_Handlebars.registerPartial('offerIcsButton',
     "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
+crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
+crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
