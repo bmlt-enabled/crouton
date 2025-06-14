@@ -14,6 +14,7 @@ function MeetingMap(inConfig) {
 	var gMeetingIdsFromCrouton = null;
 	var loadedCallbackFunction = null;
 	var loadedCallbackArgs = [];
+	var keepProjection = false;
 	function preloadApiLoadedCallback(f,a) {
 		loadedCallbackFunction = f;
 		loadedCallbackArgs = a;
@@ -77,6 +78,13 @@ function MeetingMap(inConfig) {
 					}
 				}, false);
 				if (config.map_search) {
+					if (config.filter_visible) gDelegate.addListener('idle', function (ev) {
+						if (!keepProjection) {
+							keepProjection = true;
+							crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth());
+						}
+						else keepProjection = false;
+					}, false);
 					gDelegate.addControl(createSearchButton(), 'topleft', cb);
 				}
 				else if (menuContext) {
@@ -194,7 +202,7 @@ function MeetingMap(inConfig) {
 				filterVisible(false);
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds, filterVisible);
 			}).catch(error => {
-				console.error(error.message);
+				console.log(error.message);
 				jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
 			});
 			dropdownContent = document.getElementById("map-menu-dropdown").style.display = "none";
@@ -269,10 +277,10 @@ function MeetingMap(inConfig) {
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
 			showThrobber();
-			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
+			crouton.searchByCoordinates(position.latitude, position.longitude, getSearchWidth());
 			if (activeModal == gSearchModal) closeModalWindow(gSearchModal);
 		}).catch(error => {
-			console.error(error.message);
+			console.log(error.message);
 			if (activeModal != gSearchModal) showBmltSearchDialog();
 		});
 	};
@@ -280,7 +288,7 @@ function MeetingMap(inConfig) {
 		croutonMap.showMap(false,false);
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
-			crouton.searchByCoordinates(lat, lng, config.map_search.width);
+			crouton.searchByCoordinates(lat, lng, getSearchWidth());
 		});
 		closeModalWindow(gSearchModal);
 	}
@@ -325,7 +333,7 @@ function MeetingMap(inConfig) {
 			hideThrobber();
 			return;
 		}
-		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
+		crouton.searchByCoordinates(latlng.lat, latlng.lng, getSearchWidth());
 	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
@@ -333,14 +341,14 @@ function MeetingMap(inConfig) {
 			else if (config.map_search.coordinates_search) {
 				showThrobber();
 				config.map_search.coordinates_search = false;
-				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude, config.map_search.width);
+				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude, getSearchWidth());
 			}
 			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, null, mapSearchGeocode);
 			else showBmltSearchDialog();
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		if (fitBounds) {
+		if (fitBounds && !keepProjection) {
 			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);
 		}
@@ -751,6 +759,30 @@ function MeetingMap(inConfig) {
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])
 		);
+	}
+	function rad(x) {
+  		return x * Math.PI / 180;
+	}
+
+	function getDistance(p1, p2) {
+		var R = 6378137; // Earth’s mean radius in meter
+		var dLat = rad(p2.lat - p1.lat);
+		var dLong = rad(p2.lng - p1.lng);
+		var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    		Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+    		Math.sin(dLong / 2) * Math.sin(dLong / 2);
+		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		var d = R * c;
+  		return d; // returns the distance in meter
+	}
+
+	function getScreenRadius() {
+		var corners = gDelegate.getCorners();
+		return (getDistance(corners.ne, corners.sw)/2000.0) * ((crouton.config.distance_units == 'km') ? 1.0 : 0.62137119);
+	}
+
+	function getSearchWidth() {
+		return (config.filter_visible) ? getScreenRadius() : config.map_search.width;
 	}
 	/****************************************************************************************
 	 *								MAIN FUNCTIONAL INTERFACE								*
