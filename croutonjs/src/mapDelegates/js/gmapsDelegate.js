@@ -415,12 +415,12 @@ function geoCallback( in_geocode_response ) {
         var bounds = gMainMap.getBounds();
         return {
             "ne" : {"lat": bounds.getNorthEast().lat(), "lng": bounds.getNorthEast().lng()},
-            "sw" : {"lat": bounds.getSouthWest().lat(), "lng": bounds.getsouthWest().lng()}
+            "sw" : {"lat": bounds.getSouthWest().lat(), "lng": bounds.getSouthWest().lng()}
         }
     }
     function getCenter() {
         var center = gMainMap.getCenter();
-        return { "lat": center.getSouthWest().lat(), "lng": center.getsouthWest().lng()}
+        return { "lat": center.lat(), "lng": center.lng()}
     }
     function afterInit(f) {
         if (!gMainMap) return;

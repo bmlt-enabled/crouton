@@ -97,25 +97,17 @@ function Crouton(config) {
 
 	self.setConfig(config);
 	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width) {
-
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
 			+ "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
-		self.meetingSearch()
-			.then(function() {
+		self.meetingSearch(function() {
 				self.config.refresh_map=1;
 				self.config.show_map = 1;
 				self.reset();
 				self.render();
-				/*
-				croutonMap.reload(self.meetingData);
-				croutonMap.initMap(function() {
-					croutonMap.addCurrentLocationPin(latitude, longitude);
-				});
-				*/
-			});
+		});
 	};
-	self.getMeetings = function(url) {
+	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
 		if (self.config['extra_meetings'].length > 0) {
@@ -140,16 +132,19 @@ function Crouton(config) {
 					var fullUrl = self.config['root_server'] + url
 					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
+					self.meetingData = [];
+					self.formatsData = [];
 					self.mutex = false;
+					cb && cb();
 					return;
 				}
 				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 				self.meetingData = mainMeetings['meetings'];
 				self.formatsData = mainMeetings['formats'];
-
 				if (extraMeetings) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
+				cb && cb();
 				self.mutex = false;
 			});
 	};
@@ -238,7 +233,7 @@ function Crouton(config) {
 	}
 	self.mutex = true;
 
-	self.meetingSearch = function() {
+	self.meetingSearch = function(cb=null) {
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
 			self.addDatafieldsToQuery();
 
@@ -266,7 +261,7 @@ function Crouton(config) {
 
 		if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
-			return self.getMeetings(url);
+			return self.getMeetings(url,cb);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
 				url += '&services[]=' + self.config['service_body'][i];
@@ -278,7 +273,7 @@ function Crouton(config) {
 
 			url += '&sort_keys=' + self.config['sort_keys'];
 
-			return self.getMeetings(url);
+			return self.getMeetings(url,cb);
 		} else {
 			return new Promise(function(resolve, reject) {
 				resolve();
