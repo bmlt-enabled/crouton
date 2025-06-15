@@ -428,7 +428,7 @@ function addControl(div,pos,cb) {
 	}
 	function returnTrue() {return true;}
 	function hasClickSearch() {
-		return gMainMap != null;
+		return (gMainMap != null) && !(config.map_search && config.filter_visible);
 	}
     this.createMap = createMap;
     this.addListener = addListener;

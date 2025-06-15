@@ -1070,7 +1070,7 @@ Crouton.prototype.searchMap = function() {
 Crouton.prototype.render = function(doMeetingMap = false) {
 	var self = this;
 
-	if (!self.config.map_search) {
+	if (!(self.config.map_search && self.config.filter_visible)) {
 		self.config.grouping_buttons = self.config.grouping_buttons.filter((b) => !b.field.startsWith('distance'));
 		if (self.config['view_by'] == 'distance') self.config['view_by'] = 'weekday';
 	}

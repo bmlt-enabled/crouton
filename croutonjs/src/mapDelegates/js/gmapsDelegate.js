@@ -430,7 +430,7 @@ function geoCallback( in_geocode_response ) {
     function modalOn() {}
     function modalOff() {}
 	function hasClickSearch() {
-		return gMainMap != null;
+		return gMainMap != null && !(config.map_search && config.filter_visible);
 	}
     this.createMap = createMap;
     this.addListener = addListener;
