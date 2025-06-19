@@ -98,7 +98,7 @@ function MeetingMap(inConfig) {
 	function createSearchButton() {
 		const template = hbs_Crouton.templates['mapSearch'];
 		const controlDiv = document.createElement('div');
-		const params = {'hasClickSearch': gDelegate.hasClickSearch()}
+		const params = {};
 		controlDiv.innerHTML = template(params);
 		controlDiv.querySelector("#map-search-button").addEventListener('click', showBmltSearchDialog);
 		controlDiv.querySelector("#bmltsearch-nearbyMeetings").addEventListener('click', nearMeSearch);
@@ -142,8 +142,7 @@ function MeetingMap(inConfig) {
 			controlDiv.querySelector("#modal-search-page").style.display = 'block';
 		});
 
-
-		if (gDelegate.hasClickSearch()) controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
+		controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
 		gSearchModal.parentElement.removeChild(gSearchModal);
@@ -343,11 +342,11 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		if (config.map_search && config.filter_visible) filterVisible(true);
-		else if (fitBounds && !(config.map_search && config.filter_visible)) {
+		if (fitBounds && !keepProjection) {
 			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			gDelegate.fitBounds(lat_lngs);
-		}
+			if (config.map_search && config.filter_visible) keep_projection = true;
+		} else if (config.map_search && config.filter_visible) filterVisible(true);
 		searchResponseCallback();
 		hideThrobber();
 		if (config.filter_visible || config.centerMe || config.goto) crouton.forceShowMap();
@@ -433,11 +432,12 @@ function MeetingMap(inConfig) {
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
-	function showBmltSearchDialog(e) {
-		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
-		openModalWindow(gSearchModal);
-	}
-	function showSearchDialog(e) {
+	function showBmltSearchDialog(e, forceClickSeach=false) {
+		if (forceClickSeach||gDelegate.hasClickSearch())
+			jQuery('#bmltsearch-clicksearch').parent().show();
+		else
+			jQuery('#bmltsearch-clicksearch').parent().hide();
+
 		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
 		openModalWindow(gSearchModal);
 	}
@@ -514,7 +514,7 @@ function MeetingMap(inConfig) {
 		return false;
 	}
 	function drawMarkers(expand = false) {
-		if (!gDelegate.hasClickSearch()) return;
+		if (!gDelegate.hasClickSearch() && !config.filter_visible) return;
 		gDelegate.clearAllMarkers();
 		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.
@@ -657,18 +657,20 @@ function MeetingMap(inConfig) {
 		}
 	}
 	function triggerCroutonMapNewQuery(ev) {
-		console.log("trigger");
 		if (isMouseDown) return;
 		gMeetingIdsFromCrouton = null;
-		console.log("mouseUp");
+
 		if (!keepProjection) {
-			console.log("doSearch");
-			keepProjection = true;
-			crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth());
-		}
-		else {
+			console.log(config.minVisibilityQuery+1);
+			if (gDelegate.getZoom() < config.minVisibilityQuery) {
+				showBmltSearchDialog(null,true);
+			} else {
+				keepProjection = true;
+				crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth());
+			}
+		} else {
 			keepProjection = false;
-			console.log("keepProjection off");
+			filterVisible(true);
 		}
 	}
 	function filterVisible(on=true) {
@@ -806,7 +808,7 @@ function MeetingMap(inConfig) {
 	}
 
 	function getSearchWidth() {
-		return (config.filter_visible) ? getScreenRadius() : config.map_search.width;
+		return (config.filter_visible && gDelegate.getZoom() >= config.minVisibilityQuery) ? getScreenRadius() : config.map_search.width;
 	}
 	/****************************************************************************************
 	 *								MAIN FUNCTIONAL INTERFACE								*

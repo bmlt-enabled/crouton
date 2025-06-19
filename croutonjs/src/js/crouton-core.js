@@ -92,7 +92,8 @@ function Crouton(config) {
 		minZoom: 6,
 		maxZoom: 17,
 		distance_units: 'miles',
-		noMap: false
+		noMap: false,
+		minVisibilityQuery: 8,
 	};
 
 	self.setConfig(config);
@@ -433,6 +434,7 @@ function Crouton(config) {
 		jQuery(".oddRow").removeClass("oddRow");
 	};
 	self.updateFilters = function() {
+		if (!self.dropdownData) return;
 		const getId = function (row) {return row.id.replace("meeting-data-row-", "")};
 		// The options available for this filter have to take into account all other filters, but ignore the
 		// filter itself (otherwise there's only one option!)

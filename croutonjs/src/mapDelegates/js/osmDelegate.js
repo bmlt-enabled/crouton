@@ -1,4 +1,6 @@
 function MapDelegate(config) {
+	if (config.map_search && config.filter_visible) config.minVisibilityQuery = parseInt(config.minVisibilityQuery);
+	else config.minVisibilityQuery = -1;
     var g_icon_image_single = L.icon({
 		iconUrl: config.BMLTPlugin_images+"/NAMarker.png",
 		shadowUrl: config.BMLTPlugin_images+"/NAMarkerS.png",
@@ -383,7 +385,11 @@ function addControl(div,pos,cb) {
 	function fitBounds(locations) {
 		if (!gMainMap) return;
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
-		gMainMap.fitBounds(bounds);
+		const target = gMainMap._getBoundsCenterZoom(bounds);
+		if (target.zoom < config.minVisibilityQuery) {
+			gMainMap.flyTo(target.center, config.minVisibilityQuery);
+		}
+		else gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
 		if (!gMainMap) return;
