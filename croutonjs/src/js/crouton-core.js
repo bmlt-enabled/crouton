@@ -97,7 +97,8 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
-	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width) {
+	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width, fitBounds=true) {
+		const original_query = self.config['custom_query'];
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
 			+ "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
@@ -105,8 +106,9 @@ function Crouton(config) {
 				self.config.refresh_map=1;
 				self.config.show_map = 1;
 				self.reset();
-				self.render();
+				self.render(false, fitBounds);
 		});
+		self.config['custom_query'] = original_query;
 	};
 	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
@@ -1069,7 +1071,7 @@ Crouton.prototype.searchMap = function() {
 		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
 	});
 }
-Crouton.prototype.render = function(doMeetingMap = false) {
+Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	var self = this;
 
 	if (!(self.config.map_search && self.config.filter_visible)) {
@@ -1395,7 +1397,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['refresh_map']) {
-						croutonMap.refreshMeetings(self.meetingData, true, true);
+						croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';
