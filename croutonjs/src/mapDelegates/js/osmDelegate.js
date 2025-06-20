@@ -1,4 +1,6 @@
 function MapDelegate(config) {
+	if (config.map_search && config.filter_visible) config.minVisibilityQuery = parseInt(config.minVisibilityQuery);
+	else config.minVisibilityQuery = -1;
     var g_icon_image_single = L.icon({
 		iconUrl: config.BMLTPlugin_images+"/NAMarker.png",
 		shadowUrl: config.BMLTPlugin_images+"/NAMarkerS.png",
@@ -123,6 +125,7 @@ function MapDelegate(config) {
 	function getZoomAdjust(only_out,filterMeetings) {
 		if (!gMainMap) return 12;
 		var ret = gMainMap.getZoom();
+		if (config.map_search && config.filter_visible) return ret;
 		var center = gMainMap.getCenter();
 		var bounds = gMainMap.getBounds();
 		var zoomedOut = false;
@@ -382,7 +385,11 @@ function addControl(div,pos,cb) {
 	function fitBounds(locations) {
 		if (!gMainMap) return;
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
-		gMainMap.fitBounds(bounds);
+		const target = gMainMap._getBoundsCenterZoom(bounds);
+		if (target.zoom < config.minVisibilityQuery) {
+			gMainMap.flyTo(target.center, config.minVisibilityQuery);
+		}
+		else gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
 		if (!gMainMap) return;
@@ -406,6 +413,16 @@ function addControl(div,pos,cb) {
 			})
 		});
 	}
+	function getCorners() {
+        var bounds = gMainMap.getBounds();
+        return {
+            "ne" : {"lat": bounds.getNorthEast().lat, "lng": bounds.getNorthEast().lng},
+            "sw" : {"lat": bounds.getSouthWest().lat, "lng": bounds.getSouthWest().lng}
+        }
+    }
+	function getCenter() {
+		return {"lat": gMainMap.getCenter().lat, "lng": gMainMap.getCenter().lng};
+	}
 	function modalOn() {
 		if (gMainMap) gMainMap.dragging.disable()
 	}
@@ -417,7 +434,7 @@ function addControl(div,pos,cb) {
 	}
 	function returnTrue() {return true;}
 	function hasClickSearch() {
-		return gMainMap != null;
+		return (gMainMap != null) && !(config.map_search && config.filter_visible);
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -446,6 +463,8 @@ function addControl(div,pos,cb) {
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
 	this.hasClickSearch = hasClickSearch;
+	this.getCorners = getCorners;
+	this.getCenter = getCenter;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -474,3 +493,5 @@ MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.getCorners = null;
+MapDelegate.prototype.getCenter = null;

@@ -1,5 +1,7 @@
 function MapDelegate(in_config) {
     const config = in_config;
+    if (!(config.map_search && config.filter_visible)) config.minVisibilityQuery = -1;
+    else config.minVisibilityQuery = parseInt( config.minVisibilityQuery );
     var g_icon_image_single = null;
     var g_icon_image_multi = null;
     var g_icon_image_selected = null;
@@ -94,7 +96,8 @@ function MapDelegate(in_config) {
     function fitBounds(locations) {
         if (!gMainMap) return;
         google.maps.event.addListenerOnce(gMainMap, "bounds_changed", function () {
-            gMainMap.setZoom(parseInt(Math.min(gMainMap.getZoom(), config.maxZoom)));
+            const newZoom = parseInt(Math.max(Math.min(gMainMap.getZoom(), config.maxZoom), config.minVisibilityQuery))
+            if (newZoom != gMainMap.getZoom()) gMainMap.setZoom(newZoom);
         });
         let start = new google.maps.LatLngBounds();  // avoid occasional timing problem
         if (!start) return;
@@ -124,6 +127,7 @@ function MapDelegate(in_config) {
     function getZoomAdjust(only_out,filterMeetings) {
         if (!gMainMap) return 12;
         var ret = gMainMap.getZoom();
+        if (config.map_search && config.filter_visible) return ret;
         var center = gMainMap.getCenter();
         var bounds = gMainMap.getBounds();
         var zoomedOut = false;
@@ -410,6 +414,17 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
+    function getCorners() {
+        var bounds = gMainMap.getBounds();
+        return {
+            "ne" : {"lat": bounds.getNorthEast().lat(), "lng": bounds.getNorthEast().lng()},
+            "sw" : {"lat": bounds.getSouthWest().lat(), "lng": bounds.getSouthWest().lng()}
+        }
+    }
+    function getCenter() {
+        var center = gMainMap.getCenter();
+        return { "lat": center.lat(), "lng": center.lng()}
+    }
     function afterInit(f) {
         if (!gMainMap) return;
         if (typeof gMainMap.getBounds()  !== 'undefined') f();
@@ -418,7 +433,7 @@ function geoCallback( in_geocode_response ) {
     function modalOn() {}
     function modalOff() {}
 	function hasClickSearch() {
-		return gMainMap != null;
+		return gMainMap != null && !(config.map_search && config.filter_visible);
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -448,6 +463,8 @@ function geoCallback( in_geocode_response ) {
     this.removeListener = removeListener;
     this.afterInit = afterInit;
     this.hasClickSearch = hasClickSearch;
+    this.getCorners = getCorners;
+    this.getCenter = getCenter;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -477,3 +494,5 @@ MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.getCorners = null;
+MapDelegate.prototype.getCenter= null;
