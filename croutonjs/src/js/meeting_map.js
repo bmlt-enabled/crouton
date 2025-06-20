@@ -344,7 +344,6 @@ function MeetingMap(inConfig) {
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		if (fitBounds) {
 			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
-			console.log("fitBounds");
 			gDelegate.fitBounds(lat_lngs);
 		}
 		searchResponseCallback();
@@ -653,19 +652,15 @@ function MeetingMap(inConfig) {
 	function triggerCroutonMapNewQuery(ev) {
 		if (isMouseDown) return;
 		gMeetingIdsFromCrouton = null;
-		console.log("in trigger");
 		if (!findingAllMeetingsInViewport) {
 			if (gDelegate.getZoom() < config.minVisibilityQuery) {
 				showBmltSearchDialog(null,true);
 			} else {
 				findingAllMeetingsInViewport = true;
-				console.log("doing search---findingAllMeetingsInViewport on");
-				console.log(gDelegate.getCenter());
 				crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth(), false);
 			}
 		} else {
 			findingAllMeetingsInViewport = false;
-			console.log("findingAllMeetingsInViewports off");
 			filterVisible(true);
 		}
 	}
