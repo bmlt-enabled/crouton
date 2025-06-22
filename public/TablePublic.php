@@ -63,6 +63,7 @@ if (!class_exists("Crouton\TablePublic")) {
         {
             $post_to_check = get_post(get_the_ID());
             $post_content = $post_to_check->post_content ?? '';
+            $post_content = apply_filters('Crouton_post_content', $post_content);
             $tags = ['bmlt_tabs', 'bmlt_map', 'crouton_map', 'crouton_tabs', 'bmlt_handlebar', 'init_crouton'];
             preg_match_all('/' . get_shortcode_regex($tags) . '/', $post_content, $matches, PREG_SET_ORDER);
             if (empty($matches)) {
