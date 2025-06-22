@@ -14,7 +14,7 @@ function MeetingMap(inConfig) {
 	var gMeetingIdsFromCrouton = null;
 	var loadedCallbackFunction = null;
 	var loadedCallbackArgs = [];
-	var findingAllMeetingsInViewport = false;
+	var oldBounds = false;
 	var isMouseDown = false;
 	function preloadApiLoadedCallback(f,a) {
 		loadedCallbackFunction = f;
@@ -646,22 +646,21 @@ function MeetingMap(inConfig) {
 	function onDragEnd() {
 		isMouseDown = false;
 		// if no [crouton_map], then turn filter visible back on.
-		if (config.map_search) triggerCroutonMapNewQuery(null);
+		if (config.map_search && config.filter_visible) triggerCroutonMapNewQuery(null);
 		else filterVisible(true);
 	}
 	function triggerCroutonMapNewQuery(ev) {
 		if (isMouseDown) return;
 		gMeetingIdsFromCrouton = null;
-		if (!findingAllMeetingsInViewport) {
-			if (gDelegate.getZoom() < config.minVisibilityQuery) {
-				showBmltSearchDialog(null,true);
-			} else {
-				findingAllMeetingsInViewport = true;
-				crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth(), false);
-			}
+		corners = gDelegate.getCorners();
+		if (oldBounds && gDelegate.contains(oldBounds,corners.ne.lat,corners.ne.lng)
+					  && gDelegate.contains(oldBounds,corners.sw.lat,corners.sw.lng)) {
+			filterVisible();
+		} else if (gDelegate.getZoom() < config.minVisibilityQuery) {
+			showBmltSearchDialog(null,true);
 		} else {
-			findingAllMeetingsInViewport = false;
-			filterVisible(true);
+			oldBounds = gDelegate.getBounds();
+			crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth(), false);
 		}
 	}
 	function filterVisible(on=true) {
