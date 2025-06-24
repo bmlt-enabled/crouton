@@ -12,6 +12,7 @@ function MeetingMap(inConfig) {
 	if (!config.marker_contents_template) config.marker_contents_template = croutonDefaultTemplates.marker_contents_template;
 	var gAllMeetings = [];
 	var gMeetingIdsFromCrouton = null;
+	var gSearchPoint = false;
 	var loadedCallbackFunction = null;
 	var loadedCallbackArgs = [];
 	var oldBounds = false;
@@ -69,7 +70,10 @@ function MeetingMap(inConfig) {
 			let loc = {latitude: config.lat, longitude: config.lng, zoom: config.zoom};
 			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc, hide)) {
-				if (!config.map_search) {
+				// crouton_map and filter_visible triggers a query, Otherwise, redraw markers
+				if (config.map_search && config.filter_visible) {
+					gDelegate.addListener('idle', triggerCroutonMapNewQuery, false);
+				} else {
 					gDelegate.addListener('zoomend', function (ev) {
 						if (shouldRedrawMarkers() && gAllMeetings) {
 							if (listOnlyVisible) {
@@ -79,6 +83,10 @@ function MeetingMap(inConfig) {
 							} else searchResponseCallback();
 						}
 					}, false);
+				}
+				// set up control buttons in map
+				if (config.map_search) gDelegate.addControl(createSearchButton(), 'topleft', cb);
+				else {
 					if (menuContext) {
 						menuContext.imageDir = config.BMLTPlugin_images;
 						gDelegate.addControl(createNext24Toggle(), 'topleft');
@@ -87,9 +95,6 @@ function MeetingMap(inConfig) {
 						menuContext = {imageDir: config.BMLTPlugin_images, config: config, dropdownData:false};
 						gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 					}
-				} else {
-					if (config.filter_visible) gDelegate.addListener('idle', triggerCroutonMapNewQuery, false);
-					gDelegate.addControl(createSearchButton(), 'topleft', cb);
 				}
 			}
 		};
@@ -271,6 +276,7 @@ function MeetingMap(inConfig) {
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
 			showThrobber();
+			gSearchPoint = {"lat": position.latitude, "lng": position.longitude};
 			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
 			if (activeModal == gSearchModal) closeModalWindow(gSearchModal);
 		}).catch(error => {
@@ -282,6 +288,7 @@ function MeetingMap(inConfig) {
 		croutonMap.showMap(false,false);
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
+			gSearchPoint = {"lat": position.lat, "lng": position.lng};
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
 		});
 		closeModalWindow(gSearchModal);
@@ -327,6 +334,7 @@ function MeetingMap(inConfig) {
 			hideThrobber();
 			return;
 		}
+		gSearchPoint = {"lat": latlng.lat, "lng": latlng.lng};
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {
@@ -335,6 +343,7 @@ function MeetingMap(inConfig) {
 			else if (config.map_search.coordinates_search) {
 				showThrobber();
 				config.map_search.coordinates_search = false;
+				gSearchPoint = {"lat": config.map_search.latitude, "lng": config.map_search.longitude};
 				crouton.searchByCoordinates(config.map_search.latitude, config.map_search.longitude, config.map_search.width);
 			}
 			else if (config.map_search.location) gDelegate.callGeocoder(config.map_search.location, null, mapSearchGeocode);
@@ -432,7 +441,7 @@ function MeetingMap(inConfig) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
 	function showBmltSearchDialog(e, forceClickSeach=false) {
-		if (forceClickSeach||gDelegate.hasClickSearch())
+		if (gDelegate.isMapDefined() && (forceClickSeach||!(config.map_search && config.filter_visible)))
 			jQuery('#bmltsearch-clicksearch').parent().show();
 		else
 			jQuery('#bmltsearch-clicksearch').parent().hide();
@@ -513,7 +522,7 @@ function MeetingMap(inConfig) {
 		return false;
 	}
 	function drawMarkers(expand = false) {
-		if (!gDelegate.hasClickSearch() && !config.filter_visible) return;
+		if (!gDelegate.isMapDefined()) return;
 		gDelegate.clearAllMarkers();
 		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.
@@ -791,7 +800,11 @@ function MeetingMap(inConfig) {
 		var d = R * c;
   		return d; // returns the distance in meter
 	}
-
+	function getDistanceFromSearch(p) {
+		if (!gSearchPoint) return false;
+		const d = getDistance(p, gSearchPoint);
+		return {"km": d/1000.0, "miles": d*0.00062137119};
+	}
 	function getScreenRadius() {
 		var corners = gDelegate.getCorners();
 		return (getDistance(corners.ne, corners.sw)/2000.0) * ((crouton.config.distance_units == 'km') ? 1.0 : 0.62137119);
@@ -809,7 +822,7 @@ function MeetingMap(inConfig) {
 	this.rowClick = focusOnMeeting;
 	this.apiLoadedCallback = apiLoadedCallback;
 	this.refreshMeetings = loadAllMeetings;
-
+	this.getDistanceFromSearch = getDistanceFromSearch;
 	this.openModalWindow = openModalWindow;
 	this.closeModalWindow = closeModalWindow;
 	this.loadPopupMap = loadPopupMap;
@@ -822,6 +835,7 @@ MeetingMap.prototype.fillMap = null;
 MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
 MeetingMap.prototype.refreshMeetings = null;
+MeetingMap.prototype.getDistanceFromSearch = null;
 
 MeetingMap.prototype.openModalWindow = null;
 MeetingMap.prototype.closeModalWindow = null;

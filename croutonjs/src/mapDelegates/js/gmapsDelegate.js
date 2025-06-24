@@ -432,8 +432,8 @@ function geoCallback( in_geocode_response ) {
     }
     function modalOn() {}
     function modalOff() {}
-	function hasClickSearch() {
-		return gMainMap != null && !(config.map_search && config.filter_visible);
+	function isMapDefined() {
+		return gMainMap != null;
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -462,7 +462,7 @@ function geoCallback( in_geocode_response ) {
     this.modalOff = modalOff;
     this.removeListener = removeListener;
     this.afterInit = afterInit;
-    this.hasClickSearch = hasClickSearch;
+    this.isMapDefined = isMapDefined;
     this.getCorners = getCorners;
     this.getCenter = getCenter;
 }
@@ -493,6 +493,6 @@ MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
-MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.isMapDefined = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter= null;
