@@ -288,7 +288,7 @@ function MeetingMap(inConfig) {
 		croutonMap.showMap(false,false);
 		gDelegate.clickSearch(e, function(lat,lng) {
 			showThrobber();
-			gSearchPoint = {"lat": position.lat, "lng": position.lng};
+			gSearchPoint = {"lat": lat, "lng": lng};
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
 		});
 		closeModalWindow(gSearchModal);
