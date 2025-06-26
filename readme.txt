@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 = 3.23.0 =
 * Setting filter_visible=1 on [crouton_map] returns all meetings in the bounds of them map, ignoring the map_search.width attribute.
 * In the settings described above, new queries are fired whenever the map is zoomed or dragged.
+* Place marker at search point.
 
 = 3.22.4 =
 * Removed onClick attribute from default templates, as this was filtered by security requirements, making button into no-op.
