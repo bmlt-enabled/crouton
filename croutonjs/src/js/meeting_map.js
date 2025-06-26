@@ -494,10 +494,16 @@ function MeetingMap(inConfig) {
 		};
 		try {
 			drawMarkers(expand);
+			if (gSearchPoint) {
+				gDelegate.markSearchPoint([gSearchPoint.lat, gSearchPoint.lng]);
+			}
 		} catch (e) {
 			console.log(e);
 			gDelegate.addListener('projection_changed', function (ev) {
 				drawMarkers(expand);
+				if (gSearchPoint) {
+					gDelegate.markSearchPoint([gSearchPoint.lat, gSearchPoint.lng]);
+				}
 			}, true);
 		}
 	};
