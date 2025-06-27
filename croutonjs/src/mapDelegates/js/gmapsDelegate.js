@@ -1,7 +1,5 @@
 function MapDelegate(in_config) {
     const config = in_config;
-    if (!(config.map_search && config.filter_visible)) config.minVisibilityQuery = -1;
-    else config.minVisibilityQuery = parseInt( config.minVisibilityQuery );
     var g_icon_image_single = null;
     var g_icon_image_multi = null;
     var g_icon_image_selected = null;
@@ -98,7 +96,7 @@ function MapDelegate(in_config) {
     function fitBounds(locations) {
         if (!gMainMap) return;
         google.maps.event.addListenerOnce(gMainMap, "bounds_changed", function () {
-            const newZoom = parseInt(Math.max(Math.min(gMainMap.getZoom(), config.maxZoom), config.minVisibilityQuery))
+            const newZoom = parseInt(Math.min(gMainMap.getZoom(), config.maxZoom));
             if (newZoom != gMainMap.getZoom()) gMainMap.setZoom(newZoom);
         });
         let start = new google.maps.LatLngBounds();  // avoid occasional timing problem

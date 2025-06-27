@@ -671,11 +671,12 @@ function MeetingMap(inConfig) {
 		if (oldBounds && gDelegate.contains(oldBounds,corners.ne.lat,corners.ne.lng)
 					  && gDelegate.contains(oldBounds,corners.sw.lat,corners.sw.lng)) {
 			filterVisible();
-		} else if (gDelegate.getZoom() < config.minVisibilityQuery) {
+		} else if (getScreenRadius('km') > config.maxTomatoWidth) {
 			showBmltSearchDialog(null,true);
 		} else {
 			oldBounds = gDelegate.getBounds();
-			crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getSearchWidth(), false);
+			showThrobber();
+			crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getScreenRadius(), false);
 		}
 	}
 	function filterVisible(on=true) {
@@ -811,13 +812,10 @@ function MeetingMap(inConfig) {
 		const d = getDistance(p, gSearchPoint);
 		return {"km": d/1000.0, "miles": d*0.00062137119};
 	}
-	function getScreenRadius() {
+	function getScreenRadius(units=false) {
+		if (!units) units = crouton.config.distance_units;
 		var corners = gDelegate.getCorners();
-		return (getDistance(corners.ne, corners.sw)/2000.0) * ((crouton.config.distance_units == 'km') ? 1.0 : 0.62137119);
-	}
-
-	function getSearchWidth() {
-		return (config.filter_visible && gDelegate.getZoom() >= config.minVisibilityQuery) ? getScreenRadius() : config.map_search.width;
+		return (getDistance(corners.ne, corners.sw)/2000.0) * ((units == 'km') ? 1.0 : 0.62137119);
 	}
 	/****************************************************************************************
 	 *								MAIN FUNCTIONAL INTERFACE								*

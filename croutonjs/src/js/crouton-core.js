@@ -93,7 +93,7 @@ function Crouton(config) {
 		maxZoom: 17,
 		distance_units: 'miles',
 		noMap: false,
-		minVisibilityQuery: 8,
+		maxTomatoWidth: 160,
 	};
 
 	self.setConfig(config);
