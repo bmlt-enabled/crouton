@@ -96,8 +96,7 @@ function MapDelegate(in_config) {
     function fitBounds(locations) {
         if (!gMainMap) return;
         google.maps.event.addListenerOnce(gMainMap, "bounds_changed", function () {
-            const newZoom = parseInt(Math.min(gMainMap.getZoom(), config.maxZoom));
-            if (newZoom != gMainMap.getZoom()) gMainMap.setZoom(newZoom);
+            gMainMap.setZoom(parseInt(Math.min(gMainMap.getZoom(), config.maxZoom)));
         });
         let start = new google.maps.LatLngBounds();  // avoid occasional timing problem
         if (!start) return;
