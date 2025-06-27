@@ -353,6 +353,7 @@ function MeetingMap(inConfig) {
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		if (fitBounds) {
 			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
 			gDelegate.fitBounds(lat_lngs);
 		}
 		searchResponseCallback();
@@ -372,7 +373,9 @@ function MeetingMap(inConfig) {
 				showGeocodingDialog();
 			}
 		} else {
-			if (!config.centerMe && !config.goto) gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+			if ((!config.centerMe && !config.goto) && !(config.map_search && config.filter_visible)) {
+			  gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+			}
 			if (config.goto) gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
 		}
 	}

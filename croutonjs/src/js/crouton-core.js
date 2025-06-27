@@ -1096,6 +1096,9 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 
 		if (self.isEmpty(self.meetingData)) {
 			self.showMessage("No meetings found for parameters specified.");
+			if (self.config['refresh_map']) {
+				croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
+			}
 			return;
 		}
 
