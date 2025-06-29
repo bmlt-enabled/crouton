@@ -444,7 +444,7 @@ function MeetingMap(inConfig) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
 	function showBmltSearchDialog(e, forceClickSeach=false) {
-		if (gDelegate.isMapDefined() && (forceClickSeach||!(config.map_search && config.filter_visible)))
+		if (gDelegate.isMapDefined())
 			jQuery('#bmltsearch-clicksearch').parent().show();
 		else
 			jQuery('#bmltsearch-clicksearch').parent().hide();
