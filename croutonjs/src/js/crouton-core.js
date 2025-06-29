@@ -92,30 +92,25 @@ function Crouton(config) {
 		minZoom: 6,
 		maxZoom: 17,
 		distance_units: 'miles',
-		noMap: false
+		noMap: false,
+		maxTomatoWidth: 160,
 	};
 
 	self.setConfig(config);
-	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width) {
-
+	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width, fitBounds=true) {
+		const original_query = self.config['custom_query'];
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
 			+ "&lat_val=" + latitude + "&long_val=" + longitude
 			+ (self.config['distance_units'] === "km" ? '&geo_width_km=' : '&geo_width=') + width;
-		self.meetingSearch()
-			.then(function() {
+		self.meetingSearch(function() {
 				self.config.refresh_map=1;
 				self.config.show_map = 1;
 				self.reset();
-				self.render();
-				/*
-				croutonMap.reload(self.meetingData);
-				croutonMap.initMap(function() {
-					croutonMap.addCurrentLocationPin(latitude, longitude);
-				});
-				*/
-			});
+				self.render(false, fitBounds);
+		});
+		self.config['custom_query'] = original_query;
 	};
-	self.getMeetings = function(url) {
+	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
 		if (self.config['extra_meetings'].length > 0) {
@@ -140,16 +135,19 @@ function Crouton(config) {
 					var fullUrl = self.config['root_server'] + url
 					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
+					self.meetingData = [];
+					self.formatsData = [];
 					self.mutex = false;
+					cb && cb();
 					return;
 				}
 				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
 				self.meetingData = mainMeetings['meetings'];
 				self.formatsData = mainMeetings['formats'];
-
 				if (extraMeetings) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
+				cb && cb();
 				self.mutex = false;
 			});
 	};
@@ -238,7 +236,7 @@ function Crouton(config) {
 	}
 	self.mutex = true;
 
-	self.meetingSearch = function() {
+	self.meetingSearch = function(cb=null) {
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
 			self.addDatafieldsToQuery();
 
@@ -266,7 +264,7 @@ function Crouton(config) {
 
 		if (self.config['custom_query'] != null) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
-			return self.getMeetings(url);
+			return self.getMeetings(url,cb);
 		} else if (self.config['service_body'].length > 0) {
 			for (var i = 0; i < self.config['service_body'].length; i++) {
 				url += '&services[]=' + self.config['service_body'][i];
@@ -278,7 +276,7 @@ function Crouton(config) {
 
 			url += '&sort_keys=' + self.config['sort_keys'];
 
-			return self.getMeetings(url);
+			return self.getMeetings(url,cb);
 		} else {
 			return new Promise(function(resolve, reject) {
 				resolve();
@@ -438,6 +436,7 @@ function Crouton(config) {
 		jQuery(".oddRow").removeClass("oddRow");
 	};
 	self.updateFilters = function() {
+		if (!self.dropdownData) return;
 		const getId = function (row) {return row.id.replace("meeting-data-row-", "")};
 		// The options available for this filter have to take into account all other filters, but ignore the
 		// filter itself (otherwise there's only one option!)
@@ -801,21 +800,29 @@ function Crouton(config) {
 			}
 
 			meetingData[m]['distance'] = '';
-			if (self.config['distance_units'] === "km") {
-				if (meetingData[m]['distance_in_km']) {
-					const d = meetingData[m]['distance_in_km'];
-					if (d < 1) {
-						meetingData[m]['distance'] = Math.round( d * 1000) + 'm';
-					}
-					else {
-						meetingData[m]['distance'] = (Math.round(d * 10) / 10).toFixed(1) + 'km';
+			if (meetingData[m]['venue_type'] != 2) {
+				const point = {"lat": meetingData[m]['latitude'], "lng": meetingData[m]['longitude']};
+				const distances = croutonMap.getDistanceFromSearch(point);
+				if (distances) {
+					meetingData[m]['distance_in_km'] = distances.km;
+					meetingData[m]['distance_in_miles'] = distances.miles;
+
+					if (self.config['distance_units'] === "km") {
+						if (meetingData[m]['distance_in_km']) {
+							const d = meetingData[m]['distance_in_km'];
+							if (d < 1) {
+								meetingData[m]['distance'] = Math.round( d * 1000) + 'm';
+							}
+							else {
+								meetingData[m]['distance'] = (Math.round(d * 10) / 10).toFixed(1) + 'km';
+							}
+						}
+					} else if (meetingData[m]['distance_in_miles']) {
+						const d = meetingData[m]['distance_in_miles'];
+						meetingData[m]['distance'] = (Math.round(d * 100) / 100).toFixed(2) + ' miles';
 					}
 				}
-			} else if (meetingData[m]['distance_in_miles']) {
-				const d = meetingData[m]['distance_in_miles'];
-				meetingData[m]['distance'] = (Math.round(d * 100) / 100).toFixed(2) + ' miles';
 			}
-
 			meetings.push(meetingData[m])
 		}
 
@@ -1072,7 +1079,7 @@ Crouton.prototype.searchMap = function() {
 		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
 	});
 }
-Crouton.prototype.render = function(doMeetingMap = false) {
+Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	var self = this;
 
 	if (!self.config.map_search) {
@@ -1089,6 +1096,9 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 
 		if (self.isEmpty(self.meetingData)) {
 			self.showMessage("No meetings found for parameters specified.");
+			if (self.config['refresh_map']) {
+				croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
+			}
 			return;
 		}
 
@@ -1398,7 +1408,7 @@ Crouton.prototype.render = function(doMeetingMap = false) {
 						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
 					}
 					if (self.config['refresh_map']) {
-						croutonMap.refreshMeetings(self.meetingData, true, true);
+						croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';

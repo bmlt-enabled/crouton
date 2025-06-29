@@ -26,10 +26,20 @@ function MapDelegate(config) {
 		shadowAnchor: [12, 32],  // the same for the shadow
 		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
     });
+	var g_icon_image_searchpoimt = L.icon({
+		iconUrl: config.BMLTPlugin_images+"/SearchPoint.png",
+		shadowUrl: config.BMLTPlugin_images+"/NAMarkerS.png",
+		iconSize:     [23, 32], // size of the icon
+		shadowSize:   [43, 32], // size of the shadow
+		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32],  // the same for the shadow
+		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
+    });
     var	gAllMarkers = [];				///< Holds all the markers.
 	var gMainMap;
 	var gTileLayer;
 	var gClusterLayer = null;
+	var gSearchPointMarker = false;
     function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
 		if ( inHidden ) {
@@ -123,6 +133,7 @@ function MapDelegate(config) {
 	function getZoomAdjust(only_out,filterMeetings) {
 		if (!gMainMap) return 12;
 		var ret = gMainMap.getZoom();
+		if (config.map_search && config.filter_visible) return ret;
 		var center = gMainMap.getCenter();
 		var bounds = gMainMap.getBounds();
 		var zoomedOut = false;
@@ -171,6 +182,12 @@ function MapDelegate(config) {
 		if (!gMainMap) return null;
 		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
     }
+	function markSearchPoint(inCoords) {
+		if (!gMainMap) return;
+		if (gSearchPointMarker) gSearchPointMarker.remove();
+		gSearchPointMarker = L.marker(inCoords, {icon: g_icon_image_searchpoimt});
+		gSearchPointMarker.addTo(gMainMap);
+	}
 	function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,	///< Flag if marker has multiple meetings
         in_html,		///< The info window HTML
@@ -382,6 +399,7 @@ function addControl(div,pos,cb) {
 	function fitBounds(locations) {
 		if (!gMainMap) return;
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
+		const target = gMainMap._getBoundsCenterZoom(bounds);
 		gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
@@ -406,6 +424,16 @@ function addControl(div,pos,cb) {
 			})
 		});
 	}
+	function getCorners() {
+        var bounds = gMainMap.getBounds();
+        return {
+            "ne" : {"lat": bounds.getNorthEast().lat, "lng": bounds.getNorthEast().lng},
+            "sw" : {"lat": bounds.getSouthWest().lat, "lng": bounds.getSouthWest().lng}
+        }
+    }
+	function getCenter() {
+		return {"lat": gMainMap.getCenter().lat, "lng": gMainMap.getCenter().lng};
+	}
 	function modalOn() {
 		if (gMainMap) gMainMap.dragging.disable()
 	}
@@ -416,8 +444,8 @@ function addControl(div,pos,cb) {
 		f();
 	}
 	function returnTrue() {return true;}
-	function hasClickSearch() {
-		return gMainMap != null;
+	function isMapDefined() {
+		return (gMainMap != null);
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -445,7 +473,10 @@ function addControl(div,pos,cb) {
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
-	this.hasClickSearch = hasClickSearch;
+	this.isMapDefined = isMapDefined;
+	this.getCorners = getCorners;
+	this.getCenter = getCenter;
+	this.markSearchPoint = markSearchPoint;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -473,4 +504,7 @@ MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
-MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype.getCorners = null;
+MapDelegate.prototype.getCenter = null;
+MapDelegate.prototype.markSearchPoint = null;
