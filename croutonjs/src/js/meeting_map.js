@@ -118,7 +118,7 @@ function MeetingMap(inConfig) {
 			if (text === "") return;
 			showThrobber();
 			gDelegate.callGeocoder(text, null, mapSearchGeocode);
-			closeModalWindow(gSearchModal);
+			clearMessageAndClose(gSearchModal);
 		});
 		controlDiv.querySelector("#modal-seach-parameters").style.display = 'none';
 		controlDiv.querySelector("#show-search-parameters").addEventListener('click', function (e) {
@@ -148,7 +148,7 @@ function MeetingMap(inConfig) {
 		});
 
 		controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
-		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
+		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>clearMessageAndClose(e.target)));
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
 		gSearchModal.parentElement.removeChild(gSearchModal);
 
@@ -273,12 +273,16 @@ function MeetingMap(inConfig) {
 		if (gAllMeetings)
 			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
 	};
+	function clearMessageAndClose(modal) {
+		jQuery('#zoomed-out-message').addClass('hide');
+		closeModalWindow(modal);
+	}
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
 			showThrobber();
 			gSearchPoint = {"lat": position.latitude, "lng": position.longitude};
 			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
-			if (activeModal == gSearchModal) closeModalWindow(gSearchModal);
+			if (activeModal == gSearchModal) clearMessageAndClose(gSearchModal);
 		}).catch(error => {
 			console.log(error.message);
 			if (activeModal != gSearchModal) showBmltSearchDialog();
@@ -291,7 +295,7 @@ function MeetingMap(inConfig) {
 			gSearchPoint = {"lat": lat, "lng": lng};
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
 		});
-		closeModalWindow(gSearchModal);
+		clearMessageAndClose(gSearchModal);
 	}
 	function createThrobber(inDiv) {
 		if (!inDiv.myThrobber) {
@@ -352,9 +356,16 @@ function MeetingMap(inConfig) {
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		if (fitBounds) {
-			const lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
 			gDelegate.fitBounds(lat_lngs);
+			if (config.map_search && config.filter_visible) {
+				if (getScreenRadius('km') > config.maxTomatoWidth && lat_lngs.length > 2) {
+					lat_lngs.sort((a,b) => getDistance({"lat":b[0],"lng":b[1]},gSearchPoint) - getDistance({"lat":a[0],"lng":a[1]},gSearchPoint));
+					lat_lngs = lat_lngs.slice(0, lat_lngs.length/2);
+					gDelegate.fitBounds(lat_lngs);
+				}
+			}
 		}
 		searchResponseCallback();
 		hideThrobber();
@@ -675,6 +686,7 @@ function MeetingMap(inConfig) {
 					  && gDelegate.contains(oldBounds,corners.sw.lat,corners.sw.lng)) {
 			filterVisible();
 		} else if (getScreenRadius('km') > config.maxTomatoWidth) {
+			jQuery('#zoomed-out-message').removeClass('hide');
 			showBmltSearchDialog(null,true);
 		} else {
 			oldBounds = gDelegate.getBounds();
