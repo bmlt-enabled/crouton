@@ -360,7 +360,7 @@ function MeetingMap(inConfig) {
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
 			gDelegate.fitBounds(lat_lngs);
 			if (config.map_search && config.filter_visible) {
-				if (getScreenRadius('km') > config.maxTomatoWidth && lat_lngs.length > 2) {
+				while (getScreenRadius('km') > config.maxTomatoWidth && lat_lngs.length > 2) {
 					lat_lngs.sort((a,b) => getDistance({"lat":b[0],"lng":b[1]},gSearchPoint) - getDistance({"lat":a[0],"lng":a[1]},gSearchPoint));
 					lat_lngs = lat_lngs.slice(0, lat_lngs.length/2);
 					gDelegate.fitBounds(lat_lngs);
