@@ -443,8 +443,11 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
-    function getCorners() {
-        var bounds = gMainMap.getBounds();
+    function getCorners(lat_lngs = false) {
+        var bounds = lat_lngs
+		? lat_lngs.reduce(function(b,m) {return b.extend(new google.maps.LatLng(m[0], m[1]));}, new google.maps.LatLngBounds())
+		: gMainMap.getBounds();
+
         return {
             "ne" : {"lat": bounds.getNorthEast().lat(), "lng": bounds.getNorthEast().lng()},
             "sw" : {"lat": bounds.getSouthWest().lat(), "lng": bounds.getSouthWest().lng()}

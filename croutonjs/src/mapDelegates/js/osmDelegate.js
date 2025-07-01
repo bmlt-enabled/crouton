@@ -433,8 +433,11 @@ function addControl(div,pos,cb) {
 			})
 		});
 	}
-	function getCorners() {
-        var bounds = gMainMap.getBounds();
+	function getCorners(lat_lngs = false) {
+        var bounds = lat_lngs
+		? lat_lngs.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds())
+		: gMainMap.getBounds();
+
         return {
             "ne" : {"lat": bounds.getNorthEast().lat, "lng": bounds.getNorthEast().lng},
             "sw" : {"lat": bounds.getSouthWest().lat, "lng": bounds.getSouthWest().lng}

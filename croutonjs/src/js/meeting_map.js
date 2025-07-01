@@ -358,14 +358,15 @@ function MeetingMap(inConfig) {
 		if (fitBounds) {
 			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
-			gDelegate.fitBounds(lat_lngs);
 			if (config.map_search && config.filter_visible) {
-				while (getScreenRadius('km') > config.maxTomatoWidth && lat_lngs.length > 2) {
-					lat_lngs.sort((a,b) => getDistance({"lat":b[0],"lng":b[1]},gSearchPoint) - getDistance({"lat":a[0],"lng":a[1]},gSearchPoint));
+				lat_lngs.sort((a,b) =>  getDistance({"lat":a[0],"lng":a[1]},gSearchPoint) - getDistance({"lat":b[0],"lng":b[1]},gSearchPoint));
+				while (getLatLngRadius(lat_lngs) > config.maxTomatoWidth && lat_lngs.length > 3) {
 					lat_lngs = lat_lngs.slice(0, lat_lngs.length/2);
-					gDelegate.fitBounds(lat_lngs);
 				}
+				if (getLatLngRadius(lat_lngs) > config.maxTomatoWidth)
+					lat_lngs = lat_lngs.slice(1,1);
 			}
+			gDelegate.fitBounds(lat_lngs);
 		}
 		searchResponseCallback();
 		hideThrobber();
@@ -834,6 +835,9 @@ function MeetingMap(inConfig) {
 	}
 	function getBoundsRadius(corners, units = 'km') {
 		return (getDistance(corners.ne, corners.sw)/2000.0) * ((units == 'km') ? 1.0 : 0.62137119);
+	}
+	function getLatLngRadius(lat_lngs) {
+		return getBoundsRadius(gDelegate.getCorners(lat_lngs), 'km');
 	}
 	/****************************************************************************************
 	 *								MAIN FUNCTIONAL INTERFACE								*
