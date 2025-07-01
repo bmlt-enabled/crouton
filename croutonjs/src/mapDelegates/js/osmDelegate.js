@@ -40,6 +40,7 @@ function MapDelegate(config) {
 	var gTileLayer;
 	var gClusterLayer = null;
 	var gSearchPointMarker = false;
+	var gOpenMarker = false;
     function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
 		if ( inHidden ) {
@@ -192,14 +193,16 @@ function MapDelegate(config) {
         multi,	///< Flag if marker has multiple meetings
         in_html,		///< The info window HTML
         in_title,        ///< The tooltip
-		in_ids
+		in_ids,
+		openMarker
 )
 {
 	if (!gMainMap) return;
     var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single);
 
 	let highlightRow = function(target) {
-		let id = target.id.split('-')[1];
+		const id = target.id.split('-')[1];
+		gOpenMarker = id;
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
 		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
@@ -221,10 +224,17 @@ function MapDelegate(config) {
         });
 	});
     marker.on('popupclose', function(e) {
+		gOpenMarker = false;
         marker.setIcon(marker.isMulti ? g_icon_image_multi : g_icon_image_single);
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
+	if (openMarker &&  in_ids.includes(parseInt(openMarker))) {
+		marker.openPopup();
+	}
     gAllMarkers.push( {ids: in_ids, marker: marker} );
+}
+function getOpenMarker() {
+	return gOpenMarker;
 }
 function openMarker(id) {
 	if (!gMainMap) return;
@@ -399,7 +409,6 @@ function addControl(div,pos,cb) {
 	function fitBounds(locations) {
 		if (!gMainMap) return;
 		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
-		const target = gMainMap._getBoundsCenterZoom(bounds);
 		gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
@@ -477,6 +486,7 @@ function addControl(div,pos,cb) {
 	this.getCorners = getCorners;
 	this.getCenter = getCenter;
 	this.markSearchPoint = markSearchPoint;
+	this.getOpenMarker = getOpenMarker;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -508,3 +518,4 @@ MapDelegate.prototype.isMapDefined = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter = null;
 MapDelegate.prototype.markSearchPoint = null;
+MapDelegate.prototype.getOpenMarker = null;

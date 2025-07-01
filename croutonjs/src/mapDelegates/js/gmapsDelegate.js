@@ -13,6 +13,7 @@ function MapDelegate(in_config) {
     var gIsClustering = false;
     var	gAllMarkers = [];				///< Holds all the markers.
     var gSearchPointMarker = false;
+    var gOpenMarker = false;
     function isApiLoaded() {
         return gIsLoaded;
     }
@@ -114,6 +115,9 @@ function MapDelegate(in_config) {
         gMainMap.setZoom(getZoomAdjust(false, filterMeetings));
         f && f();
     }
+    function getOpenMarker() {
+	    return gOpenMarker;
+    }
     function clearAllMarkers ()
     {
         if (!gMainMap) return;
@@ -122,6 +126,7 @@ function MapDelegate(in_config) {
             m.marker.setMap( null );
         });
         gAllMarkers = [];
+        gOpenMarker = false;
     };
     function getZoomAdjust(only_out,filterMeetings) {
         if (!gMainMap) return 12;
@@ -264,7 +269,8 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,
         inHtml,		///< The info window HTML
         inTitle,        ///< The tooltip
-        inIds
+        inIds,
+        openMarker
 )
 {
     if (!gMainMap) return;
@@ -287,7 +293,8 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
     let highlightRow = function(target) {
-        let id = target.id.split('-')[1];
+        const id = target.id.split('-')[1];
+        gOpenMarker = id;
         jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
         jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
         if (typeof crouton == 'undefined') crouton.dayTabFromId(id);
@@ -298,14 +305,30 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
         marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
         gInfoWindow.setContent(marker.desc);
         gInfoWindow.open(gMainMap, marker);
-        jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
-            highlightRow(target);
-        });
-        jQuery('input[type=radio][name=panel]').change(function() {
-            highlightRow(this);
+        gInfoWindow.addListener('visible', function() {
+            jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
+                highlightRow(target);
+            });
+            jQuery('input[type=radio][name=panel]').change(function() {
+                highlightRow(this);
+            });
         });
     });
+    if (openMarker &&  inIds.includes(parseInt(openMarker))) {
+        marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
+        gInfoWindow.setContent(marker.desc);
+        gInfoWindow.open(gMainMap, marker);
+        gInfoWindow.addListener('visible', function() {
+            jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
+                highlightRow(target);
+            });
+            jQuery('input[type=radio][name=panel]').change(function() {
+                highlightRow(this);
+            });
+        });
+    }
     gInfoWindow.addListener('closeclick', function () {
+        gOpenMarker = false;
         gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
         jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
@@ -355,7 +378,6 @@ function openMarker(id) {
     if (!gMainMap) return;
     marker = gAllMarkers.find((m) => m.ids.includes(id));
     if (marker) {
-        google.maps.event.trigger(marker.marker, 'click')
         jQuery("#panel-"+id).prop('checked', true);
         jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
         jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
@@ -473,6 +495,7 @@ function geoCallback( in_geocode_response ) {
     this.getCorners = getCorners;
     this.getCenter = getCenter;
     this.markSearchPoint = markSearchPoint;
+    this.getOpenMarker = getOpenMarker;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -505,3 +528,4 @@ MapDelegate.prototype.isMapDefined = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter= null;
 MapDelegate.prototype.markSearchPoint = null;
+MapDelegate.prototype.getOpenMarker = null;

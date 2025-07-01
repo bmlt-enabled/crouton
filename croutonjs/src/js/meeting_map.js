@@ -543,6 +543,7 @@ function MeetingMap(inConfig) {
 	}
 	function drawMarkers(expand = false) {
 		if (!gDelegate.isMapDefined()) return;
+		const openMarker = gDelegate.getOpenMarker();
 		gDelegate.clearAllMarkers();
 		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.
@@ -554,7 +555,7 @@ function MeetingMap(inConfig) {
 		if (useMarkerCluster()) gDelegate.createClusterLayer();
 		// Draw the meeting markers.
 		overlap_map.forEach(function (marker) {
-			createMapMarker(marker);
+			createMapMarker(marker, openMarker);
 		});
 		gDelegate.addClusterLayer();
 		if (expand) {
@@ -653,13 +654,13 @@ function MeetingMap(inConfig) {
 	/************************************************************************************//**
 	 *	 \brief	This creates a single meeting's marker on the map.							*
 	 ****************************************************************************************/
-	function createMapMarker(meetings) {
+	function createMapMarker(meetings, openMarker) {
 		var main_point = [meetings[0].latitude, meetings[0].longitude];
 		let markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
 		var marker_html = markerTemplate(meetings);
 		gDelegate.createMarker(main_point,
 			(meetings.length > 1),
-			marker_html, null ,meetings.map((m)=>parseInt(m.id_bigint)));
+			marker_html, null, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);
 	};
 	var listOnlyVisible = false;
 	var listener = null;
@@ -829,7 +830,9 @@ function MeetingMap(inConfig) {
 	}
 	function getScreenRadius(units=false) {
 		if (!units) units = crouton.config.distance_units;
-		var corners = gDelegate.getCorners();
+		return getBoundsRadius(gDelegate.getCorners(), units);
+	}
+	function getBoundsRadius(corners, units = 'km') {
 		return (getDistance(corners.ne, corners.sw)/2000.0) * ((units == 'km') ? 1.0 : 0.62137119);
 	}
 	/****************************************************************************************
