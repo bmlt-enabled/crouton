@@ -292,40 +292,14 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     marker.desc = inHtml;
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
-    let highlightRow = function(target) {
-        const id = target.id.split('-')[1];
-        gOpenMarker = id;
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-        jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
-        if (typeof crouton == 'undefined') crouton.dayTabFromId(id);
-    }
+
     google.maps.event.addListener ( marker, "click", function () {
         gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
         if(marker.old_image){marker.setIcon(g_icon_image_selected)};
-        marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
-        gInfoWindow.setContent(marker.desc);
-        gInfoWindow.open(gMainMap, marker);
-        gInfoWindow.addListener('visible', function() {
-            jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
-                highlightRow(target);
-            });
-            jQuery('input[type=radio][name=panel]').change(function() {
-                highlightRow(this);
-            });
-        });
+        openInfoWindow(marker);
     });
     if (openMarker &&  inIds.includes(parseInt(openMarker))) {
-        marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
-        gInfoWindow.setContent(marker.desc);
-        gInfoWindow.open(gMainMap, marker);
-        gInfoWindow.addListener('visible', function() {
-            jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
-                highlightRow(target);
-            });
-            jQuery('input[type=radio][name=panel]').change(function() {
-                highlightRow(this);
-            });
-        });
+        openInfoWindow(marker);
     }
     gInfoWindow.addListener('closeclick', function () {
         gOpenMarker = false;
@@ -334,6 +308,26 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     });
     gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
 };
+function highlightRow(target) {
+    const id = target.id.split('-')[1];
+    gOpenMarker = id;
+    jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+    jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
+    if (typeof crouton == 'undefined') crouton.dayTabFromId(id);
+}
+function openInfoWindow(marker) {
+    marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
+    gInfoWindow.setContent(marker.desc);
+    gInfoWindow.open(gMainMap, marker);
+    gInfoWindow.addListener('visible', function() {
+        jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
+            highlightRow(target);
+        });
+        jQuery('input[type=radio][name=panel]').change(function() {
+            highlightRow(this);
+        });
+    });
+}
 function addControl(div,pos,cb) {
     if (!gMainMap) {
         gDiv.appendChild(div);
@@ -376,11 +370,10 @@ function fitAndZoom(ev) {
 }
 function openMarker(id) {
     if (!gMainMap) return;
-    marker = gAllMarkers.find((m) => m.ids.includes(id));
+    const marker = gAllMarkers.find((m) => m.ids.includes(id));
     if (marker) {
         jQuery("#panel-"+id).prop('checked', true);
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-        jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
+        openInfoWindow(marker.marker)
     }
 }
 function getGeocodeCenter(in_geocode_response) {
