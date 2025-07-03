@@ -274,7 +274,7 @@ function MeetingMap(inConfig) {
 			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
 	};
 	function clearMessageAndClose(modal) {
-		jQuery('#zoomed-out-message').not('hide').addClass('hide');
+		jQuery('#zoomed-out-message').not('.hide').addClass('hide');
 		closeModalWindow(modal);
 	}
 	function nearMeSearch() {
