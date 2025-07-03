@@ -274,7 +274,7 @@ function MeetingMap(inConfig) {
 			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
 	};
 	function clearMessageAndClose(modal) {
-		jQuery('#zoomed-out-message').addClass('hide');
+		jQuery('#zoomed-out-message').not('hide').addClass('hide');
 		closeModalWindow(modal);
 	}
 	function nearMeSearch() {
@@ -357,13 +357,14 @@ function MeetingMap(inConfig) {
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
 		if (fitBounds) {
 			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
+			const maxRadius = config.maxTomatoWidth/2.0;
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
 			if (config.map_search && config.filter_visible) {
 				lat_lngs.sort((a,b) =>  getDistance({"lat":a[0],"lng":a[1]},gSearchPoint) - getDistance({"lat":b[0],"lng":b[1]},gSearchPoint));
-				while (getLatLngRadius(lat_lngs) > config.maxTomatoWidth && lat_lngs.length > 3) {
+				while (getLatLngRadius(lat_lngs) > maxRadius && lat_lngs.length > 3) {
 					lat_lngs = lat_lngs.slice(0, lat_lngs.length/2);
 				}
-				if (getLatLngRadius(lat_lngs) > config.maxTomatoWidth)
+				if (getLatLngRadius(lat_lngs) > maxRadius)
 					lat_lngs = lat_lngs.slice(1,1);
 			}
 			gDelegate.fitBounds(lat_lngs);
@@ -455,13 +456,12 @@ function MeetingMap(inConfig) {
 	function showFilterDialog(e) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
-	function showBmltSearchDialog(e, forceClickSeach=false) {
+	function showBmltSearchDialog(e) {
+		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
 		if (gDelegate.isMapDefined())
 			jQuery('#bmltsearch-clicksearch').parent().show();
 		else
 			jQuery('#bmltsearch-clicksearch').parent().hide();
-
-		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
 		openModalWindow(gSearchModal);
 	}
 	function showGeocodingDialog(e=null) {
@@ -689,7 +689,7 @@ function MeetingMap(inConfig) {
 			filterVisible();
 		} else if (getScreenRadius('km') > config.maxTomatoWidth) {
 			jQuery('#zoomed-out-message').removeClass('hide');
-			showBmltSearchDialog(null,true);
+			showBmltSearchDialog(null);
 		} else {
 			oldBounds = gDelegate.getBounds();
 			showThrobber();
