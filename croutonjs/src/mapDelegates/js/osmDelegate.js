@@ -194,7 +194,7 @@ function MapDelegate(config) {
         in_html,		///< The info window HTML
         in_title,        ///< The tooltip
 		in_ids,
-		openMarker
+		openedMarker
 )
 {
 	if (!gMainMap) return;
@@ -212,6 +212,16 @@ function MapDelegate(config) {
 	if (gClusterLayer) gClusterLayer.addLayer(marker);
 	else marker.addTo(gMainMap);
 	marker.on('popupopen', function(e) {
+		if (openedMarker) {
+			// I want to just do this:
+			//jQuery("#panel-"+openedMarker).prop("checked", true);
+			// But for some reason, leaflet makes a copy of the popup, so the ID is not unique....
+			jQuery("input[type=radio][name=panel]").filter(function() {
+				return jQuery(this).attr('id')=="panel-"+openedMarker})
+				.each(function(index,value) {
+				jQuery(this).prop("checked", true);
+			});
+		}
 		marker.setIcon(g_icon_image_selected);
 		gMainMap.on('zoomstart',function(){
 			marker.closePopup();
@@ -228,8 +238,11 @@ function MapDelegate(config) {
         marker.setIcon(marker.isMulti ? g_icon_image_multi : g_icon_image_single);
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
-	if (openMarker &&  in_ids.includes(parseInt(openMarker))) {
+	if (openedMarker &&  in_ids.includes(parseInt(openedMarker))) {
 		marker.openPopup();
+		marker.once('add', function() {
+			if (!marker.isPopupOpen()) marker.openPopup();
+		});
 	}
     gAllMarkers.push( {ids: in_ids, marker: marker} );
 }
