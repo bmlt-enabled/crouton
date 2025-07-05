@@ -212,7 +212,7 @@ function MapDelegate(config) {
 	if (gClusterLayer) gClusterLayer.addLayer(marker);
 	else marker.addTo(gMainMap);
 	marker.on('popupopen', function(e) {
-		if (openedMarker) {
+		if (openedMarker && marker.getPopup().getContent().includes("panel-"+openedMarker)) {
 			// I want to just do this:
 			//jQuery("#panel-"+openedMarker).prop("checked", true);
 			// But for some reason, leaflet makes a copy of the popup, so the ID is not unique....
