@@ -12,6 +12,8 @@ function MapDelegate(in_config) {
     var gIsLoaded = false;
     var gIsClustering = false;
     var	gAllMarkers = [];				///< Holds all the markers.
+    var gSearchPointMarker = false;
+    var gOpenMarker = false;
     function isApiLoaded() {
         return gIsLoaded;
     }
@@ -36,6 +38,7 @@ function MapDelegate(in_config) {
     g_icon_image_single = new google.maps.MarkerImage ( config.BMLTPlugin_images+"/NAMarker.png", new google.maps.Size(23, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
     g_icon_image_multi = new google.maps.MarkerImage ( config.BMLTPlugin_images+"/NAMarkerG.png", new google.maps.Size(23, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
     g_icon_image_selected = new google.maps.MarkerImage ( config.BMLTPlugin_images+"/NAMarkerSel.png", new google.maps.Size(23, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
+    g_icon_image_searchpoint = new google.maps.MarkerImage ( config.BMLTPlugin_images+"/SearchPoint.png", new google.maps.Size(23, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
     g_icon_shadow = new google.maps.MarkerImage( config.BMLTPlugin_images+"/NAMarkerS.png", new google.maps.Size(43, 32), new google.maps.Point(0,0), new google.maps.Point(12, 32) );
     g_icon_shape = { coord: [16,0,18,1,19,2,20,3,21,4,21,5,22,6,22,7,22,8,22,9,22,10,22,11,22,12,22,13,22,14,22,15,22,16,21,17,21,18,22,19,20,20,19,21,20,22,18,23,17,24,18,25,17,26,15,27,14,28,15,29,12,30,12,31,10,31,10,30,9,29,8,28,8,27,7,26,6,25,5,24,5,23,4,22,3,21,3,20,2,19,1,18,1,17,1,16,0,15,0,14,0,13,0,12,0,11,0,10,0,9,0,8,0,7,1,6,1,5,2,4,2,3,3,2,5,1,6,0,16,0], type: 'poly' };
 
@@ -112,6 +115,9 @@ function MapDelegate(in_config) {
         gMainMap.setZoom(getZoomAdjust(false, filterMeetings));
         f && f();
     }
+    function getOpenMarker() {
+	    return gOpenMarker;
+    }
     function clearAllMarkers ()
     {
         if (!gMainMap) return;
@@ -120,10 +126,12 @@ function MapDelegate(in_config) {
             m.marker.setMap( null );
         });
         gAllMarkers = [];
+        gOpenMarker = false;
     };
     function getZoomAdjust(only_out,filterMeetings) {
         if (!gMainMap) return 12;
         var ret = gMainMap.getZoom();
+        if (config.map_search && config.filter_visible) return ret;
         var center = gMainMap.getCenter();
         var bounds = gMainMap.getBounds();
         var zoomedOut = false;
@@ -249,11 +257,20 @@ function MapDelegate(in_config) {
 
         } else markers.forEach((m)=>m.setMap(gMainMap));
    }
+function markSearchPoint(inCoords) {
+        if (!gMainMap) return;
+        if (gSearchPointMarker) gSearchPointMarker.setMap(null);
+        gSearchPointMarker = new google.maps.Marker (
+        { 'position':		new google.maps.LatLng(...inCoords)});
+        gSearchPointMarker.setIcon(g_icon_image_searchpoint);
+        gSearchPointMarker.setMap(gMainMap);
+}
 function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,
         inHtml,		///< The info window HTML
         inTitle,        ///< The tooltip
-        inIds
+        inIds,
+        openMarker
 )
 {
     if (!gMainMap) return;
@@ -275,18 +292,34 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     marker.desc = inHtml;
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
-    let highlightRow = function(target) {
-        let id = target.id.split('-')[1];
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-        jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
-        if (typeof crouton == 'undefined') crouton.dayTabFromId(id);
-    }
+
     google.maps.event.addListener ( marker, "click", function () {
         gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
         if(marker.old_image){marker.setIcon(g_icon_image_selected)};
-        marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
-        gInfoWindow.setContent(marker.desc);
-        gInfoWindow.open(gMainMap, marker);
+        openInfoWindow(marker);
+    });
+    if (openMarker &&  inIds.includes(parseInt(openMarker))) {
+        openInfoWindow(marker);
+    }
+    gInfoWindow.addListener('closeclick', function () {
+        gOpenMarker = false;
+        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
+        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+    });
+    gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
+};
+function highlightRow(target) {
+    const id = target.id.split('-')[1];
+    gOpenMarker = id;
+    jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+    jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
+    if (typeof crouton == 'undefined') crouton.dayTabFromId(id);
+}
+function openInfoWindow(marker) {
+    marker.setZIndex(google.maps.Marker.MAX_ZINDEX+1);
+    gInfoWindow.setContent(marker.desc);
+    gInfoWindow.open(gMainMap, marker);
+    gInfoWindow.addListener('visible', function() {
         jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
             highlightRow(target);
         });
@@ -294,12 +327,7 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
             highlightRow(this);
         });
     });
-    gInfoWindow.addListener('closeclick', function () {
-        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-    });
-    gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
-};
+}
 function addControl(div,pos,cb) {
     if (!gMainMap) {
         gDiv.appendChild(div);
@@ -342,12 +370,10 @@ function fitAndZoom(ev) {
 }
 function openMarker(id) {
     if (!gMainMap) return;
-    marker = gAllMarkers.find((m) => m.ids.includes(id));
+    const marker = gAllMarkers.find((m) => m.ids.includes(id));
     if (marker) {
-        google.maps.event.trigger(marker.marker, 'click')
         jQuery("#panel-"+id).prop('checked', true);
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-        jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
+        openInfoWindow(marker.marker)
     }
 }
 function getGeocodeCenter(in_geocode_response) {
@@ -410,6 +436,20 @@ function geoCallback( in_geocode_response ) {
             cb(e.latLng.lat(), e.latLng.lng());
         })
     };
+    function getCorners(lat_lngs = false) {
+        var bounds = lat_lngs
+		? lat_lngs.reduce(function(b,m) {return b.extend(new google.maps.LatLng(m[0], m[1]));}, new google.maps.LatLngBounds())
+		: gMainMap.getBounds();
+
+        return {
+            "ne" : {"lat": bounds.getNorthEast().lat(), "lng": bounds.getNorthEast().lng()},
+            "sw" : {"lat": bounds.getSouthWest().lat(), "lng": bounds.getSouthWest().lng()}
+        }
+    }
+    function getCenter() {
+        var center = gMainMap.getCenter();
+        return { "lat": center.lat(), "lng": center.lng()}
+    }
     function afterInit(f) {
         if (!gMainMap) return;
         if (typeof gMainMap.getBounds()  !== 'undefined') f();
@@ -417,7 +457,7 @@ function geoCallback( in_geocode_response ) {
     }
     function modalOn() {}
     function modalOff() {}
-	function hasClickSearch() {
+	function isMapDefined() {
 		return gMainMap != null;
 	}
     this.createMap = createMap;
@@ -447,7 +487,11 @@ function geoCallback( in_geocode_response ) {
     this.modalOff = modalOff;
     this.removeListener = removeListener;
     this.afterInit = afterInit;
-    this.hasClickSearch = hasClickSearch;
+    this.isMapDefined = isMapDefined;
+    this.getCorners = getCorners;
+    this.getCenter = getCenter;
+    this.markSearchPoint = markSearchPoint;
+    this.getOpenMarker = getOpenMarker;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -476,4 +520,8 @@ MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
-MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype.getCorners = null;
+MapDelegate.prototype.getCenter= null;
+MapDelegate.prototype.markSearchPoint = null;
+MapDelegate.prototype.getOpenMarker = null;

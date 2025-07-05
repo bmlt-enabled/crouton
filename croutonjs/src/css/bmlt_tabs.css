@@ -68,10 +68,11 @@ span.bmlt_tabs_group_count {
 }
 
 #bmlt-tabs .bmlt-dropdown-container {
-	display: inline;
+	display: inline-block;
 	position: relative;
 	margin-left: 4px;
 	top: 1px !important;
+	margin-right: 4px;
 }
 
 .bmlt-drop {
@@ -221,7 +222,7 @@ span.bmlt_tabs_group_count {
 }
 
 #bmlt-tabs .bmlt-button-container {
-	display: inline;
+	display: inline-block;
 	position: relative;
 }
 
@@ -351,12 +352,6 @@ span.bmlt_tabs_group_count {
 
 	#bmlt-tabs #day.btn-sm,#bmlt-tabs .groupingButton.btn-sm {
 		margin-bottom: 4px;
-	}
-
-	#bmlt-tabs .bmlt-dropdown-container {
-		display: block;
-		margin-left: 0;
-		margin-right: 4px;
 	}
 
 	#bmlt-tabs span.select2.select2-container {

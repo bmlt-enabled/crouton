@@ -194,6 +194,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "In Waze App öffnen",
 			"remember my choice": "Auswahl speichern",
+			"zoomed-out-message": "Wir können nicht die ganze Fläche nach Meetings durchsuchen.  Bitte reinzoomen oder eine neue Suche machen."
 		},
 "en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -259,6 +260,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -325,6 +327,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -391,6 +394,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -457,6 +461,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -523,6 +528,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
 		},
 		"es-US": {
     		"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -589,6 +595,7 @@ function CroutonLocalization(language) {
     		"google_maps_desc_mobile": "Abrir en la aplicación Google Maps",
     		"waze": "Waze",
     		"waze_desc": "Abrir en la aplicación Waze",
+			"zoomed-out-message": "No podemos buscar reuniones en toda la zona. Por favor, acérquese o haga una nueva búsqueda."
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
