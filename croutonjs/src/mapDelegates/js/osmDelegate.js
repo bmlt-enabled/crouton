@@ -26,10 +26,21 @@ function MapDelegate(config) {
 		shadowAnchor: [12, 32],  // the same for the shadow
 		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
     });
+	var g_icon_image_searchpoimt = L.icon({
+		iconUrl: config.BMLTPlugin_images+"/SearchPoint.png",
+		shadowUrl: config.BMLTPlugin_images+"/NAMarkerS.png",
+		iconSize:     [23, 32], // size of the icon
+		shadowSize:   [43, 32], // size of the shadow
+		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32],  // the same for the shadow
+		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
+    });
     var	gAllMarkers = [];				///< Holds all the markers.
 	var gMainMap;
 	var gTileLayer;
 	var gClusterLayer = null;
+	var gSearchPointMarker = false;
+	var gOpenMarker = false;
     function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
 		if ( inHidden ) {
@@ -123,6 +134,7 @@ function MapDelegate(config) {
 	function getZoomAdjust(only_out,filterMeetings) {
 		if (!gMainMap) return 12;
 		var ret = gMainMap.getZoom();
+		if (config.map_search && config.filter_visible) return ret;
 		var center = gMainMap.getCenter();
 		var bounds = gMainMap.getBounds();
 		var zoomedOut = false;
@@ -171,18 +183,26 @@ function MapDelegate(config) {
 		if (!gMainMap) return null;
 		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
     }
+	function markSearchPoint(inCoords) {
+		if (!gMainMap) return;
+		if (gSearchPointMarker) gSearchPointMarker.remove();
+		gSearchPointMarker = L.marker(inCoords, {icon: g_icon_image_searchpoimt});
+		gSearchPointMarker.addTo(gMainMap);
+	}
 	function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,	///< Flag if marker has multiple meetings
         in_html,		///< The info window HTML
         in_title,        ///< The tooltip
-		in_ids
+		in_ids,
+		openedMarker
 )
 {
 	if (!gMainMap) return;
     var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single);
 
 	let highlightRow = function(target) {
-		let id = target.id.split('-')[1];
+		const id = target.id.split('-')[1];
+		gOpenMarker = id;
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
 		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
@@ -192,6 +212,16 @@ function MapDelegate(config) {
 	if (gClusterLayer) gClusterLayer.addLayer(marker);
 	else marker.addTo(gMainMap);
 	marker.on('popupopen', function(e) {
+		if (openedMarker && marker.getPopup().getContent().includes("panel-"+openedMarker)) {
+			// I want to just do this:
+			//jQuery("#panel-"+openedMarker).prop("checked", true);
+			// But for some reason, leaflet makes a copy of the popup, so the ID is not unique....
+			jQuery("input[type=radio][name=panel]").filter(function() {
+				return jQuery(this).attr('id')=="panel-"+openedMarker})
+				.each(function(index,value) {
+				jQuery(this).prop("checked", true);
+			});
+		}
 		marker.setIcon(g_icon_image_selected);
 		gMainMap.on('zoomstart',function(){
 			marker.closePopup();
@@ -204,10 +234,20 @@ function MapDelegate(config) {
         });
 	});
     marker.on('popupclose', function(e) {
+		gOpenMarker = false;
         marker.setIcon(marker.isMulti ? g_icon_image_multi : g_icon_image_single);
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
+	if (openedMarker &&  in_ids.includes(parseInt(openedMarker))) {
+		marker.openPopup();
+		marker.once('add', function() {
+			if (!marker.isPopupOpen()) marker.openPopup();
+		});
+	}
     gAllMarkers.push( {ids: in_ids, marker: marker} );
+}
+function getOpenMarker() {
+	return gOpenMarker;
 }
 function openMarker(id) {
 	if (!gMainMap) return;
@@ -406,6 +446,19 @@ function addControl(div,pos,cb) {
 			})
 		});
 	}
+	function getCorners(lat_lngs = false) {
+        var bounds = lat_lngs
+		? lat_lngs.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds())
+		: gMainMap.getBounds();
+
+        return {
+            "ne" : {"lat": bounds.getNorthEast().lat, "lng": bounds.getNorthEast().lng},
+            "sw" : {"lat": bounds.getSouthWest().lat, "lng": bounds.getSouthWest().lng}
+        }
+    }
+	function getCenter() {
+		return {"lat": gMainMap.getCenter().lat, "lng": gMainMap.getCenter().lng};
+	}
 	function modalOn() {
 		if (gMainMap) gMainMap.dragging.disable()
 	}
@@ -416,8 +469,8 @@ function addControl(div,pos,cb) {
 		f();
 	}
 	function returnTrue() {return true;}
-	function hasClickSearch() {
-		return gMainMap != null;
+	function isMapDefined() {
+		return (gMainMap != null);
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -445,7 +498,11 @@ function addControl(div,pos,cb) {
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
-	this.hasClickSearch = hasClickSearch;
+	this.isMapDefined = isMapDefined;
+	this.getCorners = getCorners;
+	this.getCenter = getCenter;
+	this.markSearchPoint = markSearchPoint;
+	this.getOpenMarker = getOpenMarker;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -473,4 +530,8 @@ MapDelegate.prototype.getGeocodeCenter = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
-MapDelegate.prototype.hasClickSearch = null;
+MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype.getCorners = null;
+MapDelegate.prototype.getCenter = null;
+MapDelegate.prototype.markSearchPoint = null;
+MapDelegate.prototype.getOpenMarker = null;

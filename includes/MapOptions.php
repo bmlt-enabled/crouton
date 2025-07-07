@@ -35,6 +35,7 @@ if (!class_exists("Crouton\MapOptions")) {
             'goto' => '',
             'min_zoom' => '6',
             'max_zoom' => '17',
+            'maxTomatoWidth' => 160,
             'marker_contents_template' => '',
         );
         private bool $isGoogle;
