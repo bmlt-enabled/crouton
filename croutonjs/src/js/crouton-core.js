@@ -827,6 +827,11 @@ function Crouton(config) {
       		return (distanceA < distanceB) ? -1 : (distanceA > distanceB) ? 1 : 0;
    		});
 		parent.html(sorted);
+		jQuery("#byfield_distance_in_km tbody .bmlt-data-row").css({cursor: "pointer"});
+		jQuery("#byfield_distance_in_km tbody .bmlt-data-row").click(function (e) {
+			if (e.target.tagName !== 'A')
+				croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+		});
 		jQuery('#groupingButton_distance_in_km').removeClass('hide');
 	}
 	self.calculateDistance = function(meetingData) {
