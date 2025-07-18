@@ -11,9 +11,9 @@ var croutonDefaultTemplates = {
 		"{{#if this.virtual_meeting_additional_info}}",
 		"    <div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>",
 		"{{/if}}",
-		"{{#if this.distance}}",
-		"    <div class='meeting-distance'>{{getWord 'Distance'}}: {{this.distance}}</div>",
-		"{{/if}}"
+		"<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>",
+		"{{getWord 'Distance'}}: {{this.distance}}",
+		"</div>",
 	].join('\n'),
 
 	metadata_template: [

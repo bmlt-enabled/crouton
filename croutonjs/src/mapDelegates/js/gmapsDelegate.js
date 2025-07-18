@@ -135,7 +135,7 @@ function MapDelegate(in_config) {
         var center = gMainMap.getCenter();
         var bounds = gMainMap.getBounds();
         var zoomedOut = false;
-        while(filterMeetings(bounds).length==0 && ret>6) {
+        while(filterMeetings(bounds, {"lat":center.lat(), "lng":center.lng()}).length==0 && ret>6) {
             zoomedOut = true;
             // no exact, because earth is curved
             ret -= 1;
