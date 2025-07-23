@@ -805,11 +805,13 @@ function Crouton(config) {
 		return meetings;
 	};
 	Crouton.prototype.updateDistances = function() {
-		self = this;
+		const self = this;
+		var knt = 0;
 		jQuery('.meeting-distance').each(function(index) {
 			const jThis = jQuery(this);
 			const id = jQuery(this).data('id');
 			if (!id) return;
+			knt++;
 			const m = self.meetingData.find((m) => m.id_bigint==id);
 			self.calculateDistance(m);
 			if (m['distance'] == '') {
@@ -821,6 +823,7 @@ function Crouton(config) {
 			}
 		});
 		const parent = jQuery('#byfield_distance_in_km tbody');
+		if (parent.length == 0) return;
 		const sorted = parent.children().sort(function (a, b) {
 			const distanceA =parseFloat( jQuery(a).data('distance'));
 			const distanceB =parseFloat( jQuery(b).data('distance'));
@@ -832,7 +835,7 @@ function Crouton(config) {
 			if (e.target.tagName !== 'A')
 				croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
 		});
-		jQuery('#groupingButton_distance_in_km').removeClass('hide');
+		if (knt > 0) jQuery('#groupingButton_distance_in_km').removeClass('hide');
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
