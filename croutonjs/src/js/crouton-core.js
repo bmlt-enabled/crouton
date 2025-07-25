@@ -360,6 +360,10 @@ function Crouton(config) {
 	};
 
 	self.groupedView = function (field) {
+		if (jQuery("#groupingButton_" + field).hasClass('hide')) {
+			self.dayView();
+			return;
+		}
 		self.lowlightButton("#day");
 		self.lowlightButton(".groupingButton");
 		self.highlightButton("#groupingButton_" + field);

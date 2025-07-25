@@ -190,6 +190,7 @@ function CroutonLocalization(language) {
 			"apple_maps": "Apple Maps",
 			"apple_maps_desc": "In Apple Maps App öffnen",
 			"google_maps": "Google Maps",
+			"distance": "Entfernung",
 			"google_maps_desc_mobile": "In Google Maps App öffnen",
 			"waze": "Waze",
 			"waze_desc": "In Waze App öffnen",
