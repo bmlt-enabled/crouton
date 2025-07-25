@@ -11,6 +11,7 @@ function Crouton(config) {
 	self.filtering = false;
 	self.masterFormatCodes = [];
 	self.currentView = "weekday";
+	self.distanceTabAllowed = false;
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
@@ -360,7 +361,7 @@ function Crouton(config) {
 	};
 
 	self.groupedView = function (field) {
-		if (jQuery("#groupingButton_" + field).hasClass('hide')) {
+		if (field.includes('distance') && !self.distanceTabAllowed) {
 			self.dayView();
 			return;
 		}
@@ -839,7 +840,10 @@ function Crouton(config) {
 			if (e.target.tagName !== 'A')
 				croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
 		});
-		if (knt > 0) jQuery('#groupingButton_distance_in_km').removeClass('hide');
+		if (knt > 0) {
+			jQuery('#groupingButton_distance_in_km').removeClass('hide');
+			self.distanceTabAllowed = true;
+		}
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
@@ -1080,6 +1084,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.searchMap = function() {
 	var self = this;
+	self.distanceTabAllowed = true;
 	if (!self.config.map_search || typeof self.config.map_search !== 'object') {
 		self.config.map_search = {
 			width: -50,
