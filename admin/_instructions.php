@@ -61,7 +61,8 @@
 	</div>
 	<h3 class="help-accordian"><strong>How Meetings are Organized into Views</strong></h3>
 	<div>
-		<p>Typically, crouton shows meetings organized by day and time.  In some cases, however, it may be better to view meetings grouped by city, state or by some other field.</p>
+		<p>Typically, crouton shows meetings organized by day and time.  In some cases, however, it may be better to view meetings grouped by city, state or by some other field.
+			It is also possible to sort meetings by their distance from the user's location, or by some user specified location.</p>
 		<p>Crouton is very flexible in this regard: alternate views are provided and you may switch between them, or even define your own groupings.  Each grouping will be represented by
 			a button in the header.  The groupings are defined using the "grouping_buttons" attribute.
 		</p>
@@ -74,7 +75,15 @@
 		<p>By default, the meetings within each group are shown.  By by clicking on the group's header, the meetings in that group may be expanded or collapsed.  If you want the initial view to be collapsed,
 			add ":closed" to the group's definition.</p>
 		<p><strong>[bmlt_tabs grouping_buttons="City:location_municipality:closed"]</strong></p>
-		<p>If you want to make it impossible to close a group, add "non-collapsable" instead of "closed".
+		<p>If you want to make it impossible to close a group, add "non-collapsable" instead of "closed".</p>
+		<p>It is also possible to use this mechanism to organize the meetings into a view sorted by distance from the user's location, or some other user specified location.  This view is always available when Using
+			the [crouton_map] or [crouton_tabs] shortcodes.  It is also available when [bmlt_tabs] is supplied with the "center_me='1'" or "goto='xxx'" arguments. Even when these arguments are not initially set, the "Distance" View
+			may be turned on by using the equivalent comments over the map's menu.</p>
+		<p>Note that the distance must be reference in one of the templates for this mechanism to work.  If you are not using the defaul templates, please use this fragment:</p>
+		<pre><code>
+			&lt;div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'&gt;
+				{{getWord 'Distance'}}: {{this.distance}}
+			&lt;/div&gt;</code></pre>
 	</div>
 
 	<h3 class="help-accordian"><strong>Organizing Meetings by Format-Types</strong></h3>
@@ -91,7 +100,7 @@
 		<p>weekday = view meetings by Weekdays (default)</p>
         <p>Another example could be "city", which would show the meetings organized by city.</p>
 		<p>When using an embedded map, view_by=map works.</p>
-		<p>When using crouton_map or crouton_tab, view_by=distance works.</p>
+		<p>When using [crouton_map], [crouton_tab], or [bmlt_tabs] with the "center_me" or "goto" options, "view_by=distance" also works.</p>
 	</div>
 
 	<h3 class="help-accordian"><strong>Weekday Tabs</strong></h3>
