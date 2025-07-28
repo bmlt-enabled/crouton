@@ -1241,13 +1241,13 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						? self.config.grouping_buttons[b]['accordionState'] : '';
 					groupingButtonsDataSorted[groupByName] = {};
 					if (groupByName.startsWith('distance')) {
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = {};
+						groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')] = {};
 						if (self.config.map_search) {
-							groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+							groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
 						} else { // when not crouton_map, sorting byy distance is triggered by an action in meeting_map.
-							groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].filter(m => m.venue_type != 2);
+							groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].group = [...self.meetingData].filter(m => m.venue_type != 2);
 						}
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = 'non-collapsable';
+						groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].accordionState = 'non-collapsable';
 						continue;
 					}
 					var sortKey = [];
