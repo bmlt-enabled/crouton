@@ -405,6 +405,8 @@ function Crouton(config) {
 		jQuery(".group-header").removeClass("hide");
 		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
+		jQuery(".bmlt-data-row").removeClass("evenRow");
+		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
@@ -416,7 +418,7 @@ function Crouton(config) {
 			}
 		});
 		var showingNow = [];
-		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
+		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
 			const rowId = value.id.split("-");
 			showingNow.push(rowId[rowId.length-1]);

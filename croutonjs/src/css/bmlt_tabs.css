@@ -79,13 +79,6 @@ span.bmlt_tabs_group_count {
 	width: 300px !important;
 }
 
-#bmlt-tabs tr:nth-child(even) {
-	background: #F2F2F2;
-}
-
-#bmlt-tabs tr:nth-child(odd) {
-	background: #FFF;
-}
 #bmlt-tabs #byday .evenRow {
     background: #F2F2F2;
 }
