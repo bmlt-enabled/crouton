@@ -78,11 +78,10 @@ span.bmlt_tabs_group_count {
 .bmlt-drop {
 	width: 300px !important;
 }
-
-#bmlt-tabs #byday .evenRow {
+.bmlt-data-row.evenRow {
     background: #F2F2F2;
 }
-#bmlt-tabs #byday .oddRow {
+.bmlt-data-row.oddRow {
 	background: #FFF;
 }
 #bmlt-tabs td {
