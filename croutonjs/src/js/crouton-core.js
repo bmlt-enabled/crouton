@@ -400,7 +400,16 @@ function Crouton(config) {
 	self.hideAllPages = function (id) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
-
+	self.addStripes = function() {
+		var showingNow = [];
+		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
+			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+			const rowId = value.id.split("-");
+			showingNow.push(rowId[rowId.length-1]);
+		});
+		showingNow = [...new Set(showingNow)];
+		return showingNow;
+	}
 	self.filterMeetingsFromView = function () {
 		jQuery(".group-header").removeClass("hide");
 		jQuery(".meeting-group").removeClass("hide");
@@ -417,13 +426,7 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
-		var showingNow = [];
-		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
-			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
-			const rowId = value.id.split("-");
-			showingNow.push(rowId[rowId.length-1]);
-		});
-		showingNow = [...new Set(showingNow)];
+		var showingNow = this.addStripes();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
@@ -1349,6 +1352,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					if (!self.config.map_search) {
 						jQuery('#groupingButton_distance_in_km').addClass('hide');
 					}
+					self.addStripes();
 					self.updateMeetingCount();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
