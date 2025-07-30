@@ -441,6 +441,7 @@ function MeetingMap(inConfig) {
 			g_suspendedFullscreen = true;
 			toggleFullscreen();
 		}
+		if (!modal) return;
 		modal.style.display = "block";
 		swipableModal = swipe;
 		modal.focus();
