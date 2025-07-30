@@ -30,10 +30,7 @@
     border-color: #333;
 }
 
-#bmlt-tabs tr:nth-child(odd) {
-    background-color: #444;
-}
-#bmlt-tabs #byday .oddRow {
+.bmlt-data-row.oddRow {
 	background-color: #444;
 }
 #bmlt-tabs .nav-tabs>li.active>a {
@@ -80,10 +77,7 @@
     border-color: #555;
 }
 
-#bmlt-tabs tr:nth-child(even) {
-    background-color: #555;
-}
-#bmlt-tabs #byday .evebRow {
+.bmlt-data-row.evebRow {
 	background-color: #555;
 }
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {

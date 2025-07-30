@@ -138,7 +138,7 @@ function MapDelegate(config) {
 		var center = gMainMap.getCenter();
 		var bounds = gMainMap.getBounds();
 		var zoomedOut = false;
-		while(filterMeetings(bounds).length==0 && ret>6) {
+		while(filterMeetings(bounds, center).length==0 && ret>6) {
 			zoomedOut = true;
 			// not exact, because earth is curved
 			ret -= 1;
@@ -398,15 +398,20 @@ function addControl(div,pos,cb) {
 			geoCodeParams.countrycodes = config.region;
 		}
 		if (config.bounds
-			&&  config.bounds.north && config.bounds.north.trim()!== ''
-			&&  config.bounds.east && config.bounds.east.trim()!== ''
-			&&  config.bounds.south && config.bounds.south.trim()!== ''
-			&&  config.bounds.west && config.bounds.west.trim()!== '') {
+			&&  isNumber(config.bounds.north)
+			&&  isNumber(config.bounds.east)
+			&&  isNumber(config.bounds.south)
+			&&  isNumber(config.bounds.west)) {
 				geoCodeParams.viewbox = config.bounds.south+","+config.bounds.west+","+
 					                    config.bounds.north+","+config.bounds.east;
 		}
         geocode(in_loc, geoCodeParams, callback, filterMeetings);
     }
+	function isNumber(x) {
+		if (typeof x === 'number') return true;
+		if (typeof x === 'string' && x.trim() !== '' && !isNaN(x)) return true;
+		return false;
+	}
 	function contains(bounds, lat, lng) {
 		if (!gMainMap) return true;
 		return bounds.contains(L.latLng ( lat, lng ));

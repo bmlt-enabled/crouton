@@ -30,10 +30,7 @@
     border-color: #444;
 }
 
-#bmlt-tabs tr:nth-child(odd) {
-    background-color: #F5F5F5;
-}
-#bmlt-tabs #byday .oddRow {
+.bmlt-data-row.oddRow {
 	background-color: #F5F5F5;
 }
 #bmlt-tabs .nav-tabs>li.active>a {
@@ -80,12 +77,10 @@
     border-color: #EEE;
 }
 
-#bmlt-tabs tr:nth-child(even) {
+.bmlt-data-row.eventRow {
     background-color: #FFF;
 }
-#bmlt-tabs tr:nth-child(even) {
-    background-color: #FFF;
-}
+
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
     background-color: rebeccapurple;
 }

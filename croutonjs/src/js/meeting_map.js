@@ -200,6 +200,9 @@ function MeetingMap(inConfig) {
 			retrieveGeolocation().then(position => {
 				filterVisible(false);
 				gDelegate.setViewToPosition(position, filterMeetingsAndBounds, filterVisible);
+				gSearchPoint = {"lat": position.latitude, "lng": position.longitude};
+				crouton.updateDistances();
+
 			}).catch(error => {
 				console.log(error.message);
 				jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
@@ -379,6 +382,8 @@ function MeetingMap(inConfig) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
 						filterVisible(false);
 						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, filterVisible);
+						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
+						crouton.updateDistances();
 					},
 					showGeocodingDialog
 				);
@@ -436,6 +441,7 @@ function MeetingMap(inConfig) {
 			g_suspendedFullscreen = true;
 			toggleFullscreen();
 		}
+		if (!modal) return;
 		modal.style.display = "block";
 		swipableModal = swipe;
 		modal.focus();
@@ -481,10 +487,14 @@ function MeetingMap(inConfig) {
 		jQuery("#table_page").addClass("hide");
 		jQuery("#bmlt-map").css("display", "block");
 	}
-	function resetVisibleThenFilterMeetingsAndBounds(bounds) {
+	function resetVisibleThenFilterMeetingsAndBounds(bounds, center=null) {
 		filterVisible(false);
 		const ret = filterMeetingsAndBounds(bounds);
 		filterVisible(true);
+		if (gSearchPoint.lat != center.lat || gSearchPoint.lng != center.lng) {
+			gSearchPoint = center;
+			crouton.updateDistances();
+		}
 		return ret;
 	}
 	function lookupLocation(fullscreen) {

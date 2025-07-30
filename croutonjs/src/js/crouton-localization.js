@@ -120,6 +120,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Afstand",
 			"get_directions": "Få vejvisning",
 			"select_map_app": "Vælg kortapp",
 			"apple_maps": "Apple Maps",
@@ -128,6 +129,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Åbn i Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Åbn i Waze app",
+			"sorted by distance": "Sorteret efter Afstand",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -190,11 +192,13 @@ function CroutonLocalization(language) {
 			"apple_maps": "Apple Maps",
 			"apple_maps_desc": "In Apple Maps App öffnen",
 			"google_maps": "Google Maps",
+			"distance": "Entfernung",
 			"google_maps_desc_mobile": "In Google Maps App öffnen",
 			"waze": "Waze",
 			"waze_desc": "In Waze App öffnen",
 			"remember my choice": "Auswahl speichern",
-			"zoomed-out-message": "Wir können nicht die ganze Fläche nach Meetings durchsuchen.  Bitte reinzoomen oder eine neue Suche machen."
+			"zoomed-out-message": "Wir können nicht die ganze Fläche nach Meetings durchsuchen.  Bitte reinzoomen oder eine neue Suche machen.",
+			"sorted by distance": "Sortiert nach Entfernung",
 		},
 "en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -260,7 +264,8 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
-			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
+			"sorted by distance": "Sorted by Distance",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -327,7 +332,8 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
-			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
+			"sorted by distance": "Sorted by Distance",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -394,7 +400,8 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
-			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
+			"sorted by distance": "Sorted by Distance",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -461,7 +468,8 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
-			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
+			"sorted by distance": "Sorted by Distance",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -528,7 +536,8 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Open in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Open in Waze app",
-			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search."
+			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
+			"sorted by distance": "Sorted by Distance",
 		},
 		"es-US": {
     		"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -587,6 +596,7 @@ function CroutonLocalization(language) {
     		'report update': "Actualización de informe",
     		'filter by visibility': "Listar solo estas reuniones",
     		'go': "¡Adelante!",
+			"distance": "Distancia",
     		"get_directions": "Obtener Direcciones",
     		"select_map_app": "Seleccionar Aplicación de Mapas",
     		"apple_maps": "Apple Maps",
@@ -595,7 +605,8 @@ function CroutonLocalization(language) {
     		"google_maps_desc_mobile": "Abrir en la aplicación Google Maps",
     		"waze": "Waze",
     		"waze_desc": "Abrir en la aplicación Waze",
-			"zoomed-out-message": "No podemos buscar reuniones en toda la zona. Por favor, acérquese o haga una nueva búsqueda."
+			"zoomed-out-message": "No podemos buscar reuniones en toda la zona. Por favor, acérquese o haga una nueva búsqueda.",
+			"sorted by distance": "Ordenado por distancia",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -652,6 +663,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "فاصله",
 			"get_directions": "دریافت مسیر",
 			"select_map_app": "انتخاب برنامه نقشه",
 			"apple_maps": "نقشه اپل",
@@ -660,6 +672,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "باز کردن در برنامه گوگل مپس",
 			"waze": "ویز",
 			"waze_desc": "باز کردن در برنامه ویز",
+			"sorted by distance": "مرتب شده بر اساس فاصله",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -717,6 +730,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Distance",
 			"get_directions": "Obtenir l'itinéraire",
 			"select_map_app": "Sélectionner l'application de cartes",
 			"apple_maps": "Apple Maps",
@@ -725,6 +739,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Ouvrir dans l'application Google Maps",
 			"waze": "Waze",
 			"waze_desc": "Ouvrir dans l'application Waze",
+			"sorted by distance": "Trié par distance",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -782,6 +797,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Distanza",
 			"get_directions": "Ottieni Indicazioni",
 			"select_map_app": "Seleziona App Mappe",
 			"apple_maps": "Apple Maps",
@@ -790,6 +806,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Apri nell'app Google Maps",
 			"waze": "Waze",
 			"waze_desc": "Apri nell'app Waze",
+			"sorted by distance": "Ordinati per distanza",
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -855,6 +872,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Openen in Google Maps app",
 			"waze": "Waze",
 			"waze_desc": "Openen in Waze app",
+			"sorted by distance": "Gesorteerd op afstand",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -912,6 +930,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Odległość",
 			"get_directions": "Pobierz Wskazówki",
 			"select_map_app": "Wybierz Aplikację Map",
 			"apple_maps": "Apple Maps",
@@ -920,6 +939,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Otwórz w aplikacji Google Maps",
 			"waze": "Waze",
 			"waze_desc": "Otwórz w aplikacji Waze",
+			"sorted by distance": "Posortowane według odległości",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -977,6 +997,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Distância",
 			"get_directions": "Obter Direções",
 			"select_map_app": "Selecionar Aplicativo de Mapas",
 			"apple_maps": "Apple Maps",
@@ -985,6 +1006,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Abrir no aplicativo Google Maps",
 			"waze": "Waze",
 			"waze_desc": "Abrir no aplicativo Waze",
+			"sorted by distance": "Classificado por distância",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -1042,6 +1064,7 @@ function CroutonLocalization(language) {
 			'report update': "Report an Update",
 			'filter by visibility': "List only these meetings",
 			'go': "Go!",
+			"distance": "Расстояние",
 			"get_directions": "Проложить маршрут",
 			"select_map_app": "Выбрать приложение карт",
 			"apple_maps": "Apple Maps",
@@ -1050,6 +1073,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Открыть в приложении Google Maps",
 			"waze": "Waze",
 			"waze_desc": "Открыть в приложении Waze",
+			"sorted by distance": "Сортировка по расстоянию",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -1115,6 +1139,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "Öppna i Google Maps-appen",
 			"waze": "Waze",
 			"waze_desc": "Öppna i Waze-appen",
+			"sorted by distance": "Sorterade efter avstånd",
 		}
 	};
 }

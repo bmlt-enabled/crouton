@@ -11,6 +11,7 @@ function Crouton(config) {
 	self.filtering = false;
 	self.masterFormatCodes = [];
 	self.currentView = "weekday";
+	self.distanceTabAllowed = false;
 	self.config = {
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
@@ -360,6 +361,10 @@ function Crouton(config) {
 	};
 
 	self.groupedView = function (field) {
+		if (field.includes('distance') && !self.distanceTabAllowed) {
+			self.dayView();
+			return;
+		}
 		self.lowlightButton("#day");
 		self.lowlightButton(".groupingButton");
 		self.highlightButton("#groupingButton_" + field);
@@ -395,11 +400,22 @@ function Crouton(config) {
 	self.hideAllPages = function (id) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
-
+	self.addStripes = function() {
+		var showingNow = [];
+		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
+			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+			const rowId = value.id.split("-");
+			showingNow.push(rowId[rowId.length-1]);
+		});
+		showingNow = [...new Set(showingNow)];
+		return showingNow;
+	}
 	self.filterMeetingsFromView = function () {
 		jQuery(".group-header").removeClass("hide");
 		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
+		jQuery(".bmlt-data-row").removeClass("evenRow");
+		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
@@ -410,13 +426,7 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
-		var showingNow = [];
-		jQuery(".bmlt-data-row").not(".hide").each(function (index, value) {
-			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
-			const rowId = value.id.split("-");
-			showingNow.push(rowId[rowId.length-1]);
-		});
-		showingNow = [...new Set(showingNow)];
+		var showingNow = this.addStripes();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
@@ -798,36 +808,74 @@ function Crouton(config) {
 													   + (self.config.force_rootserver_in_querystring ? '&root_server=' + encodeURIComponent(self.config.root_server) : '')
 													);
 			}
-
-			meetingData[m]['distance'] = '';
-			if (meetingData[m]['venue_type'] != 2) {
-				const point = {"lat": meetingData[m]['latitude'], "lng": meetingData[m]['longitude']};
-				const distances = croutonMap.getDistanceFromSearch(point);
-				if (distances) {
-					meetingData[m]['distance_in_km'] = distances.km;
-					meetingData[m]['distance_in_miles'] = distances.miles;
-
-					if (self.config['distance_units'] === "km") {
-						if (meetingData[m]['distance_in_km']) {
-							const d = meetingData[m]['distance_in_km'];
-							if (d < 1) {
-								meetingData[m]['distance'] = Math.round( d * 1000) + 'm';
-							}
-							else {
-								meetingData[m]['distance'] = (Math.round(d * 10) / 10).toFixed(1) + 'km';
-							}
-						}
-					} else if (meetingData[m]['distance_in_miles']) {
-						const d = meetingData[m]['distance_in_miles'];
-						meetingData[m]['distance'] = (Math.round(d * 100) / 100).toFixed(2) + ' miles';
-					}
-				}
-			}
+			this.calculateDistance(meetingData[m]);
 			meetings.push(meetingData[m])
 		}
 
 		return meetings;
 	};
+	Crouton.prototype.updateDistances = function() {
+		const self = this;
+		var knt = 0;
+		jQuery('.meeting-distance').each(function(index) {
+			const jThis = jQuery(this);
+			const id = jQuery(this).data('id');
+			if (!id) return;
+			knt++;
+			const m = self.meetingData.find((m) => m.id_bigint==id);
+			self.calculateDistance(m);
+			if (m['distance'] == '') {
+				if (!jThis.hasClass('hide')) jThis.addClass('hide');
+			} else {
+				jThis.removeClass('hide');
+				jQuery(this).html(self.localization.getWord('Distance')+': '+m['distance']);
+				jQuery(this).closest('tr').data('distance', m['distance_in_km']);
+			}
+		});
+		const parent = jQuery('#byfield_distance_in_km tbody');
+		if (parent.length == 0) return;
+		const sorted = parent.children().sort(function (a, b) {
+			const distanceA =parseFloat( jQuery(a).data('distance'));
+			const distanceB =parseFloat( jQuery(b).data('distance'));
+      		return (distanceA < distanceB) ? -1 : (distanceA > distanceB) ? 1 : 0;
+   		});
+		parent.html(sorted);
+		jQuery("#byfield_distance_in_km tbody .bmlt-data-row").css({cursor: "pointer"});
+		jQuery("#byfield_distance_in_km tbody .bmlt-data-row").click(function (e) {
+			if (e.target.tagName !== 'A')
+				croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+		});
+		if (knt > 0) {
+			jQuery('#groupingButton_distance_in_km').removeClass('hide');
+			self.distanceTabAllowed = true;
+		}
+	}
+	self.calculateDistance = function(meetingData) {
+		meetingData['distance'] = '';
+		if (meetingData['venue_type'] != 2) {
+			const point = {"lat": meetingData['latitude'], "lng": meetingData['longitude']};
+			const distances = croutonMap.getDistanceFromSearch(point);
+			if (distances) {
+				meetingData['distance_in_km'] = distances.km;
+				meetingData['distance_in_miles'] = distances.miles;
+
+				if (self.config['distance_units'] === "km") {
+					if (meetingData['distance_in_km']) {
+						const d = meetingData['distance_in_km'];
+						if (d < 1) {
+							meetingData['distance'] = Math.round( d * 1000) + 'm';
+						}
+						else {
+							meetingData['distance'] = (Math.round(d * 10) / 10).toFixed(1) + 'km';
+						}
+					}
+				} else if (meetingData['distance_in_miles']) {
+					const d = meetingData['distance_in_miles'];
+					meetingData['distance'] = (Math.round(d * 100) / 100).toFixed(2) + ' miles';
+				}
+			}
+		}
+	}
 	self.showMessage = function(message) {
 		jQuery("#" + self.config['placeholder_id']).html("crouton: " + message);
 		jQuery("#" + self.config['placeholder_id']).removeClass("hide");
@@ -1041,6 +1089,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.searchMap = function() {
 	var self = this;
+	self.distanceTabAllowed = true;
 	if (!self.config.map_search || typeof self.config.map_search !== 'object') {
 		self.config.map_search = {
 			width: -50,
@@ -1082,10 +1131,6 @@ Crouton.prototype.searchMap = function() {
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	var self = this;
 
-	if (!self.config.map_search) {
-		self.config.grouping_buttons = self.config.grouping_buttons.filter((b) => !b.field.startsWith('distance'));
-		if (self.config['view_by'] == 'distance') self.config['view_by'] = 'weekday';
-	}
 	self.lock(function() {
 		var body = jQuery("body");
 		if (self.config['theme'] !== '') {
@@ -1201,9 +1246,13 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						? self.config.grouping_buttons[b]['accordionState'] : '';
 					groupingButtonsDataSorted[groupByName] = {};
 					if (groupByName.startsWith('distance')) {
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'] = {};
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
-						groupingButtonsDataSorted[groupByName]['Sorted by Distance'].accordionState = 'non-collapsable';
+						groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')] = {};
+						if (self.config.map_search) {
+							groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].group = [...self.meetingData].sort((a,b) => a['distance_in_km'] - b['distance_in_km']);
+						} else { // when not crouton_map, sorting byy distance is triggered by an action in meeting_map.
+							groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].group = [...self.meetingData].filter(m => m.venue_type != 2);
+						}
+						groupingButtonsDataSorted[groupByName][self.localization.getWord('Sorted by Distance')].accordionState = 'non-collapsable';
 						continue;
 					}
 					var sortKey = [];
@@ -1300,6 +1349,10 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					},
 					"dropdownData": self.dropdownData
 				}, function () {
+					if (!self.config.map_search) {
+						jQuery('#groupingButton_distance_in_km').addClass('hide');
+					}
+					self.addStripes();
 					self.updateMeetingCount();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
