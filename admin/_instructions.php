@@ -79,11 +79,10 @@
 		<p>It is also possible to use this mechanism to organize the meetings into a view sorted by distance from the user's location, or some other user specified location.  This view is always available when Using
 			the [crouton_map] or [crouton_tabs] shortcodes.  It is also available when [bmlt_tabs] is supplied with the "center_me='1'" or "goto='xxx'" arguments. Even when these arguments are not initially set, the "Distance" View
 			may be turned on by using the equivalent comments over the map's menu.</p>
-		<p>Note that the distance must be reference in one of the templates for this mechanism to work.  If you are not using the defaul templates, please use this fragment:</p>
+		<p>Note that the distance must be reference in one of the templates for this mechanism to work.  If you are not using the defaul templates, please use add fragment to one of your templates:</p>
 		<pre><code>
-			&lt;div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'&gt;
-				{{getWord 'Distance'}}: {{this.distance}}
-			&lt;/div&gt;</code></pre>
+			{{> distance }}
+		</code></pre>
 	</div>
 
 	<h3 class="help-accordian"><strong>Organizing Meetings by Format-Types</strong></h3>
