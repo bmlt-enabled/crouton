@@ -834,6 +834,19 @@ function Crouton(config) {
 		});
 		const parent = jQuery('#byfield_distance_in_km tbody');
 		if (parent.length == 0) return;
+		if (knt === 0) {
+			parent.children().each(function (index) {
+				if (!this.id) return;
+				const id = this.id.replace("meeting-data-row-", "");
+				const m = self.meetingData.find((m) => m.id_bigint==id);
+				if (!m) return;
+				self.calculateDistance(m);
+				if (m['distance'] != '') {
+					jQuery(this).data('distance', m['distance_in_km']);
+					knt++;
+				}
+			});
+		}
 		const sorted = parent.children().sort(function (a, b) {
 			const distanceA =parseFloat( jQuery(a).data('distance'));
 			const distanceB =parseFloat( jQuery(b).data('distance'));
@@ -1785,6 +1798,10 @@ crouton_Handlebars.registerPartial('offerIcsButton',
     "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
 crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
+crouton_Handlebars.registerPartial('distance',`
+<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
+{{getWord 'Distance'}}: {{this.distance}}
+</div>`);
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
