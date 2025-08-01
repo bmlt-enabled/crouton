@@ -512,9 +512,7 @@ function MeetingMap(inConfig) {
 		return true;
 	};
 	function searchResponseCallback(expand = false) {
-		if (!gAllMeetings) return;
-		if (!gAllMeetings.length) {
-			alert ( crouton.localization.getWord("no meetings found") );
+		if (!gAllMeetings || !gAllMeetings.length) {
 			return;
 		};
 		try {
