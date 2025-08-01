@@ -80,9 +80,9 @@
 			the [crouton_map] or [crouton_tabs] shortcodes.  It is also available when [bmlt_tabs] is supplied with the "center_me='1'" or "goto='xxx'" arguments. Even when these arguments are not initially set, the "Distance" View
 			may be turned on by using the equivalent comments over the map's menu.</p>
 		<p>Note that the distance must be reference in one of the templates for this mechanism to work.  If you are not using the defaul templates, please use add fragment to one of your templates:</p>
-		<pre><code>
+		<code>
 			{{> distance }}
-		</code></pre>
+		</code>
 	</div>
 
 	<h3 class="help-accordian"><strong>Organizing Meetings by Format-Types</strong></h3>
