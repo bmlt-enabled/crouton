@@ -729,3 +729,7 @@ input#search_radius, input#search_count {
 .directions-remember-choice-div {
     margin-top: 20px;
 }
+.observerLine a {
+    display: block;
+    margin-left: 5px;
+}
