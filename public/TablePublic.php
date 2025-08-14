@@ -58,6 +58,90 @@ if (!class_exists("Crouton\TablePublic")) {
                 &$this,
                 "bmltHandlebar"
             ));
+            add_action('plugins_loaded', array(
+                &$this,
+                'emitJavascript'
+            ));
+        }
+        private function getJsLinks(): string
+        {
+            $files = [includes_url().'js/jquery/jquery.min.js', plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", ...$this->map->getJsLinks()];
+            $ret = '';
+            foreach($files as $file) {
+                $ret .= "<script src='$file'></script>\r\n";
+            }
+            return $ret;
+        }
+        private function getCssLinks(): string {
+            $files = [plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", ...$this->map->getCssLinks()];
+            $ret = '';
+            foreach($files as $file) {
+                $ret .= "<link rel='stylesheet' href='$file'></link>\r\n";
+            }
+            return $ret;
+        }
+        public function emitJavascript()
+        {
+            if (!isset($_GET["croutonjs-emitter"])) {
+                return;
+            }
+            $shortcode = isset($_GET["shortcode"]) ? $_GET["shortcode"] : 'bmlt_tabs';
+            $html = isset($_GET["croutonjs-emitter"]) ? $_GET["croutonjs-emitter"] : '';
+            $content = "";
+            $atts = $_GET;
+            unset($atts['shortcode']);
+            unset($atts['croutonjs-emitter']);
+            switch ($shortcode) {
+                case 'crouton_map':
+                    $content = $this->renderMap($atts, true, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_map':
+                    $content = $this->renderMap($atts, false, JSON_PRETTY_PRINT);
+                    break;
+                case 'bmlt_tabs':
+                    $content = $this->renderTable($atts, JSON_PRETTY_PRINT);
+                    break;
+            }
+            switch($html) {
+                case 'html':
+                    $content = $this->getCssLinks().$this->getJsLinks()."<script>$content</script>";
+                    $content .= '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching&#8230;</button></div><div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
+                    header('Content-Type: text/html; charset=UTF-8');
+                    header('Content-Length: '.strlen($content));
+                    header('Cache-Control: public, must-revalidate, max-age=0');
+                    header('Pragma: public');
+                    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+                    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+                    $content_safe = $content;
+                    echo $content_safe;
+                    break;
+                case 'indirect';
+                    $link = get_site_url().'?croutonjs-emitter=js';
+                    foreach($atts as $att=>$value) {
+                        $link .= "&$att=$value";
+                    }
+                    $content = $this->getCssLinks().$this->getJsLinks()."<script src='$link'></script>\r\n";
+                    $content .= "<div class='bootstrap-bmlt' id='please-wait'><button class='btn btn-lg btn-info'>\r\n<span class='glyphicon glyphicon-repeat glyphicon-repeat-animate'></span>\r\nFetching&#8230;</button></div>\r\n<div id='bmlt-tabs' class='bmlt-tabs hide'></div>";
+                    header('Content-Type: text/html; charset=UTF-8');
+                    header('Content-Length: '.strlen($content));
+                    header('Cache-Control: public, must-revalidate, max-age=0');
+                    header('Pragma: public');
+                    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+                    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+                    $content_safe = $content;
+                    echo $content_safe;
+                    break;
+                default:
+                    header('Content-Type: text/javascript');
+                    header('Content-Length: '.strlen($content));
+                    header('Cache-Control: public, must-revalidate, max-age=0');
+                    header('Pragma: public');
+                    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+                    header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+                    $content_safe = $content;
+                    echo $content_safe;
+            }
+            exit;
         }
         private function croutonInitializationScript(): string
         {
@@ -178,24 +262,24 @@ if (!class_exists("Crouton\TablePublic")) {
             return "var crouton;jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); $renderCmd });";
         }
 
-        private function renderTable(array $atts): string
+        private function renderTable(array $atts, int $encode_flags = 0): string
         {
-            return $this->getInitializeCroutonBlock("crouton.render();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags));
         }
 
-        private function renderMap(array $atts, $croutonMap = true): string
+        private function renderMap(array $atts, $croutonMap = true, $encode_flags = 0): string
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, true));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags, true));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
-            return $this->getInitializeCroutonBlock("crouton.render(true);".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.render(true);".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags));
         }
 
         public function initCrouton($atts)
         {
-            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", ...$this->getCroutonJsConfig($atts));
+            return $this->getInitializeCroutonBlock("crouton.renderMeetingCount();", ...$this->getCroutonJsConfig($atts, 0));
         }
 
         public function blank()
@@ -246,7 +330,7 @@ if (!class_exists("Crouton\TablePublic")) {
             $meetingId = intval($_GET['meeting-id']);
             $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
                      'strict_datafields' => false];
-            [$config, $mapConfig] = $this->getCroutonJsConfig($attr);
+            [$config, $mapConfig] = $this->getCroutonJsConfig($attr, 0);
             $croutonMap =  $this->getMapInitialization($mapConfig);
             $ret = "var crouton;"
             ."jQuery(document).ready(function() { $croutonMap crouton = new Crouton($config); crouton.doHandlebars();})";
@@ -274,7 +358,7 @@ if (!class_exists("Crouton\TablePublic")) {
          * @param boolean $croutonMap true if we are processing a crouton_map or crouton_tabs shortcode
          * @return array return value has 2 elements, the first is the configuration of the main Crouton JS object, the second is the configuration of the Map object.
          */
-        private function getCroutonJsConfig(array $atts, $croutonMap = false): array
+        private function getCroutonJsConfig(array $atts, int $encode_flags, $croutonMap = false): array
         {
             $options = $this->crouton->getOptions();
             /***  Pulling simple values from options
@@ -411,10 +495,12 @@ if (!class_exists("Crouton\TablePublic")) {
             if (!function_exists('is_plugin_active')) {
                 include_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
-            $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php')) ? get_feed_link('bmlt2ics') : "";
+            $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php'))
+                ? ($encode_flags ? site_url().'/feed/bmlt2ics' : get_feed_link('bmlt2ics'))
+                : "";
             $params = apply_filters('crouton_configuration', $params);
 
-            return [json_encode($params), $this->map->getMapJSConfig($params, $croutonMap)];
+            return [json_encode($params, $encode_flags), $this->map->getMapJSConfig($params, $croutonMap, $encode_flags)];
         }
         private function convertToArray($str) : array
         {
