@@ -67,15 +67,16 @@ if (!class_exists("Crouton\TablePublic")) {
         {
             $files = [includes_url().'js/jquery/jquery.min.js', plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", ...$this->map->getJsLinks()];
             $ret = '';
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $ret .= "<script src='$file'></script>\r\n";
             }
             return $ret;
         }
-        private function getCssLinks(): string {
+        private function getCssLinks(): string
+        {
             $files = [plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", ...$this->map->getCssLinks()];
             $ret = '';
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $ret .= "<link rel='stylesheet' href='$file'></link>\r\n";
             }
             return $ret;
@@ -102,7 +103,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     $content = $this->renderTable($atts, JSON_PRETTY_PRINT);
                     break;
             }
-            switch($html) {
+            switch ($html) {
                 case 'html':
                     $content = $this->getCssLinks().$this->getJsLinks()."<script>$content</script>";
                     $content .= '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching&#8230;</button></div><div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
@@ -115,9 +116,9 @@ if (!class_exists("Crouton\TablePublic")) {
                     $content_safe = $content;
                     echo $content_safe;
                     break;
-                case 'indirect';
+                case 'indirect':
                     $link = get_site_url().'?croutonjs-emitter=js';
-                    foreach($atts as $att=>$value) {
+                    foreach ($atts as $att => $value) {
                         $link .= "&$att=$value";
                     }
                     $content = $this->getCssLinks().$this->getJsLinks()."<script src='$link'></script>\r\n";

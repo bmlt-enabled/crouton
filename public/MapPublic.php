@@ -43,7 +43,7 @@ if (!class_exists("Crouton\MapPublic")) {
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig(array $params, $croutonMap = false, int $encode_flags): string| false
+        public function getMapJSConfig(array $params, $croutonMap = false, int $encode_flags = 0): string| false
         {
             switch ($params['tile_provider']) {
                 case 'MapBox':
