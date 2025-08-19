@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 
 = 3.24.3 =
 * Czech and Slovak translations.
+* Farsi translations.
 * Emitter: use a wordpress site to emit a script that can be copied over and used on a non-wordpress site.
 
 = 3.24.2 =
