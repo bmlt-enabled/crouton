@@ -267,66 +267,52 @@ if (!class_exists("Crouton\TableAdmin")) {
                     $this_connected = $this->testRootServer($options['root_server']);
                     $connect_color = '#ff0000';
                     $connect_dashicon = 'dashicons-no';
-                    $connect_message = 'Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.';
+                    $connect_message = __('Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.', 'crouton-domain');
                     if ($this_connected != false) {
                         $connect_color = ' #00AD00';
                         $connect_dashicon = 'dashicons-smiley';
-                        $connect_message = 'Version '.$this_connected;
+                        $connect_message = sprintf(__('Version %s', 'crouton-domain'), $this_connected);
                         $this_connected = true;
                     }?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3>Configuration</h3>
-                        <p>Please open a ticket <a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">https://github.com/bmlt-enabled/crouton/issues</a> for bugs, enhancements, or questions.</p>
-                        <ul class="configuration-toc">
-                            <li><a href="#config-bmlt-root-server">BMLT Root Server</a></li>
-                            <li><a href="#config-service-body">Service Body</a></li>
-                            <li><a href="#config-default-options">Default Options</a></li>
-                            <li><a href="#config-include-extra-meetings">Include Extra Meetings</a></li>
-                            <li><a href="#config-custom-query">Custom Query</a></li>
-                            <li><a href="#config-theme">Theme</a></li>
-                            <li><a href="#config-google-api-key">Map Options</a></li>
-                            <li><a href="#config-meeting-data-template">Meeting Data Template</a></li>
-                            <li><a href="#config-metadata-data-template">Metadata Template</a></li>
-                            <li><a href="#config-meeting-details-page">Meeting Details Page</a></li>
-                            <li><a href="#config-custom-css">Custom CSS</a></li>
-                            <li><a href="#config-documentation">Documentation</a></li>
-                        </ul>
+                        <h3><?php _e('Configuration', 'crouton-domain')?></h3>
+                        <p><?php echo sprintf(__('Please open a ticket at %s for bugs, enhancements, or questions.', 'crouton-domain'), '<a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">https://github.com/bmlt-enabled/crouton/issues</a>'); ?> </p>
                     </div>
                     <nav class="nav-tab-wrapper">
-                        <a href="#bmlt-query" class="nav-tab nav-tab-active">BMLT Query</a>
-                        <a href="#crouton-ui" class="nav-tab">Crouton UI</a>
-                        <a href="#crouton-map" class="nav-tab">Map</a>
-                        <a href="#crouton-templates" class="nav-tab">Templates</a>
+                        <a href="#bmlt-query" class="nav-tab nav-tab-active"><?php _e('BMLT Query', 'crouton-domain') ?></a>
+                        <a href="#crouton-ui" class="nav-tab"><?php _e('Crouton UI', 'crouton-domain') ?></a>
+                        <a href="#crouton-map" class="nav-tab"><?php _e('Map', 'crouton-domain') ?></a>
+                        <a href="#crouton-templates" class="nav-tab"><?php _e('Templates', 'crouton-domain') ?></a>
                     </nav>
                 <div id="bmlt-query" class="tab-content">
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-bmlt-root-server" class="anchor"></a>BMLT Root Server URL</h3>
-                        <p>Example: https://bmlt.sezf.org/main_server</p>
+                        <h3><a id="config-bmlt-root-server" class="anchor"></a><?php _e('BMLT Server URL', 'crouton-domain') ?></h3>
+                        <p><?php echo sprintf(__('Example: %s', 'crouton-domain'), 'https://bmlt.sezf.org/main_server') ?></p>
                         <ul>
                             <li>
-                                <label for="root_server">Default Root Server: </label>
+                                <label for="root_server"><?php _e('Default Server: ', 'crouton-domain') ?></label>
                                 <input id="root_server" type="text" size="50" name="root_server" value="<?php echo esc_url($options['root_server']); ?>" />
                                 <?php echo $this_connected ? '' : '<br/>'; ?>
                                 <span style='color:<?php echo esc_html($connect_color);?>;'><span style='font-size: 16px;vertical-align: text-top;' class='dashicons <?php echo esc_html($connect_dashicon);?>'></span><?php echo esc_html($connect_message);?></span>
                             </li>
                             <li>
                                 <input type="checkbox" id="use_aggregator" name="use_aggregator" value="1"/>
-                                <label for="use_aggregator">Use Aggregator &#127813;</label>
+                                <label for="use_aggregator"><?php _e('Use Aggregator &#127813;', 'crouton-domain') ?></label>
                                 <span title='<p>The Aggregator collects meeting data <br/>from all known root servers and pretends to be one large server</p><p>This can be useful to use if you want to display meetings outside <br/>of your server, for instance a statewide listing where the state <br/>covers multiple root servers<br/>Another good use case is if you want to display meetings by users<br/> location</p>' class="tooltip"></span>
                             </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-service-body" class="anchor"></a>Service Body</h3>
-                        <p>This service body will be used when no service body is defined in the shortcode.</p>
+                        <h3><a id="config-service-body" class="anchor"></a><?php _e('Service Body', 'crouton-domain') ?></h3>
+                        <p><?php _e('This service body will be used when no service body is defined in the shortcode.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
-                                <label for="service_bodies">Default Service Bodies: </label>
+                                <label for="service_bodies"><?php _e('Default Service Bodies: ', 'crouton-domain') ?></label>
                                 <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select" data-placeholder="<?php
                                 if (!$this_connected) {
-                                    echo 'Not Connected';
+                                    _e('Not Connected', 'crouton-domain');
                                 } else {
-                                    echo 'Select Service Bodies';
+                                    _e('Select Service Bodies', 'crouton-domain');
                                 }
                                 ?>"><?php
 if ($this_connected) {
@@ -355,7 +341,7 @@ if ($this_connected) {
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
                                 <p id="txtSelectedValues2"></p>
                                 <input type="checkbox" id="recurse_service_bodies" name="recurse_service_bodies" value="1" <?php echo (isset($options['recurse_service_bodies']) && $options['recurse_service_bodies'] == "1" ? "checked" : "") ?>/>
-                                <label for="recurse_service_bodies">Recurse Service Bodies</label>
+                                <label for="recurse_service_bodies"><?php _e('Recurse Service Bodies', 'crouton-domain') ?></label>
                             </li>
                         </ul>
                     </div>
@@ -383,18 +369,18 @@ if ($this_connected) {
                                     }
                                 } ?>
                             </select>
-                            <p>Hint: Type a group name, weekday, area or id to narrow down your choices.</p>
+                            <p><?php _e('Hint: Type a group name, weekday, area or id to narrow down your choices.', 'crouton-domain') ?></p>
                             <div>
-                                <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> Extra Meetings Enabled
+                                <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> <?php _e('Extra Meetings Enabled', 'crouton-domain') ?>
                             </div>
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-query" class="anchor"></a>Custom Query</h3>
-                        <p>This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.</p>
+                        <h3><a id="config-custom-query" class="anchor"></a><?php _e('Custom Query', 'crouton-domain') ?></h3>
+                        <p><?php _e('This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
-                                <label for="custom_query">Custom Query: </label>
+                                <label for="custom_query"><?php _e('Custom Query: ', 'crouton-domain') ?></label>
                                 <input id="custom_query" name="custom_query" size="50" value="<?php echo (isset($options['custom_query']) ? esc_html($options['custom_query']) : ""); ?>" />
                             </li>
                         </ul>
@@ -402,10 +388,10 @@ if ($this_connected) {
             </div>
             <div id="crouton-ui" class=tab-content>
             <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-theme" class="anchor"></a>Theme</h3>
-                        <p>Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)</p>
+                        <h3><a id="config-theme" class="anchor"></a><?php _e('Theme', 'crouton-domain') ?></h3>
+                        <p><?php _e('Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)', 'crouton-domain') ?></p>
                         <ul>
-                            <li><p><b>The default original theme is called "jack".  If no theme is selected, the default one will be used.</b></p></li>
+                            <li><p><b><?php _e('The default original theme is called "jack".  If no theme is selected, the default one will be used.', 'crouton-domain') ?></b></p></li>
                             <li>
                                 <select style="display:inline;" id="theme" name="theme"  class="theme_select">
                                     <?php
@@ -423,32 +409,32 @@ if ($this_connected) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-show-map" class="anchor"></a>Companion Map</h3>
-                        <p>In addition to croutons tabular listing of meetings, the meetings can be be displayed on a map.</p>
-                        <p>You may configure the map by clicking on the "Map" tab, above.</p>
+                        <h3><a id="config-show-map" class="anchor"></a><?php _e('Companion Map', 'crouton-domain') ?></h3>
+                        <p><?php _e('In addition to croutons tabular listing of meetings, the meetings can be be displayed on a map.', 'crouton-domain') ?></p>
+                        <p><?php _e('You may configure the map by clicking on the "Map" tab, above.') ?></p>
                                 <select id="show_map" name="show_map" style="display:block;">
-                                    <option <?php echo $options['show_map']=='0' ? 'selected' : '';?> value="0">No Map</option>
-                                    <option <?php echo $options['show_map']=='1' ? 'selected' : '';?> value="1">Show Map and Table</option>
-                                    <option <?php echo $options['show_map']=='embed' ? 'selected' : '';?> value="embed">Embed Map as Table Page</option>
+                                    <option <?php echo $options['show_map']=='0' ? 'selected' : '';?> value="0"><?php _e('No Map', 'crouton-domain') ?></option>
+                                    <option <?php echo $options['show_map']=='1' ? 'selected' : '';?> value="1"><?php _e('Show Map and Table', 'crouton-domain') ?></option>
+                                    <option <?php echo $options['show_map']=='embed' ? 'selected' : '';?> value="embed"><?php _e('Embed Map as Table Page', 'crouton-domain') ?></option>
                                 </select>
                             </li>
                         </ul>
                         <br/>
                     </div>
             <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
-                        <h3><a id="config-default-options" class="anchor"></a>Default Values</h3>
-                        <p>These values will be used when the attributes are not defined in the shortcode</p>
+                        <h3><a id="config-default-options" class="anchor"></a><?php _e('Default Values', 'crouton-domain') ?></h3>
+                        <p><?php _e('These values will be used when the attributes are not defined in the shortcode', 'crouton-domain'); ?></p>
                         <ul>
                             <li>
-                                <label for="language">Default language of Crouton UI: </label>
+                                <label for="language"><?php _e('Default language of Crouton UI:', 'crouton-domain') ?> </label>
                                 <input id="language" type="text" size="5" name="language" value="<?php echo esc_html($options['language']); ?>" />
                             </li>
                             <li>
-                                <label for="native_lang">Default language of meetings (format code): </label>
+                                <label for="native_lang"><?php _e('Default language of meetings (format code): ', 'crouton-domain') ?></label>
                                 <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo esc_html($options['native_lang']); ?>" />
                             </li>
                             <li>
-                                <label for="time_format">Default time format: </label>
+                                <label for="time_format"><?php _e('Default time format: ', 'crouton-domain') ?></label>
                                 <input id="time_format" type="text" size="10" name="time_format" value="<?php echo esc_html($options['time_format']); ?>" />
                             </li>
                             <li>
@@ -459,18 +445,18 @@ if ($this_connected) {
                                 ?>
                                 <label for="int_start_day_id">Which day does the week start on:</label>
                                 <select name="int_start_day_id" id="int_start_day_id">
-                                    <option value="1" <?php echo ($options["int_start_day_id"] == 1) ? 'selected' : ''; ?>>Sunday</option>
-                                    <option value="2" <?php echo ($options["int_start_day_id"] == 2) ? 'selected' : ''; ?>>Monday</option>
-                                    <option value="3" <?php echo ($options["int_start_day_id"] == 3) ? 'selected' : ''; ?>>Tuesday</option>
-                                    <option value="4" <?php echo ($options["int_start_day_id"] == 4) ? 'selected' : ''; ?>>Wedsday</option>
-                                    <option value="5" <?php echo ($options["int_start_day_id"] == 5) ? 'selected' : ''; ?>>Thursday</option>
-                                    <option value="6" <?php echo ($options["int_start_day_id"] == 6) ? 'selected' : ''; ?>>Friday</option>
-                                    <option value="7" <?php echo ($options["int_start_day_id"] == 7) ? 'selected' : ''; ?>>Saturday</option>
+                                    <option value="1" <?php echo ($options["int_start_day_id"] == 1) ? 'selected' : ''; ?>><?php _e('Sunday', 'crouton-domain') ?></option>
+                                    <option value="2" <?php echo ($options["int_start_day_id"] == 2) ? 'selected' : ''; ?>><?php _e('Monday', 'crouton-domain') ?></option>
+                                    <option value="3" <?php echo ($options["int_start_day_id"] == 3) ? 'selected' : ''; ?>><?php _e('Tuesday', 'crouton-domain') ?></option>
+                                    <option value="4" <?php echo ($options["int_start_day_id"] == 4) ? 'selected' : ''; ?>><?php _e('Wedsday', 'crouton-domain') ?></option>
+                                    <option value="5" <?php echo ($options["int_start_day_id"] == 5) ? 'selected' : ''; ?>><?php _e('Thursday', 'crouton-domain') ?></option>
+                                    <option value="6" <?php echo ($options["int_start_day_id"] == 6) ? 'selected' : ''; ?>><?php _e('Friday', 'crouton-domain') ?></option>
+                                    <option value="7" <?php echo ($options["int_start_day_id"] == 7) ? 'selected' : ''; ?>><?php _e('Saturday', 'crouton-domain') ?></option>
                                 </select>
                             </li>
                             <li>
                                 <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $options['strict_datafields'] ? "checked" : '' ?>/>
-                                <label for="strict_datafields">Retrieve only those fields that are directly accessed in the templates</label>
+                                <label for="strict_datafields"><?php _e('Retrieve only those fields that are directly accessed in the templates', 'crouton_domain') ?></label>
                             </li>
                         </ul>
                     </div>
@@ -478,18 +464,18 @@ if ($this_connected) {
                         <h3><a id="config-table-headers" class="anchor"></a>Configure Table Headers</h3>
                         <h4>Header Contents</h4>
                         <ul>
-                            <li><input type="checkbox" name="header" value="1" <?php echo ($options['header'] == 1 ? 'checked' : '') ?> /> Show Header</li>
-                            <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($options['has_tabs'] == 1 ? 'checked' : '') ?> /> Separate days into tabs</li>
-                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($options['include_city_button'] == 1 ? 'checked' : '') ?> /> Include 'Cities' Button</li>
-                            <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> Include 'Weekdays' Button</li>
-                            <li><input type="checkbox" name="include_distance_button" value="1" <?php echo ($options['include_distance_button'] == 1 ? 'checked' : '') ?> /> Include 'Distance' Button</li>
+                            <li><input type="checkbox" name="header" value="1" <?php echo ($options['header'] == 1 ? 'checked' : '') ?> /> <?php _e('Show Header', 'crouton-domain') ?></li>
+                            <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($options['has_tabs'] == 1 ? 'checked' : '') ?> /> <?php _e('Separate days into tabs', 'crouton-domain') ?> </li>
+                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($options['include_city_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Coties" Button', 'crouton-domain') ?></li>
+                            <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Weekdays" Button', 'crouton-domain') ?></li>
+                            <li><input type="checkbox" name="include_distance_button" value="1" <?php echo ($options['include_distance_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Distance" Button', 'crouton-domain') ?> </li>
                             <li><select name="view_by">
-                                <option value="weekday" <?php echo ($options["view_by"] == "weekday") ? 'selected' : ''; ?>>View by Weekday</option>
-                                <option value="city" <?php echo ($options["view_by"] == "city") ? 'selected' : ''; ?>>View by City</option>
-                                <option value="distance" <?php echo ($options["view_by"] == "distance") ? 'selected' : ''; ?>>View by Distance</option>
+                                <option value="weekday" <?php echo ($options["view_by"] == "weekday") ? 'selected' : ''; ?>><?php _e('View by Weekday', 'crouton-domain') ?></option>
+                                <option value="city" <?php echo ($options["view_by"] == "city") ? 'selected' : ''; ?>><?php _e('View by City', 'crouton-domain') ?></option>
+                                <option value="distance" <?php echo ($options["view_by"] == "distance") ? 'selected' : ''; ?>><?php _e('View by Distance', 'crouton-domain') ?></option>
                             </select></li>
                         </ul>
-                        <h4>Select Dropdown Filters</h4>
+                        <h4><?php _e('Select Dropdown Filters', 'crouton-domain') ?></h4>
                         <div class="inside">
 
                             <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
@@ -501,8 +487,8 @@ if ($this_connected) {
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-custom-css" class="anchor"></a>Custom CSS</h3>
-                        <p>Allows for custom styling of your crouton.</p>
+                        <h3><a id="config-custom-css" class="anchor"></a><?php _e('Custom CSS', 'crouton-domain') ?></h3>
+                        <p><?php _e('Allows for custom styling of your crouton.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($options['custom_css']) ? esc_html(html_entity_decode($options['custom_css'])) : ""); ?></textarea>
@@ -556,65 +542,78 @@ foreach ($all_fields as $field) {
             Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
         </p></div>
         <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-data-template" class="anchor"></a>Meeting Data Template</h3>
-                        <p>This allows a customization of the meeting data template.  A list of available fields are
+                        <h3><a id="config-meeting-data-template" class="anchor"></a><?php _e('Meeting Data Template', 'crouton-domain') ?></h3>
+                        <p><?php _e('This allows a customization of the second column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
                             <li>
                                 <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($options['meeting_data_template']) ? esc_html(html_entity_decode($options['meeting_data_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <input type="button" id="reset_meeting_data_template" value="RESET TO DEFAULT" class="button-secondary" />
+                                <input type="button" id="reset_meeting_data_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
+                                <input type="button" id="clear_meeting_data_template" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_meeting_data_template").click(function() {
                                 resetCodemirrorToDefault("meeting_data_template");
                             });
+                            jQuery("#clear_meeting_data_template").click(function() {
+                                clearCodemirror("meeting_data_template");
+                            });
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-metadata-data-template" class="anchor"></a>Metadata Template</h3>
-                        <p>This allows a customization of the metadata template (3rd column).  A list of available fields are
+                        <h3><a id="config-metadata-data-template" class="anchor"></a><?php _e('Metadata Template', 'crouton-domain') ?></h3>
+                        <p><?php _e('This allows a customization of the third column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
                             <li>
                                 <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($options['metadata_template']) ? esc_html(html_entity_decode($options['metadata_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <input type="button" id="reset_metadata_template" value="RESET TO DEFAULT" class="button-secondary" />
+                                <input type="button" id="reset_metadata_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
+                                <input type="button" id="clear_metadata_template" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_metadata_template").click(function() {
                                 resetCodemirrorToDefault("metadata_template");
                             });
+                            jQuery("#clear_meeting_data_template").click(function() {
+                                clearCodemirror("metadata_template");
+                            });
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-details-page" class="anchor"></a>Meeting Details Page</h3>
-                        <p>This allows a customization of the view of the meeting data that you get when you click on the meeting name.  A list of available fields are
+                        <h3><a id="config-meeting-details-page" class="anchor"></a><?php _e('Meeting Details Page', 'crouton-domain') ?></h3>
+                        <p><?php _e('This allows a customization of the page or popup focused on a particular meeting.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="here" />.</p>
+<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
                             <li>
-                                <label for="meetingpage_title_template">Title</label>
+                                <label for="meetingpage_title_template"><?php _e('Headline', 'crouton-domain') ?></label>
                                 <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($options['meetingpage_title_template']) ? esc_html(html_entity_decode($options['meetingpage_title_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <label for="meetingpage_contents_template">Contents</label>
+                                <label for="meetingpage_contents_template"><?php _e('Contents', 'crouton-domain') ?></label>
                                 <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($options['meetingpage_contents_template']) ? esc_html(html_entity_decode($options['meetingpage_contents_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <input type="button" id="reset_meetingpage_templates" value="RESET TO DEFAULT" class="button-secondary" />
+                                <input type="button" id="reset_meetingpage_templates" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
+                                <input type="button" id="#clear_meetingpage_templates" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
                             jQuery("#reset_meetingpage_templates").click(function() {
                                 resetCodemirrorToDefault("meetingpage_title_template");
                                 resetCodemirrorToDefault("meetingpage_contents_template");
+                            });
+                            jQuery("#clear_meetingpage_templates").click(function() {
+                                clearCodemirror("meetingpage_title_template");
+                                clearCodemirror("meetingpage_contents_template");
                             });
                         </script>
                         <p>By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
@@ -624,13 +623,13 @@ foreach ($all_fields as $field) {
                         </p>
                         <ul>
                             <li>
-                                <label for="meeting_details_href">URI for in-person (and hybrid) meetings: </label>
+                                <label for="meeting_details_href"><?php _e('URI for in-person (and hybrid) meetings: ', 'crouton-domain') ?></label>
                                 <input id="meeting_details_href" type="text" size="50" name="meeting_details_href" value="<?php echo esc_url($options['meeting_details_href']); ?>" onkeyup='show_create_detail_option(this)'/>
                             </li>
                             <li>
-                                <label for="virtual_meeting_details_href">URI for virtual meetings: </label>
+                                <label for="virtual_meeting_details_href"><?php _e('URI for virtual meetings: ', 'crouton-domain') ?></label>
                                 <input id="virtual_meeting_details_href" type="text" size="50" name="virtual_meeting_details_href" value="<?php echo esc_url($options['virtual_meeting_details_href']); ?>" onkeyup='show_create_detail_option(this)'/>
-                                <p>If no value is specified for virtual meetings, the in-person meeting link will be used.</p>
+                                <p><?php _e('If no value is specified for virtual meetings, the in-person meeting link will be used.', 'crouton-domain') ?></p>
                             </li>
                         </ul>
                     </div>
