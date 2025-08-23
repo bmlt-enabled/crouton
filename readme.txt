@@ -41,6 +41,7 @@ https://demo.bmlt.app/crouton
 * Czech and Slovak translations.
 * Farsi translations.
 * Emitter: use a wordpress site to emit a script that can be copied over and used on a non-wordpress site.
+* Added ability to translate backend using normal wordpress PO files.
 
 = 3.24.2 =
 * Small fixes.
