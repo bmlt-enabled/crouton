@@ -1,0 +1,439 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: crouton\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-23 12:13+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.0\n"
+"X-Domain: crouton-domain"
+
+#: admin/MapAdmin.php:84
+msgid ""
+"A good way to find the latitude and longitude is to open Google Maps, right "
+"click on a point, and select \"what is here?\""
+msgstr ""
+
+#. Description of the plugin
+msgid "A tabbed based display for showing meeting information."
+msgstr ""
+
+#: admin/TableAdmin.php:491
+msgid "Allows for custom styling of your crouton."
+msgstr ""
+
+#: admin/TableAdmin.php:392
+msgid ""
+"Allows for setting a pre-packaged theme.  (Have a custom built theme?  "
+"Please submit your CSS <a target=\"_blank\" href=\"https://github.com/bmlt-"
+"enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-"
+"template.md&title=Custom+Theme+Submission+Request\">here</a>.)"
+msgstr ""
+
+#: admin/MapAdmin.php:49
+msgid "API Key: "
+msgstr ""
+
+#: admin/MapAdmin.php:45
+msgid "Attribution: "
+msgstr ""
+
+#: admin/TableAdmin.php:282
+msgid "BMLT Query"
+msgstr ""
+
+#: admin/TableAdmin.php:289
+msgid "BMLT Server URL"
+msgstr ""
+
+#. Author of the plugin
+msgid "bmlt-enabled"
+msgstr ""
+
+#: admin/MapAdmin.php:104
+msgid "Cluster markers when below zoom level: "
+msgstr ""
+
+#: admin/MapAdmin.php:101
+msgid "Clustering"
+msgstr ""
+
+#: admin/TableAdmin.php:412
+msgid "Companion Map"
+msgstr ""
+
+#: admin/TableAdmin.php:278
+msgid "Configuration"
+msgstr ""
+
+#: admin/TableAdmin.php:270
+msgid ""
+"Connection to Root Server Failed.  Check spelling or try again.  If you are "
+"certain spelling is correct, Root Server could be down."
+msgstr ""
+
+#: admin/TableAdmin.php:601
+msgid "Contents"
+msgstr ""
+
+#. Name of the plugin
+msgid "crouton"
+msgstr ""
+
+#: admin/TableAdmin.php:283
+msgid "Crouton UI"
+msgstr ""
+
+#: admin/MapAdmin.php:39
+msgid "Custom"
+msgstr ""
+
+#: admin/TableAdmin.php:490
+msgid "Custom CSS"
+msgstr ""
+
+#: admin/TableAdmin.php:379
+msgid "Custom Query"
+msgstr ""
+
+#: admin/TableAdmin.php:383
+msgid "Custom Query: "
+msgstr ""
+
+#: admin/TableAdmin.php:429
+msgid "Default language of Crouton UI:"
+msgstr ""
+
+#: admin/TableAdmin.php:433
+msgid "Default language of meetings (format code): "
+msgstr ""
+
+#: admin/MapAdmin.php:83
+msgid "Default Latitude and Longitude of map"
+msgstr ""
+
+#: admin/TableAdmin.php:293
+msgid "Default Server: "
+msgstr ""
+
+#: admin/TableAdmin.php:310
+msgid "Default Service Bodies: "
+msgstr ""
+
+#: admin/TableAdmin.php:437
+msgid "Default time format: "
+msgstr ""
+
+#: admin/TableAdmin.php:425
+msgid "Default Values"
+msgstr ""
+
+#: admin/MapAdmin.php:69
+msgid "East: "
+msgstr ""
+
+#: admin/TableAdmin.php:418
+msgid "Embed Map as Table Page"
+msgstr ""
+
+#: admin/TableAdmin.php:290
+#, php-format
+msgid "Example: %s"
+msgstr ""
+
+#: admin/TableAdmin.php:374
+msgid "Extra Meetings Enabled"
+msgstr ""
+
+#: admin/TableAdmin.php:453
+msgid "Friday"
+msgstr ""
+
+#: admin/MapAdmin.php:52
+msgid "GeoCoding Parameters"
+msgstr ""
+
+#: admin/MapAdmin.php:65
+msgid "Geolocation Bounds (optional)"
+msgstr ""
+
+#: admin/MapAdmin.php:37
+msgid "German Open Street Map"
+msgstr ""
+
+#: admin/MapAdmin.php:38
+msgid "Google Maps"
+msgstr ""
+
+#: admin/TableAdmin.php:597
+msgid "Headline"
+msgstr ""
+
+#: admin/TableAdmin.php:548 admin/TableAdmin.php:571 admin/TableAdmin.php:594
+#: admin/MapAdmin.php:113
+msgid "here"
+msgstr ""
+
+#: admin/TableAdmin.php:372
+msgid ""
+"Hint: Type a group name, weekday, area or id to narrow down your choices."
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://bmlt.app"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/crouton/"
+msgstr ""
+
+#: admin/TableAdmin.php:632
+msgid ""
+"If no value is specified for virtual meetings, the in-person meeting link "
+"will be used."
+msgstr ""
+
+#: admin/TableAdmin.php:413
+msgid ""
+"In addition to croutons tabular listing of meetings, the meetings can be be "
+"displayed on a map."
+msgstr ""
+
+#: admin/TableAdmin.php:469
+msgid "Include \"Coties\" Button"
+msgstr ""
+
+#: admin/TableAdmin.php:471
+msgid "Include \"Distance\" Button"
+msgstr ""
+
+#: admin/TableAdmin.php:470
+msgid "Include \"Weekdays\" Button"
+msgstr ""
+
+#: admin/MapAdmin.php:87
+msgid "Latitude: r"
+msgstr ""
+
+#: admin/TableAdmin.php:554 admin/TableAdmin.php:577 admin/TableAdmin.php:605
+#: admin/MapAdmin.php:119
+msgid "Load current default template"
+msgstr ""
+
+#: admin/MapAdmin.php:91
+msgid "Longitude: "
+msgstr ""
+
+#: admin/TableAdmin.php:284
+msgid "Map"
+msgstr ""
+
+#: admin/MapAdmin.php:34
+msgid "Map Tile Provider"
+msgstr ""
+
+#: admin/TableAdmin.php:545
+msgid "Meeting Data Template"
+msgstr ""
+
+#: admin/TableAdmin.php:591
+msgid "Meeting Details Page"
+msgstr ""
+
+#: admin/TableAdmin.php:568
+msgid "Metadata Template"
+msgstr ""
+
+#: admin/TableAdmin.php:449
+msgid "Monday"
+msgstr ""
+
+#: admin/TableAdmin.php:416
+msgid "No Map"
+msgstr ""
+
+#: admin/MapAdmin.php:54
+msgid "Nominatim URL: "
+msgstr ""
+
+#: admin/MapAdmin.php:67
+msgid "North: "
+msgstr ""
+
+#: admin/TableAdmin.php:313
+msgid "Not Connected"
+msgstr ""
+
+#: admin/MapAdmin.php:36
+msgid "Open Street Map"
+msgstr ""
+
+#: admin/TableAdmin.php:279
+#, php-format
+msgid "Please open a ticket at %s for bugs, enhancements, or questions."
+msgstr ""
+
+#: admin/MapAdmin.php:110
+msgid "Popup Template"
+msgstr ""
+
+#: admin/TableAdmin.php:344
+msgid "Recurse Service Bodies"
+msgstr ""
+
+#: admin/MapAdmin.php:59
+msgid "Region/ Country Code (optional): "
+msgstr ""
+
+#: admin/TableAdmin.php:454
+msgid "Saturday"
+msgstr ""
+
+#: admin/TableAdmin.php:478
+msgid "Select Dropdown Filters"
+msgstr ""
+
+#: admin/TableAdmin.php:315
+msgid "Select Service Bodies"
+msgstr ""
+
+#: admin/TableAdmin.php:468
+msgid "Separate days into tabs"
+msgstr ""
+
+#: admin/TableAdmin.php:306
+msgid "Service Body"
+msgstr ""
+
+#: admin/TableAdmin.php:467
+msgid "Show Header"
+msgstr ""
+
+#: admin/TableAdmin.php:417
+msgid "Show Map and Table"
+msgstr ""
+
+#: admin/MapAdmin.php:72
+msgid "South: "
+msgstr ""
+
+#: admin/TableAdmin.php:448
+msgid "Sunday"
+msgstr ""
+
+#: admin/TableAdmin.php:285
+msgid "Templates"
+msgstr ""
+
+#: admin/TableAdmin.php:394
+msgid ""
+"The default original theme is called \"jack\".  If no theme is selected, the "
+"default one will be used."
+msgstr ""
+
+#: admin/TableAdmin.php:391
+msgid "Theme"
+msgstr ""
+
+#: admin/TableAdmin.php:426
+msgid ""
+"These values will be used when the attributes are not defined in the "
+"shortcode"
+msgstr ""
+
+#: admin/MapAdmin.php:111
+msgid ""
+"This allows customization of the fields displayed when you click on a map "
+"icon.  A list of available fields are"
+msgstr ""
+
+#: admin/TableAdmin.php:592
+msgid ""
+"This allows customization of the page or popup focused on a particular "
+"meeting.  A list of available fields are"
+msgstr ""
+
+#: admin/TableAdmin.php:546
+msgid ""
+"This allows customization of the second column of the crouton table.  A "
+"list of available fields are"
+msgstr ""
+
+#: admin/TableAdmin.php:569
+msgid ""
+"This allows customization of the third column of the crouton table.  A "
+"list of available fields are"
+msgstr ""
+
+#: admin/TableAdmin.php:307
+msgid ""
+"This service body will be used when no service body is defined in the "
+"shortcode."
+msgstr ""
+
+#: admin/TableAdmin.php:380
+msgid ""
+"This will allow to specify a custom BMLT query.  This will override any "
+"other filtering including service bodies."
+msgstr ""
+
+#: admin/TableAdmin.php:452
+msgid "Thursday"
+msgstr ""
+
+#: admin/TableAdmin.php:450
+msgid "Tuesday"
+msgstr ""
+
+#: admin/TableAdmin.php:626
+msgid "URI for in-person (and hybrid) meetings: "
+msgstr ""
+
+#: admin/TableAdmin.php:630
+msgid "URI for virtual meetings: "
+msgstr ""
+
+#: admin/MapAdmin.php:42
+msgid "URL for tiles: "
+msgstr ""
+
+#: admin/TableAdmin.php:300
+msgid "Use Aggregator &#127813;"
+msgstr ""
+
+#: admin/TableAdmin.php:274
+#, php-format
+msgid "Version %s"
+msgstr ""
+
+#: admin/TableAdmin.php:474
+msgid "View by City"
+msgstr ""
+
+#: admin/TableAdmin.php:475
+msgid "View by Distance"
+msgstr ""
+
+#: admin/TableAdmin.php:473
+msgid "View by Weekday"
+msgstr ""
+
+#: admin/TableAdmin.php:451
+msgid "Wedsday"
+msgstr ""
+
+#: admin/MapAdmin.php:74
+msgid "West: "
+msgstr ""
+
+#: admin/MapAdmin.php:95
+msgid "Zoom: "
+msgstr ""

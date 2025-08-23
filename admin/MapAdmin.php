@@ -108,7 +108,7 @@ if (!class_exists("Crouton\MapAdmin")) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-popup-template" class="anchor"></a><?php _e('Popup Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows a customization of the fields displayed when you click on a map icon.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the fields displayed when you click on a map icon.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>

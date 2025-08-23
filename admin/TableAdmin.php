@@ -543,7 +543,7 @@ foreach ($all_fields as $field) {
         </p></div>
         <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a><?php _e('Meeting Data Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows a customization of the second column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the second column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
@@ -566,7 +566,7 @@ foreach ($all_fields as $field) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-metadata-data-template" class="anchor"></a><?php _e('Metadata Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows a customization of the third column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the third column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
@@ -589,7 +589,7 @@ foreach ($all_fields as $field) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-details-page" class="anchor"></a><?php _e('Meeting Details Page', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows a customization of the page or popup focused on a particular meeting.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the page or popup focused on a particular meeting.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
                         <ul>
