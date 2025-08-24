@@ -109,15 +109,17 @@ if (!class_exists("Crouton\MapAdmin")) {
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-popup-template" class="anchor"></a><?php _e('Popup Template', 'crouton-domain') ?></h3>
                         <p><?php _e('This allows customization of the fields displayed when you click on a map icon.  A list of available fields are', 'crouton-domain') ?>
-                        <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
+                        <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
+                        <p><?php _e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <textarea id="marker_contents_template" class="handlebarsCode" name="marker_contents_template" cols="100" rows="10"><?php echo isset($options['marker_contents_template']) ? esc_html(html_entity_decode($options['marker_contents_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_marker_contents_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
-                                <input type="button" id="clear_marker_contents_template" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
+                                <input type="button" id="clear_marker_contents_template" value="<?php _e('Clear', 'crouton-domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">

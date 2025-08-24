@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: crouton\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-23 12:13+0000\n"
+"POT-Creation-Date: 2025-08-24 18:38+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -58,6 +58,26 @@ msgstr ""
 msgid "bmlt-enabled"
 msgstr ""
 
+#: admin/TableAdmin.php:626
+msgid ""
+"By default, the meeting details are inserted onto the same page as the "
+"crouton table itself, replacing the table.  This might not\n"
+"                        be appropriate.  If you want to use an additional "
+"page (or blog post) to display the meeting details, you may enter the path "
+"to the page here.\n"
+"                        Use the [bmlt_handlebar] shortcode to insert the "
+"meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}"
+"}[/bmlt_handlebar]).\n"
+"                        The partials 'meetingpageTitleTemplate' and "
+"'meetingpageContentsTemplate', defined in the two code areas above, are "
+"available for use in this way."
+msgstr ""
+
+#: admin/TableAdmin.php:557 admin/TableAdmin.php:583 admin/TableAdmin.php:613 
+#: admin/MapAdmin.php:122
+msgid "Clear"
+msgstr ""
+
 #: admin/MapAdmin.php:104
 msgid "Cluster markers when below zoom level: "
 msgstr ""
@@ -74,13 +94,17 @@ msgstr ""
 msgid "Configuration"
 msgstr ""
 
+#: admin/TableAdmin.php:464
+msgid "Configure Table Header"
+msgstr ""
+
 #: admin/TableAdmin.php:270
 msgid ""
 "Connection to Root Server Failed.  Check spelling or try again.  If you are "
 "certain spelling is correct, Root Server could be down."
 msgstr ""
 
-#: admin/TableAdmin.php:601
+#: admin/TableAdmin.php:608
 msgid "Contents"
 msgstr ""
 
@@ -173,18 +197,26 @@ msgstr ""
 msgid "Google Maps"
 msgstr ""
 
-#: admin/TableAdmin.php:597
+#: admin/TableAdmin.php:465
+msgid "Header Contents"
+msgstr ""
+
+#: admin/TableAdmin.php:604
 msgid "Headline"
 msgstr ""
 
-#: admin/TableAdmin.php:548 admin/TableAdmin.php:571 admin/TableAdmin.php:594
-#: admin/MapAdmin.php:113
+#: admin/TableAdmin.php:550 admin/TableAdmin.php:576 admin/TableAdmin.php:601 
+#: admin/MapAdmin.php:115
 msgid "here"
 msgstr ""
 
 #: admin/TableAdmin.php:372
 msgid ""
 "Hint: Type a group name, weekday, area or id to narrow down your choices."
+msgstr ""
+
+#: admin/TableAdmin.php:352
+msgid "Hold CTRL Key down to select multiple meetings."
 msgstr ""
 
 #. Author URI of the plugin
@@ -195,10 +227,18 @@ msgstr ""
 msgid "https://wordpress.org/plugins/crouton/"
 msgstr ""
 
-#: admin/TableAdmin.php:632
+#: admin/TableAdmin.php:639
 msgid ""
 "If no value is specified for virtual meetings, the in-person meeting link "
 "will be used."
+msgstr ""
+
+#: admin/TableAdmin.php:547 admin/TableAdmin.php:572 admin/TableAdmin.php:598 
+#: admin/MapAdmin.php:112
+msgid ""
+"If you want to customize the template, use the \"Reset\" button to load the "
+"current default template which you can then modify.  Customized templates "
+"are not overwritten, even when crouton updates."
 msgstr ""
 
 #: admin/TableAdmin.php:413
@@ -219,12 +259,16 @@ msgstr ""
 msgid "Include \"Weekdays\" Button"
 msgstr ""
 
+#: admin/TableAdmin.php:350
+msgid "Include Extra Meetings"
+msgstr ""
+
 #: admin/MapAdmin.php:87
 msgid "Latitude: r"
 msgstr ""
 
-#: admin/TableAdmin.php:554 admin/TableAdmin.php:577 admin/TableAdmin.php:605
-#: admin/MapAdmin.php:119
+#: admin/TableAdmin.php:556 admin/TableAdmin.php:582 admin/TableAdmin.php:612 
+#: admin/MapAdmin.php:121
 msgid "Load current default template"
 msgstr ""
 
@@ -244,11 +288,11 @@ msgstr ""
 msgid "Meeting Data Template"
 msgstr ""
 
-#: admin/TableAdmin.php:591
+#: admin/TableAdmin.php:596
 msgid "Meeting Details Page"
 msgstr ""
 
-#: admin/TableAdmin.php:568
+#: admin/TableAdmin.php:570
 msgid "Metadata Template"
 msgstr ""
 
@@ -293,8 +337,16 @@ msgstr ""
 msgid "Region/ Country Code (optional): "
 msgstr ""
 
+#: admin/TableAdmin.php:459
+msgid "Retrieve only those fields that are directly accessed in the templates"
+msgstr ""
+
 #: admin/TableAdmin.php:454
 msgid "Saturday"
+msgstr ""
+
+#: admin/TableAdmin.php:644
+msgid "SAVE CHANGES"
 msgstr ""
 
 #: admin/TableAdmin.php:478
@@ -355,7 +407,7 @@ msgid ""
 "icon.  A list of available fields are"
 msgstr ""
 
-#: admin/TableAdmin.php:592
+#: admin/TableAdmin.php:597
 msgid ""
 "This allows customization of the page or popup focused on a particular "
 "meeting.  A list of available fields are"
@@ -363,14 +415,14 @@ msgstr ""
 
 #: admin/TableAdmin.php:546
 msgid ""
-"This allows customization of the second column of the crouton table.  A "
-"list of available fields are"
+"This allows customization of the second column of the crouton table.  A list "
+"of available fields are"
 msgstr ""
 
-#: admin/TableAdmin.php:569
+#: admin/TableAdmin.php:571
 msgid ""
-"This allows customization of the third column of the crouton table.  A "
-"list of available fields are"
+"This allows customization of the third column of the crouton table.  A list "
+"of available fields are"
 msgstr ""
 
 #: admin/TableAdmin.php:307
@@ -389,15 +441,22 @@ msgstr ""
 msgid "Thursday"
 msgstr ""
 
+#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:599 
+#: admin/MapAdmin.php:113
+msgid ""
+"To always use the current default, allowing crouton to update the template, "
+"leave this field empty."
+msgstr ""
+
 #: admin/TableAdmin.php:450
 msgid "Tuesday"
 msgstr ""
 
-#: admin/TableAdmin.php:626
+#: admin/TableAdmin.php:633
 msgid "URI for in-person (and hybrid) meetings: "
 msgstr ""
 
-#: admin/TableAdmin.php:630
+#: admin/TableAdmin.php:637
 msgid "URI for virtual meetings: "
 msgstr ""
 
@@ -432,6 +491,14 @@ msgstr ""
 
 #: admin/MapAdmin.php:74
 msgid "West: "
+msgstr ""
+
+#: admin/TableAdmin.php:446
+msgid "Which day does the week start on:"
+msgstr ""
+
+#: admin/TableAdmin.php:414
+msgid "You may configure the map by clicking on the \"Map\" tab, above."
 msgstr ""
 
 #: admin/MapAdmin.php:95

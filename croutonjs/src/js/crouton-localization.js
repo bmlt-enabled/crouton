@@ -67,7 +67,7 @@ function CroutonLocalization(language) {
 			"waze": "وايز",
 			"waze_desc": "فتح في تطبيق وايز",
 		},
-		"cz": {
+		"cs": {
 			"days_of_the_week": ["", "Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
 			"weekday": "Den v týdnu",
 			"city": "Město",

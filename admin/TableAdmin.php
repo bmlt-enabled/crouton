@@ -347,9 +347,9 @@ if ($this_connected) {
                     </div>
 
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-include-extra-meetings" class="anchor"></a>Include Extra Meetings</h3>
+                        <h3><a id="config-include-extra-meetings" class="anchor"></a><?php _e('Include Extra Meetings', 'crouton-domain') ?></h3>
                         <div class="inside">
-                            <p class="ctrl_key" style="display:none; color: #00AD00;">Hold CTRL Key down to select multiple meetings.</p>
+                            <p class="ctrl_key" style="display:none; color: #00AD00;"><?php _e('Hold CTRL Key down to select multiple meetings.', 'crouton-domain') ?></p>
                             <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
                             if ($options['extra_meetings_enabled'] == 0) {
                                 echo 'Not Enabled';
@@ -443,7 +443,7 @@ if ($this_connected) {
                                     $options["int_start_day_id"] = 1;
                                 }
                                 ?>
-                                <label for="int_start_day_id">Which day does the week start on:</label>
+                                <label for="int_start_day_id"><?php _e('Which day does the week start on:', 'crouton-domain') ?></label>
                                 <select name="int_start_day_id" id="int_start_day_id">
                                     <option value="1" <?php echo ($options["int_start_day_id"] == 1) ? 'selected' : ''; ?>><?php _e('Sunday', 'crouton-domain') ?></option>
                                     <option value="2" <?php echo ($options["int_start_day_id"] == 2) ? 'selected' : ''; ?>><?php _e('Monday', 'crouton-domain') ?></option>
@@ -456,13 +456,13 @@ if ($this_connected) {
                             </li>
                             <li>
                                 <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $options['strict_datafields'] ? "checked" : '' ?>/>
-                                <label for="strict_datafields"><?php _e('Retrieve only those fields that are directly accessed in the templates', 'crouton_domain') ?></label>
+                                <label for="strict_datafields"><?php _e('Retrieve only those fields that are directly accessed in the templates', 'crouton-domain') ?></label>
                             </li>
                         </ul>
                     </div>
             <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-table-headers" class="anchor"></a>Configure Table Headers</h3>
-                        <h4>Header Contents</h4>
+                        <h3><a id="config-table-headers" class="anchor"></a><?php _e('Configure Table Headers', 'crouton-domain') ?></h3>
+                        <h4><?php _e('Header Contents', 'crouton-domain') ?></h4>
                         <ul>
                             <li><input type="checkbox" name="header" value="1" <?php echo ($options['header'] == 1 ? 'checked' : '') ?> /> <?php _e('Show Header', 'crouton-domain') ?></li>
                             <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($options['has_tabs'] == 1 ? 'checked' : '') ?> /> <?php _e('Separate days into tabs', 'crouton-domain') ?> </li>
@@ -544,15 +544,17 @@ foreach ($all_fields as $field) {
         <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a><?php _e('Meeting Data Template', 'crouton-domain') ?></h3>
                         <p><?php _e('This allows customization of the second column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
-                        <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
+                        <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
+                        <p><?php _e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <textarea id="meeting_data_template" class="handlebarsCode" name="meeting_data_template" cols="100" rows="10"><?php echo isset($options['meeting_data_template']) ? esc_html(html_entity_decode($options['meeting_data_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meeting_data_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
-                                <input type="button" id="clear_meeting_data_template" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
+                                <input type="button" id="clear_meeting_data_template" value="<?php _e('Clear', 'crouton-domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
@@ -567,15 +569,17 @@ foreach ($all_fields as $field) {
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-metadata-data-template" class="anchor"></a><?php _e('Metadata Template', 'crouton-domain') ?></h3>
                         <p><?php _e('This allows customization of the third column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
-                        <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
+                        <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
+                        <p><?php _e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <textarea id="metadata_template" class="handlebarsCode" name="metadata_template" cols="100" rows="10"><?php echo isset($options['metadata_template']) ? esc_html(html_entity_decode($options['metadata_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_metadata_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
-                                <input type="button" id="clear_metadata_template" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
+                                <input type="button" id="clear_metadata_template" value="<?php _e('Clear', 'crouton-domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
@@ -591,7 +595,9 @@ foreach ($all_fields as $field) {
                         <h3><a id="config-meeting-details-page" class="anchor"></a><?php _e('Meeting Details Page', 'crouton-domain') ?></h3>
                         <p><?php _e('This allows customization of the page or popup focused on a particular meeting.  A list of available fields are', 'crouton-domain') ?>
                         <span style="text-align:center;padding:20px 0;">
-<input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" />.</p>
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
+                        <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
+                        <p><?php _e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <label for="meetingpage_title_template"><?php _e('Headline', 'crouton-domain') ?></label>
@@ -603,7 +609,7 @@ foreach ($all_fields as $field) {
                             </li>
                             <li>
                                 <input type="button" id="reset_meetingpage_templates" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
-                                <input type="button" id="#clear_meetingpage_templates" value="<?php _e('Use default template.  Updating crouton may update template', 'crouton_domain') ?>" class="button-secondary" />
+                                <input type="button" id="#clear_meetingpage_templates" value="<?php _e('Clear', 'crouton-domain') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
@@ -616,10 +622,10 @@ foreach ($all_fields as $field) {
                                 clearCodemirror("meetingpage_contents_template");
                             });
                         </script>
-                        <p>By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
+                        <p><?php _e("By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
                         be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.
                         Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).
-                        The partials "meetingpageTitleTemplate" and "meetingpageContentsTemplate", defined in the two code areas above, are available for use in this way.
+                        The partials 'meetingpageTitleTemplate' and 'meetingpageContentsTemplate', defined in the two code areas above, are available for use in this way.", 'crouton-domain') ?></p>
                         </p>
                         <ul>
                             <li>

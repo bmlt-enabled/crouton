@@ -1,0 +1,427 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: crouton\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-24 18:38+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Domain: crouton-domain\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.0\n"
+
+msgid ""
+"A good way to find the latitude and longitude is to open Google Maps, right "
+"click on a point, and select \"what is here?\""
+msgstr ""
+"یک راه خوب برای یافتن عرض جغرافیایی و طول جغرافیایی باز کردن نقشه های گوگل ،"
+" کلیک راست بر روی یک نقطه و انتخاب \"اینجا چیست؟\""
+
+#. Description of the plugin
+msgid "A tabbed based display for showing meeting information."
+msgstr "یک صفحه نمایش مبتنی بر زبانه برای نشان دادن اطلاعات جلسه."
+
+msgid "Allows for custom styling of your crouton."
+msgstr "اجازه می دهد تا یک ظاهر طراحی سفارشی از crouton شما."
+
+msgid ""
+"Allows for setting a pre-packaged theme.  (Have a custom built theme?  "
+"Please submit your CSS <a target=\"_blank\" href=\"https://github.com/bmlt-"
+"enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-"
+"template.md&title=Custom+Theme+Submission+Request\">here</a>.)"
+msgstr ""
+"امکان تنظیم یک موضوع از پیش بسته بندی شده را فراهم می کند.  (یک موضوع ساخته "
+"شده سفارشی داشته باشید؟ لطفاً CSS خود را ارسال کنید <a target=\"_blank\" "
+"href=\"https://github.com/bmlt-"
+"enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-"
+"template.md&title=Custom+Theme+Submission+Request\">here</a>.)"
+
+msgid "API Key: "
+msgstr "کلید API:"
+
+msgid "Attribution: "
+msgstr "انتساب:"
+
+msgid "BMLT Query"
+msgstr "پرس و جو BMLT"
+
+msgid "BMLT Server URL"
+msgstr "URL سرور BMLT"
+
+#. Author of the plugin
+msgid "bmlt-enabled"
+msgstr "BMLT فعال"
+
+msgid ""
+"By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not\n"
+"                        be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.\n"
+"                        Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).\n"
+"                        The partials 'meetingpageTitleTemplate' and 'meetingpageContentsTemplate', defined in the two code areas above, are available for use in this way."
+msgstr ""
+"به طور پیش فرض ، جزئیات جلسه در همان صفحه به عنوان جدول Crouton خود قرار می گیرد و جدول را جایگزین می کند.  این ممکن است نباشد\r\n"
+"                        مناسب باشد  اگر می خواهید برای نمایش جزئیات جلسه از یک صفحه اضافی (یا پست وبلاگ) استفاده کنید ، می توانید مسیر صفحه را در اینجا وارد کنید.\r\n"
+"                        برای وارد کردن اطلاعات جلسه در متن استاتیک از کد کوتاه [BMLT_HANDLEBAR] استفاده کنید (به عنوان مثال ، [BMLT_HANDLEBAR] ___ Curly_0 ___ [/BMLT_HANDLEBAR]).\r\n"
+"                        قسمت های \"ScietPagetitleTemplate\" و \"ScatePageContentSmeplate\" که در دو حوزه کد فوق تعریف شده است ، برای استفاده از این طریق در دسترس هستند."
+
+msgid "Clear"
+msgstr "پاک کردن"
+
+msgid "Cluster markers when below zoom level: "
+msgstr "نشانگرهای خوشه ای در زیر سطح زوم:"
+
+msgid "Clustering"
+msgstr "خوشه"
+
+msgid "Companion Map"
+msgstr "نقشه همراه"
+
+msgid "Configuration"
+msgstr "پیکربندی"
+
+msgid "Configure Table Header"
+msgstr "هدر جدول را پیکربندی کنید"
+
+msgid ""
+"Connection to Root Server Failed.  Check spelling or try again.  If you are "
+"certain spelling is correct, Root Server could be down."
+msgstr ""
+"اتصال به سرور ریشه انجام نشد.  هجی را بررسی کنید یا دوباره امتحان کنید.  اگر"
+" برخی از املای درست باشید ، سرور ریشه می تواند پایین بیاید."
+
+msgid "Contents"
+msgstr "مطالب"
+
+#. Name of the plugin
+msgid "crouton"
+msgstr "کرتون"
+
+msgid "Crouton UI"
+msgstr "crouton ui"
+
+msgid "Custom"
+msgstr "عرف"
+
+msgid "Custom CSS"
+msgstr "CSS سفارشی"
+
+msgid "Custom Query"
+msgstr "پرس و جو سفارشی"
+
+msgid "Custom Query: "
+msgstr "پرس و جو سفارشی:"
+
+msgid "Default language of Crouton UI:"
+msgstr "زبان پیش فرض Crouton UI:"
+
+msgid "Default language of meetings (format code): "
+msgstr "زبان پیش فرض جلسات (کد فرمت):"
+
+msgid "Default Latitude and Longitude of map"
+msgstr "عرض جغرافیایی پیش فرض و طول؟"
+
+msgid "Default Server: "
+msgstr "سرور پیش فرض:"
+
+msgid "Default Service Bodies: "
+msgstr "نهادهای خدمات پیش فرض:"
+
+msgid "Default time format: "
+msgstr "قالب زمان پیش فرض:"
+
+msgid "Default Values"
+msgstr "مقادیر پیش فرض"
+
+msgid "East: "
+msgstr "شرق:"
+
+msgid "Embed Map as Table Page"
+msgstr "نقشه را به عنوان صفحه جدول تعبیه کرد"
+
+msgid "Example: %s"
+msgstr "مثال: %s"
+
+msgid "Extra Meetings Enabled"
+msgstr "جلسات اضافی فعال شده است"
+
+msgid "Friday"
+msgstr "جمعه"
+
+msgid "GeoCoding Parameters"
+msgstr "پارامترهای جغرافیایی"
+
+msgid "Geolocation Bounds (optional)"
+msgstr "مرزهای جغرافیایی (اختیاری)"
+
+msgid "German Open Street Map"
+msgstr "نقشه خیابان باز آلمان"
+
+msgid "Google Maps"
+msgstr "Google Maps"
+
+msgid "Header Contents"
+msgstr "محتوای هدر"
+
+msgid "Headline"
+msgstr "تیتر"
+
+msgid "here"
+msgstr "در اینجا"
+
+msgid ""
+"Hint: Type a group name, weekday, area or id to narrow down your choices."
+msgstr ""
+"نکته: نام گروهی ، روز هفته ، منطقه یا شناسه را تایپ کنید تا انتخاب های خود "
+"را محدود کنید."
+
+msgid "Hold CTRL Key down to select multiple meetings."
+msgstr "برای انتخاب چندین جلسه ، کلید CTRL را پایین نگه دارید."
+
+#. Author URI of the plugin
+msgid "https://bmlt.app"
+msgstr "https://bmlt.app"
+
+#. URI of the plugin
+msgid "https://wordpress.org/plugins/crouton/"
+msgstr "https://wordpress.org/plugins/crouton/"
+
+msgid ""
+"If no value is specified for virtual meetings, the in-person meeting link "
+"will be used."
+msgstr ""
+"اگر هیچ ارزشی برای جلسات مجازی مشخص نشده باشد ، از لینک جلسه حضوری استفاده "
+"می شود."
+
+msgid ""
+"If you want to customize the template, use the \"Reset\" button to load the "
+"current default template which you can then modify.  Customized templates "
+"are not overwritten, even when crouton updates."
+msgstr ""
+"اگر می خواهید الگوی را سفارشی کنید ، از دکمه \"تنظیم مجدد\" استفاده کنید تا "
+"الگوی پیش فرض فعلی را بارگذاری کنید که می توانید اصلاح کنید.  الگوهای سفارشی"
+" حتی در صورت بروزرسانی Crouton رونویسی نمی شوند."
+
+msgid ""
+"In addition to croutons tabular listing of meetings, the meetings can be be "
+"displayed on a map."
+msgstr ""
+"علاوه بر لیست جدول بندی Croutons از جلسات ، جلسات را می توان روی نقشه نمایش "
+"داد."
+
+msgid "Include \"Coties\" Button"
+msgstr "دکمه \"coties\" را درج کنید"
+
+msgid "Include \"Distance\" Button"
+msgstr "دکمه \"فاصله\" را درج کنید"
+
+msgid "Include \"Weekdays\" Button"
+msgstr "دکمه \"روزهای هفته\" را درج کنید"
+
+msgid "Include Extra Meetings"
+msgstr "شامل جلسات اضافی"
+
+msgid "Latitude: r"
+msgstr "عرض جغرافیایی: r"
+
+msgid "Load current default template"
+msgstr "الگوی پیش فرض فعلی را بارگیری کنید"
+
+msgid "Longitude: "
+msgstr "طول جغرافیایی:"
+
+msgid "Map"
+msgstr "نقشه"
+
+msgid "Map Tile Provider"
+msgstr "ارائه دهنده کاشی نقشه"
+
+msgid "Meeting Data Template"
+msgstr "ملاقات با الگوی داده"
+
+msgid "Meeting Details Page"
+msgstr "صفحه جزئیات جلسه"
+
+msgid "Metadata Template"
+msgstr "الگوی ابرداده"
+
+msgid "Monday"
+msgstr "دوشنبه"
+
+msgid "No Map"
+msgstr "بدون نقشه"
+
+msgid "Nominatim URL: "
+msgstr "URL NOMINATIM:"
+
+msgid "North: "
+msgstr "شمال:"
+
+msgid "Not Connected"
+msgstr "متصل نیست"
+
+msgid "Open Street Map"
+msgstr "نقشه خیابانی باز"
+
+msgid "Please open a ticket at %s for bugs, enhancements, or questions."
+msgstr "لطفاً برای اشکالات ، پیشرفت ها یا سؤالات ، بلیط را در %s باز کنید."
+
+msgid "Popup Template"
+msgstr "الگوی بازشو"
+
+msgid "Recurse Service Bodies"
+msgstr "مجدداً اجسام خدمات"
+
+msgid "Region/ Country Code (optional): "
+msgstr "کد منطقه/ کشور (اختیاری):"
+
+msgid "Retrieve only those fields that are directly accessed in the templates"
+msgstr ""
+"فقط آن قسمت هایی را که مستقیماً در قالب ها قابل دسترسی هستند ، بازیابی کنید"
+
+msgid "Saturday"
+msgstr "شنبه"
+
+msgid "SAVE CHANGES"
+msgstr "تغییرات را ذخیره کنید"
+
+msgid "Select Dropdown Filters"
+msgstr "فیلترهای کشویی را انتخاب کنید"
+
+msgid "Select Service Bodies"
+msgstr "نهادهای سرویس را انتخاب کنید"
+
+msgid "Separate days into tabs"
+msgstr "روزهای جداگانه در زبانه ها"
+
+msgid "Service Body"
+msgstr "بدنه خدمات"
+
+msgid "Show Header"
+msgstr "هدر نمایش"
+
+msgid "Show Map and Table"
+msgstr "نقشه و جدول را نشان دهید"
+
+msgid "South: "
+msgstr "جنوب:"
+
+msgid "Sunday"
+msgstr "یکشنبه"
+
+msgid "Templates"
+msgstr "الگوهای"
+
+msgid ""
+"The default original theme is called \"jack\".  If no theme is selected, the"
+" default one will be used."
+msgstr ""
+"موضوع اصلی پیش فرض \"جک\" نام دارد.  اگر هیچ موضوعی انتخاب نشده باشد ، از "
+"پیش فرض استفاده می شود."
+
+msgid "Theme"
+msgstr "موضوع"
+
+msgid ""
+"These values will be used when the attributes are not defined in the "
+"shortcode"
+msgstr ""
+"این مقادیر زمانی استفاده می شوند که ویژگی ها در کد کوتاه تعریف نشده باشند"
+
+msgid ""
+"This allows customization of the fields displayed when you click on a map "
+"icon.  A list of available fields are"
+msgstr ""
+"این امکان را می دهد تا هنگام کلیک بر روی یک نماد نقشه ، زمینه های نمایش داده"
+" شده را نشان دهد.  لیستی از قسمتهای موجود وجود دارد"
+
+msgid ""
+"This allows customization of the page or popup focused on a particular "
+"meeting.  A list of available fields are"
+msgstr ""
+"این اجازه می دهد تا سفارشی سازی صفحه یا پنجره های بازشو بر روی یک جلسه خاص "
+"متمرکز شود.  لیستی از قسمتهای موجود وجود دارد"
+
+msgid ""
+"This allows customization of the second column of the crouton table.  A list"
+" of available fields are"
+msgstr ""
+"این امکان سفارشی سازی ستون دوم جدول Crouton را فراهم می کند.  لیستی از "
+"قسمتهای موجود وجود دارد"
+
+msgid ""
+"This allows customization of the third column of the crouton table.  A list "
+"of available fields are"
+msgstr ""
+"این امکان سفارشی سازی ستون سوم جدول Crouton را فراهم می کند.  لیستی از "
+"قسمتهای موجود وجود دارد"
+
+msgid ""
+"This service body will be used when no service body is defined in the "
+"shortcode."
+msgstr "این بدنه سرویس در صورت تعریف بدنه سرویس در کد کوتاه استفاده می شود."
+
+msgid ""
+"This will allow to specify a custom BMLT query.  This will override any "
+"other filtering including service bodies."
+msgstr ""
+"این امکان را برای مشخص کردن یک پرس و جو BMLT سفارشی فراهم می کند.  این امر "
+"باعث نادیده گرفتن سایر فیلترها از جمله نهادهای خدماتی می شود."
+
+msgid "Thursday"
+msgstr "پنجشنبه"
+
+msgid ""
+"To always use the current default, allowing crouton to update the template, "
+"leave this field empty."
+msgstr ""
+"برای استفاده همیشه از پیش فرض فعلی ، به Crouton اجازه می دهد تا الگوی را به "
+"روز کند ، این قسمت را خالی بگذارید."
+
+msgid "Tuesday"
+msgstr "سه شنبه"
+
+msgid "URI for in-person (and hybrid) meetings: "
+msgstr "URI برای جلسات حضوری (و ترکیبی):"
+
+msgid "URI for virtual meetings: "
+msgstr "URI برای جلسات مجازی:"
+
+msgid "URL for tiles: "
+msgstr "URL برای کاشی:"
+
+msgid "Use Aggregator &#127813;"
+msgstr "از Aggregator &#127813 ؛"
+
+msgid "Version %s"
+msgstr "نسخه %s"
+
+msgid "View by City"
+msgstr "نمای توسط شهر"
+
+msgid "View by Distance"
+msgstr "نمای از راه دور"
+
+msgid "View by Weekday"
+msgstr "مشاهده روز هفته"
+
+msgid "Wedsday"
+msgstr "روز چهارشنبه"
+
+msgid "West: "
+msgstr "غرب:"
+
+msgid "Which day does the week start on:"
+msgstr "کدام روز هفته آغاز می شود:"
+
+msgid "You may configure the map by clicking on the \"Map\" tab, above."
+msgstr ""
+"شما می توانید با کلیک بر روی برگه \"نقشه\" ، در بالا ، نقشه را پیکربندی "
+"کنید."
+
+msgid "Zoom: "
+msgstr "بزرگنمایی:"
