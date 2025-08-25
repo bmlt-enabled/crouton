@@ -3,10 +3,10 @@ msgstr ""
 "Project-Id-Version: crouton\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-25 12:09+0000\n"
-"PO-Revision-Date: 2025-08-25 13:50+0000\n"
+"PO-Revision-Date: 2025-08-25 21:41+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Persian (Iran)\n"
-"Language: fa-IR\n"
+"Language-Team: Persian\n"
+"Language: fa_IR\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,6 +17,7 @@ msgstr ""
 "X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.0\n"
 "X-Loco-Parser: loco_parse_po"
 
+#: admin/MapAdmin.php:84
 msgid ""
 "A good way to find the latitude and longitude is to open Google Maps, right "
 "click on a point, and select \"what is here?\""
@@ -28,18 +29,23 @@ msgstr ""
 msgid "A tabbed based display for showing meeting information."
 msgstr "یک صفحه نمایش مبتنی بر زبانه برای نشان دادن اطلاعات جلسه."
 
+#: admin/TableAdmin.php:491
 msgid "Allows custom styling of the meeting list."
 msgstr "اجازه می دهد تا یک ظاهر طراحی شده از لیست جلسه."
 
+#: admin/MapAdmin.php:49
 msgid "API Key: "
 msgstr "کلید API:"
 
+#: admin/MapAdmin.php:45
 msgid "Attribution: "
 msgstr "انتساب:"
 
+#: admin/TableAdmin.php:282
 msgid "BMLT Query"
 msgstr "جستجوی BMLT"
 
+#: admin/TableAdmin.php:289
 msgid "BMLT Server URL"
 msgstr "URL سرور BMLT"
 
@@ -47,6 +53,7 @@ msgstr "URL سرور BMLT"
 msgid "bmlt-enabled"
 msgstr "BMLT فعال"
 
+#: admin/TableAdmin.php:380
 msgid ""
 "By default, all the meetings in the selected service bodies are returned.  "
 "You can override this with your own query here."
@@ -54,6 +61,7 @@ msgstr ""
 "به طور پیش فرض ، تمام جلسات موجود در نهادهای خدمات انتخاب شده بازگردانده می "
 "شوند.  شما می توانید این کار را با پرس و جو خود در اینجا نادیده بگیرید."
 
+#: admin/TableAdmin.php:625
 msgid ""
 "By default, the meeting details are inserted onto the same page as the "
 "meeting list table, replacing it.  This might not\n"
@@ -76,24 +84,32 @@ msgstr ""
 "'meetingpageContentsTemplate' که در دو قسمت کد بالا تعریف شده اند، برای "
 "استفاده از این روش در دسترس هستند."
 
+#: admin/TableAdmin.php:557 admin/TableAdmin.php:582 admin/TableAdmin.php:612
+#: admin/MapAdmin.php:122
 msgid "Clear"
 msgstr "پاک کردن"
 
+#: admin/MapAdmin.php:104
 msgid "Cluster markers when below zoom level: "
 msgstr "نشانگرهای خوشه ای در زیر سطح زوم:"
 
+#: admin/MapAdmin.php:101
 msgid "Clustering"
 msgstr "خوشه"
 
+#: admin/TableAdmin.php:412
 msgid "Companion Map"
 msgstr "نقشه همراه"
 
+#: admin/TableAdmin.php:278
 msgid "Configuration"
 msgstr "پیکربندی"
 
+#: admin/TableAdmin.php:464
 msgid "Configure Table Headers"
 msgstr "هدرهای جدول را پیکربندی کنید"
 
+#: admin/TableAdmin.php:270
 msgid ""
 "Connection to Root Server Failed.  Check spelling or try again.  If you are "
 "certain spelling is correct, Root Server could be down."
@@ -101,6 +117,7 @@ msgstr ""
 "اتصال به سرور ریشه انجام نشد.  هجی را بررسی کنید یا دوباره امتحان کنید.  اگر "
 "برخی از املای درست باشید ، سرور ریشه می تواند پایین بیاید."
 
+#: admin/TableAdmin.php:607
 msgid "Contents"
 msgstr "محتوی"
 
@@ -108,79 +125,105 @@ msgstr "محتوی"
 msgid "crouton"
 msgstr "کرتون"
 
+#: admin/MapAdmin.php:39
 msgid "Custom"
 msgstr "سفارشی"
 
+#: admin/TableAdmin.php:490
 msgid "Custom CSS"
 msgstr "CSS سفارشی"
 
+#: admin/TableAdmin.php:379
 msgid "Custom Query"
 msgstr "جستجوی سفارشی"
 
+#: admin/TableAdmin.php:383
 msgid "Custom Query: "
 msgstr "جستجوی سفارشی:"
 
+#: admin/MapAdmin.php:83
 msgid "Default Latitude and Longitude of map"
 msgstr "عرض جغرافیایی پیش فرض و طول؟"
 
+#: admin/TableAdmin.php:429
 msgid "Default meeting list language:"
 msgstr "زبان لیست جلسات پیش فرض:"
 
+#: admin/TableAdmin.php:293
 msgid "Default Server: "
 msgstr "سرور پیش فرض:"
 
+#: admin/TableAdmin.php:310
 msgid "Default Service Bodies: "
 msgstr "نهادهای خدمات پیش فرض:"
 
+#: admin/TableAdmin.php:437
 msgid "Default time format: "
 msgstr "قالب زمان پیش فرض:"
 
+#: admin/TableAdmin.php:425
 msgid "Default Values"
 msgstr "مقادیر پیش فرض"
 
+#: admin/MapAdmin.php:69
 msgid "East: "
 msgstr "شرق:"
 
+#: admin/TableAdmin.php:418
 msgid "Embed Map as Table Page"
 msgstr "نقشه را به عنوان صفحه جدول تعبیه کرد"
 
+#: admin/TableAdmin.php:290
+#, php-format
 msgid "Example: %s"
 msgstr "مثال: %s"
 
+#: admin/TableAdmin.php:374
 msgid "Extra Meetings Enabled"
 msgstr "جلسات اضافی فعال شده است"
 
+#: admin/TableAdmin.php:453
 msgid "Friday"
 msgstr "جمعه"
 
+#: admin/MapAdmin.php:52
 msgid "GeoCoding Parameters"
 msgstr "پارامترهای جغرافیایی"
 
+#: admin/MapAdmin.php:65
 msgid "Geolocation Bounds (optional)"
 msgstr "مرزهای جغرافیایی (اختیاری)"
 
+#: admin/MapAdmin.php:37
 msgid "German Open Street Map"
 msgstr ""
 "German Open Street Map\n"
 
+#: admin/MapAdmin.php:38
 msgid "Google Maps"
 msgstr "Google Maps"
 
+#: admin/TableAdmin.php:465
 msgid "Header Contents"
 msgstr "محتوای هدر"
 
+#: admin/TableAdmin.php:603
 msgid "Headline"
 msgstr "تیتر"
 
+#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:598
+#: admin/MapAdmin.php:113
 msgid "here"
 msgstr "اینجا"
 
+#: admin/TableAdmin.php:372
 msgid ""
 "Hint: Type a group name, weekday, area or id to narrow down your choices."
 msgstr ""
 "نکته: نام گروهی ، روز هفته ، منطقه یا شناسه را تایپ کنید تا انتخاب های خود "
 "را محدود کنید."
 
+#: admin/TableAdmin.php:352
 msgid "Hold CTRL Key down to select multiple meetings."
 msgstr "برای انتخاب چندین جلسه ، کلید CTRL را پایین نگه دارید."
 
@@ -192,6 +235,7 @@ msgstr "https://bmlt.app"
 msgid "https://wordpress.org/plugins/crouton/"
 msgstr "https://wordpress.org/plugins/crouton/"
 
+#: admin/TableAdmin.php:638
 msgid ""
 "If no value is specified for virtual meetings, the in-person meeting link "
 "will be used."
@@ -199,6 +243,8 @@ msgstr ""
 "اگر هیچ ارزشی برای جلسات مجازی مشخص نشده باشد ، از لینک جلسه حضوری استفاده "
 "می شود."
 
+#: admin/TableAdmin.php:549 admin/TableAdmin.php:574 admin/TableAdmin.php:599
+#: admin/MapAdmin.php:114
 msgid ""
 "If you want to customize the template, use the \"Reset\" button to load the "
 "current default template which you can then modify.  Customized templates "
@@ -208,6 +254,7 @@ msgstr ""
 "الگوی پیش فرض فعلی را بارگذاری کنید که می توانید اصلاح کنید.  الگوهای سفارشی "
 "حتی در صورت بروزرسانی Crouton رونویسی نمی شوند."
 
+#: admin/TableAdmin.php:413
 msgid ""
 "In addition to croutons tabular listing of meetings, the meetings can be be "
 "displayed on a map."
@@ -215,106 +262,142 @@ msgstr ""
 "علاوه بر لیست جدول بندی Croutons از جلسات ، جلسات را می توان روی نقشه نمایش "
 "داد."
 
+#: admin/TableAdmin.php:469
 msgid "Include \"Cities\" Button"
 msgstr "دکمه \"شهرها\" را درج کنید"
 
+#: admin/TableAdmin.php:471
 msgid "Include \"Distance\" Button"
 msgstr "دکمه \"فاصله\" را درج کنید"
 
+#: admin/TableAdmin.php:470
 msgid "Include \"Weekdays\" Button"
 msgstr "دکمه \"روزهای هفته\" را درج کنید"
 
+#: admin/TableAdmin.php:350
 msgid "Include Extra Meetings"
 msgstr "شامل جلسات اضافی"
 
+#: admin/MapAdmin.php:87
 msgid "Latitude: "
 msgstr "عرض جغرافیایی:"
 
+#: admin/TableAdmin.php:556 admin/TableAdmin.php:581 admin/TableAdmin.php:611
+#: admin/MapAdmin.php:121
 msgid "Load current default template"
 msgstr "الگوی پیش فرض فعلی را بارگیری کنید"
 
+#: admin/MapAdmin.php:91
 msgid "Longitude: "
 msgstr "طول جغرافیایی:"
 
+#: admin/TableAdmin.php:284
 msgid "Map"
 msgstr "نقشه"
 
+#: admin/MapAdmin.php:34
 msgid "Map Tile Provider"
 msgstr "ارائه دهنده کاشی نقشه"
 
+#: admin/TableAdmin.php:545
 msgid "Meeting Data Template"
 msgstr "ملاقات با الگوی داده"
 
+#: admin/TableAdmin.php:595
 msgid "Meeting Details Page"
 msgstr "صفحه جزئیات جلسه"
 
+#: admin/TableAdmin.php:570
 msgid "Metadata Template"
 msgstr "الگوی ابرداده"
 
+#: admin/TableAdmin.php:449
 msgid "Monday"
 msgstr "دوشنبه"
 
+#: admin/TableAdmin.php:416
 msgid "No Map"
 msgstr "بدون نقشه"
 
+#: admin/MapAdmin.php:54
 msgid "Nominatim URL: "
 msgstr "URL NOMINATIM:"
 
+#: admin/MapAdmin.php:67
 msgid "North: "
 msgstr "شمال:"
 
+#: admin/TableAdmin.php:313
 msgid "Not Connected"
 msgstr "متصل نیست"
 
+#: admin/MapAdmin.php:36
 msgid "Open Street Map"
 msgstr "Open Street Map"
 
+#: admin/TableAdmin.php:279
+#, php-format
 msgid "Please open a ticket at %s for bugs, enhancements, or questions."
 msgstr "لطفاً برای اشکالات ، پیشرفت ها یا سؤالات ، بلیط را در %s باز کنید."
 
+#: admin/MapAdmin.php:110
 msgid "Popup Template"
 msgstr "الگوی بازشو"
 
+#: admin/TableAdmin.php:344
 msgid "Recurse Service Bodies"
 msgstr "مجدداً اجسام خدمات"
 
+#: admin/MapAdmin.php:59
 msgid "Region/ Country Code (optional): "
 msgstr "کد منطقه/ کشور (اختیاری):"
 
+#: admin/TableAdmin.php:459
 msgid "Retrieve only those fields that are directly accessed in the templates"
 msgstr ""
 "فقط آن قسمت هایی را که مستقیماً در قالب ها قابل دسترسی هستند ، بازیابی کنید"
 
+#: admin/TableAdmin.php:454
 msgid "Saturday"
 msgstr "شنبه"
 
+#: admin/TableAdmin.php:478
 msgid "Select Dropdown Filters"
 msgstr "فیلترهای کشویی را انتخاب کنید"
 
+#: admin/TableAdmin.php:315
 msgid "Select Service Bodies"
 msgstr "نهادهای سرویس را انتخاب کنید"
 
+#: admin/TableAdmin.php:468
 msgid "Separate days into tabs"
 msgstr "روزهای جداگانه در زبانه ها"
 
+#: admin/TableAdmin.php:306
 msgid "Service Body"
 msgstr "بدنه خدماتی"
 
+#: admin/TableAdmin.php:467
 msgid "Show Header"
 msgstr "نمایش هدر"
 
+#: admin/TableAdmin.php:417
 msgid "Show Map and Table"
 msgstr "نقشه و جدول را نشان دهید"
 
+#: admin/MapAdmin.php:72
 msgid "South: "
 msgstr "جنوب:"
 
+#: admin/TableAdmin.php:448
 msgid "Sunday"
 msgstr "یکشنبه"
 
+#: admin/TableAdmin.php:285
 msgid "Templates"
 msgstr "الگوها"
 
+#: admin/TableAdmin.php:392
 msgid ""
 "The BMLT community has developed many color schemes for their meeting lists. "
 " You can select one of them here.  The default original theme is called "
@@ -324,15 +407,18 @@ msgstr ""
 "یکی از آنها را در اینجا انتخاب کنید.  موضوع اصلی پیش فرض \"جک\" نام دارد.  "
 "اگر هیچ موضوعی انتخاب نشده باشد ، از پیش فرض استفاده می شود."
 
+#: admin/TableAdmin.php:391
 msgid "Theme"
 msgstr "موضوع"
 
+#: admin/TableAdmin.php:426
 msgid ""
 "These values will be used when the attributes are not defined in the "
 "shortcode"
 msgstr ""
 "این مقادیر زمانی استفاده می شوند که ویژگی ها در کد کوتاه تعریف نشده باشند"
 
+#: admin/MapAdmin.php:111
 msgid ""
 "This allows customization of the fields displayed when you click on a map "
 "icon.  A list of available fields are"
@@ -340,6 +426,7 @@ msgstr ""
 "این امکان را می دهد تا هنگام کلیک بر روی یک نماد نقشه ، زمینه های نمایش داده "
 "شده را نشان دهد.  لیستی از قسمتهای موجود وجود دارد"
 
+#: admin/TableAdmin.php:596
 msgid ""
 "This allows customization of the page or popup focused on a particular "
 "meeting.  A list of available fields are"
@@ -347,6 +434,7 @@ msgstr ""
 "این اجازه می دهد تا سفارشی سازی صفحه یا پنجره های بازشو بر روی یک جلسه خاص "
 "متمرکز شود.  لیستی از قسمتهای موجود وجود دارد"
 
+#: admin/TableAdmin.php:546
 msgid ""
 "This allows customization of the second column of the meeting list table.  A "
 "list of available fields are"
@@ -354,6 +442,7 @@ msgstr ""
 "این امکان سفارشی سازی ستون دوم جدول لیست جلسه را فراهم می کند.  لیستی از "
 "قسمتهای موجود وجود دارد"
 
+#: admin/TableAdmin.php:571
 msgid ""
 "This allows customization of the third column of the meeting list table.  A "
 "list of available fields are"
@@ -361,14 +450,18 @@ msgstr ""
 "این امکان سفارشی سازی ستون سوم جدول لیست جلسه را فراهم می کند.  لیستی از "
 "قسمتهای موجود وجود دارد"
 
+#: admin/TableAdmin.php:307
 msgid ""
 "This service body will be used when no service body is defined in the "
 "shortcode."
 msgstr "این بدنه سرویس در صورت تعریف بدنه سرویس در کد کوتاه استفاده می شود."
 
+#: admin/TableAdmin.php:452
 msgid "Thursday"
 msgstr "پنجشنبه"
 
+#: admin/TableAdmin.php:550 admin/TableAdmin.php:575 admin/TableAdmin.php:600
+#: admin/MapAdmin.php:115
 msgid ""
 "To always use the current default, allowing crouton to update the template, "
 "leave this field empty."
@@ -376,50 +469,71 @@ msgstr ""
 "برای استفاده همیشه از پیش فرض فعلی ، به Crouton اجازه می دهد تا الگوی را به "
 "روز کند ، این قسمت را خالی بگذارید."
 
+#: admin/TableAdmin.php:450
 msgid "Tuesday"
 msgstr "سه شنبه"
 
+#: admin/TableAdmin.php:632
 msgid "URI for in-person (and hybrid) meetings: "
 msgstr "URI برای جلسات حضوری (و ترکیبی):"
 
+#: admin/TableAdmin.php:636
 msgid "URI for virtual meetings: "
 msgstr "URI برای جلسات مجازی:"
 
+#: admin/MapAdmin.php:42
 msgid "URL for tiles: "
 msgstr "URL برای کاشی:"
 
+#: admin/TableAdmin.php:300
 msgid "Use Aggregator &#127813;"
 msgstr "از Aggregator &#127813 ؛"
 
+#: admin/TableAdmin.php:283
 msgid "User Interface"
 msgstr "رابط کاربری"
 
+#: admin/TableAdmin.php:274
+#, php-format
 msgid "Version %s"
 msgstr "نسخه %s"
 
+#: admin/TableAdmin.php:474
 msgid "View by City"
 msgstr "نمایش بر اساس شهر"
 
+#: admin/TableAdmin.php:475
 msgid "View by Distance"
 msgstr "نمایش بر اساس مصافت"
 
+#: admin/TableAdmin.php:473
 msgid "View by Weekday"
 msgstr "مشاهده بر اساس روزهای هفته"
 
+#: admin/TableAdmin.php:451
 msgid "Wedsday"
 msgstr "چهارشنبه"
 
+#: admin/MapAdmin.php:74
 msgid "West: "
 msgstr "غرب:"
 
+#: admin/TableAdmin.php:446
 msgid "Which day does the week start on:"
 msgstr "روز آغازین هفته :"
 
+#: admin/TableAdmin.php:433
 msgid "Which format code represents the default language: "
 msgstr "کدام کد با فرمت زبان پیش فرض را نشان می دهد:"
 
+#: admin/TableAdmin.php:393
 msgid "You can customize the selected theme in the custom CSS section, below."
 msgstr "می توانید موضوع انتخاب شده را در بخش CSS سفارشی ، در زیر سفارشی کنید."
 
+#: admin/TableAdmin.php:414
+msgid "You may configure the map by clicking on the \"Map\" tab, above."
+msgstr "می توانید نقشه را با کلیک بر روی برگه \"نقشه\" در بالا پیکربندی کنید."
+
+#: admin/MapAdmin.php:95
 msgid "Zoom: "
 msgstr "بزرگنمایی:"

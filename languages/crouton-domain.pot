@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: crouton\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 12:09+0000\n"
+"POT-Creation-Date: 2025-08-25 21:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -71,7 +71,7 @@ msgid ""
 "available for use in this way."
 msgstr ""
 
-#: admin/TableAdmin.php:557 admin/TableAdmin.php:582 admin/TableAdmin.php:612
+#: admin/TableAdmin.php:557 admin/TableAdmin.php:582 admin/TableAdmin.php:612 
 #: admin/MapAdmin.php:122
 msgid "Clear"
 msgstr ""
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Headline"
 msgstr ""
 
-#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:598
+#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:598 
 #: admin/MapAdmin.php:113
 msgid "here"
 msgstr ""
@@ -223,7 +223,7 @@ msgid ""
 "will be used."
 msgstr ""
 
-#: admin/TableAdmin.php:549 admin/TableAdmin.php:574 admin/TableAdmin.php:599
+#: admin/TableAdmin.php:549 admin/TableAdmin.php:574 admin/TableAdmin.php:599 
 #: admin/MapAdmin.php:114
 msgid ""
 "If you want to customize the template, use the \"Reset\" button to load the "
@@ -257,7 +257,7 @@ msgstr ""
 msgid "Latitude: "
 msgstr ""
 
-#: admin/TableAdmin.php:556 admin/TableAdmin.php:581 admin/TableAdmin.php:611
+#: admin/TableAdmin.php:556 admin/TableAdmin.php:581 admin/TableAdmin.php:611 
 #: admin/MapAdmin.php:121
 msgid "Load current default template"
 msgstr ""
@@ -422,7 +422,7 @@ msgstr ""
 msgid "Thursday"
 msgstr ""
 
-#: admin/TableAdmin.php:550 admin/TableAdmin.php:575 admin/TableAdmin.php:600
+#: admin/TableAdmin.php:550 admin/TableAdmin.php:575 admin/TableAdmin.php:600 
 #: admin/MapAdmin.php:115
 msgid ""
 "To always use the current default, allowing crouton to update the template, "
@@ -488,6 +488,10 @@ msgstr ""
 
 #: admin/TableAdmin.php:393
 msgid "You can customize the selected theme in the custom CSS section, below."
+msgstr ""
+
+#: admin/TableAdmin.php:414
+msgid "You may configure the map by clicking on the \"Map\" tab, above."
 msgstr ""
 
 #: admin/MapAdmin.php:95

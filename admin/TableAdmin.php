@@ -411,7 +411,7 @@ if ($this_connected) {
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-show-map" class="anchor"></a><?php _e('Companion Map', 'crouton-domain') ?></h3>
                         <p><?php _e('In addition to croutons tabular listing of meetings, the meetings can be be displayed on a map.', 'crouton-domain') ?></p>
-                        <p><?php _e('You may configure the map by clicking on the "Map" tab, above.') ?></p>
+                        <p><?php _e('You may configure the map by clicking on the "Map" tab, above.', 'crouton-domain') ?></p>
                                 <select id="show_map" name="show_map" style="display:block;">
                                     <option <?php echo $options['show_map']=='0' ? 'selected' : '';?> value="0"><?php _e('No Map', 'crouton-domain') ?></option>
                                     <option <?php echo $options['show_map']=='1' ? 'selected' : '';?> value="1"><?php _e('Show Map and Table', 'crouton-domain') ?></option>
