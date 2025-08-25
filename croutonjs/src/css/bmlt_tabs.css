@@ -363,9 +363,9 @@ span.bmlt_tabs_group_count {
 		border-radius: 0 !important;
 		margin-right: 0 !important;
 	}
-
-	#bmlt-tabs .nav-tabs > li {
+	#bmlt-tabs #nav-days .nav-tabs>li {
 		float: none;
+		width: 100% !important;
 		border: 1px solid #ddd;
 	}
 
@@ -424,6 +424,19 @@ span.bmlt_tabs_group_count {
 
 	#bmlt-tabs td.formats_description {
 		display: none !important;
+	}
+
+    #bmlt-tabs .bmlt-rtl .bmlt-dropdown-container {
+        display: block;
+        margin-left: 0;
+        margin-right: 4px
+    }
+
+    #bmlt-tabs .bmlt-rtl span.select2.select2-container {
+        width: 100% !important
+    }
+	#bmlt-tabs #nav-days.bmlt-rtl {
+    	width: 100% !important;
 	}
 }
 

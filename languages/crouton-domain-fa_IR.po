@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: crouton\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-08-25 12:09+0000\n"
-"PO-Revision-Date: 2025-08-25 12:41+0000\n"
+"PO-Revision-Date: 2025-08-25 13:50+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Persian (Iran)\n"
 "Language: fa-IR\n"
@@ -15,7 +15,6 @@ msgstr ""
 "X-Domain: crouton-domain\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.0\n"
-"\n"
 "X-Loco-Parser: loco_parse_po"
 
 msgid ""
@@ -39,7 +38,7 @@ msgid "Attribution: "
 msgstr "انتساب:"
 
 msgid "BMLT Query"
-msgstr "پرس و جو BMLT"
+msgstr "جستجوی BMLT"
 
 msgid "BMLT Server URL"
 msgstr "URL سرور BMLT"
@@ -103,23 +102,23 @@ msgstr ""
 "برخی از املای درست باشید ، سرور ریشه می تواند پایین بیاید."
 
 msgid "Contents"
-msgstr "مطالب"
+msgstr "محتوی"
 
 #. Name of the plugin
 msgid "crouton"
 msgstr "کرتون"
 
 msgid "Custom"
-msgstr "عرف"
+msgstr "سفارشی"
 
 msgid "Custom CSS"
 msgstr "CSS سفارشی"
 
 msgid "Custom Query"
-msgstr "پرس و جو سفارشی"
+msgstr "جستجوی سفارشی"
 
 msgid "Custom Query: "
-msgstr "پرس و جو سفارشی:"
+msgstr "جستجوی سفارشی:"
 
 msgid "Default Latitude and Longitude of map"
 msgstr "عرض جغرافیایی پیش فرض و طول؟"
@@ -161,7 +160,8 @@ msgid "Geolocation Bounds (optional)"
 msgstr "مرزهای جغرافیایی (اختیاری)"
 
 msgid "German Open Street Map"
-msgstr "نقشه خیابان باز آلمان"
+msgstr ""
+"German Open Street Map\n"
 
 msgid "Google Maps"
 msgstr "Google Maps"
@@ -173,7 +173,7 @@ msgid "Headline"
 msgstr "تیتر"
 
 msgid "here"
-msgstr "در اینجا"
+msgstr "اینجا"
 
 msgid ""
 "Hint: Type a group name, weekday, area or id to narrow down your choices."
@@ -267,7 +267,7 @@ msgid "Not Connected"
 msgstr "متصل نیست"
 
 msgid "Open Street Map"
-msgstr "نقشه خیابانی باز"
+msgstr "Open Street Map"
 
 msgid "Please open a ticket at %s for bugs, enhancements, or questions."
 msgstr "لطفاً برای اشکالات ، پیشرفت ها یا سؤالات ، بلیط را در %s باز کنید."
@@ -298,10 +298,10 @@ msgid "Separate days into tabs"
 msgstr "روزهای جداگانه در زبانه ها"
 
 msgid "Service Body"
-msgstr "بدنه خدمات"
+msgstr "بدنه خدماتی"
 
 msgid "Show Header"
-msgstr "هدر نمایش"
+msgstr "نمایش هدر"
 
 msgid "Show Map and Table"
 msgstr "نقشه و جدول را نشان دهید"
@@ -313,7 +313,7 @@ msgid "Sunday"
 msgstr "یکشنبه"
 
 msgid "Templates"
-msgstr "الگوهای"
+msgstr "الگوها"
 
 msgid ""
 "The BMLT community has developed many color schemes for their meeting lists. "
@@ -398,22 +398,22 @@ msgid "Version %s"
 msgstr "نسخه %s"
 
 msgid "View by City"
-msgstr "نمای توسط شهر"
+msgstr "نمایش بر اساس شهر"
 
 msgid "View by Distance"
-msgstr "نمای از راه دور"
+msgstr "نمایش بر اساس مصافت"
 
 msgid "View by Weekday"
-msgstr "مشاهده روز هفته"
+msgstr "مشاهده بر اساس روزهای هفته"
 
 msgid "Wedsday"
-msgstr "روز چهارشنبه"
+msgstr "چهارشنبه"
 
 msgid "West: "
 msgstr "غرب:"
 
 msgid "Which day does the week start on:"
-msgstr "کدام روز هفته آغاز می شود:"
+msgstr "روز آغازین هفته :"
 
 msgid "Which format code represents the default language: "
 msgstr "کدام کد با فرمت زبان پیش فرض را نشان می دهد:"
