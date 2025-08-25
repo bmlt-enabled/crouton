@@ -58,8 +58,13 @@ if (!class_exists("Crouton\TableAdmin")) {
             add_action("admin_enqueue_scripts", array(&$this, "enqueueBackendFiles"), 500);
             add_action("admin_menu", array(&$this, "adminMenuLink"));
             add_action("BmltEnabled_Submenu", array(&$this, "adminSubmenuLink"));
+            add_action("init", array(&$this, "loadTextDomain"));
         }
         private $menu_created = false;
+        public function loadTextDomain()
+        {
+            load_plugin_textdomain('crouton-domain', false, dirname(plugin_basename(__FILE__)).'/../languages/');
+        }
         public function adminSubmenuLink($parent_slug)
         {
             $this->menu_created = true;
