@@ -50,7 +50,14 @@ span.bmlt_tabs_group_count {
 #bmlt-tabs .glyphicon-search:before {
 	margin-right: 5px;
 }
+#bmlt-tabs .bmlt-rtl .glyphicon-map-marker:before {
+	content: "\e062";
+	margin-left: 3px;
+}
 
+#bmlt-tabs .bmlt-rtl .glyphicon-search:before {
+	margin-left: 5px;
+}
 #bmlt-tabs .select2-container .select2-choice,#bmlt-tabs .select2-result-label {
 	height: 20px;
 }
@@ -140,12 +147,6 @@ span.bmlt_tabs_group_count {
 	text-align: left;
 	width: 50%;
 	vertical-align: top;
-}
-
-#bmlt-tabs .virtual .bmlt-column3 {
-	text-align: center !important;
-	vertical-align: middle !important;
-	width: 30%;
 }
 
 #bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
@@ -378,7 +379,7 @@ span.bmlt_tabs_group_count {
 	}
 
 	#bmlt-tabs .bmlt-column1 {
-		text-align: left;
+		text-align: start;
 		width: 100%;
 		vertical-align: top;
 		border: 0;
@@ -387,7 +388,7 @@ span.bmlt_tabs_group_count {
 	}
 
 	#bmlt-tabs .bmlt-column2 {
-		text-align: left;
+		text-align: start;
 		width: 100%;
 		vertical-align: top;
 		border: 0;
@@ -396,8 +397,8 @@ span.bmlt_tabs_group_count {
 	}
 
 	#bmlt-tabs .bmlt-column3 {
-		text-align: left !important;
-		vertical-align: top !important;
+		text-align: start !important;
+		vertical-align: top ;
 		width: 100%;
 		border: 0;
 		height: auto;
