@@ -84,7 +84,7 @@ if (!class_exists("Crouton\MapAdmin")) {
                         <p><?php _e('A good way to find the latitude and longitude is to open Google Maps, right click on a point, and select "what is here?"', 'crouton-domain') ?></p>
                         <ul>
                             <li>
-                                <label for="lat"><?php _e('Latitude: r', 'crouton-domain') ?></label>
+                                <label for="lat"><?php _e('Latitude: ', 'crouton-domain') ?></label>
                                 <input id="lat" type="text" size="10" name="lat" value="<?php echo esc_html($options['lat']); ?>" />
                             </li>
                             <li>

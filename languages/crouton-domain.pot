@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: crouton\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-24 18:38+0000\n"
+"POT-Creation-Date: 2025-08-25 12:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -27,15 +27,7 @@ msgid "A tabbed based display for showing meeting information."
 msgstr ""
 
 #: admin/TableAdmin.php:491
-msgid "Allows for custom styling of your crouton."
-msgstr ""
-
-#: admin/TableAdmin.php:392
-msgid ""
-"Allows for setting a pre-packaged theme.  (Have a custom built theme?  "
-"Please submit your CSS <a target=\"_blank\" href=\"https://github.com/bmlt-"
-"enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-"
-"template.md&title=Custom+Theme+Submission+Request\">here</a>.)"
+msgid "Allows custom styling of the meeting list."
 msgstr ""
 
 #: admin/MapAdmin.php:49
@@ -58,10 +50,16 @@ msgstr ""
 msgid "bmlt-enabled"
 msgstr ""
 
-#: admin/TableAdmin.php:626
+#: admin/TableAdmin.php:380
+msgid ""
+"By default, all the meetings in the selected service bodies are returned.  "
+"You can override this with your own query here."
+msgstr ""
+
+#: admin/TableAdmin.php:625
 msgid ""
 "By default, the meeting details are inserted onto the same page as the "
-"crouton table itself, replacing the table.  This might not\n"
+"meeting list table, replacing it.  This might not\n"
 "                        be appropriate.  If you want to use an additional "
 "page (or blog post) to display the meeting details, you may enter the path "
 "to the page here.\n"
@@ -73,7 +71,7 @@ msgid ""
 "available for use in this way."
 msgstr ""
 
-#: admin/TableAdmin.php:557 admin/TableAdmin.php:583 admin/TableAdmin.php:613 
+#: admin/TableAdmin.php:557 admin/TableAdmin.php:582 admin/TableAdmin.php:612
 #: admin/MapAdmin.php:122
 msgid "Clear"
 msgstr ""
@@ -95,7 +93,7 @@ msgid "Configuration"
 msgstr ""
 
 #: admin/TableAdmin.php:464
-msgid "Configure Table Header"
+msgid "Configure Table Headers"
 msgstr ""
 
 #: admin/TableAdmin.php:270
@@ -104,16 +102,12 @@ msgid ""
 "certain spelling is correct, Root Server could be down."
 msgstr ""
 
-#: admin/TableAdmin.php:608
+#: admin/TableAdmin.php:607
 msgid "Contents"
 msgstr ""
 
 #. Name of the plugin
 msgid "crouton"
-msgstr ""
-
-#: admin/TableAdmin.php:283
-msgid "Crouton UI"
 msgstr ""
 
 #: admin/MapAdmin.php:39
@@ -132,16 +126,12 @@ msgstr ""
 msgid "Custom Query: "
 msgstr ""
 
-#: admin/TableAdmin.php:429
-msgid "Default language of Crouton UI:"
-msgstr ""
-
-#: admin/TableAdmin.php:433
-msgid "Default language of meetings (format code): "
-msgstr ""
-
 #: admin/MapAdmin.php:83
 msgid "Default Latitude and Longitude of map"
+msgstr ""
+
+#: admin/TableAdmin.php:429
+msgid "Default meeting list language:"
 msgstr ""
 
 #: admin/TableAdmin.php:293
@@ -201,12 +191,12 @@ msgstr ""
 msgid "Header Contents"
 msgstr ""
 
-#: admin/TableAdmin.php:604
+#: admin/TableAdmin.php:603
 msgid "Headline"
 msgstr ""
 
-#: admin/TableAdmin.php:550 admin/TableAdmin.php:576 admin/TableAdmin.php:601 
-#: admin/MapAdmin.php:115
+#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:598
+#: admin/MapAdmin.php:113
 msgid "here"
 msgstr ""
 
@@ -227,14 +217,14 @@ msgstr ""
 msgid "https://wordpress.org/plugins/crouton/"
 msgstr ""
 
-#: admin/TableAdmin.php:639
+#: admin/TableAdmin.php:638
 msgid ""
 "If no value is specified for virtual meetings, the in-person meeting link "
 "will be used."
 msgstr ""
 
-#: admin/TableAdmin.php:547 admin/TableAdmin.php:572 admin/TableAdmin.php:598 
-#: admin/MapAdmin.php:112
+#: admin/TableAdmin.php:549 admin/TableAdmin.php:574 admin/TableAdmin.php:599
+#: admin/MapAdmin.php:114
 msgid ""
 "If you want to customize the template, use the \"Reset\" button to load the "
 "current default template which you can then modify.  Customized templates "
@@ -248,7 +238,7 @@ msgid ""
 msgstr ""
 
 #: admin/TableAdmin.php:469
-msgid "Include \"Coties\" Button"
+msgid "Include \"Cities\" Button"
 msgstr ""
 
 #: admin/TableAdmin.php:471
@@ -264,10 +254,10 @@ msgid "Include Extra Meetings"
 msgstr ""
 
 #: admin/MapAdmin.php:87
-msgid "Latitude: r"
+msgid "Latitude: "
 msgstr ""
 
-#: admin/TableAdmin.php:556 admin/TableAdmin.php:582 admin/TableAdmin.php:612 
+#: admin/TableAdmin.php:556 admin/TableAdmin.php:581 admin/TableAdmin.php:611
 #: admin/MapAdmin.php:121
 msgid "Load current default template"
 msgstr ""
@@ -288,7 +278,7 @@ msgstr ""
 msgid "Meeting Data Template"
 msgstr ""
 
-#: admin/TableAdmin.php:596
+#: admin/TableAdmin.php:595
 msgid "Meeting Details Page"
 msgstr ""
 
@@ -345,10 +335,6 @@ msgstr ""
 msgid "Saturday"
 msgstr ""
 
-#: admin/TableAdmin.php:644
-msgid "SAVE CHANGES"
-msgstr ""
-
 #: admin/TableAdmin.php:478
 msgid "Select Dropdown Filters"
 msgstr ""
@@ -385,10 +371,11 @@ msgstr ""
 msgid "Templates"
 msgstr ""
 
-#: admin/TableAdmin.php:394
+#: admin/TableAdmin.php:392
 msgid ""
-"The default original theme is called \"jack\".  If no theme is selected, the "
-"default one will be used."
+"The BMLT community has developed many color schemes for their meeting lists. "
+" You can select one of them here.  The default original theme is called "
+"\"jack\".  If no theme is selected, the default one will be used."
 msgstr ""
 
 #: admin/TableAdmin.php:391
@@ -407,7 +394,7 @@ msgid ""
 "icon.  A list of available fields are"
 msgstr ""
 
-#: admin/TableAdmin.php:597
+#: admin/TableAdmin.php:596
 msgid ""
 "This allows customization of the page or popup focused on a particular "
 "meeting.  A list of available fields are"
@@ -415,14 +402,14 @@ msgstr ""
 
 #: admin/TableAdmin.php:546
 msgid ""
-"This allows customization of the second column of the crouton table.  A list "
-"of available fields are"
+"This allows customization of the second column of the meeting list table.  A "
+"list of available fields are"
 msgstr ""
 
 #: admin/TableAdmin.php:571
 msgid ""
-"This allows customization of the third column of the crouton table.  A list "
-"of available fields are"
+"This allows customization of the third column of the meeting list table.  A "
+"list of available fields are"
 msgstr ""
 
 #: admin/TableAdmin.php:307
@@ -431,18 +418,12 @@ msgid ""
 "shortcode."
 msgstr ""
 
-#: admin/TableAdmin.php:380
-msgid ""
-"This will allow to specify a custom BMLT query.  This will override any "
-"other filtering including service bodies."
-msgstr ""
-
 #: admin/TableAdmin.php:452
 msgid "Thursday"
 msgstr ""
 
-#: admin/TableAdmin.php:548 admin/TableAdmin.php:573 admin/TableAdmin.php:599 
-#: admin/MapAdmin.php:113
+#: admin/TableAdmin.php:550 admin/TableAdmin.php:575 admin/TableAdmin.php:600
+#: admin/MapAdmin.php:115
 msgid ""
 "To always use the current default, allowing crouton to update the template, "
 "leave this field empty."
@@ -452,11 +433,11 @@ msgstr ""
 msgid "Tuesday"
 msgstr ""
 
-#: admin/TableAdmin.php:633
+#: admin/TableAdmin.php:632
 msgid "URI for in-person (and hybrid) meetings: "
 msgstr ""
 
-#: admin/TableAdmin.php:637
+#: admin/TableAdmin.php:636
 msgid "URI for virtual meetings: "
 msgstr ""
 
@@ -466,6 +447,10 @@ msgstr ""
 
 #: admin/TableAdmin.php:300
 msgid "Use Aggregator &#127813;"
+msgstr ""
+
+#: admin/TableAdmin.php:283
+msgid "User Interface"
 msgstr ""
 
 #: admin/TableAdmin.php:274
@@ -497,8 +482,12 @@ msgstr ""
 msgid "Which day does the week start on:"
 msgstr ""
 
-#: admin/TableAdmin.php:414
-msgid "You may configure the map by clicking on the \"Map\" tab, above."
+#: admin/TableAdmin.php:433
+msgid "Which format code represents the default language: "
+msgstr ""
+
+#: admin/TableAdmin.php:393
+msgid "You can customize the selected theme in the custom CSS section, below."
 msgstr ""
 
 #: admin/MapAdmin.php:95

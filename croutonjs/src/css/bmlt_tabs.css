@@ -66,7 +66,7 @@ span.bmlt_tabs_group_count {
 	font-size: 14px;
 	color: #5b5b5b;
 	font-family: "Arial","Helvetica",sans-serif;
-	text-align: left;
+	text-align: start;
 	font-style: normal;
 }
 
@@ -109,7 +109,7 @@ span.bmlt_tabs_group_count {
 }
 
 #bmlt-tabs .bmlt-column1 {
-	text-align: left;
+	text-align: start;
 	width: 20%;
 	overflow: hidden;
 	word-break: break-all;
@@ -117,7 +117,7 @@ span.bmlt_tabs_group_count {
 }
 
 #bmlt-tabs .bmlt-column2 {
-	text-align: left;
+	text-align: start;
 	width: auto;
 	vertical-align: top;
 }
@@ -137,14 +137,14 @@ span.bmlt_tabs_group_count {
 }
 
 #bmlt-tabs .virtual .bmlt-column1 {
-	text-align: left;
+	text-align: start;
 	width: 20%;
 	word-break: break-all;
 	vertical-align: top;
 }
 
 #bmlt-tabs .virtual .bmlt-column2 {
-	text-align: left;
+	text-align: start;
 	width: 50%;
 	vertical-align: top;
 }
@@ -484,7 +484,7 @@ table.tablesaw {
 @media only all {
 	/* Show the table cells as a block level element */
 	.tablesaw-stack td,.tablesaw-stack th {
-		text-align: left;
+		text-align: start;
 		display: block;
 	}
 
@@ -533,7 +533,11 @@ table.tablesaw {
 		float: left;
 		width: 100%;
 	}
-
+	.bmlt-rtl .tablesaw-stack tbody td,.tablesaw-stack tbody th {
+		clear: right;
+		float: right;
+		width: 100%;
+	}
 	.tablesaw-cell-label {
 		vertical-align: top;
 	}
@@ -577,7 +581,7 @@ table.tablesaw {
 	font-size: 12px;
 	cursor: pointer;
 	margin: 5px;
-	text-align: left;
+	text-align: start;
 	display: block;
 }
 

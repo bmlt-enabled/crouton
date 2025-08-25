@@ -280,7 +280,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                     </div>
                     <nav class="nav-tab-wrapper">
                         <a href="#bmlt-query" class="nav-tab nav-tab-active"><?php _e('BMLT Query', 'crouton-domain') ?></a>
-                        <a href="#crouton-ui" class="nav-tab"><?php _e('Crouton UI', 'crouton-domain') ?></a>
+                        <a href="#crouton-ui" class="nav-tab"><?php _e('User Interface', 'crouton-domain') ?></a>
                         <a href="#crouton-map" class="nav-tab"><?php _e('Map', 'crouton-domain') ?></a>
                         <a href="#crouton-templates" class="nav-tab"><?php _e('Templates', 'crouton-domain') ?></a>
                     </nav>
@@ -377,7 +377,7 @@ if ($this_connected) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-custom-query" class="anchor"></a><?php _e('Custom Query', 'crouton-domain') ?></h3>
-                        <p><?php _e('This will allow to specify a custom BMLT query.  This will override any other filtering including service bodies.', 'crouton-domain') ?></p>
+                        <p><?php _e('By default, all the meetings in the selected service bodies are returned.  You can override this with your own query here.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <label for="custom_query"><?php _e('Custom Query: ', 'crouton-domain') ?></label>
@@ -389,9 +389,9 @@ if ($this_connected) {
             <div id="crouton-ui" class=tab-content>
             <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-theme" class="anchor"></a><?php _e('Theme', 'crouton-domain') ?></h3>
-                        <p><?php _e('Allows for setting a pre-packaged theme.  (Have a custom built theme?  Please submit your CSS <a target="_blank" href="https://github.com/bmlt-enabled/crouton/issues/new?assignees=&labels=theme&template=custom-theme-template.md&title=Custom+Theme+Submission+Request">here</a>.)', 'crouton-domain') ?></p>
+                        <p><?php _e('The BMLT community has developed many color schemes for their meeting lists.  You can select one of them here.  The default original theme is called "jack".  If no theme is selected, the default one will be used.', 'crouton-domain') ?></p>
+                        <p><?php _e('You can customize the selected theme in the custom CSS section, below.', 'crouton-domain') ?></p>
                         <ul>
-                            <li><p><b><?php _e('The default original theme is called "jack".  If no theme is selected, the default one will be used.', 'crouton-domain') ?></b></p></li>
                             <li>
                                 <select style="display:inline;" id="theme" name="theme"  class="theme_select">
                                     <?php
@@ -426,11 +426,11 @@ if ($this_connected) {
                         <p><?php _e('These values will be used when the attributes are not defined in the shortcode', 'crouton-domain'); ?></p>
                         <ul>
                             <li>
-                                <label for="language"><?php _e('Default language of Crouton UI:', 'crouton-domain') ?> </label>
+                                <label for="language"><?php _e('Default meeting list language:', 'crouton-domain') ?> </label>
                                 <input id="language" type="text" size="5" name="language" value="<?php echo esc_html($options['language']); ?>" />
                             </li>
                             <li>
-                                <label for="native_lang"><?php _e('Default language of meetings (format code): ', 'crouton-domain') ?></label>
+                                <label for="native_lang"><?php _e('Which format code represents the default language: ', 'crouton-domain') ?></label>
                                 <input id="native_lang" type="text" size="2" name="native_lang" value="<?php echo esc_html($options['native_lang']); ?>" />
                             </li>
                             <li>
@@ -466,7 +466,7 @@ if ($this_connected) {
                         <ul>
                             <li><input type="checkbox" name="header" value="1" <?php echo ($options['header'] == 1 ? 'checked' : '') ?> /> <?php _e('Show Header', 'crouton-domain') ?></li>
                             <li><input type="checkbox" name="has_tabs" value="1" <?php echo ($options['has_tabs'] == 1 ? 'checked' : '') ?> /> <?php _e('Separate days into tabs', 'crouton-domain') ?> </li>
-                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($options['include_city_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Coties" Button', 'crouton-domain') ?></li>
+                            <li><input type="checkbox" name="include_city_button" value="1" <?php echo ($options['include_city_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Cities" Button', 'crouton-domain') ?></li>
                             <li><input type="checkbox" name="include_weekday_button" value="1" <?php echo ($options['include_weekday_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Weekdays" Button', 'crouton-domain') ?></li>
                             <li><input type="checkbox" name="include_distance_button" value="1" <?php echo ($options['include_distance_button'] == 1 ? 'checked' : '') ?> /> <?php _e('Include "Distance" Button', 'crouton-domain') ?> </li>
                             <li><select name="view_by">
@@ -488,7 +488,7 @@ if ($this_connected) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-custom-css" class="anchor"></a><?php _e('Custom CSS', 'crouton-domain') ?></h3>
-                        <p><?php _e('Allows for custom styling of your crouton.', 'crouton-domain') ?></p>
+                        <p><?php _e('Allows custom styling of the meeting list.', 'crouton-domain') ?></p>
                         <ul>
                             <li>
                                 <textarea id="custom_css" name="custom_css" cols="100" rows="10"><?php echo (isset($options['custom_css']) ? esc_html(html_entity_decode($options['custom_css'])) : ""); ?></textarea>
@@ -543,7 +543,7 @@ foreach ($all_fields as $field) {
         </p></div>
         <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-meeting-data-template" class="anchor"></a><?php _e('Meeting Data Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows customization of the second column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the second column of the meeting list table.  A list of available fields are', 'crouton-domain') ?>
                             <span style="text-align:center;padding:20px 0;">
                                 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
                         <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
@@ -568,7 +568,7 @@ foreach ($all_fields as $field) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-metadata-data-template" class="anchor"></a><?php _e('Metadata Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows customization of the third column of the crouton table.  A list of available fields are', 'crouton-domain') ?>
+                        <p><?php _e('This allows customization of the third column of the meeting list table.  A list of available fields are', 'crouton-domain') ?>
                             <span style="text-align:center;padding:20px 0;">
                                 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
                         <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
@@ -622,7 +622,7 @@ foreach ($all_fields as $field) {
                                 clearCodemirror("meetingpage_contents_template");
                             });
                         </script>
-                        <p><?php _e("By default, the meeting details are inserted onto the same page as the crouton table itself, replacing the table.  This might not
+                        <p><?php _e("By default, the meeting details are inserted onto the same page as the meeting list table, replacing it.  This might not
                         be appropriate.  If you want to use an additional page (or blog post) to display the meeting details, you may enter the path to the page here.
                         Use the [bmlt_handlebar] shortcode to insert the meeting information into the static text (eg, [bmlt_handlebar]{{meeting_name}}[/bmlt_handlebar]).
                         The partials 'meetingpageTitleTemplate' and 'meetingpageContentsTemplate', defined in the two code areas above, are available for use in this way.", 'crouton-domain') ?></p>
