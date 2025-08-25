@@ -3,6 +3,10 @@ function resetCodemirrorToDefault(textAreaId) {
 	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
 	cm.setValue(croutonDefaultTemplates[textAreaId]);
 }
+function clearCodemirror(textAreaId) {
+	let cm = jQuery('#'+textAreaId).next()[0].CodeMirror;
+	cm.setValue("");
+}
 jQuery(document).ready(function($) {
 	var aggregator = "https://aggregator.bmltenabled.org/main_server";
 	$("#accordion").accordion({

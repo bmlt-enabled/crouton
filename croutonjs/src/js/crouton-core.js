@@ -1802,6 +1802,16 @@ crouton_Handlebars.registerPartial('distance',`
 <div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
 {{getWord 'Distance'}}: {{this.distance}}
 </div>`);
+crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
+    if (name && name.length > 0) return true;
+	if (phone && phone.length > 0) return true;
+	if (email && email.length > 0) return true;
+	return false;
+});
+crouton_Handlebars.registerPartial('observerLine',`
+	{{#if (hasObserverLine name phone email) }}
+	<div class='observerLine'>Kontact: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
+	</div>{{/if}}`);
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
