@@ -31,47 +31,47 @@ if (!class_exists("Crouton\MapAdmin")) {
         {
             ?>
                     <div style="padding: 0 15px;" class="postbox">
-                         <h3><?php _e('Map Tile Provider', 'crouton-domain') ?></h3>
+                         <h3><?php esc_html_e('Map Tile Provider', 'crouton') ?></h3>
                         <select name="tile_provider" id="tile_provider">
-                            <option value="OSM" <?php echo ( 'OSM' == $options['tile_provider'] ? 'selected' : '' )?>><?php _e('Open Street Map', 'crouton-domain') ?></option>
-                            <option value="OSM DE" <?php echo ( 'OSM DE' == $options['tile_provider'] ? 'selected' : '' )?>><?php _e('German Open Street Map', 'crouton-domain') ?></option>
-                            <option value="google" <?php echo ( 'google' == $options['tile_provider'] ? 'selected' : '' )?>><?php _e('Google Maps', 'crouton-domain') ?></option>
-                            <option value="custom" <?php echo ( 'custom' == $options['tile_provider'] ? 'selected' : '' )?>><?php _e('Custom', 'crouton-domain') ?></option>
+                            <option value="OSM" <?php echo ( 'OSM' == $options['tile_provider'] ? 'selected' : '' )?>><?php esc_html_e('Open Street Map', 'crouton') ?></option>
+                            <option value="OSM DE" <?php echo ( 'OSM DE' == $options['tile_provider'] ? 'selected' : '' )?>><?php esc_html_e('German Open Street Map', 'crouton') ?></option>
+                            <option value="google" <?php echo ( 'google' == $options['tile_provider'] ? 'selected' : '' )?>><?php esc_html_e('Google Maps', 'crouton') ?></option>
+                            <option value="custom" <?php echo ( 'custom' == $options['tile_provider'] ? 'selected' : '' )?>><?php esc_html_e('Custom', 'crouton') ?></option>
                         </select>
                         <div id="custom_tile_provider">
-                            <label for="tile_url"><?php _e('URL for tiles: ', 'crouton-domain') ?></label>
+                            <label for="tile_url"><?php esc_html_e('URL for tiles: ', 'crouton') ?></label>
                             <input id="tile_url" type="text" size="60" name="tile_url" value="<?php echo esc_html($options['tile_url']); ?>" />
                             <br>
-                            <label for="tile_attribution"><?php _e('Attribution: ', 'crouton-domain') ?></label>
+                            <label for="tile_attribution"><?php esc_html_e('Attribution: ', 'crouton') ?></label>
                             <input id="tile_attribution" type="text" size="60" name="tile_attribution" value="<?php echo esc_html($options['tile_attribution']); ?>" />
                         </div>
                         <div id="api_key_div">
-                            <label for="api_key"><?php _e('API Key: ', 'crouton-domain') ?></label>
+                            <label for="api_key"><?php esc_html_e('API Key: ', 'crouton') ?></label>
                             <input id="api_key" type="text" size="40" name="api_key" value="<?php echo esc_html($options['api_key']); ?>" />
                         </div>
-                        <h3><?php _e('GeoCoding Parameters', 'crouton-domain') ?></h3>
+                        <h3><?php esc_html_e('GeoCoding Parameters', 'crouton') ?></h3>
                         <div id="nominatim_div">
-                            <label for="nominatim_url"><?php _e('Nominatim URL: ', 'crouton-domain') ?></label>
+                            <label for="nominatim_url"><?php esc_html_e('Nominatim URL: ', 'crouton') ?></label>
                             <input id="nominatim_url" type="text" size="40" name="nominatim_url" value="<?php echo esc_url($options['nominatim_url']); ?>" />
                         </div>
                         <ul>
                             <li>
-                                <label for="region_bias"><?php _e('Region/ Country Code (optional): ', 'crouton-domain') ?></label>
+                                <label for="region_bias"><?php esc_html_e('Region/ Country Code (optional): ', 'crouton') ?></label>
                                 <input id="region_bias" type="text" size="2" name="region_bias" value="<?php echo esc_html($options['region_bias']); ?>" />
                             </li>
                             <li>
                             <table>
                             <tr>
-                            <td><?php _e('Geolocation Bounds (optional)', 'crouton-domain') ?></td>
+                            <td><?php esc_html_e('Geolocation Bounds (optional)', 'crouton') ?></td>
                             <td>
-                                <label for="bounds_north"><?php _e('North: ', 'crouton-domain') ?></label>
+                                <label for="bounds_north"><?php esc_html_e('North: ', 'crouton') ?></label>
                                 <input id="bounds_north" type="text" size="8" name="bounds_north" value="<?php echo esc_html($options['bounds_north']); ?>" />
-                                <label for="bounds_east"><?php _e('East: ', 'crouton-domain') ?></label>
+                                <label for="bounds_east"><?php esc_html_e('East: ', 'crouton') ?></label>
                                 <input id="bounds_east" type="text" size="8" name="bounds_east" value="<?php echo esc_html($options['bounds_east']); ?>" />
                                 <br>
-                                <label for="bounds_south"><?php _e('South: ', 'crouton-domain') ?></label>
+                                <label for="bounds_south"><?php esc_html_e('South: ', 'crouton') ?></label>
                                 <input id="bounds_south" type="text" size="8" name="bounds_south" value="<?php echo esc_html($options['bounds_south']); ?>" />
-                                <label for="bounds_west"><?php _e('West: ', 'crouton-domain') ?></label>
+                                <label for="bounds_west"><?php esc_html_e('West: ', 'crouton') ?></label>
                                 <input id="bounds_west" type="text" size="8" name="bounds_west" value="<?php echo esc_html($options['bounds_west']); ?>" />
                              </td>
                             </tr>
@@ -80,46 +80,46 @@ if (!class_exists("Crouton\MapAdmin")) {
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><?php _e('Default Latitude and Longitude of map', 'crouton-domain') ?></h3>
-                        <p><?php _e('A good way to find the latitude and longitude is to open Google Maps, right click on a point, and select "what is here?"', 'crouton-domain') ?></p>
+                        <h3><?php esc_html_e('Default Latitude and Longitude of map', 'crouton') ?></h3>
+                        <p><?php esc_html_e('A good way to find the latitude and longitude is to open Google Maps, right click on a point, and select "what is here?"', 'crouton') ?></p>
                         <ul>
                             <li>
-                                <label for="lat"><?php _e('Latitude: ', 'crouton-domain') ?></label>
+                                <label for="lat"><?php esc_html_e('Latitude: ', 'crouton') ?></label>
                                 <input id="lat" type="text" size="10" name="lat" value="<?php echo esc_html($options['lat']); ?>" />
                             </li>
                             <li>
-                                <label for="lng"><?php _e('Longitude: ', 'crouton-domain') ?></label>
+                                <label for="lng"><?php esc_html_e('Longitude: ', 'crouton') ?></label>
                                 <input id="lng" type="text" size="10" name="lng" value="<?php echo esc_html($options['lng']); ?>" />
                             </li>
                             <li>
-                                <label for="zoom"><?php _e('Zoom: ', 'crouton-domain') ?></label>
+                                <label for="zoom"><?php esc_html_e('Zoom: ', 'crouton') ?></label>
                                 <input id="zoom" type="text" size="3" name="zoom" value="<?php echo esc_html($options['zoom']); ?>" />
                             </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><?php _e('Clustering', 'crouton-domain') ?></h3>
+                        <h3><?php esc_html_e('Clustering', 'crouton') ?></h3>
                         <ul>
                             <li>
-                                <label for="clustering"><?php _e('Cluster markers when below zoom level: ', 'crouton-domain') ?></label>
+                                <label for="clustering"><?php esc_html_e('Cluster markers when below zoom level: ', 'crouton') ?></label>
                                 <input id="clustering" type="text" size="2" name="clustering" value="<?php echo esc_html($options['clustering']); ?>" />
                             </li>
                         </ul>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-popup-template" class="anchor"></a><?php _e('Popup Template', 'crouton-domain') ?></h3>
-                        <p><?php _e('This allows customization of the fields displayed when you click on a map icon.  A list of available fields are', 'crouton-domain') ?>
+                        <h3><a id="config-meeting-popup-template" class="anchor"></a><?php esc_html_e('Popup Template', 'crouton') ?></h3>
+                        <p><?php esc_html_e('This allows customization of the fields displayed when you click on a map icon.  A list of available fields are', 'crouton') ?>
                             <span style="text-align:center;padding:20px 0;">
-                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php _e('here', 'crouton-domain') ?>" /></span>.</p>
-                        <p><?php _e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton-domain') ?></p>
-                        <p><?php _e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton-domain') ?></p>
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
+                        <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
+                        <p><?php esc_html_e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton') ?></p>
                         <ul>
                             <li>
                                 <textarea id="marker_contents_template" class="handlebarsCode" name="marker_contents_template" cols="100" rows="10"><?php echo isset($options['marker_contents_template']) ? esc_html(html_entity_decode($options['marker_contents_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <input type="button" id="reset_marker_contents_template" value="<?php _e('Load current default template', 'crouton-domain')?>" class="button-secondary" />
-                                <input type="button" id="clear_marker_contents_template" value="<?php _e('Clear', 'crouton-domain') ?>" class="button-secondary" />
+                                <input type="button" id="reset_marker_contents_template" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
+                                <input type="button" id="clear_marker_contents_template" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">
