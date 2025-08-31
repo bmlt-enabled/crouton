@@ -81,9 +81,9 @@ if (!class_exists("Crouton\TableAdmin")) {
         {
             if (str_ends_with($hook, $this->hook)) {
                 wp_enqueue_style('bmlt-tabs-admin-ui-css', plugin_dir_url(__DIR__).'css/south-street/jquery-ui.css', false, '1.11.4', false);
-                wp_enqueue_style("chosen", plugin_dir_url(__DIR__) . "css/chosen.min.css", false, "1.2", 'all');
+                wp_enqueue_style("select2", plugin_dir_url(__DIR__) . "css/select2.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
-                wp_enqueue_script("chosen", plugin_dir_url(__DIR__) . "js/chosen.jquery.min.js", array('jquery'), "1.2", true);
+                wp_enqueue_script("select2", plugin_dir_url(__DIR__) . "js/select2.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/bmlt_tabs_admin.js"), false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__DIR__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
@@ -358,28 +358,24 @@ if ($this_connected) {
 
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a><?php esc_html_e('Include Extra Meetings', 'crouton') ?></h3>
-                        <div class="inside">
-                            <p class="ctrl_key" style="display:none; color: #00AD00;"><?php esc_html_e('Hold CTRL Key down to select multiple meetings.', 'crouton') ?></p>
-                            <select class="chosen-select" style="width: 100%;" data-placeholder="<?php
-                            if ($options['extra_meetings_enabled'] == 0) {
-                                echo 'Not Enabled';
-                            } elseif (!$this_connected) {
-                                echo 'Not Connected';
-                            } else {
-                                echo 'Select Extra Meetings';
-                            } ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
-                                <?php if ($this_connected && $options['extra_meetings_enabled'] == 1) {
-                                    $extra_meetings_array = $this->getAllMeetings($options['root_server']);
-                                    foreach ($extra_meetings_array as $extra_meeting) {
-                                        $extra_meeting_x = explode('|||', $extra_meeting);
-                                        $extra_meeting_id = trim($extra_meeting_x[3]);
-                                        $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
+                        <div class="inside"><?php
+                        if ($this_connected && $options['extra_meetings_enabled'] == 1) {?>
+                                <select class="crouton-admin-select" style="width: 100%;" data-placeholder="<?php esc_attr_e('Select Extra Meetings', 'crouton') ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
+                                <?php
+                                $extra_meetings_array = $this->getAllMeetings($options['root_server']);
+                                foreach ($extra_meetings_array as $extra_meeting) {
+                                    $extra_meeting_x = explode('|||', $extra_meeting);
+                                    $extra_meeting_id = trim($extra_meeting_x[3]);
+                                    $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
                                         <option <?php echo ($options['extra_meetings'] != '' && in_array($extra_meeting_id, $options['extra_meetings']) ? 'selected' : '') ?> value="<?php echo esc_attr($extra_meeting_id) ?>"><?php echo esc_html($extra_meeting_display) ?></option>
                                         <?php
-                                    }
-                                } ?>
-                            </select>
-                            <p><?php esc_html_e('Hint: Type a group name, weekday, area or id to narrow down your choices.', 'crouton') ?></p>
+                                }
+                                ?>
+                                </select>
+                                <p><?php esc_html_e('Hint: Type a group name, weekday, area or id to narrow down your choices.', 'crouton') ?></p><?php
+                        } ?>
+
+
                             <div>
                                 <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> <?php esc_html_e('Extra Meetings Enabled', 'crouton') ?>
                             </div>
@@ -488,7 +484,7 @@ if ($this_connected) {
                         <h4><?php esc_html_e('Select Dropdown Filters', 'crouton') ?></h4>
                         <div class="inside">
 
-                            <select class="chosen-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
+                            <select class="crouton-admin-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
                             foreach ($this->hasFilters as $hasFilter) {?>
                                 <option <?php echo empty($options[$hasFilter]) ? "" : "selected='selected' "?> value="<?php echo esc_html($hasFilter);?>"><?php echo esc_html($hasFilter);?></option>
                                 <?php
@@ -596,7 +592,7 @@ foreach ($all_fields as $field) {
                             jQuery("#reset_metadata_template").click(function() {
                                 resetCodemirrorToDefault("metadata_template");
                             });
-                            jQuery("#clear_meeting_data_template").click(function() {
+                            jQuery("#clear_metadata_template").click(function() {
                                 clearCodemirror("metadata_template");
                             });
                         </script>
@@ -619,7 +615,7 @@ foreach ($all_fields as $field) {
                             </li>
                             <li>
                                 <input type="button" id="reset_meetingpage_templates" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
-                                <input type="button" id="#clear_meetingpage_templates" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
+                                <input type="button" id="clear_meetingpage_templates" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
                             </li>
                         </ul>
                         <script type="text/javascript">

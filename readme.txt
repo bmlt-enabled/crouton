@@ -42,6 +42,7 @@ https://demo.bmlt.app/crouton
 * Farsi translations.
 * Emitter: use a wordpress site to emit a script that can be copied over and used on a non-wordpress site.
 * Added ability to translate backend using normal wordpress PO files.
+* Replaced the chosen.js selection boxes in backend with select2, since chosen is now deprecated.
 
 = 3.24.2 =
 * Small fixes.

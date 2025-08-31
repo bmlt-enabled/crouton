@@ -14,29 +14,18 @@ jQuery(document).ready(function($) {
 		active: false,
 		collapsible: true
 	});
-	$(".service_body_select").chosen({
-		inherit_select_classes: true,
+	$(".service_body_select").select2({
 		width: "40%"
 	});
-	$(".theme_select").chosen({
-		inherit_select_classes: true,
+	$(".theme_select").select2({
 		width: "20%"
 	});
-	$("#select_filters").chosen({
-		inherit_select_classes: true,
+	$("#select_filters").select2({
 		width: "60%"
 	});
-	$("#extra_meetings").chosen({
-		no_results_text: "Oops, nothing found!",
+	$("#extra_meetings").select2({
 		width: "60%",
-		placeholder_text_multiple: "Select Extra Meetings",
-		search_contains: true
-	});
-	$('#extra_meetings').on('chosen:showing_dropdown', function(evt, params) {
-		$(".ctrl_key").show();
-	});
-	$('#extra_meetings').on('chosen:hiding_dropdown', function(evt, params) {
-		$(".ctrl_key").hide();
+		placeholder: "Select Extra Meetings",
 	});
 	$(window).on("load", function () {
 		if($('#use_aggregator').is(':checked')) {
