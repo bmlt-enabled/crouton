@@ -203,6 +203,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['root_server']    = isset($_POST['root_server']) ? sanitize_url(wp_unslash($_POST['root_server'])) : '';
                 $options['service_bodies'] = isset($_POST['service_bodies']) ? array_map('sanitize_text_field', $_POST['service_bodies']) : array();
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
+                $options['distance_units'] = isset($_POST['distance_units']) ? sanitize_text_field(wp_unslash($_POST['distance_units'])) : 'miles';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
@@ -442,6 +443,13 @@ if ($this_connected) {
                             <li>
                                 <label for="time_format"><?php esc_html_e('Default time format: ', 'crouton') ?></label>
                                 <input id="time_format" type="text" size="10" name="time_format" value="<?php echo esc_html($options['time_format']); ?>" />
+                            </li>
+                            <li>
+                                <label for="distance_units"><?php esc_html_e('Distance Units: ', 'crouton') ?></label>
+                                <select id="distance_units" name="distance_units" style="display:inline;">
+                                    <option <?php echo ($options['distance_units'] == 'miles') ? 'selected' : ''; ?> value="miles"><?php esc_html_e('Miles', 'crouton') ?></option>
+                                    <option <?php echo ($options['distance_units'] == 'km') ? 'selected' : ''; ?> value="km"><?php esc_html_e('Kilometers', 'crouton') ?></option>
+                                </select>
                             </li>
                             <li>
                                 <?php
