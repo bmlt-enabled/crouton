@@ -343,6 +343,10 @@ function addControl(div,pos,cb) {
             p = google.maps.ControlPosition.TOP_LEFT;
             div.style.margin = "10px 0 0 10px";
             break;
+        case 'bottomleft':
+            p = google.maps.ControlPosition.LEFT_BOTTOM;
+            div.style.margin = "0 0 0px 10px";
+            break;
     }
     div.index = 1;
     if (cb) {

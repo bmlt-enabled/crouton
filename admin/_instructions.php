@@ -280,6 +280,10 @@
     <div>
         <p>If you use the format code "TC" it will render the format description for that format above the meeting name with a flag icon.  It will show in the defined language (assuming that it was set in the root server).  This behavior is overridable through the meeting data template functionality.</p>
     </div>
+	<h3 class="help-accordian"><strong>Map Caption</strong></h3>
+    <div>
+        <p>Some sites might wish some additional annotation or instructions, for instance, pointing out that the user can click on meeting markers, or that a red marker indicates multiple meetings.  The caption text appears in the lower left corner of the map. To insert line breaks, use '\n'.</p>
+    </div>
     <h3 class="help-accordian"><strong>Suggest Change</strong></h3>
     <div>
         <p>You can set a short setting so that a button that says "Report an Update" appears.  When the button is clicked, it links back to a BMLT workflow page with that meeting.</p>

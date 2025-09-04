@@ -96,6 +96,11 @@ function MeetingMap(inConfig) {
 						gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 					}
 				}
+				if (config.caption) {
+					const wrapper= document.createElement('div');
+					wrapper.innerHTML= '<div class="map-caption">'+config.caption.replace('\n','<br/>')+'</div>';
+					gDelegate.addControl(wrapper.firstChild, 'bottomleft', cb);
+				}
 			}
 		};
 	};

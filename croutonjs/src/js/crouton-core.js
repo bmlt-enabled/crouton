@@ -95,6 +95,7 @@ function Crouton(config) {
 		distance_units: 'miles',
 		noMap: false,
 		maxTomatoWidth: 160,
+		caption: false,
 	};
 
 	self.setConfig(config);
