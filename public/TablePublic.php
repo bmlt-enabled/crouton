@@ -421,18 +421,18 @@ if (!class_exists("Crouton\TablePublic")) {
                     array_push($params['grouping_buttons'], ['title' => 'Distance', 'field' => 'distance_in_km']);
                 }
             } else {
-                $params['grouping_buttons'] = array_filter($params['grouping_buttons'], function ($item) {
+                $params['grouping_buttons'] = array_values(array_filter($params['grouping_buttons'], function ($item) {
                     return $item['title'] != 'Distance';
-                });
+                }));
             }
             if (strcmp($params['include_city_button'], "1") == 0 || strcmp($params['view_by'], 'city') == 0) {
                 if (!in_array('City', array_column($params['grouping_buttons'], 'title'), true)) {
                     array_push($params['grouping_buttons'], ['title' => 'City', 'field' => 'location_municipality']);
                 }
             } else {
-                $params['grouping_buttons'] = array_filter($params['grouping_buttons'], function ($item) {
+                $params['grouping_buttons'] = array_values(array_filter($params['grouping_buttons'], function ($item) {
                     return $item['title'] != 'City';
-                });
+                }));
             }
             $tmp_formats = [];
             if (strlen($params['formats']) > 0) {
