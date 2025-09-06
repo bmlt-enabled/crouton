@@ -417,7 +417,22 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['grouping_buttons'] = $this->convertToArray($params['grouping_buttons']);
 
             if (strcmp($params['include_distance_button'], "1") == 0 || strcmp($params['view_by'], 'distance') == 0) {
-                array_push($params['grouping_buttons'], ['title' => 'Distance', 'field' => 'distance_in_km']);
+                if (!in_array('Distance', array_column($params['grouping_buttons'], 'title'), true)) {
+                    array_push($params['grouping_buttons'], ['title' => 'Distance', 'field' => 'distance_in_km']);
+                }
+            } else {
+                $params['grouping_buttons'] = array_filter($params['grouping_buttons'], function ($item) {
+                    return $item['title'] != 'Distance';
+                });
+            }
+            if (strcmp($params['include_city_button'], "1") == 0 || strcmp($params['view_by'], 'city') == 0) {
+                if (!in_array('City', array_column($params['grouping_buttons'], 'title'), true)) {
+                    array_push($params['grouping_buttons'], ['title' => 'City', 'field' => 'location_municipality']);
+                }
+            } else {
+                $params['grouping_buttons'] = array_filter($params['grouping_buttons'], function ($item) {
+                    return $item['title'] != 'City';
+                });
             }
             $tmp_formats = [];
             if (strlen($params['formats']) > 0) {
