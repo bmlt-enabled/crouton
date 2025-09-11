@@ -687,8 +687,11 @@ function Crouton(config) {
 
 	self.toFarsinNumber = function( n ) {
 		const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-
-		return n.replace(/\d/g, x => farsiDigits[x]);
+		const ampm = {'AM':'صبح', 'PM':'بعدازظهر'};
+		n = n.replace(/\d/g, x => farsiDigits[x]);
+		n = n.replace(/AM|am/g, ampm['AM']);
+		n = n.replace(/PM|pm/g, x => ampm['PM']);
+		return n;
 	}
 	self.enrichMeetings = function (meetingData) {
 		var meetings = [];
