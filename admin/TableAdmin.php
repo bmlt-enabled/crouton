@@ -129,18 +129,6 @@ if (!class_exists("Crouton\TableAdmin")) {
 
             return '';
         }
-
-        public function serviceBodyNames(array $atts): string
-        {
-            if (isset($_GET['meeting-id'])) {
-                return '';
-            }
-            $live = '';
-            if (is_array($atts) && isset($atts['live']) && $atts['live']=='1') {
-                $live = "-live";
-            }
-            return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
-        }
         public function getAreas(string $root_server, string $source): array
         {
             $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", TableAdmin::HTTP_RETRIEVE_ARGS);

@@ -529,6 +529,16 @@ function Crouton(config) {
 			addLive = function(id) {return id+"-live"};
 		}
 		self.showingNowCount = meetingCount;
+		jQuery(".crouton_root_service_body").each(function() {
+			var text = "";
+			var field = 'name';
+			if (this.dataset.field) field = this.dataset.field;
+			if (self.config['service_body'].length > 0) {
+				const sb = self.getServiceBodyDetails(self.config['service_body'][0]);
+				if (sb) text = sb[field] ? sb[field] : "";
+			}
+			jQuery(this).text(text);
+		});
 		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;

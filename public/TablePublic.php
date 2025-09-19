@@ -54,6 +54,10 @@ if (!class_exists("Crouton\TablePublic")) {
                 &$this,
                 "serviceBodyNames"
             ));
+            add_shortcode('root_service_body', array(
+                &$this,
+                "rootServiceBody"
+            ));
             add_shortcode('bmlt_handlebar', array(
                 &$this,
                 "bmltHandlebar"
@@ -322,6 +326,17 @@ if (!class_exists("Crouton\TablePublic")) {
                 $live = "-live";
             }
             return "<span id='bmlt_tabs_service_body_names$live'>Fetching...</span>";
+        }
+        public function rootServiceBody($atts)
+        {
+            if (isset($_GET['meeting-id'])) {
+                return '';
+            }
+            $field = '';
+            if (is_array($atts) && isset($atts['field'])) {
+                $field = trim($atts['field']);
+            }
+            return "<span class='crouton_root_service_body' data-field='$field'>Fetching...</span>";
         }
         public function handlebarFooterScript()
         {
