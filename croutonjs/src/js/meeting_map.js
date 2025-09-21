@@ -664,14 +664,14 @@ function MeetingMap(inConfig) {
 	</div>{{/each}}
 	</div>
 	`;
+	const markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
 
 	/************************************************************************************//**
 	 *	 \brief	This creates a single meeting's marker on the map.							*
 	 ****************************************************************************************/
 	function createMapMarker(meetings, openMarker) {
 		var main_point = [meetings[0].latitude, meetings[0].longitude];
-		let markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
-		var marker_html = markerTemplate(meetings);
+		const marker_html = markerTemplate(meetings);
 		gDelegate.createMarker(main_point,
 			(meetings.length > 1),
 			marker_html, null, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);

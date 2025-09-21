@@ -2,8 +2,10 @@ var crouton_Handlebars = Handlebars.noConflict();
 // These are extension points
 crouton_Handlebars.registerHelper("startup", () => '');
 crouton_Handlebars.registerHelper("enrich", () => '');
+crouton_Handlebars.registerHelper("log", (x) => console.log(x));
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
+
 
 function Crouton(config) {
 	var self = this;
@@ -299,13 +301,21 @@ function Crouton(config) {
 	self.dayTab = function(day_id) {
 		self.hideAllPages();
 		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
-		self.showPage("#" + day_id);
+		jQuery("#" + day_id).removeClass("hide").addClass("show");
 	};
 	self.dayTabFromId = function(id) {
 		day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
 		self.dayTab(day_id);
 	};
 	self.showPage = function (id) {
+		jQuery(id+" .bmlt-data-row-placeholder").each(function() {
+			const meetingId = this.dataset.meetingid;
+			const placeHolder = jQuery(this);
+			const placeholderText = this.outerHTML;
+			const meetingRow = jQuery("#"+meetingId);
+			meetingRow.before(placeholderText);
+			placeHolder.replaceWith(meetingRow);
+		});
 		jQuery(id).removeClass("hide").addClass("show");
 	};
 
@@ -341,12 +351,12 @@ function Crouton(config) {
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.hidePage("#days");
-			self.showPage("#byday");
-			self.hidePage("#nav-days");
-			self.hidePage("#tabs-content");
 			return;
 		});
+		self.hidePage("#days");
+		self.showPage("#byday");
+		self.hidePage("#nav-days");
+		self.hidePage("#tabs-content");
 	};
 
 	self.dayView = function () {
@@ -354,11 +364,11 @@ function Crouton(config) {
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.showPage("#days");
-			self.showPage("#nav-days");
-			self.showPage("#tabs-content");
 			return;
 		});
+		jQuery("#days").removeClass("hide").addClass("show");
+		jQuery("#nav-days").removeClass("hide").addClass("show")
+		self.showPage("#tabs-content");
 	};
 
 	self.groupedView = function (field) {
@@ -402,9 +412,13 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 	self.addStripes = function() {
-		var showingNow = [];
 		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+		});
+	}
+	self.calcShowingNow = function() {
+		var showingNow = [];
+		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			const rowId = value.id.split("-");
 			showingNow.push(rowId[rowId.length-1]);
 		});
@@ -427,7 +441,8 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
-		var showingNow = this.addStripes();
+		this.addStripes();
+		var showingNow = this.calcShowingNow();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
@@ -473,6 +488,7 @@ function Crouton(config) {
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
 		window.crouton = self;
@@ -507,6 +523,7 @@ function Crouton(config) {
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
@@ -1380,6 +1397,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						jQuery('#groupingButton_distance_in_km').addClass('hide');
 					}
 					self.addStripes();
+					self.calcShowingNow()
 					self.updateMeetingCount();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
@@ -1447,15 +1465,6 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					jQuery('.directions-map-modal-close').on('click', function (e) {
 						closeDirectionsMapModal()
 					});
-					/****
-					jQuery('.custom-ul').on('click', 'a', function (event) {
-						jQuery('.bmlt-page').each(function (index) {
-							self.hidePage("#" + this.id);
-							self.showPage("#" + event.target.id);
-							return;
-						});
-					});
-					*/
 					if (self.config['has_tabs']) {
 						jQuery('.nav-tabs a').on('click', function (e) {
 							e.preventDefault();
@@ -1469,8 +1478,8 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						jQuery('#tab' + n).show();
 					}
 
-					self.showPage(".bmlt-header");
-					self.showPage(".bmlt-tabs");
+					jQuery('.bmlt-header').removeClass("hide").addClass("show");
+					jQuery(".bmlt-tabs").removeClass("hide").addClass("show");
 
 					if (self.config['default_filter_dropdown'] !== "") {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
@@ -1492,7 +1501,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';
-					self.showView(self.config['view_by'], self.meetingData.length);
+						self.showView(self.config['view_by'], self.meetingData.length);
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
