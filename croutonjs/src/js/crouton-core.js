@@ -114,6 +114,9 @@ function Crouton(config) {
 		});
 		self.config['custom_query'] = original_query;
 	};
+	self.registerPartial = function(name, template) {
+		crouton_Handlebars.registerPartial(name, crouton_Handlebars.compile(template));
+	};
 	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
@@ -145,7 +148,9 @@ function Crouton(config) {
 					cb && cb();
 					return;
 				}
-				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+				if (self.config['exclude_zip_codes'].length > 0) {
+					mainMeetings['meetings'] = mainMeetings['meetings'].filter(function(m) { return !inArray(m['location_postal_code_1'], self.config['exclude_zip_codes']); } );
+				}
 				self.meetingData = mainMeetings['meetings'];
 				self.formatsData = mainMeetings['formats'];
 				if (extraMeetings) {
@@ -316,6 +321,7 @@ function Crouton(config) {
 			meetingRow.before(placeholderText);
 			placeHolder.replaceWith(meetingRow);
 		});
+		self.addStripes();
 		jQuery(id).removeClass("hide").addClass("show");
 	};
 
@@ -412,6 +418,8 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 	self.addStripes = function() {
+		jQuery(".bmlt-data-row").removeClass("evenRow");
+		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
 		});
@@ -429,8 +437,6 @@ function Crouton(config) {
 		jQuery(".group-header").removeClass("hide");
 		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		jQuery(".bmlt-data-row").removeClass("evenRow");
-		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
@@ -723,15 +729,6 @@ function Crouton(config) {
 	self.enrichMeetings = function (meetingData) {
 		var meetings = [];
 
-		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
-		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
-		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
-		crouton_Handlebars.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
-		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
-		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
-		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
-		crouton_Handlebars.registerPartial("meetingModal", self.config['meeting_modal_template']);
-
 		let queryStringChar = '?';
 		if (self.config.meeting_details_href) {
 			if (self.config.meeting_details_href.indexOf('?') >= 0) queryStringChar = '&';
@@ -893,6 +890,37 @@ function Crouton(config) {
 			jQuery('#groupingButton_distance_in_km').removeClass('hide');
 			self.distanceTabAllowed = true;
 		}
+	}
+	self.setUpPartials = function() {
+		crouton_Handlebars.registerHelper('hasBMLT2ics', function() {return crouton.config['bmlt2ics'].length>0;});
+		crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
+		self.registerPartial('icsButton',
+    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
+		self.registerPartial('offerIcsButton', "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
+		crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
+		self.registerPartial('distance',`
+<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
+{{getWord 'Distance'}}: {{this.distance}}
+</div>`);
+		crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
+    		if (name && name.length > 0) return true;
+			if (phone && phone.length > 0) return true;
+			if (email && email.length > 0) return true;
+			return false;
+	});
+		self.registerPartial('observerLine',`
+{{#if (hasObserverLine name phone email) }}
+<div class='observerLine'>Kontact: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
+</div>{{/if}}`);
+			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
+			self.registerPartial("metaDataTemplate", self.config['metadata_template']);
+			self.registerPartial("observerTemplate", self.config['observer_template']);
+			self.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
+			self.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
+			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
+			self.registerPartial("meetingLink", self.config['meeting_link_template']);
+			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
@@ -1064,6 +1092,7 @@ Crouton.prototype.doHandlebars = function() {
 					self.all_service_bodies.push(service_bodies[i]);
 				}
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				self.setUpPartials();
 				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
 				customStartupTemplate(enrichedMeetingData);
 				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
@@ -1207,6 +1236,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				}
 
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				self.setUpPartials();
 
 				enrichedMeetingData.sort(function (a, b) {
 					if (a['start_time_raw'] < b['start_time_raw']) {
@@ -1812,29 +1842,7 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 		accum += block.fn(i);
 	return accum;
 });
-crouton_Handlebars.registerHelper('hasBMLT2ics', function() {
-    return crouton.config['bmlt2ics'].length>0;});
-crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
-crouton_Handlebars.registerPartial('icsButton',
-    '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
-crouton_Handlebars.registerPartial('offerIcsButton',
-    "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
-crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
-crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
-crouton_Handlebars.registerPartial('distance',`
-<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
-{{getWord 'Distance'}}: {{this.distance}}
-</div>`);
-crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
-    if (name && name.length > 0) return true;
-	if (phone && phone.length > 0) return true;
-	if (email && email.length > 0) return true;
-	return false;
-});
-crouton_Handlebars.registerPartial('observerLine',`
-	{{#if (hasObserverLine name phone email) }}
-	<div class='observerLine'>Kontact: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
-	</div>{{/if}}`);
+
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
@@ -1992,17 +2000,6 @@ Array.prototype.clean = function() {
 		if (this[i] === "") {
 			this.splice(i, 1);
 			i--;
-		}
-	}
-	return this;
-};
-
-Array.prototype.exclude = function(excludedValues, mappedField) {
-	for (var i = this.length; i--;) {
-		for (var j = 0; j < excludedValues.length; j++) {
-			if (excludedValues[j] === this[i][mappedField]) {
-				this.splice(i, 1);
-			}
 		}
 	}
 	return this;

@@ -51,7 +51,7 @@ function MeetingMap(inConfig) {
 
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null,hide=false) {
 		if (inDiv) {
-			crouton_Handlebars.registerPartial("markerContentsTemplate", config['marker_contents_template']);
+			crouton_Handlebars.registerPartial("markerContentsTemplate", crouton_Handlebars.compile(config['marker_contents_template']));
 			gInDiv = inDiv;
 			createThrobber(inDiv);
 			if (!config.map_search) showThrobber();
