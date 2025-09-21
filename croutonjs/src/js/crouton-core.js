@@ -1848,15 +1848,6 @@ function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
 }
 
-function arrayColumn(input, columnKey) {
-	var newArr = [];
-	for (var i = 0; i < input.length; i++) {
-		newArr.push(input[i][columnKey]);
-	}
-
-	return newArr;
-}
-
 function getUniqueValuesOfKey(array, key){
 	return array.reduce(function(carry, item){
 		if(item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);

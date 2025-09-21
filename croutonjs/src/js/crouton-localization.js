@@ -711,6 +711,14 @@ function CroutonLocalization(language) {
 			"apple_directions" : "مسیرهای Apple به جلسه",
 			"no_meetings_for_this_day" : "هیچ جلسه ای در این روز وجود ندارد",
 			"css-direction: bmlt-rtl" : "",
+			"bootstrap-popover-placement" : "left",
+			"adjust search" : "تنظیم جستجو",
+			"this number represents" : "این عدد نشان دهنده",
+			"radius of search in $$" : "شعاع جستجو بر حسب $$",
+			"miles" : "مایل",
+			"km" : "کیلومتر",
+			"approx. number of meetings in result" : "تعداد تقریبی جلسات در نتیجه",
+			"back" : "بازگشت",
 			"all" : "هر",
 			"menu" : "منوی",
 			"search for meetings" : "جستجوی جلسه ها",
@@ -1281,6 +1289,7 @@ CroutonLocalization.prototype.getWord = function(word) {
 	const ret = this.words[this.language][word.toLowerCase()];
 	if (typeof ret === 'undefined') {
 		if (word === 'css-direction') return '';
+		if (word === 'bootstrap-popover-placement') return 'right';
 		return word;
 	}
 	return ret;
