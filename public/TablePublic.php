@@ -8,7 +8,6 @@ if (!class_exists("Crouton\TablePublic")) {
     // phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
     class TablePublic
     {
-        const END_WAIT_MESSAGE = "document.getElementById('please-wait').style.display='none';";
         private MapPublic $map;
         private TableOptions $crouton;
         private ?array $formats = null;
@@ -214,10 +213,19 @@ if (!class_exists("Crouton\TablePublic")) {
                 wp_add_inline_script("crouton-delegate", $script);
             }
         }
-
-        private function outputTag(): string
+        /**
+         * When we are processing the main shortcodes themselves, we can just insert standard tags, because the difference is
+         * in how we initialize the JS Crouton object.  And we do that when deciding whether to enqueue scripts or not.
+         *
+         * @return string
+         */
+        public function replaceShortcodeWithStandardTags($atts, $content, $tag): string
         {
-            $output = '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
+            if (isset($_GET['meeting-id'])) {
+                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
+            }
+            $output = ($tag == 'crouton_map' || $tag == 'crouton_tabs') ? ''
+                : '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching...</button></div>';
             if (isset($_GET['this_title'])) {
                 $title =  sanitize_text_field(wp_unslash($_GET['this_title']));
                 $output .= '<div class="bmlt_tabs_title">' . $title . '</div>';
@@ -228,19 +236,6 @@ if (!class_exists("Crouton\TablePublic")) {
                 $output .= '<div class="bmlt_tabs_sub_title">' . $title . '</div>';
             }
             return $output.'<div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
-        }
-        /**
-         * When we are processing the main shortcodes themselves, we can just insert standard tags, because the difference is
-         * in how we initialize the JS Crouton object.  And we do that when deciding whether to enqueue scripts or not.
-         *
-         * @return string
-         */
-        public function replaceShortcodeWithStandardTags(): string
-        {
-            if (isset($_GET['meeting-id'])) {
-                return do_shortcode($this->getDefaultMeetingDetailsPageContents());
-            }
-            return $this->outputTag();
         }
         public function bmltHandlebar(array $atts, $template = null): string
         {
@@ -269,17 +264,17 @@ if (!class_exists("Crouton\TablePublic")) {
 
         private function renderTable(array $atts, int $encode_flags = 0): string
         {
-            return $this->getInitializeCroutonBlock("crouton.render();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags));
+            return $this->getInitializeCroutonBlock("crouton.render();", ...$this->getCroutonJsConfig($atts, $encode_flags));
         }
 
         private function renderMap(array $atts, $croutonMap = true, $encode_flags = 0): string
         {
             if ($croutonMap) {
                 // This loads a map in which BMLT queries can be initiated
-                return $this->getInitializeCroutonBlock("crouton.searchMap();".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags, true));
+                return $this->getInitializeCroutonBlock("crouton.searchMap();", ...$this->getCroutonJsConfig($atts, $encode_flags, true));
             }
             // This is the map UI, but loading meetings like in the table form, only at startu
-            return $this->getInitializeCroutonBlock("crouton.render(true);".TablePublic::END_WAIT_MESSAGE, ...$this->getCroutonJsConfig($atts, $encode_flags));
+            return $this->getInitializeCroutonBlock("crouton.render(true);", ...$this->getCroutonJsConfig($atts, $encode_flags));
         }
 
         public function initCrouton($atts)

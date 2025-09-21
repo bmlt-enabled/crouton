@@ -1429,6 +1429,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					self.addStripes();
 					self.calcShowingNow()
 					self.updateMeetingCount();
+					jQuery('#please-wait').remove();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
 						jQuery(".bmlt-data-row").click(function (e) {
