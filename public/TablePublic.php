@@ -66,24 +66,35 @@ if (!class_exists("Crouton\TablePublic")) {
                 'emitJavascript'
             ));
         }
+        /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
+		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+		 * That is why we are not using wp_enqueue */
         private function getJsLinks(): string
         {
             $files = [includes_url().'js/jquery/jquery.min.js', plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", ...$this->map->getJsLinks()];
             $ret = '';
             foreach ($files as $file) {
+                // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
                 $ret .= "<script src='$file'></script>\r\n";
             }
             return $ret;
         }
+        /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
+		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+		 * That is why we are not using wp_enqueue */
         private function getCssLinks(): string
         {
             $files = [plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", ...$this->map->getCssLinks()];
             $ret = '';
             foreach ($files as $file) {
+                // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
                 $ret .= "<link rel='stylesheet' href='$file'></link>\r\n";
             }
             return $ret;
         }
+        /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
+		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+		 * That is why we are not using wp_enqueue */
         public function emitJavascript()
         {
             if (!isset($_GET["croutonjs-emitter"])) {
@@ -117,6 +128,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
                     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
                     $content_safe = $content;
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo $content_safe;
                     break;
                 case 'indirect':
@@ -124,6 +136,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     foreach ($atts as $att => $value) {
                         $link .= "&$att=$value";
                     }
+                    // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
                     $content = $this->getCssLinks().$this->getJsLinks()."<script src='$link'></script>\r\n";
                     $content .= "<div class='bootstrap-bmlt' id='please-wait'><button class='btn btn-lg btn-info'>\r\n<span class='glyphicon glyphicon-repeat glyphicon-repeat-animate'></span>\r\nFetching&#8230;</button></div>\r\n<div id='bmlt-tabs' class='bmlt-tabs hide'></div>";
                     header('Content-Type: text/html; charset=UTF-8');
@@ -133,6 +146,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
                     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
                     $content_safe = $content;
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo $content_safe;
                     break;
                 default:
@@ -143,6 +157,7 @@ if (!class_exists("Crouton\TablePublic")) {
                     header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
                     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
                     $content_safe = $content;
+                    // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                     echo $content_safe;
             }
             exit;
