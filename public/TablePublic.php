@@ -67,8 +67,8 @@ if (!class_exists("Crouton\TablePublic")) {
             ));
         }
         /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
-		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
-		 * That is why we are not using wp_enqueue */
+         * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+         * That is why we are not using wp_enqueue */
         private function getJsLinks(): string
         {
             $files = [includes_url().'js/jquery/jquery.min.js', plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", ...$this->map->getJsLinks()];
@@ -80,8 +80,8 @@ if (!class_exists("Crouton\TablePublic")) {
             return $ret;
         }
         /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
-		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
-		 * That is why we are not using wp_enqueue */
+         * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+         * That is why we are not using wp_enqueue */
         private function getCssLinks(): string
         {
             $files = [plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", ...$this->map->getCssLinks()];
@@ -93,8 +93,8 @@ if (!class_exists("Crouton\TablePublic")) {
             return $ret;
         }
         /** This method is only called when generating HTML that will be pasted in to a non-WP site.  The basic functionality provided by this implemented in JavaScript.
-		 * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
-		 * That is why we are not using wp_enqueue */
+         * This is to allow the software to run in non-WP system, using Wordpress to configure and then generate HTML that can be pasted into the foreign system.
+         * That is why we are not using wp_enqueue */
         public function emitJavascript()
         {
             if (!isset($_GET["croutonjs-emitter"])) {
