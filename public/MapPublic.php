@@ -23,11 +23,27 @@ if (!class_exists("Crouton\MapPublic")) {
                 wp_enqueue_script($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js", ['croutonjs'], filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-map.min.js"), false);
             }
         }
+        public function getJsLinks(): array
+        {
+            if ($this->map->isGoogle()) {
+                return [plugin_dir_url(__DIR__)."croutonjs/dist/crouton-gmaps.min.js"];
+            } else {
+                return [plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js"];
+            }
+        }
+        public function getCssLinks(): array
+        {
+            if ($this->map->isGoogle()) {
+                return [];
+            } else {
+                return [plugin_dir_url(__DIR__)."croutonjs/dist/crouton-leaflet.min.css"];
+            }
+        }
         public function className(): string
         {
             return "MeetingMap";
         }
-        public function getMapJSConfig(array $params, $croutonMap = false): string| false
+        public function getMapJSConfig(array $params, $croutonMap = false, int $encode_flags = 0): string| false
         {
             switch ($params['tile_provider']) {
                 case 'MapBox':
@@ -69,7 +85,7 @@ if (!class_exists("Crouton\MapPublic")) {
             if ($croutonMap) {
                 $this->addCroutonMapParameters($params);
             }
-            return $this->createJavascriptConfig($params);
+            return $this->createJavascriptConfig($params, $encode_flags);
         }
         private function addCroutonMapParameters(array &$params): void
         {
@@ -124,11 +140,11 @@ if (!class_exists("Crouton\MapPublic")) {
         {
             return htmlspecialchars($field, ENT_COMPAT);
         }
-        private function createJavascriptConfig(array $options): string| false
+        private function createJavascriptConfig(array $options, int $encode_flags): string| false
         {
             $ret = [];
             $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages");
-            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages/#f");
+            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages/+'/Throbber.gif");
             $ret['region'] = $options['region_bias'];
             $ret['bounds'] = [
                 "north" => $options['bounds_north'],
@@ -148,6 +164,7 @@ if (!class_exists("Crouton\MapPublic")) {
             $ret['maxZoom'] = $options['max_zoom'];
             $ret['filter_visible'] = $options['filter_visible'];
             $ret['maxTomatoWidth'] = $options['maxTomatoWidth'];
+            $ret['caption'] = $options['caption'];
             if (!empty($options['center_me'])) {
                 $ret['centerMe'] = $options['center_me'];
             }
@@ -164,7 +181,7 @@ if (!class_exists("Crouton\MapPublic")) {
             if (isset($options['noMap'])) {
                 $ret['noMap'] = $options['noMap'];
             }
-            return json_encode($ret);
+            return json_encode($ret, $encode_flags);
         }
     }
 }

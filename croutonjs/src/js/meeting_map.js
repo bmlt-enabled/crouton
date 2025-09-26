@@ -51,7 +51,7 @@ function MeetingMap(inConfig) {
 
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null,hide=false) {
 		if (inDiv) {
-			crouton_Handlebars.registerPartial("markerContentsTemplate", config['marker_contents_template']);
+			crouton_Handlebars.registerPartial("markerContentsTemplate", crouton_Handlebars.compile(config['marker_contents_template']));
 			gInDiv = inDiv;
 			createThrobber(inDiv);
 			if (!config.map_search) showThrobber();
@@ -95,6 +95,11 @@ function MeetingMap(inConfig) {
 						menuContext = {imageDir: config.BMLTPlugin_images, config: config, dropdownData:false};
 						gDelegate.addControl(createMenuButton(menuContext), 'topright', cb);
 					}
+				}
+				if (config.caption) {
+					const wrapper= document.createElement('div');
+					wrapper.innerHTML= '<div class="map-caption">'+config.caption.replace('\n','<br/>')+'</div>';
+					gDelegate.addControl(wrapper.firstChild, 'bottomleft', cb);
 				}
 			}
 		};
@@ -659,14 +664,14 @@ function MeetingMap(inConfig) {
 	</div>{{/each}}
 	</div>
 	`;
+	const markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
 
 	/************************************************************************************//**
 	 *	 \brief	This creates a single meeting's marker on the map.							*
 	 ****************************************************************************************/
 	function createMapMarker(meetings, openMarker) {
 		var main_point = [meetings[0].latitude, meetings[0].longitude];
-		let markerTemplate = crouton_Handlebars.compile(markerTemplateSrc);
-		var marker_html = markerTemplate(meetings);
+		const marker_html = markerTemplate(meetings);
 		gDelegate.createMarker(main_point,
 			(meetings.length > 1),
 			marker_html, null, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);

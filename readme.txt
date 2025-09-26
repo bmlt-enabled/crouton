@@ -5,7 +5,7 @@ Tags: narcotics anonymous, meeting list, recovery, bmlt
 Requires at least: 4.0
 Requires PHP: 8.0
 Tested up to: 6.8
-Stable tag: 3.24.2
+Stable tag: 3.25.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 crouton provides a UI and more for view recovery meetings as stored in a Basic Meeting List Toolbox (BMLT) database.
@@ -36,6 +36,18 @@ This plugin provides shortcodes to view the meetings as a table, a map or insert
 https://demo.bmlt.app/crouton
 
 == Changelog ==
+
+= 3.25.0 =
+* Performance improvements
+
+= 3.24.3 =
+* Czech and Slovak translations.
+* Farsi translations.
+* Emitter: use a wordpress site to emit a script that can be copied over and used on a non-wordpress site.
+* Added ability to translate backend using normal wordpress PO files.
+* New shortcode [root_service_body] for titling meeting lists from query strings.
+* Replaced the chosen.js selection boxes in backend with select2, since chosen is now deprecated.
+* Added optional "caption" in bottom left corner of map.
 
 = 3.24.2 =
 * Small fixes.

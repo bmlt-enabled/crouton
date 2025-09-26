@@ -2,8 +2,10 @@ var crouton_Handlebars = Handlebars.noConflict();
 // These are extension points
 crouton_Handlebars.registerHelper("startup", () => '');
 crouton_Handlebars.registerHelper("enrich", () => '');
+crouton_Handlebars.registerHelper("log", (x) => console.log(x));
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
+
 
 function Crouton(config) {
 	var self = this;
@@ -95,6 +97,7 @@ function Crouton(config) {
 		distance_units: 'miles',
 		noMap: false,
 		maxTomatoWidth: 160,
+		caption: false,
 	};
 
 	self.setConfig(config);
@@ -110,6 +113,9 @@ function Crouton(config) {
 				self.render(false, fitBounds);
 		});
 		self.config['custom_query'] = original_query;
+	};
+	self.registerPartial = function(name, template) {
+		crouton_Handlebars.registerPartial(name, crouton_Handlebars.compile(template));
 	};
 	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
@@ -142,7 +148,9 @@ function Crouton(config) {
 					cb && cb();
 					return;
 				}
-				mainMeetings['meetings'].exclude(self.config['exclude_zip_codes'], "location_postal_code_1");
+				if (self.config['exclude_zip_codes'].length > 0) {
+					mainMeetings['meetings'] = mainMeetings['meetings'].filter(function(m) { return !inArray(m['location_postal_code_1'], self.config['exclude_zip_codes']); } );
+				}
 				self.meetingData = mainMeetings['meetings'];
 				self.formatsData = mainMeetings['formats'];
 				if (extraMeetings) {
@@ -298,13 +306,22 @@ function Crouton(config) {
 	self.dayTab = function(day_id) {
 		self.hideAllPages();
 		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
-		self.showPage("#" + day_id);
+		jQuery("#" + day_id).removeClass("hide").addClass("show");
 	};
 	self.dayTabFromId = function(id) {
 		day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
 		self.dayTab(day_id);
 	};
 	self.showPage = function (id) {
+		jQuery(id+" .bmlt-data-row-placeholder").each(function() {
+			const meetingId = this.dataset.meetingid;
+			const placeHolder = jQuery(this);
+			const placeholderText = this.outerHTML;
+			const meetingRow = jQuery("#"+meetingId);
+			meetingRow.before(placeholderText);
+			placeHolder.replaceWith(meetingRow);
+		});
+		self.addStripes();
 		jQuery(id).removeClass("hide").addClass("show");
 	};
 
@@ -340,12 +357,12 @@ function Crouton(config) {
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.hidePage("#days");
-			self.showPage("#byday");
-			self.hidePage("#nav-days");
-			self.hidePage("#tabs-content");
 			return;
 		});
+		self.hidePage("#days");
+		self.showPage("#byday");
+		self.hidePage("#nav-days");
+		self.hidePage("#tabs-content");
 	};
 
 	self.dayView = function () {
@@ -353,11 +370,11 @@ function Crouton(config) {
 		self.highlightButton("#day");
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.showPage("#days");
-			self.showPage("#nav-days");
-			self.showPage("#tabs-content");
 			return;
 		});
+		jQuery("#days").removeClass("hide").addClass("show");
+		jQuery("#nav-days").removeClass("hide").addClass("show")
+		self.showPage("#tabs-content");
 	};
 
 	self.groupedView = function (field) {
@@ -401,9 +418,15 @@ function Crouton(config) {
 		jQuery("#tab-pane").removeClass("show").addClass("hide");
 	};
 	self.addStripes = function() {
-		var showingNow = [];
+		jQuery(".bmlt-data-row").removeClass("evenRow");
+		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
+		});
+	}
+	self.calcShowingNow = function() {
+		var showingNow = [];
+		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			const rowId = value.id.split("-");
 			showingNow.push(rowId[rowId.length-1]);
 		});
@@ -414,8 +437,6 @@ function Crouton(config) {
 		jQuery(".group-header").removeClass("hide");
 		jQuery(".meeting-group").removeClass("hide");
 		jQuery(".bmlt-data-row").removeClass("hide");
-		jQuery(".bmlt-data-row").removeClass("evenRow");
-		jQuery(".bmlt-data-row").removeClass("oddRow");
 		jQuery(".filter-dropdown").each(function(index, filter) {
 			const dataValue = filter.value.replace("a-", "");
 			if (dataValue === "") return;
@@ -426,7 +447,8 @@ function Crouton(config) {
 				jQuery(".bmlt-data-row").not("[data-" + dataType + "~='" + dataValue + "']").addClass("hide");
 			}
 		});
-		var showingNow = this.addStripes();
+		this.addStripes();
+		var showingNow = this.calcShowingNow();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters();
 		if (croutonMap) croutonMap.fillMap(showingNow);
@@ -472,6 +494,7 @@ function Crouton(config) {
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
 		window.crouton = self;
@@ -506,6 +529,7 @@ function Crouton(config) {
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
 		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
 		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
 		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
@@ -528,6 +552,16 @@ function Crouton(config) {
 			addLive = function(id) {return id+"-live"};
 		}
 		self.showingNowCount = meetingCount;
+		jQuery(".crouton_root_service_body").each(function() {
+			var text = "";
+			var field = 'name';
+			if (this.dataset.field) field = this.dataset.field;
+			if (self.config['service_body'].length > 0) {
+				const sb = self.getServiceBodyDetails(self.config['service_body'][0]);
+				if (sb) text = sb[field] ? sb[field] : "";
+			}
+			jQuery(this).text(text);
+		});
 		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;
@@ -686,20 +720,14 @@ function Crouton(config) {
 
 	self.toFarsinNumber = function( n ) {
 		const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-
-		return n.replace(/\d/g, x => farsiDigits[x]);
+		const ampm = {'AM':'صبح', 'PM':'بعدازظهر'};
+		n = n.replace(/\d/g, x => farsiDigits[x]);
+		n = n.replace(/AM|am/g, ampm['AM']);
+		n = n.replace(/PM|pm/g, x => ampm['PM']);
+		return n;
 	}
 	self.enrichMeetings = function (meetingData) {
 		var meetings = [];
-
-		crouton_Handlebars.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
-		crouton_Handlebars.registerPartial("metaDataTemplate", self.config['metadata_template']);
-		crouton_Handlebars.registerPartial("observerTemplate", self.config['observer_template']);
-		crouton_Handlebars.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
-		crouton_Handlebars.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
-		crouton_Handlebars.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
-		crouton_Handlebars.registerPartial("meetingLink", self.config['meeting_link_template']);
-		crouton_Handlebars.registerPartial("meetingModal", self.config['meeting_modal_template']);
 
 		let queryStringChar = '?';
 		if (self.config.meeting_details_href) {
@@ -862,6 +890,37 @@ function Crouton(config) {
 			jQuery('#groupingButton_distance_in_km').removeClass('hide');
 			self.distanceTabAllowed = true;
 		}
+	}
+	self.setUpPartials = function() {
+		crouton_Handlebars.registerHelper('hasBMLT2ics', function() {return crouton.config['bmlt2ics'].length>0;});
+		crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
+		self.registerPartial('icsButton',
+    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
+		self.registerPartial('offerIcsButton', "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
+		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
+		crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
+		self.registerPartial('distance',`
+<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
+{{getWord 'Distance'}}: {{this.distance}}
+</div>`);
+		crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
+    		if (name && name.length > 0) return true;
+			if (phone && phone.length > 0) return true;
+			if (email && email.length > 0) return true;
+			return false;
+	});
+		self.registerPartial('observerLine',`
+{{#if (hasObserverLine name phone email) }}
+<div class='observerLine'>Kontact: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
+</div>{{/if}}`);
+			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
+			self.registerPartial("metaDataTemplate", self.config['metadata_template']);
+			self.registerPartial("observerTemplate", self.config['observer_template']);
+			self.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
+			self.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
+			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
+			self.registerPartial("meetingLink", self.config['meeting_link_template']);
+			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
@@ -1033,6 +1092,7 @@ Crouton.prototype.doHandlebars = function() {
 					self.all_service_bodies.push(service_bodies[i]);
 				}
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				self.setUpPartials();
 				var customStartupTemplate = crouton_Handlebars.compile('{{startup}}');
 				customStartupTemplate(enrichedMeetingData);
 				var customEnrichTemplate = crouton_Handlebars.compile('{{enrich this}}');
@@ -1176,6 +1236,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				}
 
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				self.setUpPartials();
 
 				enrichedMeetingData.sort(function (a, b) {
 					if (a['start_time_raw'] < b['start_time_raw']) {
@@ -1366,7 +1427,9 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						jQuery('#groupingButton_distance_in_km').addClass('hide');
 					}
 					self.addStripes();
+					self.calcShowingNow()
 					self.updateMeetingCount();
+					jQuery('#please-wait').remove();
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
 						jQuery(".bmlt-data-row").click(function (e) {
@@ -1433,15 +1496,6 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					jQuery('.directions-map-modal-close').on('click', function (e) {
 						closeDirectionsMapModal()
 					});
-					/****
-					jQuery('.custom-ul').on('click', 'a', function (event) {
-						jQuery('.bmlt-page').each(function (index) {
-							self.hidePage("#" + this.id);
-							self.showPage("#" + event.target.id);
-							return;
-						});
-					});
-					*/
 					if (self.config['has_tabs']) {
 						jQuery('.nav-tabs a').on('click', function (e) {
 							e.preventDefault();
@@ -1455,8 +1509,8 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						jQuery('#tab' + n).show();
 					}
 
-					self.showPage(".bmlt-header");
-					self.showPage(".bmlt-tabs");
+					jQuery('.bmlt-header').removeClass("hide").addClass("show");
+					jQuery(".bmlt-tabs").removeClass("hide").addClass("show");
 
 					if (self.config['default_filter_dropdown'] !== "") {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
@@ -1478,7 +1532,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';
-					self.showView(self.config['view_by'], self.meetingData.length);
+						self.showView(self.config['view_by'], self.meetingData.length);
 					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
 						self.config['on_complete']();
 					}
@@ -1789,30 +1843,9 @@ crouton_Handlebars.registerHelper('times', function(n, block) {
 		accum += block.fn(i);
 	return accum;
 });
-crouton_Handlebars.registerHelper('hasBMLT2ics', function() {
-    return crouton.config['bmlt2ics'].length>0;});
-crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
-crouton_Handlebars.registerPartial('icsButton',
-    '<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
-crouton_Handlebars.registerPartial('offerIcsButton',
-    "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
-crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
-crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
-crouton_Handlebars.registerPartial('distance',`
-<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
-{{getWord 'Distance'}}: {{this.distance}}
-</div>`);
+
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
-}
-
-function arrayColumn(input, columnKey) {
-	var newArr = [];
-	for (var i = 0; i < input.length; i++) {
-		newArr.push(input[i][columnKey]);
-	}
-
-	return newArr;
 }
 
 function getUniqueValuesOfKey(array, key){
@@ -1959,17 +1992,6 @@ Array.prototype.clean = function() {
 		if (this[i] === "") {
 			this.splice(i, 1);
 			i--;
-		}
-	}
-	return this;
-};
-
-Array.prototype.exclude = function(excludedValues, mappedField) {
-	for (var i = this.length; i--;) {
-		for (var j = 0; j < excludedValues.length; j++) {
-			if (excludedValues[j] === this[i][mappedField]) {
-				this.splice(i, 1);
-			}
 		}
 	}
 	return this;

@@ -42,8 +42,8 @@ var croutonDefaultTemplates = {
 	].join('\n'),
 
 	observer_template: [
-		"<div class='observerLine'>{{this.contact_name_1}} {{this.contact_phone_1}} {{this.contact_email_1}}</div>",
-		"<div class='observerLine'>{{this.contact_name_2}} {{this.contact_phone_2}} {{this.contact_email_2}}</div>",
+		"{{> observerLine name=contact_name_1 phone=contact_phone_1 email=contact_email_1 }}",
+		"{{> observerLine name=contact_name_2 phone=contact_phone_2 email=contact_email_2 }}",
 		"{{#if this.wheelchair}}<div aria-hidden='true' style='font-style:normal; font-size:x-large;'>&#x267F;</div>{{/if}}"
 	].join('\n'),
 

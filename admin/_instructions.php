@@ -20,7 +20,9 @@
             	<li><code>[group_count]</code></li>
             	<li><code>[service_body_names]</code></li>
 				<li><code>[bmlt_handlebar]</code></li>
-			</ul></li>
+			</ul>
+			The shortcode <code>[root_service_body]</code> can be used to display the name (or other field) of the root service body.  This is particularly useful when the root service body is specified in the query string of the URL, allowing the meeting list to be titled based on the name or description of the service body.
+			</li>
         </ul>
         <p>Example: <code>There are currently [group_count] groups, offering a total of [meeting_count] meetings per week.</code></p>
         <p>Detailed instructions for the shortcode parameters follow.</p>
@@ -279,6 +281,10 @@
     <h3 class="help-accordian"><strong>Temporarily Closed</strong></h3>
     <div>
         <p>If you use the format code "TC" it will render the format description for that format above the meeting name with a flag icon.  It will show in the defined language (assuming that it was set in the root server).  This behavior is overridable through the meeting data template functionality.</p>
+    </div>
+	<h3 class="help-accordian"><strong>Map Caption</strong></h3>
+    <div>
+        <p>Some sites might wish some additional annotation or instructions, for instance, pointing out that the user can click on meeting markers, or that a red marker indicates multiple meetings.  The caption text appears in the lower left corner of the map. To insert line breaks, use '\n'.</p>
     </div>
     <h3 class="help-accordian"><strong>Suggest Change</strong></h3>
     <div>
