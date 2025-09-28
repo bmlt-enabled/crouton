@@ -73,6 +73,7 @@ if (!class_exists("Crouton\TableOptions")) {
             'metadata_template' => '',
             'meetingpage_title_template' => '',
             'meetingpage_contents_template' => '',
+            'groups' => false,
         );
         public function getOptions(): array
         {

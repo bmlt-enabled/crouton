@@ -270,7 +270,7 @@ function MeetingMap(inConfig) {
 		let delegate = new MapDelegate(config);
 		if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng, zoom: handlebarMapOptions.zoom};
 		if (delegate.createMap(inDiv, loc)) {
-			delegate.createMarker([meeting.latitude, meeting.longitude], false, null, "", [parseInt(meeting.id_bigint)]);
+			delegate.createMarker([meeting.latitude, meeting.longitude], false, null);
 			delegate.addClusterLayer();
 			gModalDelegate = delegate;
 		}
@@ -540,6 +540,7 @@ function MeetingMap(inConfig) {
 	 ****************************************************************************************/
 	var prevUseMarkerCluster;
 	function useMarkerCluster() {
+		if (config.groups) return true;
 		if (typeof gDelegate.getZoom() === 'undefined') return true;
 		if (typeof config.clustering === 'undefined') return false;
 		return gDelegate.getZoom() < config.clustering;
@@ -562,14 +563,16 @@ function MeetingMap(inConfig) {
 		gDelegate.removeClusterLayer();
 		// This calculates which markers are the red "multi" markers.
 		const filtered = filterMeetings(gAllMeetings);
-		var overlap_map = (useMarkerCluster() || filtered.length == 1)
-			? filtered.map((m)=>[m])
-			: mapOverlappingMarkersInCity(filtered);
+		const overlap_map = config.groups ? filtered
+			:	((useMarkerCluster() || filtered.length == 1)
+				? filtered.map((m)=>[m])
+				: mapOverlappingMarkersInCity(filtered));
 
 		if (useMarkerCluster()) gDelegate.createClusterLayer();
 		// Draw the meeting markers.
+		markerCreator = config.groups ? createGroupMarker : createMapMarker;
 		overlap_map.forEach(function (marker) {
-			createMapMarker(marker, openMarker);
+			markerCreator(marker, openMarker);
 		});
 		gDelegate.addClusterLayer();
 		if (expand) {
@@ -672,9 +675,30 @@ function MeetingMap(inConfig) {
 	function createMapMarker(meetings, openMarker) {
 		var main_point = [meetings[0].latitude, meetings[0].longitude];
 		const marker_html = markerTemplate(meetings);
-		gDelegate.createMarker(main_point,
-			(meetings.length > 1),
-			marker_html, null, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);
+		const marker = gDelegate.createMarker(main_point, (meetings.length > 1), null);
+		gDelegate.bindPopup(marker, marker_html, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);
+	};
+	function openGroupModal(group) {
+		const marker_html = hbs_Crouton.templates['group'](group);
+		const tabs = document.getElementById('bmlt-tabs');
+		let div = document.createElement('div');
+		tabs.appendChild(div);
+		div.innerHTML = hbs_Crouton.templates['groupModal'](group);
+		[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
+		let gm = document.getElementById('group_modal');
+		document.body.appendChild(gm);
+		jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
+		openModalWindow(gm, true);
+		div.remove();
+	}
+	function createGroupMarker(group, openMarker) {
+		var main_point = [group.latitude, group.longitude];
+		//let options = {maxWidth: 600, autoPanPaddingTopLeft:[10, 50]};
+		//if (screen.width < 768) options.maxHeight = 550;
+		const marker = gDelegate.createMarker(main_point, group['membersOfGroup'].length > 1, null);
+		gDelegate.addMarkerCallback(marker, function() {
+			croutonMap.openGroupModal(group);
+		});
 	};
 	var listOnlyVisible = false;
 	var listener = null;
@@ -867,6 +891,7 @@ function MeetingMap(inConfig) {
 	this.loadPopupMap = loadPopupMap;
 	this.filterVisible = filterVisible;
 	this.hasMapSearch = hasMapSearch;
+	this.openGroupModal = openGroupModal;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -881,3 +906,4 @@ MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
 MeetingMap.prototype.filterVisible = null;
 MeetingMap.prototype.hasMapSearch = null;
+MeetingMap.prototype.openGroupModal = null;

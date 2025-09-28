@@ -165,6 +165,7 @@ if (!class_exists("Crouton\MapPublic")) {
             $ret['filter_visible'] = $options['filter_visible'];
             $ret['maxTomatoWidth'] = $options['maxTomatoWidth'];
             $ret['caption'] = $options['caption'];
+            $ret['groups'] = $options['groups'];
             if (!empty($options['center_me'])) {
                 $ret['centerMe'] = $options['center_me'];
             }

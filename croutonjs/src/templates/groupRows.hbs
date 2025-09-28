@@ -1,0 +1,65 @@
+{{#each this}}
+	{{enrich this}}
+	<tr class="bmlt-data-row"
+		id="meeting-data-row-{{this.id_bigint}}"
+		data-cities="{{formatDataPointer this.location_municipality}}"
+		data-groups="{{formatDataPointer this.meeting_name}}"
+		data-locations="{{formatDataPointer this.location_text}}"
+		data-zips="{{formatDataPointer this.location_postal_code_1}}"
+		data-formats="{{formatDataPointerFormats this.formats_expanded}}"
+		data-areas="{{formatDataPointer this.service_body_bigint}}"
+		data-regions="{{formatDataPointer this.parentServiceBodyName}}"
+		data-counties="{{formatDataPointer this.location_sub_province}}"
+		data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
+		data-states="{{formatDataPointer this.location_province}}"
+		data-venues="{{formatDataFromArray this.venue_type_name}}">
+		<td class="bmlt-column1" {{{getWord 'css-textAlign'}}}>
+			<div class='meeting-name'>
+				<a tabindex='0' href='#' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>
+			</div>
+			{{#if this.formats}}
+				<a id="bmlt-formats"
+				   class="btn btn-primary btn-xs"
+				   title=""
+				   data-html="true"
+				   tabindex="0"
+				   data-trigger="focus"
+				   role="button"
+				   data-toggle="popover"
+				   data-original-title=""
+				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
+				   data-content="{{> (selectFormatPopup) }}">
+                    <span class="glyphicon glyphicon-search"
+						  aria-hidden="true"
+						  data-toggle="popover"
+						  data-trigger="focus"
+						  data-html="true"
+						  role="button"></span>{{ this.formats }}
+				</a>
+			{{/if}}
+			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
+			<div class="bmlt-observer">{{> (selectObserver) }}</div>
+		</td>
+		<td class="bmlt-column2" {{{getWord 'css-textAlign'}}}>
+			<div class="meeting-data-template">
+				<div class='location-text'>{{this.location_text}}</div>
+				<div class='meeting-address'>{{this.formatted_address}}</div>
+				<div class='location-information'>{{this.formatted_location_info}}
+				{{#if this.virtual_meeting_additional_info}}
+					<div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>
+				{{/if}}
+				{{> distance }}
+			</div>
+		</td>
+		<td class="bmlt-column3">
+			{{> metaDataTemplate }}
+			{{#canShare this}}
+				<a href="javascript:void(0);" id="share-button" class="btn btn-primary btn-xs" onclick='navigator.share({ text: JSON.stringify("{{this.formatted_day}} {{this.start_time_formatted}} - {{this.end_time_formatted}} {{this.meeting_name}} {{this.location_text}} {{this.formatted_address}} {{this.formatted_location_info}}{{#if this.virtual_meeting_additional_info}} {{this.virtual_meeting_additional_info}}{{/if}}"), url: "{{#isVirtualOrHybrid this}}{{#if this.virtual_meeting_link}}{{this.virtual_meeting_link}}{{/if}}{{#if this.phone_meeting_number}}{{this.phone_meeting_number}}{{/if}}{{/isVirtualOrHybrid}}{{#isInPersonOrHybrid this}} {{#isOS}} https://maps.apple.com/?daddr={{this.latitude}},{{this.longitude}} {{else}} https://www.google.com/maps/search/?api=1&amp;query={{this.latitude}},{{this.longitude}}&amp;q={{this.latitude}},{{this.longitude}}{{/isOS}}{{/isInPersonOrHybrid}}"})'><span class="glyphicon glyphicon-share"></span>  {{this.share_word}}</a>
+			{{/canShare}}
+			{{#reportUpdateEnabled this}}
+				<a href="{{ reportUpdateUrl }}?meeting_id={{this.id_bigint}}" id="share-button" class="btn btn-primary btn-xs edit-button" target="_blank"><span class="glyphicon glyphicon-edit"></span> {{this.report_update_word}}</a>
+			{{/reportUpdateEnabled}}
+			{{> offerIcsButton}}
+		</td>
+	</tr>
+{{/each}}
