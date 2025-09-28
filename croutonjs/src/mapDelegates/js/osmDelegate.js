@@ -191,15 +191,20 @@ function MapDelegate(config) {
 	}
 	function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,	///< Flag if marker has multiple meetings
-        in_html,		///< The info window HTML
         in_title,        ///< The tooltip
-		in_ids,
-		openedMarker
 )
 {
 	if (!gMainMap) return;
     var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single);
 
+    var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title})
+	marker.isMulti = multi;
+	if (gClusterLayer) gClusterLayer.addLayer(marker);
+	else marker.addTo(gMainMap);
+
+	return marker;
+}
+function bindPopup(marker, in_html, in_ids, openedMarker) {
 	let highlightRow = function(target) {
 		const id = target.id.split('-')[1];
 		gOpenMarker = id;
@@ -207,10 +212,7 @@ function MapDelegate(config) {
 		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
 	}
-    var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title}).bindPopup(in_html);
-	marker.isMulti = multi;
-	if (gClusterLayer) gClusterLayer.addLayer(marker);
-	else marker.addTo(gMainMap);
+	marker.bindPopup(in_html);
 	marker.on('popupopen', function(e) {
 		if (openedMarker && marker.getPopup().getContent().includes("panel-"+openedMarker)) {
 			// I want to just do this:
@@ -244,7 +246,13 @@ function MapDelegate(config) {
 			if (!marker.isPopupOpen()) marker.openPopup();
 		});
 	}
-    gAllMarkers.push( {ids: in_ids, marker: marker} );
+	gAllMarkers.push( {ids: in_ids, marker: marker} );
+}
+function addMarkerCallback(marker, cb, in_ids) {
+	if (cb) marker.on('click', function() {
+		cb(in_ids);
+	});
+	gAllMarkers.push( {ids: in_ids, marker: marker} );
 }
 function getOpenMarker() {
 	return gOpenMarker;
@@ -488,6 +496,8 @@ function addControl(div,pos,cb) {
 	this.setZoom = setZoom;
 	this.getZoom = getZoom;
 	this.createMarker = createMarker;
+	this.bindPopup = bindPopup;
+	this.addMarkerCallback = addMarkerCallback;
 	this.contains = contains;
 	this.getBounds = getBounds;
 	this.invalidateSize = invalidateSize;
@@ -520,6 +530,8 @@ MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
 MapDelegate.prototype.createMarker = null;
+MapDelegate.prototype.bindPopup = null;
+MapDelegate.prototype.addMarkerCallback = null;
 MapDelegate.prototype.contains = null;
 MapDelegate.prototype.getBounds = null;
 MapDelegate.prototype.invalidateSize = null;

@@ -52,6 +52,7 @@ let cssFiles = [
 	'bootstrap.min.css',
 	'bmlt_tabs.css',
 	'meeting_map.css',
+	'card.css',
 ];
 let LeafletCssFiles = [
 	'leaflet.css',
