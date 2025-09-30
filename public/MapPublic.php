@@ -144,7 +144,7 @@ if (!class_exists("Crouton\MapPublic")) {
         {
             $ret = [];
             $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages");
-            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages/+'/Throbber.gif");
+            $ret["BMLTPlugin_throbber_img_src"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages/Throbber.gif");
             $ret['region'] = $options['region_bias'];
             $ret['bounds'] = [
                 "north" => $options['bounds_north'],
