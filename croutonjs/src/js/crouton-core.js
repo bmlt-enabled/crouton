@@ -852,6 +852,13 @@ function Crouton(config) {
 	};
 	self.convertToGroups = function(meetings) {
 		if (!meetings || !meetings.length) return [];
+		if (meetings[0].hasOwnProperty('membersOfGroup')) return meetings;
+		if (!meetings[0].hasOwnProperty('group_id')) {
+			meetings.forEach((meeting) =>
+				meeting['group_id'] = meeting['service_body_bigint'] + '|' + meeting['meeting_name'] +
+					(meeting['venue_type'] != 2) ? ('|' + parseFloat(meeting['latitude']).toFixed(6) + '|' + parseFloat(meeting['longitude']).toFixed(6))
+												 : '');
+		}
 		// There are so many, I think this is faster than using reduce.
 		const sorted = meetings.sort((a,b) => {
 			if (a['group_id'] < b['group_id']) return -1;
@@ -863,6 +870,7 @@ function Crouton(config) {
 		sorted.forEach(function (meeting) {
 			if (!meeting['group_id']) {
 				groups.push(meeting);
+				meeting['membersOfGroup'] = [meeting];
 			} else if (!last || meeting['group_id'] != last['group_id']) {
 				groups.push(meeting);
 				last = meeting;
