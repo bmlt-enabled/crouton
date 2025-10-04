@@ -934,7 +934,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerHelper('hasBMLT2ics', function() {return crouton.config['bmlt2ics'].length>0;});
 		crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
 		self.registerPartial('icsButton',
-    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
+    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" class="share-button btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
 		self.registerPartial('offerIcsButton', "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
 		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
@@ -960,6 +960,7 @@ function Crouton(config) {
 			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 			self.registerPartial("meetingLink", self.config['meeting_link_template']);
 			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
+			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>")
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';

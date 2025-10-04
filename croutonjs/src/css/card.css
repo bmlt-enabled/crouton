@@ -126,6 +126,10 @@
   margin: 0;
   align-items: stretch;
 }
+.card h5 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+  }
 @media (min-width: 768px) {
   .card .card-body {
     padding: .5rem .5rem;
@@ -159,10 +163,6 @@
   }
   .leaflet-popup-scrolled {
     max-height: 400px;
-  }
-  .card h5 {
-    margin-top: 10px;
-    margin-bottom: 10px;
   }
 }
 .row {
@@ -438,12 +438,12 @@
       width: 100%;
     }
     .box-shadow {
-      margin-inline-start: 20px;
+      margin-inline-end: 20px;
     }
 }
 .box-shadow {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,.2),0 6px 20px 0 rgba(0,0,0,.19);
-    margin-inline-end: 0;
+    margin-inline-start: 0;
     margin-top: 5px;
     margin-bottom: 5px;
 }
@@ -458,4 +458,7 @@
 }
 .card-body {
   padding-inline-start: 10px;
+}
+#bmlt-group-map {
+  height: 300px;
 }
