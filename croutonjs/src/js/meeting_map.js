@@ -267,6 +267,7 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		let inDiv = document.getElementById(inDiv_id);
+		if (!inDiv) return;
 		let delegate = new MapDelegate(config);
 		if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng, zoom: handlebarMapOptions.zoom};
 		if (delegate.createMap(inDiv, loc)) {
@@ -690,6 +691,11 @@ function MeetingMap(inConfig) {
 		jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
 		openModalWindow(gm, true);
 		div.remove();
+		loadPopupMap("bmlt-group-map", group, {
+			lat: parseFloat(group.latitude),
+			lng: parseFloat(group.longitude),
+			zoom: 14
+		});
 	}
 	function createGroupMarker(group, openMarker) {
 		var main_point = [group.latitude, group.longitude];
