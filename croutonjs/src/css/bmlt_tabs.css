@@ -349,6 +349,7 @@ span.bmlt_tabs_group_count {
     	color: black;
     	margin-right: 15px;
     	font-weight: 100;
+		font-size: 14pt;
 	}
 @media (max-width: 39.9375em) {
 	#bmlt-tabs .bmlt-header {
