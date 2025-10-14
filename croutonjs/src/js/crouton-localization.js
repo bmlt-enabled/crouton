@@ -747,6 +747,10 @@ function CroutonLocalization(language) {
 			"more info" : "اطلاعات بیشتر",
 			"css-direction": 'bmlt-rtl',
 			"css-textalign": "style='text-align: right;'",
+			'address': 'آدرس',
+			'meeting info': 'ویژگی',
+			'comments': 'توضیحات',
+			'group details': 'نمایش گروه',
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],

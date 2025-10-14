@@ -766,7 +766,7 @@ function Crouton(config) {
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
 			let formatRootServer = self.formatsData.filter((f)=>f['root_server_uri'] == meetingData[m]['root_server_uri']);
-			meetingData[m]['wheelchar'] = false;
+			meetingData[m]['wheelchair'] = false;
 			for (var f = 0; f < formats.length; f++) {
 				for (var g = 0; g < formatRootServer.length; g++) {
 					if (formats[f] === formatRootServer[g]['key_string']) {
