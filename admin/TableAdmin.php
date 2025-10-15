@@ -84,7 +84,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                 wp_enqueue_style("select2", plugin_dir_url(__DIR__) . "css/select2.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
                 wp_enqueue_script("select2", plugin_dir_url(__DIR__) . "js/select2.min.js", array('jquery'), "1.2", true);
-                wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/bmlt_tabs_admin.js"), false);
+                wp_enqueue_script('fetch-jsonp', plugin_dir_url(__DIR__).'js/fetch-jsonp.js', array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/fetch-jsonp.js"), false);
+                wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('fetch-jsonp'), filemtime(plugin_dir_path(__DIR__) . "js/bmlt_tabs_admin.js"), false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__DIR__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
                 add_thickbox();
@@ -103,59 +104,6 @@ if (!class_exists("Crouton\TableAdmin")) {
                 wp_enqueue_script('showhint', plugins_url('js/codemirror/show-hint.js', __DIR__), array('codemirror'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/show-hint.js"), false);
                 wp_enqueue_script('csshint', plugins_url('js/codemirror/css-hint.js', __DIR__), array('showhint'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/css-hint.js"), false);
             }
-        }
-
-        private function testRootServer(string $root_server): string| false
-        {
-            $args = array(
-                'timeout' => '10',
-                'headers' => array(
-                    'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0 +crouton'
-                )
-            );
-            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServerInfo", $args);
-            $httpcode = wp_remote_retrieve_response_code($results);
-            $response_message = wp_remote_retrieve_response_message($results);
-            if ($httpcode != 200 && $httpcode != 302 && $httpcode != 304 && ! empty($response_message)) {
-                //echo '<p>Problem Connecting to BMLT Root Server: ' . $root_server . '</p>';
-                return false;
-            };
-
-            $results = json_decode(wp_remote_retrieve_body($results), true);
-
-            if (is_array($results) && !empty($results)) {
-                return $results[0]['version'] ?? '';
-            }
-
-            return '';
-        }
-        public function getAreas(string $root_server, string $source): array
-        {
-            $results = wp_remote_get("$root_server/client_interface/json/?switcher=GetServiceBodies", TableAdmin::HTTP_RETRIEVE_ARGS);
-            $result = json_decode(wp_remote_retrieve_body($results), true);
-            if (is_wp_error($results)) {
-                echo '<div style="font-size: 20px;text-align:center;font-weight:normal;color:#F00;margin:0 auto;margin-top: 30px;"><p>Problem Connecting to BMLT Root Server</p><p>' . esc_url($root_server) . '</p><p>Error: ' . esc_html($result->get_error_message()) . '</p><p>Please try again later</p></div>';
-                return [];
-            }
-
-            if ($source == 'dropdown') {
-                $unique_areas = array();
-                foreach ($result as $value) {
-                    $parent_name = 'None';
-                    foreach ($result as $parent) {
-                        if ($value['parent_id'] == $parent['id']) {
-                            $parent_name = $parent['name'];
-                        }
-                    }
-                    $unique_areas[] = $value['name'] . ',' . $value['id'] . ',' . $value['parent_id'] . ',' . $parent_name;
-                }
-            } else {
-                $unique_areas = array();
-                foreach ($result as $value) {
-                    $unique_areas[$value['id']] = $value['name'];
-                }
-            }
-            return $unique_areas;
         }
         public function adminMenuLink()
         {
@@ -257,24 +205,19 @@ if (!class_exists("Crouton\TableAdmin")) {
                 <div id="updated"></div>
                 <form style="display:inline!important;" method="POST" id="bmlt_tabs_options" name="bmlt_tabs_options">
                     <?php
-                    wp_nonce_field('bmlttabsupdate-options');
-                    $this_connected = $this->testRootServer($options['root_server']);
-                    $connect_color = '#ff0000';
-                    $connect_dashicon = 'dashicons-no';
-                    $connect_message = __('Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.', 'crouton');
-                    if ($this_connected != false) {
-                        $connect_color = ' #00AD00';
-                        $connect_dashicon = 'dashicons-smiley';
-                        // translators: %s is the version number of the connected BMLT server
-                        $connect_message = sprintf(__('Version %s', 'crouton'), $this_connected);
-                        $this_connected = true;
-                    }?>
+                    wp_nonce_field('bmlttabsupdate-options');?>
                     <div style="margin-top: 20px; padding: 0 15px;" class="postbox">
                         <h3><?php esc_html_e('Configuration', 'crouton')?></h3>
                         <p><?php
                             // translators: %s is the URL of the crouton GitHub issues page
                             echo wp_kses_post(sprintf(__('Please open a ticket at %s for bugs, enhancements, or questions.', 'crouton'), '<a href="https://github.com/bmlt-enabled/crouton/issues" target="_blank">https://github.com/bmlt-enabled/crouton/issues</a>')); ?> </p>
                     </div>
+                    <script type="text/javascript">
+                        window.crouton_admin = {};
+                        window.crouton_admin.root_server = '<?php echo esc_js($options['root_server']); ?>';
+                        window.crouton_admin.service_bodies_selected = <?php echo json_encode($options['service_bodies']); ?>.map(x => x.split(',')[1]);
+                        window.crouton_admin.extra_meetings = <?php echo json_encode($options['extra_meetings']); ?>;
+                    </script>
                     <nav class="nav-tab-wrapper">
                         <a href="#bmlt-query" class="nav-tab nav-tab-active"><?php esc_html_e('BMLT Query', 'crouton') ?></a>
                         <a href="#crouton-ui" class="nav-tab"><?php esc_html_e('User Interface', 'crouton') ?></a>
@@ -290,9 +233,16 @@ if (!class_exists("Crouton\TableAdmin")) {
                         <ul>
                             <li>
                                 <label for="root_server"><?php esc_html_e('Default Server: ', 'crouton') ?></label>
-                                <input id="root_server" type="text" size="50" name="root_server" value="<?php echo esc_url($options['root_server']); ?>" />
-                                <?php echo $this_connected ? '' : '<br/>'; ?>
-                                <span style='color:<?php echo esc_html($connect_color);?>;'><span style='font-size: 16px;vertical-align: text-top;' class='dashicons <?php echo esc_html($connect_dashicon);?>'></span><?php echo esc_html($connect_message);?></span>
+                                <input id="root_server" type="text" size="50" name="root_server" value="<?php echo esc_url($options['root_server']); ?>"
+                                    onKeypress="root_server_keypress(event)" onChange="test_root_server()" />
+                                <span id="connected_message" class="hide" style="color:green;">
+                                    <span style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-yes'></span>
+                                    Version: <span id="server_version"></span>
+                                </span>
+                                <span id="disconnected_message" class="hide" style="color:red;">
+                                    <span style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></span>
+                                    <?php esc_html_e('Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.', 'crouton') ?>
+                                </span>
                             </li>
                             <li>
                                 <input type="checkbox" id="use_aggregator" name="use_aggregator" value="1"/>
@@ -308,34 +258,9 @@ if (!class_exists("Crouton\TableAdmin")) {
                             <li>
                                 <label for="service_bodies"><?php esc_html_e('Default Service Bodies: ', 'crouton') ?></label>
                                 <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select" data-placeholder="<?php
-                                if (!$this_connected) {
-                                    esc_html_e('Not Connected', 'crouton');
-                                } else {
                                     esc_html_e('Select Service Bodies', 'crouton');
-                                }
-                                ?>"><?php
-if ($this_connected) {
-    $unique_areas = $this->getAreas($options['root_server'], 'dropdown');
-    asort($unique_areas, SORT_NATURAL | SORT_FLAG_CASE);
-    $is_data = [];
-    foreach ($options['service_bodies'] as $service_body) {
-        $is_data[] = explode(',', esc_html($service_body))[1];
-    }
-    foreach ($unique_areas as $key => $unique_area) {
-        $area_data = explode(',', $unique_area);
-        $area_name = $area_data[0];
-        $area_id = $area_data[1];
-        $area_parent = $area_data[2];
-        $area_parent_name = $area_data[3];
-        $option_description = $area_name . " (" . $area_id . ") " . $area_parent_name . " (" . $area_parent . ")";
-        if (in_array($area_id, $is_data)) {?>
-                                                <option selected="selected" value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-        <?php } else { ?>
-                                                <option value="<?php echo esc_attr($unique_area); ?>"><?php echo esc_html($option_description); ?></option>
-        <?php }
-    }
-}?>
-                                 </select>
+                                ?>">
+                                </select>
 
                                 <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
                                 <p id="txtSelectedValues2"></p>
@@ -347,27 +272,17 @@ if ($this_connected) {
 
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-include-extra-meetings" class="anchor"></a><?php esc_html_e('Include Extra Meetings', 'crouton') ?></h3>
-                        <div class="inside"><?php
-                        if ($this_connected && $options['extra_meetings_enabled'] == 1) {?>
-                                <select class="crouton-admin-select" style="width: 100%;" data-placeholder="<?php esc_attr_e('Select Extra Meetings', 'crouton') ?>" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
-                                <?php
-                                $extra_meetings_array = $this->getAllMeetings($options['root_server']);
-                                foreach ($extra_meetings_array as $extra_meeting) {
-                                    $extra_meeting_x = explode('|||', $extra_meeting);
-                                    $extra_meeting_id = trim($extra_meeting_x[3]);
-                                    $extra_meeting_display = substr($extra_meeting_x[0], 0, 30) . ' ' . $extra_meeting_x[1] . ' ' . $extra_meeting_x[2] . $extra_meeting_id; ?>
-                                        <option <?php echo ($options['extra_meetings'] != '' && in_array($extra_meeting_id, $options['extra_meetings']) ? 'selected' : '') ?> value="<?php echo esc_attr($extra_meeting_id) ?>"><?php echo esc_html($extra_meeting_display) ?></option>
-                                        <?php
-                                }
-                                ?>
-                                </select>
-                                <p><?php esc_html_e('Hint: Type a group name, weekday, area or id to narrow down your choices.', 'crouton') ?></p><?php
-                        } ?>
+                        <div id="extra_meetings_select" class="inside">
+                            <select class="crouton-admin-select" style="width: 100%;" id="extra_meetings" name="extra_meetings[]" multiple="multiple">
 
-
-                            <div>
-                                <input type="checkbox" name="extra_meetings_enabled" value="1" <?php echo ($options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> <?php esc_html_e('Extra Meetings Enabled', 'crouton') ?>
-                            </div>
+                            </select>
+                            <p><?php esc_html_e('Hint: Type a group name, weekday, area or id to narrow down your choices.', 'crouton') ?></p>
+                        </div>
+                        <div id="fetching_meetings" style="margin:20px;" class="hidden">
+                            Fetching meetings from server...
+                        </div>
+                        <div>
+                            <input type="checkbox" id="extra_meetings_enabled" name="extra_meetings_enabled" value="1" <?php echo ($options['extra_meetings_enabled'] == 1 ? 'checked' : '') ?> /> <?php esc_html_e('Extra Meetings Enabled', 'crouton') ?>
                         </div>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
@@ -503,12 +418,7 @@ if ($this_connected) {
             </div>
             <div id="crouton-templates">
                                     <div id="examplePopup1" style="display:none">
-<h2>Database Fields in BMLT Root Server</h2><table><tr><th>Name</th><th>Description</th></tr><?php
-$all_fields = $this_connected ? $this->getAllFields($options['root_server']) : [];
-foreach ($all_fields as $field) {
-    echo "<tr><td>".esc_html($field['key'])."</td><td>".esc_html($field['description'])."</td></tr>";
-}
-?></table>
+<h2>Database Fields in BMLT Root Server</h2><table id="fields_table"></table>
 <h2>Calculated Values</h2>        <p>In addition to the fields returned by the root server, the following fields are calculated and made available as part of the meeting data.
         <ul style="list-style:disc; padding-inline-start: 20px;">
     <li>start_time_formatted</li>
@@ -655,34 +565,6 @@ foreach ($all_fields as $field) {
             $allowed = wp_kses_allowed_html('post');
             $allowed['a']['onclick'] = true;
             return isset($_POST[$field]) ? wp_specialchars_decode(wp_kses(wp_unslash($_POST[$field]), $allowed)) : '';
-        }
-        private function getAllFields(string $root_server): array
-        {
-            try {
-                $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetFieldKeys");
-                return json_decode(wp_remote_retrieve_body($results), true);
-            } catch (\Exception $e) {
-                return [];
-            }
-        }
-        private function getAllMeetings(string $root_server): array
-        {
-            $results = wp_remote_get($root_server . "/client_interface/json/?switcher=GetSearchResults&data_field_key=weekday_tinyint,start_time,service_body_bigint,id_bigint,meeting_name,location_text,email_contact&sort_keys=meeting_name,service_body_bigint,weekday_tinyint,start_time");
-            $result = json_decode(wp_remote_retrieve_body($results), true);
-            $unique_areas = $this->getAreas($root_server, 'dropdown');
-            $all_meetings = array();
-            foreach ($result as $value) {
-                foreach ($unique_areas as $unique_area) {
-                    $area_data = explode(',', $unique_area);
-                    $area_id = $area_data[1];
-                    if ($area_id === $value['service_body_bigint']) {
-                        $area_name = $area_data[0];
-                    }
-                }
-                $value['start_time'] = gmdate("g:iA", strtotime($value['start_time']));
-                $all_meetings[] = $value['meeting_name'].'||| ['.$value['weekday_tinyint'].'] ['.$value['start_time'].']||| ['.$area_name.']||| ['.$value['id_bigint'].']';
-            }
-            return $all_meetings;
         }
     }
 }
