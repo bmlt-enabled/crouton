@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 
 = 4.0.0 =
 * Support for Groups
+* Get data for admin page from browser, avoiding connection problems between servers.
 
 = 3.25.1 =
 * Fix Typo
