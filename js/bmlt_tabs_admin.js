@@ -114,8 +114,10 @@ jQuery(document).ready(function($) {
         $('#service_bodies').html(options.join(''));
     }
     root_server_keypress = function(event) {
-        if (event.code == 'Enter') this.test_root_server();
-		event.preventDefault();
+        if (event.code == 'Enter') {
+			this.test_root_server();
+			event.preventDefault();
+		}
 		return true;
     }
 	fill_extra_meetings = function(extra_meetings_array) {
