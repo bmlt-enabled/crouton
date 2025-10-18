@@ -38,8 +38,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 4.0.0 =
-* Support for Groups
+* Support for Groups.
 * Get data for admin page from browser, avoiding connection problems between servers.
+* Add "manage_crouton" capability.
 
 = 3.25.1 =
 * Fix Typo

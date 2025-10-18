@@ -38,6 +38,23 @@ if (!class_exists("Crouton/Controller")) {
         }
     }
 }
+function activate_crouton()
+{
+    include_once plugin_dir_path(__FILE__) . 'includes/CroutonActivator.php';
+    \CroutonActivator::activate();
+}
+
+/**
+ * The code that runs during plugin deactivation.
+ * This action is documented in includes/class-bread-deactivator.php
+ */
+function deactivate_crouton()
+{
+    include_once plugin_dir_path(__FILE__) . 'includes/CroutonActivator.php';
+    \CroutonActivator::deactivate();
+}
+register_activation_hook(__FILE__, 'Crouton\activate_crouton');
+register_deactivation_hook(__FILE__, 'Crouton\deactivate_crouton');
 // end if
 // instantiate the class
 if (class_exists("Crouton\Controller")) {

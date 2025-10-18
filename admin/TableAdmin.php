@@ -26,12 +26,6 @@ if (!class_exists("Crouton\TableAdmin")) {
             "sezf",
             "truth"
         ];
-        private const HTTP_RETRIEVE_ARGS = array(
-            'headers' => array(
-                'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0 +crouton'
-            ),
-            'timeout' => 60
-        );
         private $hasFilters = [
             "has_days",
             "has_groups",
@@ -68,11 +62,15 @@ if (!class_exists("Crouton\TableAdmin")) {
         public function adminSubmenuLink($parent_slug)
         {
             $this->menu_created = true;
+            $cap = 'manage_options';
+            if (!current_user_can($cap)) {
+                $cap = 'manage_crouton';
+            }
             $this->hook = add_submenu_page(
                 $parent_slug,
                 'Online Meeting Lists',
                 'Online Meeting Lists',
-                'manage_options',
+                $cap,
                 'bmlt-enabled-crouton',
                 array(&$this, 'adminOptionsPage')
             );
@@ -110,12 +108,16 @@ if (!class_exists("Crouton\TableAdmin")) {
             if ($this->menu_created) {
                 return;
             }
+            $cap = 'manage_options';
+            if (!current_user_can($cap)) {
+                $cap = 'manage_crouton';
+            }
             $icon = apply_filters("BmltEnabled_IconSVG", 'dashicons-location-alt');
             $slug = 'bmlt-enabled-crouton';
             add_menu_page(
                 'Meeting Lists',
                 'Meeting Lists',
-                'manage_options',
+                $cap,
                 $slug,
                 '',
                 $icon,
