@@ -41,7 +41,7 @@ if (!class_exists("Crouton/Controller")) {
 function activate_crouton()
 {
     include_once plugin_dir_path(__FILE__) . 'includes/CroutonActivator.php';
-    \CroutonActivator::activate();
+    CroutonActivator::activate();
 }
 
 /**
@@ -51,7 +51,7 @@ function activate_crouton()
 function deactivate_crouton()
 {
     include_once plugin_dir_path(__FILE__) . 'includes/CroutonActivator.php';
-    \CroutonActivator::deactivate();
+    CroutonActivator::deactivate();
 }
 register_activation_hook(__FILE__, 'Crouton\activate_crouton');
 register_deactivation_hook(__FILE__, 'Crouton\deactivate_crouton');
