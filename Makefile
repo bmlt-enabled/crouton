@@ -85,4 +85,4 @@ bundle-deps: npm ## Legacy alias for npm
 bundle: js-build ## Legacy alias for js-build
 watch: js-watch ## Legacy alias for js-watch
 serve: dev ## Legacy alias for dev
-deploy: all build ## Legacy alias for full build
+deploy: npm js-build ## Legacy alias for building assets (used by CI)
