@@ -11,3 +11,4 @@ croutonjs/src/js/templates.js
 *.iml
 tmp
 .vscode/launch.json
+build/
