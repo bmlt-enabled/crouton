@@ -17,10 +17,10 @@ if (!class_exists("Crouton\MapPublic")) {
         public function enqueueFrontendFiles(string $handle)
         {
             if ($this->map->isGoogle()) {
-                wp_enqueue_script($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-gmaps.min.js", ['croutonjs'], CROUTON_VERSION, false);
+                wp_enqueue_script($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-gmaps.min.js", ['croutonjs'], filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-gmaps.min.js"), false);
             } else {
-                wp_enqueue_style($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-leaflet.min.css", false, CROUTON_VERSION, false);
-                wp_enqueue_script($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js", ['croutonjs'], CROUTON_VERSION, false);
+                wp_enqueue_style($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-leaflet.min.css", false, filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-leaflet.min.css"), false);
+                wp_enqueue_script($handle, plugin_dir_url(__DIR__)."croutonjs/dist/crouton-map.min.js", ['croutonjs'], filemtime(plugin_dir_path(__DIR__)."croutonjs/dist/crouton-map.min.js"), false);
             }
         }
         public function getJsLinks(): array

@@ -15,9 +15,9 @@ endif
 help:  ## Print the help documentation
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-$(ZIP_FILE): $(VENDOR_AUTOLOAD) $(NODE_MODULES) js-build
+$(ZIP_FILE): $(NODE_MODULES) js-build
 	git archive --format=zip --output=${ZIP_FILENAME} $(COMMIT)
-	zip -r ${ZIP_FILENAME} vendor/ croutonjs/dist/
+	zip -r ${ZIP_FILENAME} croutonjs/dist/
 	mkdir -p ${BUILD_DIR} && mv ${ZIP_FILENAME} ${BUILD_DIR}/
 
 .PHONY: build
@@ -35,6 +35,7 @@ composer: $(VENDOR_AUTOLOAD) ## Install PHP dependencies
 
 $(NODE_MODULES):
 	npm install
+	npm list gulp || npm install -g gulp-cli
 
 .PHONY: npm
 npm: $(NODE_MODULES) ## Install Node.js dependencies
@@ -76,7 +77,7 @@ ngrok-setup:  ## Setup HTTPS testing with ngrok (requires ngrok url as NGROK_URL
 	docker exec -i $(BASENAME)-db-1 mysql -uwordpress -pwordpress -Dwordpress <<< "update wp_options set option_value = '$(NGROK_URL)' where option_id in (1,2);"
 
 .PHONY: all
-all: composer npm js-build ## Install all dependencies and build assets
+all: npm js-build ## Install all dependencies and build assets
 
 # Legacy aliases for backwards compatibility
 .PHONY: bundle bundle-deps serve watch deploy
