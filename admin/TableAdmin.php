@@ -237,11 +237,11 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <label for="root_server"><?php esc_html_e('Default Server: ', 'crouton') ?></label>
                                 <input id="root_server" type="text" size="50" name="root_server" value="<?php echo esc_url($options['root_server']); ?>"
                                     onKeypress="root_server_keypress(event)" onChange="test_root_server()" />
-                                <span id="connected_message" class="hide" style="color:green;">
+                                <span id="connected_message" class="hidden" style="color:green;">
                                     <span style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-yes'></span>
                                     Version: <span id="server_version"></span>
                                 </span>
-                                <span id="disconnected_message" class="hide" style="color:red;">
+                                <span id="disconnected_message" class="hidden" style="color:red;">
                                     <span style='font-size: 16px;vertical-align: text-top;' class='dashicons dashicons-no'></span>
                                     <?php esc_html_e('Connection to Root Server Failed.  Check spelling or try again.  If you are certain spelling is correct, Root Server could be down.', 'crouton') ?>
                                 </span>
