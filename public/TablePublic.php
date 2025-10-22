@@ -222,8 +222,8 @@ if (!class_exists("Crouton\TablePublic")) {
         {
             $script = $this->croutonInitializationScript();
             if ($script !== '') {
-                wp_enqueue_style("croutoncss", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", false, CROUTON_VERSION, false);
-                wp_enqueue_script("croutonjs", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", array('jquery'), CROUTON_VERSION, true);
+                wp_enqueue_style("croutoncss", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton-core.min.css", false, filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton-core.min.css"), false);
+                wp_enqueue_script("croutonjs", plugin_dir_url(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js", array('jquery'), filemtime(plugin_dir_path(__DIR__) . "croutonjs/dist/crouton.nojquery.min.js"), true);
                 $this->map->enqueueFrontendFiles("crouton-delegate");
                 wp_add_inline_script("crouton-delegate", $script);
             }
@@ -539,7 +539,6 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php'))
                 ? ($encode_flags ? site_url().'/feed/bmlt2ics' : get_feed_link('bmlt2ics'))
                 : "";
-            $params['version'] = CROUTON_VERSION;
             $params = apply_filters('crouton_configuration', $params);
 
             return [json_encode($params, $encode_flags), $this->map->getMapJSConfig($params, $croutonMap, $encode_flags)];
