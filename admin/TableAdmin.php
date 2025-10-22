@@ -84,24 +84,24 @@ if (!class_exists("Crouton\TableAdmin")) {
                 wp_enqueue_style("select2", plugin_dir_url(__DIR__) . "css/select2.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
                 wp_enqueue_script("select2", plugin_dir_url(__DIR__) . "js/select2.min.js", array('jquery'), "1.2", true);
-                wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/bmlt_tabs_admin.js"), false);
+                wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('jquery'), CROUTON_VERSION, false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__DIR__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');
                 add_thickbox();
                 wp_enqueue_script('jquery-ui-accordion');
-                wp_enqueue_script("crouton-default-templates", plugin_dir_url(__DIR__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), filemtime(plugin_dir_path(__DIR__) . "croutonjs/src/js/crouton-default-templates.js"), true);
+                wp_enqueue_script("crouton-default-templates", plugin_dir_url(__DIR__) . "croutonjs/src/js/crouton-default-templates.js", array('jquery'), CROUTON_VERSION, true);
 
                 wp_enqueue_style("codemirror", plugin_dir_url(__DIR__) . "css/codemirror.css", false, "5.65.15", 'all');
                 wp_enqueue_style("codemirror", plugin_dir_url(__DIR__) . "css/show-hint.css", false, "5.65.15", 'all');
-                wp_enqueue_script('codemirror', plugins_url('js/codemirror/codemirror.js', __DIR__), array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/codemirror.js"), false);
-                wp_enqueue_script('codemirror-simple', plugins_url('js/codemirror/simple.js', __DIR__), array('codemirror'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/simple.js"), false);
-                wp_enqueue_script('codemirror-multiplex', plugins_url('js/codemirror/multiplex.js', __DIR__), array('codemirror-simple'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/multiplex.js"), false);
-                wp_enqueue_script('codemirror-matchbrackets', plugins_url('js/codemirror/matchbrackets.js', __DIR__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/matchbrackets.js"), false);
-                wp_enqueue_script('codemirror-xml', plugins_url('js/codemirror/xml.js', __DIR__), array('codemirror-multiplex'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/xml.js"), false);
-                wp_enqueue_script('codemirror-handlebars', plugins_url('js/codemirror/handlebars.js', __DIR__), array('codemirror-xml'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/handlebars.js"), false);
-                wp_enqueue_script('codemirror-css', plugins_url('js/codemirror/css.js', __DIR__), array('codemirror'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/css.js"), false);
-                wp_enqueue_script('showhint', plugins_url('js/codemirror/show-hint.js', __DIR__), array('codemirror'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/show-hint.js"), false);
-                wp_enqueue_script('csshint', plugins_url('js/codemirror/css-hint.js', __DIR__), array('showhint'), filemtime(plugin_dir_path(__DIR__) . "js/codemirror/css-hint.js"), false);
+                wp_enqueue_script('codemirror', plugins_url('js/codemirror/codemirror.js', __DIR__), array('jquery'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-simple', plugins_url('js/codemirror/simple.js', __DIR__), array('codemirror'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-multiplex', plugins_url('js/codemirror/multiplex.js', __DIR__), array('codemirror-simple'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-matchbrackets', plugins_url('js/codemirror/matchbrackets.js', __DIR__), array('codemirror-multiplex'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-xml', plugins_url('js/codemirror/xml.js', __DIR__), array('codemirror-multiplex'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-handlebars', plugins_url('js/codemirror/handlebars.js', __DIR__), array('codemirror-xml'), CROUTON_VERSION, false);
+                wp_enqueue_script('codemirror-css', plugins_url('js/codemirror/css.js', __DIR__), array('codemirror'), CROUTON_VERSION, false);
+                wp_enqueue_script('showhint', plugins_url('js/codemirror/show-hint.js', __DIR__), array('codemirror'), CROUTON_VERSION, false);
+                wp_enqueue_script('csshint', plugins_url('js/codemirror/css-hint.js', __DIR__), array('showhint'), CROUTON_VERSION, false);
             }
         }
 
