@@ -99,6 +99,7 @@ function Crouton(config) {
 		noMap: false,
 		maxTomatoWidth: 160,
 		caption: false,
+		groups: false,
 	};
 
 	self.setConfig(config);
@@ -529,14 +530,19 @@ function Crouton(config) {
 	};
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
-		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+		if (self.config.groups) {
+			crouton_Handlebars.registerPartial('group', hbs_Crouton.templates['group']);
+			crouton_Handlebars.registerPartial('groupRows', hbs_Crouton.templates['groupRows']);
+		} else {
+			crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
+			crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
+			crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
+		}
 		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
-		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
-		crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		var template = hbs_Crouton.templates['main'];
+		var template = self.config.groups ? hbs_Crouton.templates['groupMain'] : hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
 	};
@@ -761,7 +767,7 @@ function Crouton(config) {
 			var formats = meetingData[m]['formats'].split(",");
 			var formats_expanded = [];
 			let formatRootServer = self.formatsData.filter((f)=>f['root_server_uri'] == meetingData[m]['root_server_uri']);
-			meetingData[m]['wheelchar'] = false;
+			meetingData[m]['wheelchair'] = false;
 			for (var f = 0; f < formats.length; f++) {
 				for (var g = 0; g < formatRootServer.length; g++) {
 					if (formats[f] === formatRootServer[g]['key_string']) {
@@ -840,9 +846,42 @@ function Crouton(config) {
 			this.calculateDistance(meetingData[m]);
 			meetings.push(meetingData[m])
 		}
-
+		if (self.config.groups) {
+			return self.convertToGroups(meetings);
+		}
 		return meetings;
 	};
+	self.convertToGroups = function(meetings) {
+		if (!meetings || !meetings.length) return [];
+		if (meetings[0].hasOwnProperty('membersOfGroup')) return meetings;
+		if (!meetings[0].hasOwnProperty('group_id')) {
+			meetings.forEach((meeting) =>
+				meeting['group_id'] = meeting['service_body_bigint'] + '|' + meeting['meeting_name'] +
+					(meeting['venue_type'] != 2) ? ('|' + parseFloat(meeting['latitude']).toFixed(6) + '|' + parseFloat(meeting['longitude']).toFixed(6))
+												 : '');
+		}
+		// There are so many, I think this is faster than using reduce.
+		const sorted = meetings.sort((a,b) => {
+			if (a['group_id'] < b['group_id']) return -1;
+			if (a['group_id'] > b['group_id']) return 1;
+			return 0;
+		});
+		const groups = [];
+		let last = null;
+		sorted.forEach(function (meeting) {
+			if (!meeting['group_id']) {
+				groups.push(meeting);
+				meeting['membersOfGroup'] = [meeting];
+			} else if (!last || meeting['group_id'] != last['group_id']) {
+				groups.push(meeting);
+				last = meeting;
+				last['membersOfGroup'] = [last];
+			} else {
+				last['membersOfGroup'].push(meeting);
+			}
+		});
+		return groups;
+	}
 	Crouton.prototype.updateDistances = function() {
 		const self = this;
 		var knt = 0;
@@ -896,7 +935,7 @@ function Crouton(config) {
 		crouton_Handlebars.registerHelper('hasBMLT2ics', function() {return crouton.config['bmlt2ics'].length>0;});
 		crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
 		self.registerPartial('icsButton',
-    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" id="share-button" class="btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
+    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" class="share-button btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
 		self.registerPartial('offerIcsButton', "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
 		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
 		crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
@@ -922,6 +961,7 @@ function Crouton(config) {
 			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 			self.registerPartial("meetingLink", self.config['meeting_link_template']);
 			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
+			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>")
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
@@ -1028,7 +1068,11 @@ Crouton.prototype.setConfig = function(config) {
 			self.config.day_sequence.push(next_day);
 		}
 	}
-
+	if (self.config.groups) {
+		self.config["view_by"] = "city";
+		self.config["include_weekday_button"] = false;
+		self.config["has_tabs"] = false;
+	}
 	if (self.config["view_by"].endsWith('day')) {
 		self.config["include_weekday_button"] = true;
 	}
@@ -1107,6 +1151,11 @@ Crouton.prototype.doHandlebars = function() {
 
 Crouton.prototype.meetingModal = function(meetingId) {
 	let self = this;
+	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
+	if (self.config.groups) {
+		croutonMap.openGroupModal(meeting);
+		return;
+	}
 	const tabs = document.getElementById('bmlt-tabs');
 
 	let el = document.createElement('bmlt-handlebar');
@@ -1114,7 +1163,6 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	let span = document.createElement('span');
 	el.appendChild(span);
 	span.textContent = self.config.meetingpage_frame_template;
-	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
 	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
@@ -1237,6 +1285,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				}
 
 				var enrichedMeetingData = self.enrichMeetings(self.meetingData);
+				if (self.config.groups) self.meetingData = enrichedMeetingData;
 				self.setUpPartials();
 
 				enrichedMeetingData.sort(function (a, b) {
@@ -1415,6 +1464,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				renderer("#" + self.config['placeholder_id'], {
 					"config": self.config,
 					"meetings": {
+						"allMeetings": self.meetingData,
 						"weekdays": weekdaysData,
 						"groupingButtons": groupingButtonsDataSorted,
 						"formattypeGroupingButtons": formattypeGroupingButtonsData,
@@ -1756,7 +1806,12 @@ crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options)
 
 	return allFound ? getTrueResult(options, this) : getFalseResult(options, this);
 });
-
+crouton_Handlebars.registerHelper('isGroupFormat', function(format, options) {
+	return (format['type'] === 'FC2' || format['type'] === 'FC3') ? getTrueResult(options, this) : getFalseResult(options, this);
+});
+crouton_Handlebars.registerHelper('isGroupMeetingFormat', function(format, options) {
+	return (format['type'] === 'FC2' || format['type'] === 'FC3') ? getFalseResult(options, this) : getTrueResult(options, this);
+});
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
 	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
 		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
