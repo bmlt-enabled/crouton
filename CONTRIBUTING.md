@@ -83,6 +83,9 @@ Before creating a release, update the version number in these files:
    - Update `Version:` in the plugin header comment (line 8)
    - Update `CROUTON_VERSION` constant (line 23)
 
+3. **`croutonjs/src/js/crouton-core.js`**:
+   - Update `js_version:` in config object (line 18)
+
 **Example:**
 ```php
 // In crouton.php header
@@ -90,6 +93,11 @@ Version: 3.26.0
 
 // In crouton.php constant
 define('CROUTON_VERSION', '3.26.0');
+```
+
+```javascript
+// In crouton-core.js
+js_version: '3.26.0';
 ```
 
 ### Tagging Releases

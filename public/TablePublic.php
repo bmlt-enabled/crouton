@@ -539,6 +539,7 @@ if (!class_exists("Crouton\TablePublic")) {
             $params['bmlt2ics'] = (is_plugin_active('bmlt2calendar/bmlt2calendar.php'))
                 ? ($encode_flags ? site_url().'/feed/bmlt2ics' : get_feed_link('bmlt2ics'))
                 : "";
+            $params['version'] = CROUTON_VERSION;
             $params = apply_filters('crouton_configuration', $params);
 
             return [json_encode($params, $encode_flags), $this->map->getMapJSConfig($params, $croutonMap, $encode_flags)];
