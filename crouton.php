@@ -17,11 +17,6 @@ namespace Crouton;
 if (! defined('WPINC')) {
     die;
 }
-
-// Define plugin version constant for use throughout the plugin
-if (!defined('CROUTON_VERSION')) {
-    define('CROUTON_VERSION', '3.25.1');
-}
 ini_set('max_execution_time', 120);
 if (!class_exists("Crouton/Controller")) {
     class Controller
