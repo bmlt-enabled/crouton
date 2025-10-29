@@ -82,7 +82,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                 wp_enqueue_style("select2", plugin_dir_url(__DIR__) . "css/select2.min.css", false, "1.2", 'all');
                 wp_enqueue_style("crouton-admin", plugin_dir_url(__DIR__) . "css/crouton-admin.css", false, "1.1", 'all');
                 wp_enqueue_script("select2", plugin_dir_url(__DIR__) . "js/select2.min.js", array('jquery'), "1.2", true);
-                wp_enqueue_script('fetch-jsonp', plugin_dir_url(__DIR__).'js/fetch-jsonp.js', array('jquery'), CROUTON_VERSION, false);
+                wp_enqueue_script('fetch-jsonp', plugin_dir_url(__DIR__).'js/fetch-jsonp.js', array('jquery'), filemtime(plugin_dir_path(__DIR__) . "js/fetch-jsonp.js"), false);
                 wp_enqueue_script('bmlt-tabs-admin', plugin_dir_url(__DIR__).'js/bmlt_tabs_admin.js', array('fetch-jsonp'), filemtime(plugin_dir_path(__DIR__) . "js/bmlt_tabs_admin.js"), false);
                 wp_enqueue_script("tooltipster", plugin_dir_url(__DIR__) . "js/jquery.tooltipster.min.js", array('jquery'), "1.2", true);
                 wp_enqueue_script('common');

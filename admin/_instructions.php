@@ -114,6 +114,16 @@
 		<p>The default value of this attribute is 20.</p>
 		<p>The <b>has_tabs</b> attribute has been deprecated but is still supported.</p>
 	</div>
+	<h3 class="help-accordian"><strong>Displaying Groups as well as Meetings</strong></h3>
+	<div>
+		<p>By default, Crouton assumes users are interested in finding the next or nearest meeting.  In some cases, however, it is useful to reflect how meetings are sometimes organized into groups.
+			Groups in Crouton are meetings that belong to the same service body, have the same name and same locataion.  A loser definition, where groups could have meetings in multiple locations, is
+			simply not relevant to how Crouton displays information.  Since groups have multiple meetings during the week, groups cannot be listed by day or time, but
+			only by city, state or by distance from the user's location.
+		<p><strong>[bmlt_tabs groups="0|1"]</strong></p>
+		<p>0 = list the individual meetings (default).</p>
+		<p>1 = display groups</p>
+	</div>
 	<h3 class="help-accordian"><strong>Header or No Header</strong></h3>
 	<div>
 		<p>The header will show dropdowns.</p>
