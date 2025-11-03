@@ -875,9 +875,24 @@ function Crouton(config) {
 			} else if (!last || meeting['group_id'] != last['group_id']) {
 				groups.push(meeting);
 				last = meeting;
-				last['membersOfGroup'] = [last];
+				last['membersOfGroup'] = [Object.assign({}, last)];
 			} else {
 				last['membersOfGroup'].push(meeting);
+			}
+		});
+		groups.forEach(function(group) {
+			if (group['membersOfGroup'].length > 1) {
+				let commonFormats = group['formats'].split(',');
+				group['membersOfGroup'].forEach(function(member) {
+					const memberFormats = member['formats'].split(',');
+					commonFormats = commonFormats.filter(value => memberFormats.includes(value));
+				});
+				group['formats'] = commonFormats.join(',');
+				group['formats_expanded'] = group['formats_expanded'].filter((format) => commonFormats.includes(format['key']));
+				group['membersOfGroup'].forEach(function(member) {
+					member['formats'] = member['formats'].split(',').filter((f) => !commonFormats.includes(f)).join(',');
+					member['formats_expanded'] = member['formats_expanded'].filter((format) => !commonFormats.includes(format['key']));
+				});
 			}
 		});
 		return groups;
@@ -1805,12 +1820,6 @@ crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options)
 	}
 
 	return allFound ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-crouton_Handlebars.registerHelper('isGroupFormat', function(format, options) {
-	return (format['type'] === 'FC2' || format['type'] === 'FC3') ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-crouton_Handlebars.registerHelper('isGroupMeetingFormat', function(format, options) {
-	return (format['type'] === 'FC2' || format['type'] === 'FC3') ? getFalseResult(options, this) : getTrueResult(options, this);
 });
 crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
 	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
