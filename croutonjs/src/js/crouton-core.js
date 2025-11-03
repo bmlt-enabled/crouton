@@ -551,7 +551,7 @@ function Crouton(config) {
 		let meetingCount = self.meetingData.length;
 		if (self.meetingCountCallback) self.meetingCountCallback(meetingCount);
 		if (self.groupCountCallback) self.groupCountCallback(
-			self.config.groups ? self.config.meetingData.length : convertToGroups(self.config.meetingData).length
+			self.config.groups ? self.config.meetingData.length : self.convertToGroups(self.config.meetingData).length
 		);
 		addLive = function(id) {return id+", "+id+"-live"};
 		if (showingNow !== null) {
@@ -573,7 +573,7 @@ function Crouton(config) {
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;
 			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
-			const groups = self.config.groups ? filteredMeetings : convertToGroups(filteredMeetings);
+			const groups = self.config.groups ? filteredMeetings : self.convertToGroups(filteredMeetings);
 			jQuery(this).text(arrayUnique(groups).length);
 		});
 		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
