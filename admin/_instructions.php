@@ -116,10 +116,12 @@
 	</div>
 	<h3 class="help-accordian"><strong>Displaying Groups as well as Meetings</strong></h3>
 	<div>
-		<p>By default, Crouton assumes users are interested in finding the next or nearest meeting.  In some cases, however, it is useful to reflect how meetings are sometimes organized into groups.
-			Groups in Crouton are meetings that belong to the same service body, have the same name and same locataion.  A loser definition, where groups could have meetings in multiple locations, is
-			simply not relevant to how Crouton displays information.  Since groups have multiple meetings during the week, groups cannot be listed by day or time, but
-			only by city, state or by distance from the user's location.
+		<p>By default, Crouton assumes users are interested in finding the next meeting. However, in some cases, for instance, in situations
+			where location is the dominant qualifier for meetings, it is more useful to show meetings organized into groups. Groups in Crouton
+			are meetings that belong to the same service body, have the same name and same location (for online meetings, the same link).
+			In the real world, some NA groups have meetings in multiple locations, or meet both in-person and online, however, such a definition of
+			„group“ is simply not relevant to how Crouton displays information. Since groups have multiple meetings during the week, groups cannot be
+			listed by day or time, but only by city, state or by distance from the user's location.</p>
 		<p><strong>[bmlt_tabs groups="0|1"]</strong></p>
 		<p>0 = list the individual meetings (default).</p>
 		<p>1 = display groups</p>

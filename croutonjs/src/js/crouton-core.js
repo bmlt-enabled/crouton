@@ -858,7 +858,7 @@ function Crouton(config) {
 			meetings.forEach((meeting) =>
 				meeting['group_id'] = meeting['service_body_bigint'] + '|' + meeting['meeting_name'] +
 					((meeting['venue_type'] != 2) ? ('|' + parseFloat(meeting['latitude']).toFixed(6) + '|' + parseFloat(meeting['longitude']).toFixed(6))
-												 : ''));
+												 : meeting['virtual_meeting_link'] + '|' + meeting['virtual_meeting_additional_info']));
 		}
 		// There are so many, I think this is faster than using reduce.
 		const sorted = meetings.sort((a,b) => {
