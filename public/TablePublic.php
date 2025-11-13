@@ -75,7 +75,7 @@ if (!class_exists("Crouton\TablePublic")) {
             $ret = '';
             foreach ($files as $file) {
                 // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
-                $ret .= "<script src='$file'></script>\r\n";
+                $ret .= "<script src='$file' data-privacy-group='script' defer ></script>\r\n";
             }
             return $ret;
         }
@@ -119,7 +119,7 @@ if (!class_exists("Crouton\TablePublic")) {
             }
             switch ($html) {
                 case 'html':
-                    $content = $this->getCssLinks().$this->getJsLinks()."<script>$content</script>";
+                    $content = $this->getCssLinks().$this->getJsLinks()."<script data-privacy-group='script' defer>$content</script>";
                     $content .= '<div class="bootstrap-bmlt" id="please-wait"><button class="btn btn-lg btn-info"><span class="glyphicon glyphicon-repeat glyphicon-repeat-animate"></span>Fetching&#8230;</button></div><div id="bmlt-tabs" class="bmlt-tabs hide"></div>';
                     header('Content-Type: text/html; charset=UTF-8');
                     header('Content-Length: '.strlen($content));

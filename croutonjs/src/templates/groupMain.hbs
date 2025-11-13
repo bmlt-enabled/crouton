@@ -1,0 +1,24 @@
+<div id="bmlt-tabs-table">
+    <div id="bmlt-header" class="bmlt-header {{getWord 'css-direction'}} hide">
+        {{> header}}
+    </div>
+	{{#each this.meetings.groupingButtons}}
+		<div id="byfield_{{ @key }}" class="bmlt-page {{getWord 'css-direction'}} hide" >
+			{{> byfields this }}
+		</div>
+	{{/each}}
+    {{#each this.meetings.formattypeGroupingButtons}}
+		<div id="byfield_{{ @key }}" class="bmlt-page {{getWord 'css-direction'}} hide">
+			{{> byfields this }}
+		</div>
+	{{/each}}
+    {{#if this.config.map_page }}
+    	<div id="byfield_embeddedMapPage" class="bmlt-map bmlt-page {{getWord 'css-direction'}} hide">
+		</div>
+    {{/if}}
+    <div id="bmlt_incubator" class="bmlt-page {{getWord 'css-direction'}} hide">
+        <table class='bmlt-table table table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
+        {{> groupRows this.meetings.allMeetings}}
+        </table>
+    </div>
+</div>
