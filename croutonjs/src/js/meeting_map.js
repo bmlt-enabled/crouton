@@ -679,31 +679,11 @@ function MeetingMap(inConfig) {
 		const marker = gDelegate.createMarker(main_point, (meetings.length > 1), null);
 		gDelegate.bindPopup(marker, marker_html, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);
 	};
-	function openGroupModal(group) {
-		const marker_html = hbs_Crouton.templates['group'](group);
-		const tabs = document.getElementById('bmlt-tabs');
-		let div = document.createElement('div');
-		tabs.appendChild(div);
-		div.innerHTML = hbs_Crouton.templates['groupModal'](group);
-		[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
-		let gm = document.getElementById('group_modal');
-		document.body.appendChild(gm);
-		jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
-		openModalWindow(gm, true);
-		div.remove();
-		loadPopupMap("bmlt-group-map", group, {
-			lat: parseFloat(group.latitude),
-			lng: parseFloat(group.longitude),
-			zoom: 14
-		});
-	}
 	function createGroupMarker(group, openMarker) {
 		var main_point = [group.latitude, group.longitude];
-		//let options = {maxWidth: 600, autoPanPaddingTopLeft:[10, 50]};
-		//if (screen.width < 768) options.maxHeight = 550;
 		const marker = gDelegate.createMarker(main_point, group['membersOfGroup'].length > 1, null);
 		gDelegate.addMarkerCallback(marker, function() {
-			croutonMap.openGroupModal(group);
+			crouton.openMeetingModal(group);
 		});
 	};
 	var listOnlyVisible = false;
@@ -897,7 +877,6 @@ function MeetingMap(inConfig) {
 	this.loadPopupMap = loadPopupMap;
 	this.filterVisible = filterVisible;
 	this.hasMapSearch = hasMapSearch;
-	this.openGroupModal = openGroupModal;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -912,4 +891,3 @@ MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
 MeetingMap.prototype.filterVisible = null;
 MeetingMap.prototype.hasMapSearch = null;
-MeetingMap.prototype.openGroupModal = null;

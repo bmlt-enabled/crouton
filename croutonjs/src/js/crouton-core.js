@@ -1166,9 +1166,13 @@ Crouton.prototype.doHandlebars = function() {
 
 Crouton.prototype.meetingModal = function(meetingId) {
 	let self = this;
-	let meeting = self.meetingData.find((m) => m.id_bigint == meetingId);
-	if (self.config.groups) {
-		croutonMap.openGroupModal(meeting);
+	this.openMeetingModal(self.meetingData.find((m) => m.id_bigint == meetingId));
+	return;
+}
+Crouton.prototype.openMeetingModal = function(meeting) {
+	let self = this;
+	if (self.config.groups && meeting.hasOwnProperty('membersOfGroup') && meeting.membersOfGroup.length > 1) {
+		self.openGroupModal(meeting);
 		return;
 	}
 	const tabs = document.getElementById('bmlt-tabs');
@@ -1189,7 +1193,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	let index = -1;
 	const prefix = "meeting-data-row-";
 	for (k=0; k<visibleMeetings.length; k++) {
-		if (visibleMeetings[k].id===prefix+meetingId) {
+		if (visibleMeetings[k].id===prefix+meeting.id_bigint) {
 			index = k;
 			break;
 		}
@@ -1263,6 +1267,23 @@ Crouton.prototype.searchMap = function() {
 		},
 		"dropdownData": [],
 		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
+	});
+}
+Crouton.prototype.openGroupModal = function(group) {
+	const tabs = document.getElementById('bmlt-tabs');
+	let div = document.createElement('div');
+	tabs.appendChild(div);
+	div.innerHTML = hbs_Crouton.templates['groupModal'](group);
+	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
+	let gm = document.getElementById('group_modal');
+	document.body.appendChild(gm);
+	jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
+	croutonMap.openModalWindow(gm, true);
+	div.remove();
+	croutonMap.loadPopupMap("bmlt-group-map", group, {
+		lat: parseFloat(group.latitude),
+		lng: parseFloat(group.longitude),
+		zoom: 14
 	});
 }
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
