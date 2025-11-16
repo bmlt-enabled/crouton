@@ -1274,7 +1274,7 @@ Crouton.prototype.openGroupModal = function(group) {
 	let div = document.createElement('div');
 	tabs.appendChild(div);
 	div.innerHTML = hbs_Crouton.templates['groupModal'](group);
-	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
+	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
 	let gm = document.getElementById('group_modal');
 	document.body.appendChild(gm);
 	jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
