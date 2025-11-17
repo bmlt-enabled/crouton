@@ -66,6 +66,7 @@ function CroutonLocalization(language) {
 			"google_maps_desc_mobile": "فتح في تطبيق خرائط جوجل",
 			"waze": "وايز",
 			"waze_desc": "فتح في تطبيق وايز",
+			'address_lookup_fail': 'تعذر العثور على العنوان. يرجى المحاولة مرة أخرى.',
 		},
 		"cs": {
 			"days_of_the_week": ["", "Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"],
@@ -128,7 +129,8 @@ function CroutonLocalization(language) {
 			"waze_desc": "Otevřít v aplikaci Waze",
 			"remember my choice": "Zapamatovat si moji volbu",
 			"zoomed-out-message": "Nemůžeme prohledat celou oblast pro setkání. Přibližte si prosím nebo proveďte nové vyhledávání.",
-			"sorted by distance": "Seřazeno podle vzdálenosti"
+			"sorted by distance": "Seřazeno podle vzdálenosti",
+			"address_lookup_fail": "Adresu se nepodařilo najít. Zkuste to prosím znovu.",
 		},
 		"da-DK": {
 			"days_of_the_week": ["", "Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"],
@@ -193,6 +195,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Åbn i Waze app",
 			"sorted by distance": "Sorteret efter Afstand",
+			"address_lookup_fail": "Adressen kunne ikke findes. Prøv venligst igen.",
 		},
 		"de-DE":{
 			"days_of_the_week": ["", "Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
@@ -262,6 +265,7 @@ function CroutonLocalization(language) {
 			"remember my choice": "Auswahl speichern",
 			"zoomed-out-message": "Wir können nicht die ganze Fläche nach Meetings durchsuchen.  Bitte reinzoomen oder eine neue Suche machen.",
 			"sorted by distance": "Sortiert nach Entfernung",
+			"address_lookup_fail": "Die Adresse konnte nicht gefunden werden. Bitte versuchen Sie es erneut.",
 		},
 "en-AU": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -329,6 +333,7 @@ function CroutonLocalization(language) {
 			"waze_desc": "Open in Waze app",
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"en-CA": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -397,6 +402,7 @@ function CroutonLocalization(language) {
 			"waze_desc": "Open in Waze app",
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"en-NZ": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -465,6 +471,7 @@ function CroutonLocalization(language) {
 			"waze_desc": "Open in Waze app",
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"en-UK": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -533,6 +540,7 @@ function CroutonLocalization(language) {
 			"waze_desc": "Open in Waze app",
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"en-US": {
 			"days_of_the_week" : ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -601,6 +609,7 @@ function CroutonLocalization(language) {
 			"waze_desc": "Open in Waze app",
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"es-US": {
     		"days_of_the_week" : ["", "Domingo", " Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -670,6 +679,7 @@ function CroutonLocalization(language) {
     		"waze_desc": "Abrir en la aplicación Waze",
 			"zoomed-out-message": "No podemos buscar reuniones en toda la zona. Por favor, acérquese o haga una nueva búsqueda.",
 			"sorted by distance": "Ordenado por distancia",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"fa-IR": {
 			"days_of_the_week" : ["", 'یَکشَنب', 'دوشَنبه', 'سه‌شنبه', 'چهار شنبه', 'پَنج شَنبه', 'جُمعه', 'شَنبه'],
@@ -691,7 +701,7 @@ function CroutonLocalization(language) {
 			"click_search" : "پیدا کردن جلسات نزدیک به یک نقطه روی نقشه",
 			"pan_and_zoom" : "حرکت + بزرگنمایی",
 			"languages" : "زبانها",
-			"common_needs" : "نیازهای مشترک",
+			"common_needs" : "خصوصیات مشترک",
 			"meeting_count" : "جلسات هفتگی:",
 			"venue_types" : "انواع مکان",
 			"venue_type_choices" : {
@@ -719,21 +729,21 @@ function CroutonLocalization(language) {
 			"km" : "کیلومتر",
 			"approx. number of meetings in result" : "تعداد تقریبی جلسات در نتیجه",
 			"back" : "بازگشت",
-			"all" : "هر",
-			"menu" : "منوی",
+			"all" : "همه",
+			"menu" : " منوی",
 			"search for meetings" : "جستجوی جلسه ها",
 			"show meetings near..." : "نمایش جلسات نزدیک",
 			"filter meetings" : "فیلتر جلسات",
 			"visible meeting list" : "جلسات قابل مشاهده به عنوان لیست",
 			"enter a city or zip code" : "شهر یا کد پستی را وارد کنید",
 			"toggle fullscreen mode" : "تغییر حالت تمام صفحه",
-			"close" : " بستن",
+			"close" : "بستن",
 			"bmlt2ics" : "به تقویم خود اضافه کنید",
-			"meeting page" : " صفحه جلسه",
-			"meeting details" : " جزئیات جلسه",
-			"report update" : " گزارش به‌روزرسانی",
-			"filter by visibility" : " فقط این جلسات را فهرست کنید",
-			"go" : " برو",
+			"meeting page" : "صفحه جلسه",
+			"meeting details" : "جزئیات جلسه",
+			"report update" : "گزارش به‌روزرسانی",
+			"filter by visibility" : "فقط این جلسات را فهرست کنید",
+			"go" : "برو",
 			"distance" : "فاصله",
 			"get_directions" : "دریافت مسیر",
 			"select_map_app" : "انتخاب برنامه نقشه",
@@ -747,6 +757,11 @@ function CroutonLocalization(language) {
 			"more info" : "اطلاعات بیشتر",
 			"css-direction": 'bmlt-rtl',
 			"css-textalign": "style='text-align: right;'",
+			'address': 'آدرس',
+			'meeting info': 'ویژگی',
+			'comments': 'توضیحات',
+			'group details': 'نمایش گروه',
+			"address_lookup_fail": "آدرس پیدا نشد. لطفا دوباره تلاش کنید.",
 		},
 		"fr-CA": {
 			"days_of_the_week" : ["", "Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
@@ -814,6 +829,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Ouvrir dans l'application Waze",
 			"sorted by distance": "Trié par distance",
+			"address_lookup_fail": "L'adresse est introuvable. Veuillez réessayer.",
 		},
 		"it-IT": {
 			"days_of_the_week" : ["", "Domenica", " Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
@@ -881,6 +897,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Apri nell'app Waze",
 			"sorted by distance": "Ordinati per distanza",
+			"address_lookup_fail": "L'indirizzo non è stato trovato. Per favore riprova.",
 		},
 		"nl-NL": {
 			"days_of_the_week" : ["", "Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
@@ -947,6 +964,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Openen in Waze app",
 			"sorted by distance": "Gesorteerd op afstand",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"pl-PL": {
 			"days_of_the_week" : ["", "Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"],
@@ -1014,6 +1032,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Otwórz w aplikacji Waze",
 			"sorted by distance": "Posortowane według odległości",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"pt-BR": {
 			"days_of_the_week" : ["", "Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"],
@@ -1081,6 +1100,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Abrir no aplicativo Waze",
 			"sorted by distance": "Classificado por distância",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		},
 		"ru-RU": {
 			"days_of_the_week" : ["", "Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
@@ -1148,6 +1168,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Открыть в приложении Waze",
 			"sorted by distance": "Сортировка по расстоянию",
+			"address_lookup_fail": "Адрес не найден. Пожалуйста, попробуйте еще раз.",
 		},
 		"sk": {
 			"days_of_the_week": ["", "Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"],
@@ -1210,7 +1231,8 @@ function CroutonLocalization(language) {
 			"waze_desc": "Otvoriť v aplikácii Waze",
 			"remember my choice": "Zapamätať si moju voľbu",
 			"zoomed-out-message": "Nemôžeme prehľadať celú oblasť pre stretnutia. Prosím, priblížte alebo vykonajte nové vyhľadávanie.",
-			"sorted by distance": "Zoradené podľa vzdialenosti"
+			"sorted by distance": "Zoradené podľa vzdialenosti",
+			"address_lookup_fail": "Adresa sa nenašla. Skúste to znova prosím.",
 		},
 		"sv-SE": {
 			"days_of_the_week" : ["", "Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"],
@@ -1277,6 +1299,7 @@ function CroutonLocalization(language) {
 			"waze": "Waze",
 			"waze_desc": "Öppna i Waze-appen",
 			"sorted by distance": "Sorterade efter avstånd",
+			"address_lookup_fail": "The address could not be found. Please try again.",
 		}
 	};
 }

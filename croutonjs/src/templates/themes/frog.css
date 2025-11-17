@@ -88,7 +88,7 @@
     background-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs,#map-button.btn-xs,#share-button.btn-xs,.bmlt-data-row button.get-directions-modal {
+.bmlt-formats.btn-xs,.map-button.btn-xs,.share-button.btn-xs,.bmlt-data-row button.get-directions-modal {
     background-color: lightseagreen;
 }
 
@@ -126,12 +126,12 @@
     color: #000;
 }
 
-#bmlt-formats.btn-xs, #map-button.btn-xs,#share-button.btn-xs,.bmlt-data-row button.get-directions-modal {
+.bmlt-formats.btn-xs, .map-button.btn-xs,.share-button.btn-xs,.bmlt-data-row button.get-directions-modal {
     color: #555;
     border-color: lightseagreen;
 }
 
-#bmlt-formats.btn-xs:hover, #map-button.btn-xs:hover, #share-button.btn-xs:hover,.bmlt-data-row button.get-directions-modal:hover {
+.bmlt-formats.btn-xs:hover, .map-button.btn-xs:hover, .share-button.btn-xs:hover,.bmlt-data-row button.get-directions-modal:hover {
     color: #AAA;
     background-color: #444;
     border-color: lightseagreen;
