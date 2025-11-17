@@ -410,8 +410,8 @@ function addControl(div,pos,cb) {
 			&&  isNumber(config.bounds.east)
 			&&  isNumber(config.bounds.south)
 			&&  isNumber(config.bounds.west)) {
-				geoCodeParams.viewbox = config.bounds.south+","+config.bounds.west+","+
-					                    config.bounds.north+","+config.bounds.east;
+				geoCodeParams.viewbox = config.bounds.west+","+config.bounds.south+","+
+					                    config.bounds.east+","+config.bounds.north;
 		}
         geocode(in_loc, geoCodeParams, callback, filterMeetings);
     }
