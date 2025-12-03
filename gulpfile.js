@@ -13,7 +13,6 @@ let jsFilesCrouton = [
 	'bootstrap.min.js',
 	'transition.js',
 	'select2.full.min.js',
-	'tablesaw.jquery.3.0.9.js',
 	'handlebars-v4.5.3.js',
 	'moment.js',
 	'moment-timezone.js',
@@ -52,6 +51,7 @@ let cssFiles = [
 	'bootstrap.min.css',
 	'bmlt_tabs.css',
 	'meeting_map.css',
+	'card.css',
 ];
 let LeafletCssFiles = [
 	'leaflet.css',

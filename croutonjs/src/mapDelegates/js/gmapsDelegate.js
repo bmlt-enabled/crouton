@@ -267,10 +267,7 @@ function markSearchPoint(inCoords) {
 }
 function createMarker (	inCoords,		///< The long/lat for the marker.
         multi,
-        inHtml,		///< The info window HTML
-        inTitle,        ///< The tooltip
-        inIds,
-        openMarker
+        inTitle
 )
 {
     if (!gMainMap) return;
@@ -289,10 +286,13 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
             'title':        inTitle,
             'draggable':    false
     } );
-    marker.desc = inHtml;
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
 
+    return marker;
+};
+function bindPopup(marker, inHtml, inIds, openedMarker) {
+    marker.desc = inHtml;
     google.maps.event.addListener ( marker, "click", function () {
         gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
         if(marker.old_image){marker.setIcon(g_icon_image_selected)};
@@ -307,7 +307,13 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
         jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
     });
     gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
-};
+}
+function addMarkerCallback(marker, cb, in_ids) {
+	if (cb) marker.addListener('click', () => {
+		cb(in_ids);
+	});
+	gAllMarkers.push( {ids: in_ids, marker: marker} );
+}
 function highlightRow(target) {
     const id = target.id.split('-')[1];
     gOpenMarker = id;
@@ -474,6 +480,8 @@ function geoCallback( in_geocode_response ) {
     this.setZoom = setZoom;
     this.getZoom = getZoom;
     this.createMarker = createMarker;
+	this.bindPopup = bindPopup;
+	this.addMarkerCallback = addMarkerCallback;
     this.contains = contains;
     this.getBounds = getBounds;
     this.invalidateSize = invalidateSize;
@@ -508,6 +516,8 @@ MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
 MapDelegate.prototype.createMarker = null;
+MapDelegate.prototype.bindPopup = null;
+MapDelegate.prototype.addMarkerCallback = null;
 MapDelegate.prototype.contains = null;
 MapDelegate.prototype.getBounds = null;
 MapDelegate.prototype.invalidateSize = null;

@@ -12,15 +12,11 @@
 		data-counties="{{formatDataPointer this.location_sub_province}}"
 		data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
 		data-states="{{formatDataPointer this.location_province}}"
-		data-venues="{{formatDataFromArray this.venue_type_name}}"
-		data-weekdays="{{formatDataPointer this.formatted_day}}">
+		data-venues="{{formatDataFromArray this.venue_type_name}}">
 		<td class="bmlt-column1" {{{getWord 'css-textAlign'}}}>
-			<div class="bmlt-day">{{this.formatted_day}}</div>
-			{{#ifEquals this.duration_time "24:00:00"}}
-				<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
-			{{else}}
-				<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
-			{{/ifEquals}}
+			<div class='meeting-name'>
+				<a tabindex='0' href='#' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>
+			</div>
 			{{#if this.formats}}
 				<a
 				   class="bmlt-formats btn btn-primary btn-xs"
@@ -45,7 +41,15 @@
 			<div class="bmlt-observer">{{> (selectObserver) }}</div>
 		</td>
 		<td class="bmlt-column2" {{{getWord 'css-textAlign'}}}>
-			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>
+			<div class="meeting-data-template">
+				<div class='location-text'>{{this.location_text}}</div>
+				<div class='meeting-address'>{{this.formatted_address}}</div>
+				<div class='location-information'>{{this.formatted_location_info}}
+				{{#if this.virtual_meeting_additional_info}}
+					<div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>
+				{{/if}}
+				{{> distance }}
+			</div>
 		</td>
 		<td class="bmlt-column3">
 			{{> metaDataTemplate }}
