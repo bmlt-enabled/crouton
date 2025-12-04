@@ -22,7 +22,7 @@ jobs:
       S3_KEY_JS: croutonjs
       S3_KEY: crouton
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         id: code-checkout
 
       - name: Prepare crouton zip file
@@ -45,7 +45,7 @@ jobs:
           mkdir -p $DIST_DIR_GITHUB && cp $BUILD_DIR/$ZIP_FILENAME $DIST_DIR_GITHUB/$GITHUB_RELEASE_FILENAME
 
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions/gh-ci-s3-artifact
           role-session-name: gh-actions-crouton
@@ -58,13 +58,13 @@ jobs:
 
       - name: Publish Release to Latest WP
         id: publish_latest
-        uses: bmlt-enabled/wordpress-releases-github-action@v1.2
+        uses: bmlt-enabled/wordpress-releases-github-action@v2
         with:
           file: ${{ env.DIST_DIR_S3 }}/${{ env.ZIP_FILENAME }}
           aws_account_id: ${{ secrets.AWS_ACCOUNT_ID }}
           s3_key: ${{ env.S3_KEY }}
 
-      - uses: act10ns/slack@v1
+      - uses: act10ns/slack@v2
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}

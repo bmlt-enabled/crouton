@@ -24,7 +24,7 @@ jobs:
       PLUGIN: crouton
       MAINFILE: crouton.php
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         id: code-checkout
 
       - name: Prepare crouton zip file
@@ -60,7 +60,7 @@ jobs:
           echo "RELEASE_TYPE=${RELEASE_TYPE}" >> $GITHUB_ENV
 
       - name: Create Release 🎉
-        uses: ncipollo/release-action@v1.11.1
+        uses: ncipollo/release-action@v1
         if: github.ref_type == 'tag'
         with:
           artifacts: ${{ env.GITHUB_RELEASE_PATH }},${{ env.GITHUB_RELEASE_PATH_JS }}
@@ -80,9 +80,9 @@ jobs:
 
       - name: Setup Node
         if: "!contains(github.ref, 'beta')"
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: '16.x'
+          node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Publish package on NPM 📦
@@ -95,7 +95,7 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - uses: act10ns/slack@v1
+      - uses: act10ns/slack@v2
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
