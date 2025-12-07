@@ -88,12 +88,12 @@ Before creating a release, update the version number in these files:
 **Example:**
 ```php
 // In crouton.php header
-Version: 3.26.0
+Version: 4.0.1
 ```
 
 ```javascript
 // In crouton-core.js
-version: '3.26.0';
+version: '4.0.1';
 ```
 
 ### Tagging Releases

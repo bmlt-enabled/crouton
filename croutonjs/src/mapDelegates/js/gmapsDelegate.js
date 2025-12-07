@@ -274,38 +274,36 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single)
     var marker = null;
 
-    var	is_clickable = (inHtml ? true : false);
-
     var marker = new google.maps.Marker (
         { 'position':		new google.maps.LatLng(...inCoords),
             'shadow':		g_icon_shadow,
             'icon':			in_main_icon,
             'shape':		g_icon_shape,
-            'clickable':	is_clickable,
             'cursor':		'default',
             'title':        inTitle,
             'draggable':    false
     } );
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
-
     return marker;
 };
 function bindPopup(marker, inHtml, inIds, openedMarker) {
-    marker.desc = inHtml;
-    google.maps.event.addListener ( marker, "click", function () {
-        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
-        if(marker.old_image){marker.setIcon(g_icon_image_selected)};
-        openInfoWindow(marker);
-    });
-    if (openMarker &&  inIds.includes(parseInt(openMarker))) {
-        openInfoWindow(marker);
+    if (inHtml) {
+        marker.desc = inHtml;
+        google.maps.event.addListener ( marker, "click", function () {
+            gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
+            if(marker.old_image){marker.setIcon(g_icon_image_selected)};
+            openInfoWindow(marker);
+        });
+        if (openMarker &&  inIds.includes(parseInt(openMarker))) {
+            openInfoWindow(marker);
+        }
+        gInfoWindow.addListener('closeclick', function () {
+            gOpenMarker = false;
+            gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
+            jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+        });
     }
-    gInfoWindow.addListener('closeclick', function () {
-        gOpenMarker = false;
-        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-    });
     gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
 }
 function addMarkerCallback(marker, cb, in_ids) {

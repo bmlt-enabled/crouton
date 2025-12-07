@@ -271,7 +271,8 @@ function MeetingMap(inConfig) {
 		let delegate = new MapDelegate(config);
 		if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng, zoom: handlebarMapOptions.zoom};
 		if (delegate.createMap(inDiv, loc)) {
-			delegate.createMarker([meeting.latitude, meeting.longitude], false, null);
+			const marker = delegate.createMarker([meeting.latitude, meeting.longitude], false, null);
+			delegate.bindPopup(marker, null, meeting.id_bigint, false);
 			delegate.addClusterLayer();
 			gModalDelegate = delegate;
 		}

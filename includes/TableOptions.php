@@ -144,24 +144,14 @@ if (!class_exists("Crouton\TableOptions")) {
                     unset($this->options['button_format_filters_option']);
                 }
             }
-            if ($this->options['crouton_version'] === "3.18") {
-                $this->options['crouton_version'] = "3.21";
-                if (isset($this->options['button_filters_option'])) {
-                    $this->options['grouping_buttons'] = $this->options['button_filters_option'];
-                    unset($this->options['button_filters_option']);
-                }
-                if (isset($this->options['button_format_filters_option'])) {
-                    $this->options['formattype_grouping_buttons'] = $this->options['button_format_filters_option'];
-                    unset($this->options['button_format_filters_option']);
-                }
-            }
             if ($this->options['crouton_version'] === "3.21") {
-                $this->options['crouton_version'] = "3.22";
+                $this->options['crouton_version'] = "4.0";
                 if (isset($this->options['service_body_1'])) {
                     $this->options['service_bodies'] = [$this->options['service_body_1']];
                     unset($this->options['service_body_1']);
                 }
             }
+            $this->options['crouton_version'] = "4.0";
             if (isset($this->options['meetingpage_contents_template'])) {
                 $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
             }
