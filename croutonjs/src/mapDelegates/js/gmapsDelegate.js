@@ -285,25 +285,25 @@ function createMarker (	inCoords,		///< The long/lat for the marker.
     } );
     marker.zIndex = 999;
     marker.old_image = marker.getIcon();
-
     return marker;
 };
 function bindPopup(marker, inHtml, inIds, openedMarker) {
-    marker.desc = inHtml;
-    marker.is_clickable = (inHtml ? true : false);
-    google.maps.event.addListener ( marker, "click", function () {
-        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
-        if(marker.old_image){marker.setIcon(g_icon_image_selected)};
-        openInfoWindow(marker);
-    });
-    if (openMarker &&  inIds.includes(parseInt(openMarker))) {
-        openInfoWindow(marker);
+    if (inHtml) {
+        marker.desc = inHtml;
+        google.maps.event.addListener ( marker, "click", function () {
+            gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
+            if(marker.old_image){marker.setIcon(g_icon_image_selected)};
+            openInfoWindow(marker);
+        });
+        if (openMarker &&  inIds.includes(parseInt(openMarker))) {
+            openInfoWindow(marker);
+        }
+        gInfoWindow.addListener('closeclick', function () {
+            gOpenMarker = false;
+            gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
+            jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+        });
     }
-    gInfoWindow.addListener('closeclick', function () {
-        gOpenMarker = false;
-        gAllMarkers.forEach((m) => m.marker.setIcon(m.marker.old_image));
-        jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-    });
     gAllMarkers[gAllMarkers.length] = {ids: inIds, marker: marker};
 }
 function addMarkerCallback(marker, cb, in_ids) {

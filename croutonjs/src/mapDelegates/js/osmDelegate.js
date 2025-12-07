@@ -205,6 +205,7 @@ function MapDelegate(config) {
 	return marker;
 }
 function bindPopup(marker, in_html, in_ids, openedMarker) {
+	if (!in_html) return;
 	let highlightRow = function(target) {
 		const id = target.id.split('-')[1];
 		gOpenMarker = id;
