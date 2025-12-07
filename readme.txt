@@ -37,8 +37,9 @@ https://demo.bmlt.app/crouton
 
 == Changelog ==
 
-= 3.26.2 =
+= 4.0.1 =
 * Add meeting times to group table.
+* Big fix for markers in Google Maps.
 
 = 3.26.1 =
 * Version bump.
