@@ -17,26 +17,7 @@
 			<div class='meeting-name'>
 				<a tabindex='0' href='#' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>
 			</div>
-			{{#if this.formats}}
-				<a
-				   class="bmlt-formats btn btn-primary btn-xs"
-				   title=""
-				   data-html="true"
-				   tabindex="0"
-				   data-trigger="focus"
-				   role="button"
-				   data-toggle="popover"
-				   data-original-title=""
-				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
-				   data-content="{{> (selectFormatPopup) }}">
-                    <span class="glyphicon glyphicon-search"
-						  aria-hidden="true"
-						  data-toggle="popover"
-						  data-trigger="focus"
-						  data-html="true"
-						  role="button"></span>{{ this.formats }}
-				</a>
-			{{/if}}
+			{{> formatKeys }}
 			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
 			<div class="bmlt-observer">{{> (selectObserver) }}</div>
 		</td>

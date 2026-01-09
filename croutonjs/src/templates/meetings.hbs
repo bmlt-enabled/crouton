@@ -15,37 +15,12 @@
 		data-venues="{{formatDataFromArray this.venue_type_name}}"
 		data-weekdays="{{formatDataPointer this.formatted_day}}">
 		<td class="bmlt-column1" {{{getWord 'css-textAlign'}}}>
-			<div class="bmlt-day">{{this.formatted_day}}</div>
-			{{#ifEquals this.duration_time "24:00:00"}}
-				<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
-			{{else}}
-				<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
-			{{/ifEquals}}
-			{{#if this.formats}}
-				<a
-				   class="bmlt-formats btn btn-primary btn-xs"
-				   title=""
-				   data-html="true"
-				   tabindex="0"
-				   data-trigger="focus"
-				   role="button"
-				   data-toggle="popover"
-				   data-original-title=""
-				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
-				   data-content="{{> (selectFormatPopup) }}">
-                    <span class="glyphicon glyphicon-search"
-						  aria-hidden="true"
-						  data-toggle="popover"
-						  data-trigger="focus"
-						  data-html="true"
-						  role="button"></span>{{ this.formats }}
-				</a>
-			{{/if}}
-			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
-			<div class="bmlt-observer">{{> (selectObserver) }}</div>
+			{{> meetingTimesTemplate }}
 		</td>
 		<td class="bmlt-column2" {{{getWord 'css-textAlign'}}}>
-			<div class="meeting-data-template">{{> meetingDataTemplate }}</div>
+			<div class="meeting-data-template">
+				{{> meetingDataTemplate }}
+			</div>
 		</td>
 		<td class="bmlt-column3">
 			{{> metaDataTemplate }}

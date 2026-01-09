@@ -83,6 +83,7 @@ function Crouton(config) {
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 		meetingpage_frame_template: croutonDefaultTemplates.meetingpage_frame_template,
+		meeting_times_template: croutonDefaultTemplates.meeting_times_template,
 		lat: 0,
 		lng: 0,
 		zoom: 10,
@@ -241,6 +242,7 @@ function Crouton(config) {
 		self.collectDataKeys(self.config['meeting_data_template']);
 		self.collectDataKeys(self.config['metadata_template']);
 		self.collectDataKeys(self.config['observer_template']);
+		self.collectDataKeys(self.config['meeting_times_template']);
 
 		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
 		return '&data_field_key=' + unique_data_field_keys.join(',');
@@ -958,6 +960,29 @@ function Crouton(config) {
 <div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
 {{getWord 'Distance'}}: {{this.distance}}
 </div>`);
+		self.registerPartial('formatKeys', `
+				{{#if this.formats}}
+				<a
+				   class="bmlt-formats btn btn-primary btn-xs"
+				   title=""
+				   data-html="true"
+				   tabindex="0"
+				   data-trigger="focus"
+				   role="button"
+				   data-toggle="popover"
+				   data-original-title=""
+				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
+				   data-content="{{> (selectFormatPopup) }}">
+                    <span class="glyphicon glyphicon-search"
+						  aria-hidden="true"
+						  data-toggle="popover"
+						  data-trigger="focus"
+						  data-html="true"
+						  role="button"></span>{{ this.formats }}
+				</a>
+			{{/if}}
+			`
+		)
 		crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
     		if (name && name.length > 0) return true;
 			if (phone && phone.length > 0) return true;
@@ -976,6 +1001,7 @@ function Crouton(config) {
 			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
 			self.registerPartial("meetingLink", self.config['meeting_link_template']);
 			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
+			self.registerPartial("meetingTimesTemplate", self.config['meeting_times_template']);
 			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>")
 	}
 	self.calculateDistance = function(meetingData) {
