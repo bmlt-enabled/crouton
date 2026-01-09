@@ -966,7 +966,7 @@ function Crouton(config) {
 	});
 		self.registerPartial('observerLine',`
 {{#if (hasObserverLine name phone email) }}
-<div class='observerLine'>Kontact: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
+<div class='observerLine'>{{getWord "Contact"}}: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
 </div>{{/if}}`);
 			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 			self.registerPartial("metaDataTemplate", self.config['metadata_template']);

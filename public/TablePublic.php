@@ -513,7 +513,7 @@ if (!class_exists("Crouton\TablePublic")) {
             $mapParams['google_api_key'] = $params['google_api_key'];
             $mapParams['template_path'] = $params['template_path'];
             $extra_meetings_array = [];
-            if (isset($this->options['extra_meetings']) && !isset($_GET['meeting-id'])) {
+            if (isset($options['extra_meetings']) && !isset($_GET['meeting-id'])) {
                 foreach ($options['extra_meetings'] as $value) {
                     $data = array("[", "]");
                     array_push($extra_meetings_array, trim(str_replace($data, "", $value)));
