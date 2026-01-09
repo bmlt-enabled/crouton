@@ -158,6 +158,17 @@ var croutonDefaultTemplates = {
 		{{#each this.formats_expanded}}{{#if @index}}; {{/if}}{{this.name}}{{/each}}
 		</div>
 	</div>
+	`,
+	meeting_times_template: `
+		<div class="bmlt-day">{{this.formatted_day}}</div>
+		{{#ifEquals this.duration_time "24:00:00"}}
+			<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
+		{{else}}
+			<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
+		{{/ifEquals}}
+		{{> formatKeys }}
+		<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
+		<div class="bmlt-observer">{{> (selectObserver) }}</div>
 	`
 }
 
