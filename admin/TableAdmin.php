@@ -150,7 +150,9 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['virtual_meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['virtual_meeting_details_href'])));
                 $options['custom_query']   = isset($_POST['custom_query']) ? sanitize_text_field(wp_unslash($_POST['custom_query'])) : '';
                 $options['custom_css']     = $this->sanitize_handlebars('custom_css');
+                $options['meeting_times_template'] = $this->sanitize_handlebars('meeting_times_template');
                 $options['meeting_data_template'] = $this->sanitize_handlebars('meeting_data_template');
+                $options['group_data_template'] = $this->sanitize_handlebars('group_data_template');
                 $options['metadata_template'] = $this->sanitize_handlebars('metadata_template');
                 $options['meetingpage_title_template'] = $this->sanitize_handlebars('meetingpage_title_template');
                 $options['meetingpage_contents_template'] =$this->sanitize_handlebars('meetingpage_contents_template');
@@ -451,12 +453,48 @@ if (!class_exists("Crouton\TableAdmin")) {
     <li>parentServiceBodyDescription</li>
     <li>parentServiceBodyType</li>
 </ul>
-        </p>
+</p>
+<h2>Partial Templates</h2>
+    <p>Partial templates are higher level constructs that can be included in your templates.  They include both values and HTML constructs.  They
+        can be includesd using the Handlebar syntax {{> partialName }}.  The available partials are:
+    </p>
+<ul>
+    <li>directionsButton (a button linking to device specific maps directions)</li>
+    <li>distanceButton(distance from user location to meeting location)</li>
+    <li>formatPopup (list of formats with a popup containing format description)</li>
+    <li>formatDescriptions (list of format descriptions)</li>
+</ul>
+<h2>Including a Map</h2>
         <p>To include a map in the meeting details, use the "crouton_map" helper function, ie, {{{crouton_map}}}.
             Note the triple brackets.  A initial zoom factor (from 2 to 17) may be given as an option, eg, {{{crouton_map zoom=16}}}.  Default zoom is 14.
         </p></div>
-        <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-data-template" class="anchor"></a><?php esc_html_e('Meeting Data Template', 'crouton') ?></h3>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting-times-template" class="anchor"></a><?php esc_html_e('Meeting Times Template', 'crouton') ?></h3>
+                        <p><?php esc_html_e('This allows customization of the first column of the meeting list table.  A list of available fields are', 'crouton') ?>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
+                        <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
+                        <p><?php esc_html_e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton') ?></p>
+                        <ul>
+                            <li>
+                                <textarea id="meeting_times_template" class="handlebarsCode" name="meeting_times_template" cols="100" rows="10"><?php echo isset($options['meeting_times_template']) ? esc_html(html_entity_decode($options['meeting_times_template'])) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_meeting_times_template" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
+                                <input type="button" id="clear_meeting_times_template" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_meeting_times_template").click(function() {
+                                resetCodemirrorToDefault("meeting_times_template");
+                            });
+                            jQuery("#clear_meeting_times_template").click(function() {
+                                clearCodemirror("meeting_times_template");
+                            });
+                        </script>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-meeting_times-template" class="anchor"></a><?php esc_html_e('Meeting Data Template', 'crouton') ?></h3>
                         <p><?php esc_html_e('This allows customization of the second column of the meeting list table.  A list of available fields are', 'crouton') ?>
                             <span style="text-align:center;padding:20px 0;">
                                 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
@@ -552,6 +590,31 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <p><?php esc_html_e('If no value is specified for virtual meetings, the in-person meeting link will be used.', 'crouton') ?></p>
                             </li>
                         </ul>
+                    </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-group-data-template" class="anchor"></a><?php esc_html_e('Group Data Template', 'crouton') ?></h3>
+                        <p><?php esc_html_e('This allows customization of the second column of the meeting list table, when listing by group rather than individual meetings.  A list of available fields are', 'crouton') ?>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
+                        <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
+                        <p><?php esc_html_e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton') ?></p>
+                        <ul>
+                            <li>
+                                <textarea id="group_data_template" class="handlebarsCode" name="group_data_template" cols="100" rows="10"><?php echo isset($options['group_data_template']) ? esc_html(html_entity_decode($options['group_data_template'])) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_group_data_template" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
+                                <input type="button" id="clear_group_data_template" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_group_data_template").click(function() {
+                                resetCodemirrorToDefault("group_data_template");
+                            });
+                            jQuery("#clear_group_data_template").click(function() {
+                                clearCodemirror("group_data_template");
+                            });
+                        </script>
                     </div>
             </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />

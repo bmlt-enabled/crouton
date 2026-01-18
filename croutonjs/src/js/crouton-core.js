@@ -84,6 +84,7 @@ function Crouton(config) {
 		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
 		meetingpage_frame_template: croutonDefaultTemplates.meetingpage_frame_template,
 		meeting_times_template: croutonDefaultTemplates.meeting_times_template,
+		group_data_template: croutonDefaultTemplates.group_data_template,
 		lat: 0,
 		lng: 0,
 		zoom: 10,
@@ -243,6 +244,7 @@ function Crouton(config) {
 		self.collectDataKeys(self.config['metadata_template']);
 		self.collectDataKeys(self.config['observer_template']);
 		self.collectDataKeys(self.config['meeting_times_template']);
+		self.collectDataKeys(self.config['group_data_template']);
 
 		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
 		return '&data_field_key=' + unique_data_field_keys.join(',');
@@ -960,6 +962,17 @@ function Crouton(config) {
 <div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
 {{getWord 'Distance'}}: {{this.distance}}
 </div>`);
+		self.registerPartial('formatDescriptions', `
+			{{#if formats_expanded}}
+            	<h4>Meeting Formats</h4>
+            	<ul>
+            		{{#each formats_expanded}}
+                		<li>{{description}}</li>
+            		{{/each}}
+            	</ul>
+            	<br/>
+        	{{/if}}
+		`);
 		self.registerPartial('formatKeys', `
 				{{#if this.formats}}
 				<a
@@ -1002,7 +1015,8 @@ function Crouton(config) {
 			self.registerPartial("meetingLink", self.config['meeting_link_template']);
 			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
 			self.registerPartial("meetingTimesTemplate", self.config['meeting_times_template']);
-			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>")
+			self.registerPartial("groupDataTemplate", self.config['group_data_template']);
+			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>");
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
