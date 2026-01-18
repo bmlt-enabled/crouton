@@ -60,8 +60,6 @@ if (!class_exists("Crouton\TableOptions")) {
             "custom_css" => "",
             "theme" => '',
             "default_filter_dropdown" => '',
-            "meeting_data_template" => null,
-            "metadata_template" => null,
             "filter_tabs" => '20',
             "show_qrcode" => false,
             "native_lang" => '',
@@ -69,10 +67,12 @@ if (!class_exists("Crouton\TableOptions")) {
             "google_api_key" => "",
             "report_update_url" => "",
             "noMap" => false,
+            'meeting_times_template' => '',
             'meeting_data_template' => '',
             'metadata_template' => '',
             'meetingpage_title_template' => '',
             'meetingpage_contents_template' => '',
+            'group_data_template' => '',
             'groups' => false,
         );
         public function getOptions(): array

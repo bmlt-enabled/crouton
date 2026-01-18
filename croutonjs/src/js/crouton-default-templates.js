@@ -169,7 +169,23 @@ var croutonDefaultTemplates = {
 		{{> formatKeys }}
 		<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
 		<div class="bmlt-observer">{{> (selectObserver) }}</div>
-	`
+	`,
+	group_data_template: `
+		<div class='location-text'>{{this.location_text}}</div>
+		<div class='meeting-address'>{{this.formatted_address}}</div>
+		<div class='location-information'>{{this.formatted_location_info}}
+		{{#if this.virtual_meeting_additional_info}}
+			<div class='meeting-additional-info'>{{this.virtual_meeting_additional_info}}</div>
+		{{/if}}
+		{{> distance }}
+		<div class="bmlt-group-meetings">
+			{{#each this.membersOfGroup}}
+				<div class="bmlt-group-meeting">
+					{{this.formatted_day}}: {{this.start_time_formatted}}
+				</div>
+			{{/each}}
+		</div>
+		`
 }
 
 

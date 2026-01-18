@@ -47,14 +47,7 @@
                             <h5 class="m-0 me-2">{{getWord 'Meeting Info'}}</h5>
                         </div>
                         <div class="card-text">
-                            {{#if formats_expanded}}
-                                <ul>
-                                {{#each formats_expanded}}
-                                    <li>{{description}}</li>
-                                {{/each}}
-                                </ul>
-                                <br/>
-                            {{/if}}
+                            {{> formatDescriptions }}
                         </div>
                         <div class="card-title header-elements">
                             <h5 class="m-0 me-2">{{getWord 'Comments'}}</h5>
