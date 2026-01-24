@@ -689,7 +689,9 @@ input#search_radius, input#search_count {
     width: auto;
 }
 
-
+.group-modal {
+	width:85%
+}
 .directions-map-modal {
 	display: none;
 	position: fixed;

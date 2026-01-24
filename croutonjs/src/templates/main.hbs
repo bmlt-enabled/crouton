@@ -16,11 +16,19 @@
     	<div id="byfield_embeddedMapPage" class="bmlt-map bmlt-page {{getWord 'css-direction'}} hide">
 		</div>
     {{/if}}
-    <div id="byday" class="bmlt-page {{getWord 'css-direction'}} hide">
-        {{> bydays this.meetings.bydays}}
-    </div>
-    <div id="tabs-content" class="bmlt-page {{getWord 'css-direction'}}">
-        {{> weekdays this.meetings.weekdays}}
-    </div>
+    {{#if this.config.groups}}
+        <div id="bmlt_incubator" class="bmlt-page {{getWord 'css-direction'}} hide">
+            <table class='bmlt-table table table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
+                {{> tableRows this.meetings.allMeetings}}
+            </table>
+        </div>
+    {{else}}
+        <div id="byday" class="bmlt-page {{getWord 'css-direction'}} hide">
+            {{> bydays this.meetings.bydays}}
+        </div>
+        <div id="tabs-content" class="bmlt-page {{getWord 'css-direction'}}">
+            {{> weekdays this.meetings.weekdays}}
+        </div>
+    {{/if}}
     {{> meetingCountTemplate }}
 </div>

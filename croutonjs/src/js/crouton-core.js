@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.0.6',             // CroutonJS version for debugging
+		version: '4.1.0',            // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -78,13 +78,13 @@ function Crouton(config) {
 		metadata_template: croutonDefaultTemplates.metadata_template,
 		observer_template: croutonDefaultTemplates.observer_template,
 		meeting_count_template: croutonDefaultTemplates.meeting_count_template,
-		meeting_link_template: croutonDefaultTemplates.meeting_link_template,
-		meeting_modal_template: croutonDefaultTemplates.meeting_modal_template,
 		meetingpage_title_template: croutonDefaultTemplates.meetingpage_title_template,
-		meetingpage_contents_template: croutonDefaultTemplates.meetingpage_contents_template,
-		meetingpage_frame_template: croutonDefaultTemplates.meetingpage_frame_template,
+		meetingdetails_contents_template: croutonDefaultTemplates.meetingdetails_contents_template,
 		meeting_times_template: croutonDefaultTemplates.meeting_times_template,
 		group_data_template: croutonDefaultTemplates.group_data_template,
+		group_title_template: croutonDefaultTemplates.group_title_template,
+		group_details_template: croutonDefaultTemplates.group_details_contents_template,
+		member_details_template: croutonDefaultTemplates.member_details_template,
 		lat: 0,
 		lng: 0,
 		zoom: 10,
@@ -102,6 +102,7 @@ function Crouton(config) {
 		maxTomatoWidth: 160,
 		caption: false,
 		groups: false,
+		details_table: false,
 	};
 
 	self.setConfig(config);
@@ -118,9 +119,7 @@ function Crouton(config) {
 		});
 		self.config['custom_query'] = original_query;
 	};
-	self.registerPartial = function(name, template) {
-		crouton_Handlebars.registerPartial(name, crouton_Handlebars.compile(template));
-	};
+
 	self.getMeetings = function(url,cb=null) {
 		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
@@ -164,96 +163,10 @@ function Crouton(config) {
 				self.mutex = false;
 			});
 	};
-	self.addDatafieldsToQuery = function() {
-		if (!self.config.strict_datafields) {
-			self.all_data_keys = [];
-			self.queryable_data_keys = [];
-			return '';
-		}
-		var base_data_field_keys = [
-			'location_postal_code_1',
-			'duration_time',
-			'start_time',
-			'time_zone',
-			'weekday_tinyint',
-			'service_body_bigint',
-			'longitude',
-			'latitude',
-			'location_province',
-			'location_municipality',
-			'location_street',
-			'location_info',
-			'location_text',
-			'location_neighborhood',
-			'formats',
-			'format_shared_id_list',
-			'comments',
-			'meeting_name',
-			'location_sub_province',
-			'worldid_mixed',
-			'root_server_uri',
-			'id_bigint',
-			'venue_type',
-		];
-
-		var calculated_keys = [
-			"serviceBodyName",
-			"serviceBodyUrl",
-			"serviceBodyPhone",
-			"serviceBodyDescription",
-			"serviceBodyType",
-			"parentServiceBodyName",
-			"parentServiceBodyUrl",
-			"parentServiceBodyPhone",
-			"parentServiceBodyDescription",
-			"parentServiceBodyType",
-			"map_word",
-			"share_word",
-			"report_update_word",
-			"show_qrcode",
-			"formatted_day",
-			"formatted_address",
-			"formats_expanded",
-			"formatted_location_info",
-			"end_time_formatted",
-			"start_time_formatted",
-			"formatted_comments",
-			"start_time_raw",
-			"venue_type_name",
-			"day_of_the_week",
-		];
-
-		self.all_data_keys = base_data_field_keys.clone();
-		self.queryable_data_keys = base_data_field_keys.clone();
-
-		self.collectDataKeys = function(template) {
-			var extra_fields_regex = /this\.([A-Za-z0-9_]*)}}/gi;
-			while (arr = extra_fields_regex.exec(template)) {
-				self.all_data_keys.push(arr[1]);
-				if (!inArray(arr[1], calculated_keys)) {
-					self.queryable_data_keys.push(arr[1]);
-				}
-			}
-		}
-
-		if (self.config.map_search) {
-			self.queryable_data_keys.push('distance_in_km');
-			self.queryable_data_keys.push('distance_in_miles');
-		}
-		self.collectDataKeys(self.config['meeting_data_template']);
-		self.collectDataKeys(self.config['metadata_template']);
-		self.collectDataKeys(self.config['observer_template']);
-		self.collectDataKeys(self.config['meeting_times_template']);
-		self.collectDataKeys(self.config['group_data_template']);
-
-		var unique_data_field_keys = arrayUnique(self.queryable_data_keys);
-		return '&data_field_key=' + unique_data_field_keys.join(',');
-	}
 	self.mutex = true;
 
 	self.meetingSearch = function(cb=null) {
-		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'] +
-			self.addDatafieldsToQuery();
+		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'];
 
 		if (self.config['formats']) {
 			url += self.config['formats'].reduce(function(prev,id) {
@@ -499,10 +412,6 @@ function Crouton(config) {
 	}
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
-		crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
-		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
-		crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
-		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
 		window.crouton = self;
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
@@ -534,19 +443,7 @@ function Crouton(config) {
 	};
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
-		if (self.config.groups) {
-			crouton_Handlebars.registerPartial('group', hbs_Crouton.templates['group']);
-			crouton_Handlebars.registerPartial('groupRows', hbs_Crouton.templates['groupRows']);
-		} else {
-			crouton_Handlebars.registerPartial('meetings', hbs_Crouton.templates['meetings']);
-			crouton_Handlebars.registerPartial('bydays', hbs_Crouton.templates['byday']);
-			crouton_Handlebars.registerPartial('weekdays', hbs_Crouton.templates['weekdays']);
-		}
-		crouton_Handlebars.registerPartial('meetingsPlaceholders', hbs_Crouton.templates['meetingsPlaceholders']);
-		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
-		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
-		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		var template = self.config.groups ? hbs_Crouton.templates['groupMain'] : hbs_Crouton.templates['main'];
+		var template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
 	};
@@ -950,73 +847,37 @@ function Crouton(config) {
 			self.distanceTabAllowed = true;
 		}
 	}
+	self.registerPartial = function(name, template) {
+		crouton_Handlebars.registerPartial(name, crouton_Handlebars.compile(template));
+	};
 	self.setUpPartials = function() {
-		crouton_Handlebars.registerHelper('hasBMLT2ics', function() {return crouton.config['bmlt2ics'].length>0;});
-		crouton_Handlebars.registerHelper('BMLT2ics', function() {return crouton.config['bmlt2ics'];});
-		self.registerPartial('icsButton',
-    		'<a href="{{BMLT2ics}}?meeting-id={{id_bigint}}" download="{{meeting_name}}.ics" class="share-button btn btn-primary btn-xs" ><span class="glyphicon glyphicon-download-alt"></span> {{getWord "bmlt2ics"}}</a>');
-		self.registerPartial('offerIcsButton', "{{#if (hasBMLT2ics)}}{{> icsButton}}<br/>{{/if}}");
-		crouton_Handlebars.registerPartial('directionsButton', hbs_Crouton.templates['directionsButton']);
-		crouton_Handlebars.registerPartial('meetingDetailsButton', hbs_Crouton.templates['meetingDetailsButton']);
-		self.registerPartial('distance',`
-<div class='meeting-distance{{#unless this.distance}} hide{{/unless}}' data-id='{{this.id_bigint}}'>
-{{getWord 'Distance'}}: {{this.distance}}
-</div>`);
-		self.registerPartial('formatDescriptions', `
-			{{#if formats_expanded}}
-            	<h4>Meeting Formats</h4>
-            	<ul>
-            		{{#each formats_expanded}}
-                		<li>{{description}}</li>
-            		{{/each}}
-            	</ul>
-            	<br/>
-        	{{/if}}
-		`);
-		self.registerPartial('formatKeys', `
-				{{#if this.formats}}
-				<a
-				   class="bmlt-formats btn btn-primary btn-xs"
-				   title=""
-				   data-html="true"
-				   tabindex="0"
-				   data-trigger="focus"
-				   role="button"
-				   data-toggle="popover"
-				   data-original-title=""
-				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
-				   data-content="{{> (selectFormatPopup) }}">
-                    <span class="glyphicon glyphicon-search"
-						  aria-hidden="true"
-						  data-toggle="popover"
-						  data-trigger="focus"
-						  data-html="true"
-						  role="button"></span>{{ this.formats }}
-				</a>
-			{{/if}}
-			`
-		)
-		crouton_Handlebars.registerHelper('hasObserverLine', function(name, phone, email) {
-    		if (name && name.length > 0) return true;
-			if (phone && phone.length > 0) return true;
-			if (email && email.length > 0) return true;
-			return false;
-	});
-		self.registerPartial('observerLine',`
-{{#if (hasObserverLine name phone email) }}
-<div class='observerLine'>{{getWord "Contact"}}: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>
-</div>{{/if}}`);
+		crouton_Handlebars.registerPartial('tableDataRow',
+			self.config.groups
+			? (self.config.details_table
+				? "<td>{{> groupStackedRow}}</td>"
+				: hbs_Crouton.templates['group3ColumnRow'])
+			: (self.config.details_table
+				? "<td>{{> meetingStackedRow}}</td>"
+				: hbs_Crouton.templates['meeting3ColumnRow'])
+			);
+
+
+			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 			self.registerPartial("metaDataTemplate", self.config['metadata_template']);
 			self.registerPartial("observerTemplate", self.config['observer_template']);
 			self.registerPartial("meetingpageTitleTemplate", self.config['meetingpage_title_template']);
-			self.registerPartial("meetingpageContentsTemplate", self.config['meetingpage_contents_template']);
+			self.registerPartial("meetingDetailsContentsTemplate", self.config['meetingdetails_contents_template']);
 			self.registerPartial("meetingCountTemplate", self.config['meeting_count_template']);
-			self.registerPartial("meetingLink", self.config['meeting_link_template']);
-			self.registerPartial("meetingModal", self.config['meeting_modal_template']);
 			self.registerPartial("meetingTimesTemplate", self.config['meeting_times_template']);
-			self.registerPartial("groupDataTemplate", self.config['group_data_template']);
-			self.registerPartial('group_map', "<div id='bmlt-group-map' class='bmlt-map'></div>");
+			self.registerPartial("groupData", self.config['group_data_template']);
+			self.registerPartial("groupDetailsContents", self.config['group_details_template']);
+			self.registerPartial("memberDetails", self.config['member_details_template']);
+			self.registerPartial("groupTitle", self.config['group_title_template']);
+
+			const handlebarsExtensions = new CroutonHandlebarsExtensions();
+			handlebarsExtensions.registerHelpers();
+			handlebarsExtensions.registerPartials(self.config.groups);
 	}
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
@@ -1133,15 +994,6 @@ Crouton.prototype.setConfig = function(config) {
 	}
 	self.currentView = self.config["view_by"];
 
-	if (self.config["template_path"] == null) {
-		self.config["template_path"] = "templates"
-	}
-	if (self.config["BMLTPlugin_images"] == null) {
-		self.config["BMLTPlugin_images"] = self.config["template_path"];
-	}
-	if (self.config["BMLTPlugin_throbber_img_src"] == null) {
-		self.config["BMLTPlugin_throbber_img_src"] = self.config["template_path"]+'/Throbber.gif';
-	}
 	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
 	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
@@ -1211,24 +1063,24 @@ Crouton.prototype.meetingModal = function(meetingId) {
 }
 Crouton.prototype.openMeetingModal = function(meeting) {
 	let self = this;
-	if (self.config.groups && meeting.hasOwnProperty('membersOfGroup') && meeting.membersOfGroup.length > 1) {
-		self.openGroupModal(meeting);
-		return;
-	}
+	crouton_Handlebars.registerHelper('crouton_map', function() {
+		return "<div id='bmlt-handlebars-map' class='bmlt-map'></div>"
+	});
+	let template = hbs_Crouton.templates['meetingModal'];
 	const tabs = document.getElementById('bmlt-tabs');
-
-	let el = document.createElement('bmlt-handlebar');
-	tabs.appendChild(el);
-	let span = document.createElement('span');
-	el.appendChild(span);
-	span.textContent = self.config.meetingpage_frame_template;
-	self.handlebars(meeting, tabs.getElementsByTagName('bmlt-handlebar'));
+	let div = document.createElement('div');
+	tabs.appendChild(div);
+	div.innerHTML = template(meeting);
 	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('meeting_modal').remove()}));
 	let mm = document.getElementById('meeting_modal');
 	document.body.appendChild(mm);
 	jQuery('#meeting_modal .get-directions-modal').on('click', openDirectionsModal);
 	croutonMap.openModalWindow(mm, true);
-	croutonMap.showMap(true);
+	croutonMap.loadPopupMap("bmlt-handlebars-map", meeting, {
+		lat: parseFloat(meeting.latitude),
+		lng: parseFloat(meeting.longitude),
+		zoom: 14
+	});
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
 	let index = -1;
 	const prefix = "meeting-data-row-";
@@ -1307,23 +1159,6 @@ Crouton.prototype.searchMap = function() {
 		},
 		"dropdownData": [],
 		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
-	});
-}
-Crouton.prototype.openGroupModal = function(group) {
-	const tabs = document.getElementById('bmlt-tabs');
-	let div = document.createElement('div');
-	tabs.appendChild(div);
-	div.innerHTML = hbs_Crouton.templates['groupModal'](group);
-	[...tabs.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>{croutonMap.closeModalWindow(e.target); document.getElementById('group_modal').remove()}));
-	let gm = document.getElementById('group_modal');
-	document.body.appendChild(gm);
-	jQuery('#group_modal .get-directions-modal').on('click', openDirectionsModal);
-	croutonMap.openModalWindow(gm, true);
-	div.remove();
-	croutonMap.loadPopupMap("bmlt-group-map", group, {
-		lat: parseFloat(group.latitude),
-		lng: parseFloat(group.longitude),
-		zoom: 14
 	});
 }
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
@@ -1673,14 +1508,6 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	}
 };
 
-function getTrueResult(options, ctx) {
-	return options.fn !== undefined ? options.fn(ctx) : true;
-}
-
-function getFalseResult(options, ctx) {
-	return options.inverse !== undefined ? options.inverse(ctx) : false;
-}
-
 // [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
 function getMasterFormatId(code, data) {
 	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
@@ -1717,258 +1544,6 @@ function getVenueTypeName(data) {
 function getFormats(data) {
 	return data['formats'] !== "" ? data['format_shared_id_list'].split(",") : [];
 }
-
-crouton_Handlebars.registerHelper('getDayOfTheWeek', function(day_id) {
-	return hbs_Crouton.localization.getDayOfTheWeekWord(day_id);
-});
-
-crouton_Handlebars.registerHelper('getWord', function(word) {
-	var translation = hbs_Crouton.localization.getWord(word);
-	if (typeof translation !== 'undefined') return translation;
-	console.log("no translation for '"+word+"'");
-	// if none found, return the untranslated - better than nothing.
-	return word;
-});
-
-crouton_Handlebars.registerHelper('formatDataPointer', function(str) {
-	return convertToPunyCode(str);
-});
-
-crouton_Handlebars.registerHelper('call', function(fn, str) {
-	return fn(str);
-});
-
-crouton_Handlebars.registerHelper('canShare', function(data, options) {
-	return navigator.share ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-crouton_Handlebars.registerHelper('isOS', function(options) {
-	if (isIOSDevice()) {
-		return getTrueResult(options, this);
-	} else {
-		return getFalseResult(options, this);
-	}
-});
-
-function isIOSDevice() {
-    if (navigator.userAgentData && navigator.userAgentData.platform) {
-        if (navigator.userAgentData.platform === 'iOS') {
-            return true;
-        }
-    }
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-    const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
-    return isIOS || isIPadOS;
-}
-
-function isAndroidDevice() {
-    return /Android/i.test(navigator.userAgent);
-}
-
-function isMobileDevice() {
-    return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
-}
-
-function createDirectionsOptions() {
-    const options = [];
-    const isIOS = isIOSDevice();
-
-    // Apple Maps (iOS only)
-    if (isIOS) {
-        options.push({
-            name: crouton.localization.getWord('apple_maps'),
-            description: crouton.localization.getWord('apple_maps_desc'),
-            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-            url: 'https://maps.apple.com/?daddr=${latitude},${longitude}'
-        });
-    }
-
-    // Google Maps (always available)
-    options.push({
-        name: crouton.localization.getWord('google_maps'),
-        description: crouton.localization.getWord('google_maps_desc_mobile'),
-        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-        url: 'https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}'
-    });
-
-    // Waze (always available)
-    options.push({
-        name: crouton.localization.getWord('waze'),
-        description: crouton.localization.getWord('waze_desc'),
-        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
-        url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
-    });
-
-    return options;
-}
-
-crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
-	return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
-});
-
-crouton_Handlebars.registerHelper('reportUpdateUrl', function() {
-	return crouton.config.report_update_url;
-});
-
-/**
- * @deprecated Since version 3.12.2, will be removed in a future version.
- */
-crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-	return ((data['venue_type'] === venueType.HYBRID || data['venue_type'] === venueType.VIRTUAL) || ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
-		|| inArray(getMasterFormatId('VM', data), getFormats(data))))
-	&& (data['virtual_meeting_link'] || data['phone_meeting_number'] || data['virtual_meeting_additional_info']) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
- */
-crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
-	return data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * @deprecated Since version 3.12.2 will be removed in a future version.
- */
-crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
- */
-crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
-	return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-	return inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-	return !inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
- */
-crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
-	return data['venue_type'] !== venueType.VIRTUAL && !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
- */
-crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
-	return data['venue_type'] === venueType.IN_PERSON || (!inArray(getMasterFormatId('VM', data), getFormats(data))
-	&& !inArray(getMasterFormatId('HY', data), getFormats(data))) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-/**
- * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
- */
-crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
-	return (data['venue_type'] === venueType.VIRTUAL || data['venue_type'] === venueType.HYBRID) || inArray(getMasterFormatId('VM', data), getFormats(data))
-	|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-
-crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
-	var allFound = false;
-	var formatsResponse = data['formats'].split(",")
-	var formatsParam = formats.split(",");
-	for (var i = 0; i < formatsParam.length; i++) {
-		allFound = inArray(formatsParam[i], formatsResponse);
-	}
-
-	return allFound ? getTrueResult(options, this) : getFalseResult(options, this);
-});
-crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
-	} else {
-		return "FACILITY IS TEMPORARILY CLOSED";
-	}
-});
-
-crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data)) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data))['description'];
-	} else {
-		return "MEETS VIRTUALLY";
-	}
-});
-
-crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
-	if (data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data)) !== undefined) {
-		return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data))['description'];
-	} else {
-		return "MEETS VIRTUALLY AND IN PERSON";
-	}
-});
-
-crouton_Handlebars.registerHelper('qrCode', function(link, options) {
-	return new crouton_Handlebars.SafeString("<img alt='qrcode' src='https://quickchart.io/qr?size=100&text=" + encodeURIComponent(link) + "'>");
-});
-
-crouton_Handlebars.registerHelper('formatDataFromArray', function(arr) {
-	var finalValues = [];
-	for (var i = 0; i < arr.length; i++) {
-		finalValues.push(convertToPunyCode(arr[i]));
-	}
-
-	return finalValues.join(" ");
-});
-
-crouton_Handlebars.registerHelper('formatDataPointerFormats', function(formatsExpanded) {
-	var finalFormats = [];
-	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(convertToPunyCode(formatsExpanded[i]['name']));
-	}
-	return finalFormats.join(" ");
-});
-
-crouton_Handlebars.registerHelper('formatDataKeyFormats', function(formatsExpanded) {
-	var finalFormats = [];
-	for (var i = 0; i < formatsExpanded.length; i++) {
-		finalFormats.push(convertToPunyCode(formatsExpanded[i]['key']));
-	}
-	return finalFormats.join(" ");
-});
-
-crouton_Handlebars.registerHelper('formatLink', function(text) {
-	if (text.indexOf('tel:') === 0 || text.indexOf('http') === 0) {
-		return new crouton_Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
-	} else {
-		return text;
-	}
-});
-
-crouton_Handlebars.registerHelper('webLinkify', function(text) {
-	return new crouton_Handlebars.SafeString("<a href='" + text + "' target='_blank'>" + text + "</a>");
-});
-
-crouton_Handlebars.registerHelper('phoneLinkify', function(text) {
-	return new crouton_Handlebars.SafeString("<a href='tel:" + text + "' target='_blank'>" + text + "</a>");
-});
-
-crouton_Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
-	return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
-});
-
-crouton_Handlebars.registerHelper('greaterThan', function (arg1, arg2, options) {
-	return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
-});
-
-crouton_Handlebars.registerHelper('lessThan', function (arg1, arg2, options) {
-	return (arg1 < arg2) ? options.fn(this) : options.inverse(this);
-});
-
-crouton_Handlebars.registerHelper('times', function(n, block) {
-	var accum = '';
-	for(var i = 1; i <= n; ++i)
-		accum += block.fn(i);
-	return accum;
-});
 
 function convertToPunyCode(str) {
 	return str !== undefined ? punycode.toASCII(str.toLowerCase()).replace(/\W|_/g, "-") : "";
@@ -2164,6 +1739,58 @@ function swipedetect(el, callback){
 			e.preventDefault()
         }
     }, false)
+}
+function isIOSDevice() {
+    if (navigator.userAgentData && navigator.userAgentData.platform) {
+        if (navigator.userAgentData.platform === 'iOS') {
+            return true;
+        }
+    }
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
+    return isIOS || isIPadOS;
+}
+
+function isAndroidDevice() {
+    return /Android/i.test(navigator.userAgent);
+}
+
+function isMobileDevice() {
+    return isIOSDevice() || isAndroidDevice() || /Mobi|Android/i.test(navigator.userAgent);
+}
+
+function createDirectionsOptions() {
+    const options = [];
+    const isIOS = isIOSDevice();
+
+    // Apple Maps (iOS only)
+    if (isIOS) {
+        options.push({
+            name: crouton.localization.getWord('apple_maps'),
+            description: crouton.localization.getWord('apple_maps_desc'),
+            icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+            url: 'https://maps.apple.com/?daddr=${latitude},${longitude}'
+        });
+    }
+
+    // Google Maps (always available)
+    options.push({
+        name: crouton.localization.getWord('google_maps'),
+        description: crouton.localization.getWord('google_maps_desc_mobile'),
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+        url: 'https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}'
+    });
+
+    // Waze (always available)
+    options.push({
+        name: crouton.localization.getWord('waze'),
+        description: crouton.localization.getWord('waze_desc'),
+        icon: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300D4FF'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E",
+        url: 'https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes'
+    });
+
+    return options;
 }
 function openDirectionsModal(e) {
 	const latitude = jQuery(this).data('latitude');
