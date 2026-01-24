@@ -318,7 +318,7 @@ function MeetingMap(inConfig) {
 				var img = document.createElement("img");
 
 				if (img) {
-					img.src = crouton.config.BMLTPlugin_throbber_img_src;
+					img.src = config.BMLTPlugin_images + "/Throbber.gif";
 					img.className = 'bmlt_mapThrobber_img';
 					img.id = inDiv.id + 'Throbber_img';
 					img.alt = 'AJAX Throbber';

@@ -152,10 +152,13 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['custom_css']     = $this->sanitize_handlebars('custom_css');
                 $options['meeting_times_template'] = $this->sanitize_handlebars('meeting_times_template');
                 $options['meeting_data_template'] = $this->sanitize_handlebars('meeting_data_template');
+                $options['group_title_template'] = $this->sanitize_handlebars('group_title_template');
                 $options['group_data_template'] = $this->sanitize_handlebars('group_data_template');
+                $options['group_details_contents_template'] = $this->sanitize_handlebars('group_details_contents_template');
+                $options['member_details_template'] = $this->sanitize_handlebars('member_details_template');
                 $options['metadata_template'] = $this->sanitize_handlebars('metadata_template');
                 $options['meetingpage_title_template'] = $this->sanitize_handlebars('meetingpage_title_template');
-                $options['meetingpage_contents_template'] =$this->sanitize_handlebars('meetingpage_contents_template');
+                $options['meetingdetails_contents_template'] =$this->sanitize_handlebars('meetingdetails_contents_template');
                 $options['theme']          = sanitize_text_field(wp_unslash($_POST['theme']));
                 $options['show_map']       = sanitize_text_field(wp_unslash($_POST['show_map']));
                 $options['header']         = isset($_POST['header']) ? "1" : "0";
@@ -459,6 +462,7 @@ if (!class_exists("Crouton\TableAdmin")) {
         can be includesd using the Handlebar syntax {{> partialName }}.  The available partials are:
     </p>
 <ul>
+    <li>attendVirtual (links to the virtal meeting)</li>
     <li>directionsButton (a button linking to device specific maps directions)</li>
     <li>distanceButton(distance from user location to meeting location)</li>
     <li>formatPopup (list of formats with a popup containing format description)</li>
@@ -544,7 +548,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                         </script>
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
-                        <h3><a id="config-meeting-details-page" class="anchor"></a><?php esc_html_e('Meeting Details Page', 'crouton') ?></h3>
+                        <h3><a id="config-meeting-details-page" class="anchor"></a><?php esc_html_e('Meeting Details Page Template', 'crouton') ?></h3>
                         <p><?php esc_html_e('This allows customization of the page or popup focused on a particular meeting.  A list of available fields are', 'crouton') ?>
                         <span style="text-align:center;padding:20px 0;">
                                 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
@@ -556,8 +560,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <textarea id="meetingpage_title_template" class="handlebarsCode" name="meetingpage_title_template" cols="100" rows="2"><?php echo isset($options['meetingpage_title_template']) ? esc_html(html_entity_decode($options['meetingpage_title_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
-                                <label for="meetingpage_contents_template"><?php esc_html_e('Contents', 'crouton') ?></label>
-                                <textarea id="meetingpage_contents_template" class="handlebarsCode" name="meetingpage_contents_template" cols="100" rows="20"><?php echo isset($options['meetingpage_contents_template']) ? esc_html(html_entity_decode($options['meetingpage_contents_template'])) : "___DEFAULT___"; ?></textarea>
+                                <label for="meetingdetails_contents_template"><?php esc_html_e('Contents', 'crouton') ?></label>
+                                <textarea id="meetingdetails_contents_template" class="handlebarsCode" name="meetingdetails_contents_template" cols="100" rows="20"><?php echo isset($options['meetingdetails_contents_template']) ? esc_html(html_entity_decode($options['meetingdetails_contents_template'])) : "___DEFAULT___"; ?></textarea>
                             </li>
                             <li>
                                 <input type="button" id="reset_meetingpage_templates" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
@@ -567,11 +571,11 @@ if (!class_exists("Crouton\TableAdmin")) {
                         <script type="text/javascript">
                             jQuery("#reset_meetingpage_templates").click(function() {
                                 resetCodemirrorToDefault("meetingpage_title_template");
-                                resetCodemirrorToDefault("meetingpage_contents_template");
+                                resetCodemirrorToDefault("meetingdetails_contents_template");
                             });
                             jQuery("#clear_meetingpage_templates").click(function() {
                                 clearCodemirror("meetingpage_title_template");
-                                clearCodemirror("meetingpage_contents_template");
+                                clearCodemirror("meetingdetails_contents_template");
                             });
                         </script>
                         <p><?php esc_html_e("By default, the meeting details are inserted onto the same page as the meeting list table, replacing it.  This might not
@@ -593,7 +597,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                     </div>
                     <div style="padding: 0 15px;" class="postbox">
                         <h3><a id="config-group-data-template" class="anchor"></a><?php esc_html_e('Group Data Template', 'crouton') ?></h3>
-                        <p><?php esc_html_e('This allows customization of the second column of the meeting list table, when listing by group rather than individual meetings.  A list of available fields are', 'crouton') ?>
+                        <p><?php esc_html_e('This allows customization of the second column of the group list table.  A list of available fields are', 'crouton') ?>
                             <span style="text-align:center;padding:20px 0;">
                                 <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
                         <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
@@ -616,7 +620,64 @@ if (!class_exists("Crouton\TableAdmin")) {
                             });
                         </script>
                     </div>
+                    <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-group-details-template" class="anchor"></a><?php esc_html_e('Group Details Page Template', 'crouton') ?></h3>
+                        <p><?php esc_html_e('This allows customization of the page or popup focused on a particular group.  A list of available fields are', 'crouton') ?>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
+                        <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
+                        <p><?php esc_html_e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton') ?></p>
+                        <ul>
+                            <li>
+                                <label for="group_title_template"><?php esc_html_e('Headline', 'crouton') ?></label>
+                                <textarea id="group_title_template" class="handlebarsCode" name="group_title_template" cols="100" rows="2"><?php echo isset($options['group_title_template']) ? esc_html(html_entity_decode($options['group_title_template'])) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <label for="group_details_contents_template"><?php esc_html_e('Contents', 'crouton') ?></label>
+                                <textarea id="group_details_contents_template" class="handlebarsCode" name="group_details_contents_template" cols="100" rows="10"><?php echo isset($options['group_details_contents_template']) ? esc_html(html_entity_decode($options['group_details_contents_template'])) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_group_details_contents_template" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
+                                <input type="button" id="clear_group_details_contents_template" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_group_details_contents_template").click(function() {
+                                resetCodemirrorToDefault("group_title_template");
+                                resetCodemirrorToDefault("group_details_contents_template");
+                            });
+                            jQuery("#clear_group_details_contents_template").click(function() {
+                                clearCodemirror("group_title_template");
+                                clearCodemirror("group_details_template");
+                            });
+                        </script>
+                    </div>
             </div>
+            <div style="padding: 0 15px;" class="postbox">
+                        <h3><a id="config-group-data-template" class="anchor"></a><?php esc_html_e('Group Member Details Template', 'crouton') ?></h3>
+                        <p><?php esc_html_e('This allows customization of the second column of the group list table.  A list of available fields are', 'crouton') ?>
+                            <span style="text-align:center;padding:20px 0;">
+                                <input alt="#TB_inline?height=300&amp;width=400&amp;inlineId=examplePopup1" title="Show Handlebar Variables" class="thickbox" type="button" value="<?php esc_html_e('here', 'crouton') ?>" /></span>.</p>
+                        <p><?php esc_html_e('If you want to customize the template, use the "Reset" button to load the current default template which you can then modify.  Customized templates are not overwritten, even when crouton updates.', 'crouton') ?></p>
+                        <p><?php esc_html_e('To always use the current default, allowing crouton to update the template, leave this field empty.', 'crouton') ?></p>
+                        <ul>
+                            <li>
+                                <textarea id="member_details_template" class="handlebarsCode" name="member_details_template" cols="100" rows="10"><?php echo isset($options['member_details_template']) ? esc_html(html_entity_decode($options['member_details_template'])) : "___DEFAULT___"; ?></textarea>
+                            </li>
+                            <li>
+                                <input type="button" id="reset_member_details_template" value="<?php esc_html_e('Load current default template', 'crouton')?>" class="button-secondary" />
+                                <input type="button" id="clear_member_details_template" value="<?php esc_html_e('Clear', 'crouton') ?>" class="button-secondary" />
+                            </li>
+                        </ul>
+                        <script type="text/javascript">
+                            jQuery("#reset_member_details_template").click(function() {
+                                resetCodemirrorToDefault("member_details_template");
+                            });
+                            jQuery("#clear_member_details_template").click(function() {
+                                clearCodemirror("member_details_template");
+                            });
+                        </script>
+                    </div>
                     <input type="submit" value="SAVE CHANGES" name="bmlttabssave" class="button-primary" />
                 </form>
                 <br/><br/>

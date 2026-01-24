@@ -17,6 +17,7 @@ let jsFilesCrouton = [
 	'moment.js',
 	'moment-timezone.js',
 	'crouton-localization.js',
+	'crouton-handlebars-extensions.js',
 	'templates.js',
 	'crouton-default-templates.js',
 	'punycode.1.4.1.js',
