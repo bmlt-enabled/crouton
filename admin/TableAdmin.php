@@ -143,7 +143,6 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
                 $options['distance_units'] = isset($_POST['distance_units']) ? sanitize_text_field(wp_unslash($_POST['distance_units'])) : 'miles';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
-                $options['strict_datafields'] = isset($_POST['strict_datafields']);
                 $options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
                 $options['native_lang'] = trim(sanitize_text_field(wp_unslash($_POST['native_lang'])));
                 $options['meeting_details_href'] = trim(sanitize_text_field(wp_unslash($_POST['meeting_details_href'])));
@@ -192,9 +191,6 @@ if (!class_exists("Crouton\TableAdmin")) {
             }
             if (!isset($options['virtual_meeting_details_href'])) {
                 $options['virtual_meeting_details_href'] = '';
-            }
-            if (!isset($options['strict_datafields'])) {
-                $options['strict_datafields'] = true;
             }
             if (!isset($options['extra_meetings_enabled']) || $options['extra_meetings_enabled'] == "0" || strlen(trim($options['extra_meetings_enabled'])) == 0) {
                 $options['extra_meetings_enabled'] = 0;
@@ -377,10 +373,6 @@ if (!class_exists("Crouton\TableAdmin")) {
                                     <option value="6" <?php echo ($options["int_start_day_id"] == 6) ? 'selected' : ''; ?>><?php esc_html_e('Friday', 'crouton') ?></option>
                                     <option value="7" <?php echo ($options["int_start_day_id"] == 7) ? 'selected' : ''; ?>><?php esc_html_e('Saturday', 'crouton') ?></option>
                                 </select>
-                            </li>
-                            <li>
-                                <input type="checkbox" id="strict_datafields" name="strict_datafields" <?php echo $options['strict_datafields'] ? "checked" : '' ?>/>
-                                <label for="strict_datafields"><?php esc_html_e('Retrieve only those fields that are directly accessed in the templates', 'crouton') ?></label>
                             </li>
                         </ul>
                     </div>
