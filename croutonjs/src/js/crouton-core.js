@@ -55,7 +55,6 @@ function Crouton(config) {
 		service_body: [],             // Array of service bodies to return data for.
 		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
 		venue_types: [],			  // Return only meetings with this venue type (1, 2 or 3)
-		strict_datafields: true,	  // Only get the datafields that are mentioned in the templates
 		meeting_details_href: '',	  // Link to the meeting details page
 		virtual_meeting_details_href: '', // Link to the virtual meeting details page
 		bmlt2ics: '',				  // URL of feed to generate ICS files from meetings

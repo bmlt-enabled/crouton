@@ -49,7 +49,6 @@ if (!class_exists("Crouton\TableOptions")) {
             "custom_query" => null,
             "show_map" => 'embed',
             "language" => 'en-US',
-            'strict_datafields' => false,
             'meeting_details_href' => '',
             'virtual_meeting_details_href' => '',
             "auto_tz_adjust" => '0',

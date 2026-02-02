@@ -354,8 +354,7 @@ if (!class_exists("Crouton\TablePublic")) {
                 return;
             }
             $meetingId = intval($_GET['meeting-id']);
-            $attr = ['custom_query' => '&meeting_ids[]='.$meetingId,
-                     'strict_datafields' => false];
+            $attr = ['custom_query' => '&meeting_ids[]='.$meetingId];
             [$config, $mapConfig] = $this->getCroutonJsConfig($attr, 0);
             $croutonMap =  $this->getMapInitialization($mapConfig);
             $ret = "var crouton;"
