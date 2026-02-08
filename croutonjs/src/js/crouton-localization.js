@@ -294,6 +294,7 @@ function CroutonLocalization(language) {
 			"meeting_count": "Σύνολο ομάδων",
 			"google_directions": "Οδηγίες Google",
 			"apple_directions": "Οδηγίες Apple",
+			"venue_types": "Τύπος ομάδων",
 			"venue_type_choices": {
 				IN_PERSON: "Φυσικές",
 				VIRTUAL: "Διαδικτυακές"
