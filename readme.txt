@@ -38,6 +38,8 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 4.1.0 =
+* Download current translations as CSV
+* Upload translation customizations (or whole new language)
 * Strict Datafields Removed
 * Refactored Templates for more reusability
 * Refactored CroutonCore for maintainability

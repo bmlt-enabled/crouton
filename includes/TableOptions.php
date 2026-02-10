@@ -76,6 +76,7 @@ if (!class_exists("Crouton\TableOptions")) {
             'group_details_contents_template' => '',
             'groups' => false,
             'details_table' => false,
+            'custom_translations' => "",
         );
         public function getOptions(): array
         {
