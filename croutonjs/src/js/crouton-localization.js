@@ -1398,3 +1398,34 @@ CroutonLocalization.prototype.getVenueType = function(type) {
 CroutonLocalization.prototype.getServiceBodyType = function(type) {
 	return this.words[this.language]['service_body_types'][type];
 }
+
+CroutonLocalization.prototype.getAllLanguages = function() {
+	return Object.keys(this.words);
+}
+CroutonLocalization.prototype.getTranslations = function(targetLanguage) {
+	return Object.entries(this.words['en-US']).map((entries) => {
+		return {
+			key: entries[0],
+			english: entries[1],
+			translation: this.words[targetLanguage][entries[0]] ?? ''
+		}
+	});
+}
+CroutonLocalization.prototype.filterCustomTranslations = function(language, translations) {
+	return Object.fromEntries(Object.entries(translations).filter((entries) => {
+		let translation = this.words[language][entries[0]];
+		if (Array.isArray(translation)
+			|| typeof translation === 'object') {
+			translation = JSON.stringify(translation);;
+		}
+		return translation !== translations[entries[0]];
+	}));
+}
+CroutonLocalization.prototype.customizeTranslations = function(translations) {
+	Object.entries(translations).forEach((language_entry) => {
+		const language = language_entry[0];
+		Object.entries(language_entry[1]).forEach((entries) => {
+			this.words[language][entries[0]] = entries[1];
+		});
+	});
+}

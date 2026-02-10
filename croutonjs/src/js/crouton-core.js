@@ -997,6 +997,13 @@ Crouton.prototype.setConfig = function(config) {
 	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
 	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
 	self.localization = new CroutonLocalization(self.config['language']);
+	if (JSON.parse(config.custom_translations)) {
+		try {
+			self.localization.customizeTranslations(JSON.parse(config.custom_translations));
+		} catch (e) {
+			console.log("Error parsing custom translations: " + e.message);
+		}
+	}
 };
 
 Crouton.prototype.reset = function() {
