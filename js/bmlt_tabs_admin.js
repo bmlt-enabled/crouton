@@ -160,8 +160,6 @@ jQuery(document).ready(function($) {
 		const languages = new CroutonLocalization('en-US');
 		try {
 			if ($('#custom_translations').val()) {
-				console.log("Existing custom translations found, merging with defaults");
-				console.log($('#custom_translations').val())
 				languages.customizeTranslations(JSON.parse($('#custom_translations').val() ?? '{}'));
 			}
 		} catch (e) {
@@ -170,11 +168,17 @@ jQuery(document).ready(function($) {
 		let ret = 'key;en-US;'+language+'\n';
 		const translations = languages.getTranslations(language);
 		translations.forEach((translation) => {
-			if (Array.isArray(translation.translation)
-				|| typeof translation.translation === 'object') {
-				translation.translation = JSON.stringify(translation.translation);
+			if (Array.isArray(translation.translation)) {
+				for (let i=0; i<translation.translation.length; i++) {
+					ret += translation.key+'['+i+'];'+translation.english[i]+';'+translation.translation[i]+'\n';
+				}
+			} else if (typeof translation.translation === 'object') {
+				for (const subkey in translation.translation) {
+					ret += translation.key+'['+subkey+'];'+translation.english[subkey]+';'+translation.translation[subkey]+'\n';
+				}
+			} else {
+				ret += translation.key+';'+translation.english+';'+translation.translation+'\n';
 			}
-			ret += translation.key+';'+translation.english+';'+translation.translation+'\n';
 		});
     	const blob = new Blob([ret], { type: 'text/csv' });
     	const url = URL.createObjectURL(blob);
@@ -189,6 +193,8 @@ jQuery(document).ready(function($) {
 	upload_translation_csv = function(event) {
 		const file = event.target.files[0];
 		if (!file) return;
+		event.target.files[0] = null;
+		$('#translation_file_input').val('');
 		const reader = new FileReader();
 		reader.onload = function(e) {
 			const contents = e.target.result;
@@ -202,7 +208,20 @@ jQuery(document).ready(function($) {
         	const data = rows.reduce((carry, row) => {
 				const columns = row.split(';');
 				if (columns.length < 3) return carry;
-				carry[columns[0]] = columns[2].trim();
+				var matches = columns[0].match(/(.+)\[(.*?)\]/);
+				if (matches && matches.length == 3) {
+    				const key = matches[1];
+    				const subkey = matches[2];
+					if (Number.isInteger(parseInt(subkey))) {
+						if (carry[key] === undefined) carry[key] = [];
+						carry[key][parseInt(subkey)] = columns[2].trim();
+					} else {
+						if (carry[key] === undefined) carry[key] = {};
+						carry[key][subkey] = columns[2].trim();
+					}
+				} else {
+					carry[columns[0]] = columns[2].trim();
+				}
 				return carry;
 			}, {});
 			const custom_translations = new CroutonLocalization('en-US').filterCustomTranslations(lang, data);

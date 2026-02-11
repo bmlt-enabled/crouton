@@ -65,7 +65,7 @@ var croutonDefaultTemplates = {
 		<div class="marker_div_location_info">{{{this.formatted_location_info}}}</div>
 		<div class="marker_div_location_maplink">
 		{{#if this.meeting_details_url}}
-			<a href="{{this.meeting_details_url}}" target="_blank">More info</a>
+			<a href="{{this.meeting_details_url}}" target="_blank">{{getWord "more info"}}</a>
 		{{/if}}
 		</div>
 		<div class="marker_div_formats">

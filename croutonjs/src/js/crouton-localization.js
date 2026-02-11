@@ -345,10 +345,21 @@ function CroutonLocalization(language) {
 			"this meeting is in": "Αυτή η ομάδα ανήκει στην",
 			"location": "Τοποθεσία",
 			"remember my choice": "Θυμήσου την επιλογή μου",
-			"facility is temporarily closed": "FACILITY IS TEMPORARILY CLOSED",
+			"adjust search": "Προσαρμογή αναζήτησης",
+			"this number represents": "Αυτός ο αριθμός αντιπροσωπ",
+			"radius of search in $$": "Ακτίνα αναζήτησης σε $$",
+			"miles": "miles",
+			"km": "km",
+			"approx. number of meetings in result": "Περίπου αριθμός ομάδων στο αποτέλεσμα",
+			"back": "Πίσω",
+			"meeting info": "Πληροφορίες ομάδας",
+			"more info": "Περισσότερα",
+			"address": "Διεύθυνση",
+			"comments": "Σχόλια",
+			"facility is temporarily closed": "Η εγκατάσταση είναι προσωρινά κλειστή",
 			"meets virtually": "Διαδικτυακή ομάδα",
-			"meets in person": "MEETS IN PERSON",
-			"meets virtually and in person": "MEETS VIRTUALLY AND IN PERSON",
+			"meets in person": "Φυσική ομάδα",
+			"meets virtually and in person": "Διαδικτυακή και φυσική ομάδα",
 		},
 		"en-AU": {
 			"days_of_the_week": ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -714,6 +725,7 @@ function CroutonLocalization(language) {
 			"meeting info": "Meeting Info",
 			"address": "Address",
 			"comments": "Comments",
+			"more info": "More Info",
 		},
 		"es-US": {
 			"days_of_the_week": ["", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -1449,7 +1461,7 @@ CroutonLocalization.prototype.filterCustomTranslations = function(language, tran
 		if (Array.isArray(translation)
 			|| typeof translation === 'object') {
 			translation = JSON.stringify(translation);
-			entries[1] = JSON.parse(new_translation);
+			new_translation = JSON.stringify(new_translation);
 		}
 		if (translation !== new_translation) carry.push(entries);
 		return carry;
