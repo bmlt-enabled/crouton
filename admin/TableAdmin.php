@@ -686,6 +686,13 @@ if (!class_exists("Crouton\TableAdmin")) {
                     </div>
                     <div id="crouton-translations">
                         <div style="padding: 0 15px;" class="postbox">
+                            <p>
+                                This section allows you to adjust the translations used in the frontend display. Please also send corrections to help@bmlt.app.
+                                <br/>
+                                You can download a CSV of the current translations for your configured language, edit them as needed, and upload custom translations.
+                            </p>
+                        </div>
+                        <div style="padding: 0 15px;" class="postbox">
                             <h3><?php esc_html_e('Download a translation CSV', 'crouton') ?></h3>
                             <select style="display:inline;" id="translation_select" name="translation_select" class="theme_select language_select" onchange=enable_download_translation_button(this.value)>
                                 <option value=""><?php esc_html_e('Select language', 'crouton') ?></option>

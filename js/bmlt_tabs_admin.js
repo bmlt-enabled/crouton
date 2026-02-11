@@ -158,6 +158,11 @@ jQuery(document).ready(function($) {
 		language = $('#translation_select').val();
 		if (!language) return;
 		const languages = new CroutonLocalization('en-US');
+		try {
+			languages.customizeTranslations(JSON.parse($('#custom_translations').val() ?? '{}'));
+		} catch (e) {
+			console.error('Error parsing existing translations:', e);
+		}
 		let ret = 'key;en-US;'+language+'\n';
 		const translations = languages.getTranslations(language);
 		translations.forEach((translation) => {

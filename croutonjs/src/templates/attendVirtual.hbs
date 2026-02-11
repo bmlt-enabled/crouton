@@ -1,5 +1,5 @@
         {{#isVirtualOrHybrid this}}
-            <h4>Join this meeting online:</h4>
+            <h4>{{getWord "Join this meeting online"}}</h4>
             {{#if virtual_meeting_link}}
                 <div>{{webLinkify this.virtual_meeting_link}}</div>
                 {{#if show_qrcode}}

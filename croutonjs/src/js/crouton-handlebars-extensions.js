@@ -125,7 +125,7 @@ function CroutonHandlebarsExtensions() {
 			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
 				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
 			} else {
-				return "FACILITY IS TEMPORARILY CLOSED";
+				return crouton.localization.getWord("FACILITY IS TEMPORARILY CLOSED");
 			}
 		});
 
@@ -133,7 +133,7 @@ function CroutonHandlebarsExtensions() {
 			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data)) !== undefined) {
 				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data))['description'];
 			} else {
-				return "MEETS VIRTUALLY";
+				return crouton.localization.getWord("MEETS VIRTUALLY");
 			}
 		});
 
@@ -141,7 +141,7 @@ function CroutonHandlebarsExtensions() {
 			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data)) !== undefined) {
 				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data))['description'];
 			} else {
-				return "MEETS VIRTUALLY AND IN PERSON";
+				return crouton.localization.getWord("MEETS VIRTUALLY AND IN PERSON");
 			}
 		});
 
@@ -256,7 +256,7 @@ function CroutonHandlebarsExtensions() {
 </div>`);
 		crouton_Handlebars.registerPartial('formatDescriptions', `
 			{{#if formats_expanded}}
-            	<h4>Meeting Formats</h4>
+            	<h4>{{getWord "Meeting Info"}}</h4>
             	<ul>
             		{{#each formats_expanded}}
                 		<li>{{description}}</li>

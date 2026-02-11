@@ -41,7 +41,7 @@ var croutonDefaultTemplates = {
 	].join('\n'),
 	meetingdetails_contents_template: `
 		{{#isInPersonOrHybrid this}}
-       		<h4>Location:</h4>
+       		<h4>{{getWord "Location"}}</h4>
         	{{#isTemporarilyClosed this}}
             	<div class="temporarilyClosed">{{temporarilyClosed this}}</div>
         	{{/isTemporarilyClosed}}
@@ -53,17 +53,9 @@ var croutonDefaultTemplates = {
         {{/isInPersonOrHybrid}}
 		{{> attendVirtual }}
         <br/>
-        {{#if formats_expanded}}
-            <h4>Meeting Formats</h4>
-            <ul>
-            {{#each formats_expanded}}
-                <li>{{description}}</li>
-            {{/each}}
-            </ul>
-            <br/>
-        {{/if}}
-        <h4>Contact:</h4>
-        This meeting is in <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a><br/>
+        {{> formatDescriptions }}
+        <h4>{{getWord "Contact"}}</h4>
+        {{getWord "This meeting is in"}} <a href="{{serviceBodyUrl}}">{{serviceBodyName}}</a><br/>
 		{{> offerIcsButton}}`,
 	marker_contents_template:
 	`<h4>{{meeting_name}}</h4>
@@ -118,7 +110,7 @@ var croutonDefaultTemplates = {
 	    <div class="card-text">
         	{{#isInPersonOrHybrid this}}
             	<div class="card-title header-elements">
-                	<h5 class="m-0 me-2">{{getWord 'Address'}}</h5>
+                	<h4 class="m-0 me-2">{{getWord 'Address'}}</h4>
     	        </div>
          	   	<div class="location-text">{{{this.location_text}}}</div>
             	<div class="meeting-address">{{this.formatted_address}}</div>
@@ -127,14 +119,9 @@ var croutonDefaultTemplates = {
         	{{/isInPersonOrHybrid}}
 			{{> attendVirtual }}
     	</div>
+        {{> formatDescriptions }}
         <div class="card-title header-elements">
-            <h5 class="m-0 me-2">{{getWord 'Meeting Info'}}</h5>
-        </div>
-		<div class="card-text">
-            {{> formatDescriptions }}
-        </div>
-        <div class="card-title header-elements">
-            <h5 class="m-0 me-2">{{getWord 'Comments'}}</h5>
+            <h4 class="m-0 me-2">{{getWord 'Comments'}}</h4>
         </div>
         <div class="card-text">
 			<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
