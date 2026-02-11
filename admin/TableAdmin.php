@@ -203,7 +203,7 @@ if (!class_exists("Crouton\TableAdmin")) {
             } else {
                 $options['extra_meetings_enabled'] = 1;
             }
-?>
+            ?>
             <div class="wrap">
                 <div id="tallyBannerContainer">
                     <img alt="crouton-banner" id="tallyBannerImage" src="<?php echo esc_url(plugin_dir_url(__DIR__) . 'css/images/banner.png'); ?>" />
@@ -266,7 +266,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                                     <label for="service_bodies"><?php esc_html_e('Default Service Bodies: ', 'crouton') ?></label>
                                     <select style="display:inline;" id="service_bodies" name="service_bodies[]" multiple="multiple" class="service_body_select" data-placeholder="<?php
                                                                                                                                                                                     esc_html_e('Select Service Bodies', 'crouton');
-                                                                                                                                                                                    ?>">
+                                    ?>">
                                     </select>
 
                                     <div style="display:inline; margin-left:15px;" id="txtSelectedValues1"></div>
@@ -319,7 +319,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                                                         echo "";
                                                     }
                                                     ?> value="<?php echo esc_html($theme) ?>"><?php echo $theme == "jack" ? "jack (default)" : esc_html($theme) ?></option>
-                                        <?php
+                                            <?php
                                         } ?>
                                     </select>
                                 </li>
@@ -399,10 +399,10 @@ if (!class_exists("Crouton\TableAdmin")) {
                             <div class="inside">
 
                                 <select class="crouton-admin-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
-                                                                                                                                                                                            foreach ($this->hasFilters as $hasFilter) { ?>
+                                foreach ($this->hasFilters as $hasFilter) { ?>
                                         <option <?php echo empty($options[$hasFilter]) ? "" : "selected='selected' " ?> value="<?php echo esc_html($hasFilter); ?>"><?php echo esc_html($hasFilter); ?></option>
                                     <?php
-                                                                                                                                                                                            } ?>
+                                } ?>
                                 </select>
                             </div>
                         </div>
@@ -713,7 +713,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                 <br /><br />
                 <?php include '_instructions.php'; ?>
             </div>
-<?php
+            <?php
         }
         // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
         private function sanitize_handlebars($field)
