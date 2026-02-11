@@ -5,7 +5,7 @@ Plugin URI: https://wordpress.org/plugins/crouton/
 Description: A tabbed based display for showing meeting information.
 Author: bmlt-enabled
 Author URI: https://bmlt.app
-Version: 4.0.6
+Version: 4.0.7
 Text Domain: crouton
 Domain Path: /languages
 License:           GPL-2.0+
