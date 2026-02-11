@@ -412,6 +412,7 @@ function Crouton(config) {
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
 		window.crouton = self;
+		self.setUpPartials();
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
 	self.retrieveGeolocation = function() {
@@ -700,8 +701,8 @@ function Crouton(config) {
 				meetingData[m]['location_info'] != null
 					? meetingData[m]['location_info'].replace('/(http|https):\/\/([A-Za-z0-9\._\-\/\?=&;%,]+)/i', '<a style="text-decoration: underline;" href="$1://$2" target="_blank">$1://$2</a>')
 					: "";
-			meetingData[m]['map_word'] = self.localization.getWord('map').toUpperCase();
-			meetingData[m]['share_word'] = self.localization.getWord('share').toUpperCase();
+			meetingData[m]['map_word'] = self.localization.getWord('map');
+			meetingData[m]['share_word'] = self.localization.getWord('share');
 			meetingData[m]['report_update_word'] = self.localization.getWord('report update');
 			meetingData[m]['show_qrcode'] = self.config['show_qrcode'];
 			for (var k in meetingData[m]) {
@@ -997,7 +998,7 @@ Crouton.prototype.setConfig = function(config) {
 	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
 	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
 	self.localization = new CroutonLocalization(self.config['language']);
-	if (JSON.parse(config.custom_translations)) {
+	if (config.custom_translations && config.custom_translations.trim() !== "") {
 		try {
 			self.localization.customizeTranslations(JSON.parse(config.custom_translations));
 		} catch (e) {
