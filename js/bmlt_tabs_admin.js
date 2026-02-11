@@ -159,7 +159,11 @@ jQuery(document).ready(function($) {
 		if (!language) return;
 		const languages = new CroutonLocalization('en-US');
 		try {
-			languages.customizeTranslations(JSON.parse($('#custom_translations').val() ?? '{}'));
+			if ($('#custom_translations').val()) {
+				console.log("Existing custom translations found, merging with defaults");
+				console.log($('#custom_translations').val())
+				languages.customizeTranslations(JSON.parse($('#custom_translations').val() ?? '{}'));
+			}
 		} catch (e) {
 			console.error('Error parsing existing translations:', e);
 		}
@@ -204,7 +208,9 @@ jQuery(document).ready(function($) {
 			const custom_translations = new CroutonLocalization('en-US').filterCustomTranslations(lang, data);
 			let existing_translations = {};
 			try {
-				existing_translations = JSON.parse($('#custom_translations').val() ?? '{}');
+				if ($('#custom_translations').val()) {
+					existing_translations = JSON.parse($('#custom_translations').val() ?? '{}');
+				}
 			} catch (e) {
 				console.error('Error parsing existing translations:', e);
 			}
@@ -213,6 +219,13 @@ jQuery(document).ready(function($) {
 			alert('Translations uploaded successfully! Don\'t forget to click "Save Changes" to save your translations.');
 		}
 		reader.readAsText(file);
+	}
+	clear_custom_translations = function(event) {
+		event.preventDefault();
+		if (confirm('Are you sure you want to clear all custom translations?')) {
+			$('#custom_translations').val('');
+			alert('Custom translations cleared.');
+		}
 	}
 	$(window).on("load", function () {
 		if($('#use_aggregator').is(':checked')) {

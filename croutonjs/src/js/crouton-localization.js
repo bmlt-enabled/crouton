@@ -1443,14 +1443,17 @@ CroutonLocalization.prototype.getTranslations = function(targetLanguage) {
 	});
 }
 CroutonLocalization.prototype.filterCustomTranslations = function(language, translations) {
-	return Object.fromEntries(Object.entries(translations).filter((entries) => {
+	return Object.fromEntries(Object.entries(translations).reduce((carry, entries) => {
 		let translation = this.words[language][entries[0]];
+		let new_translation = entries[1];
 		if (Array.isArray(translation)
 			|| typeof translation === 'object') {
-			translation = JSON.stringify(translation);;
+			translation = JSON.stringify(translation);
+			entries[1] = JSON.parse(new_translation);
 		}
-		return translation !== translations[entries[0]];
-	}));
+		if (translation !== new_translation) carry.push(entries);
+		return carry;
+	}, []));
 }
 CroutonLocalization.prototype.customizeTranslations = function(translations) {
 	Object.entries(translations).forEach((language_entry) => {

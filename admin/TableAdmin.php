@@ -692,16 +692,19 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 You can download a CSV of the current translations for your configured language, edit them as needed, and upload custom translations.
                             </p>
                         </div>
-                        <div style="padding: 0 15px;" class="postbox">
+                        <div style="padding: 0 15px 10px;" class="postbox">
                             <h3><?php esc_html_e('Download a translation CSV', 'crouton') ?></h3>
                             <select style="display:inline;" id="translation_select" name="translation_select" class="theme_select language_select" onchange=enable_download_translation_button(this.value)>
                                 <option value=""><?php esc_html_e('Select language', 'crouton') ?></option>
                             </select>
                             <button style="display:inline;" id="download_translation_button" class="button-secondary" onclick="download_translation_csv(event)" disabled=true><?php esc_html_e('Download', 'crouton') ?></button>
+                            <br/>
                         </div>
-                        <div style="padding: 0 15px;" class="postbox">
+                        <div style="padding: 0 15px 10px;" class="postbox">
                             <h3><?php esc_html_e('Upload a translation CSV', 'crouton') ?></h3>
                             <input type="file" id="translation_file_input" onchange="upload_translation_csv(event)"/>
+                            <br/><button style="margin-top: 20px;" id="clear_translations_button" class="button-secondary" onclick="clear_custom_translations(event)"><?php esc_html_e('Clear Custom Translations', 'crouton') ?></button>
+                            <br/>
                         </div>
                         <input type="hidden" id="custom_translations" name="custom_translations" value='<?php echo isset($options['custom_translations']) ? esc_js($options['custom_translations']) : ''; ?>' />
                     </div>
