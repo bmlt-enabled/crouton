@@ -690,6 +690,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 This section allows you to adjust the translations used in the frontend display. Please also send corrections to help@bmlt.app.
                                 <br/>
                                 You can download a CSV of the current translations for your configured language, edit them as needed, and upload custom translations.
+                                The uploaded file should be in the same format as the downloaded file, using a semicolon (;) as a separator and using UTF-8 encoding. The first row should be a header row
+                                with three columns: "key", "en-US" and the ISO code for the target language.
                             </p>
                         </div>
                         <div style="padding: 0 15px 10px;" class="postbox">

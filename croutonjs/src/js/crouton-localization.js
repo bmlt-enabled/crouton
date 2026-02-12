@@ -1455,6 +1455,7 @@ CroutonLocalization.prototype.getTranslations = function(targetLanguage) {
 	});
 }
 CroutonLocalization.prototype.filterCustomTranslations = function(language, translations) {
+	if (!this.words[language]) return translations;
 	return Object.fromEntries(Object.entries(translations).reduce((carry, entries) => {
 		let translation = this.words[language][entries[0]];
 		let new_translation = entries[1];
@@ -1470,6 +1471,7 @@ CroutonLocalization.prototype.filterCustomTranslations = function(language, tran
 CroutonLocalization.prototype.customizeTranslations = function(translations) {
 	Object.entries(translations).forEach((language_entry) => {
 		const language = language_entry[0];
+		if (!this.words[language]) this.words[language] = {};
 		Object.entries(language_entry[1]).forEach((entries) => {
 			this.words[language][entries[0]] = entries[1];
 		});
