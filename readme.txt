@@ -45,9 +45,6 @@ https://demo.bmlt.app/crouton
 * Refactored CroutonCore for maintainability
 * Added Detailed-Stacked Table View
 
-= 4.0.6 =
-* Corrected Greek translation
-
 = 4.0.5 =
 * Corrected Greek translation
 
