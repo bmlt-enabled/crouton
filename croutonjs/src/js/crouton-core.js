@@ -474,7 +474,7 @@ function Crouton(config) {
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			var filteredMeetings = self.meetingData;
 			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
-			const groups = self.config.groups ? filteredMeetings : self.convertToGroups(filteredMeetings);
+			const groups = self.config.groups ? filteredMeetings : self.convertToGroups([...filteredMeetings]);
 			jQuery(this).text(arrayUnique(groups).length);
 		});
 		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
