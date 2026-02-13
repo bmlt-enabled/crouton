@@ -653,7 +653,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 });
                                 jQuery("#clear_group_details_contents_template").click(function() {
                                     clearCodemirror("group_title_template");
-                                    clearCodemirror("group_details_template");
+                                    clearCodemirror("group_details_contents_template");
                                 });
                             </script>
                         </div>
