@@ -1,0 +1,19 @@
+{{#each this}}
+	{{enrich this}}
+	<tr class="bmlt-data-row"
+		id="meeting-data-row-{{this.id_bigint}}"
+		data-cities="{{formatDataPointer this.location_municipality}}"
+		data-groups="{{formatDataPointer this.meeting_name}}"
+		data-locations="{{formatDataPointer this.location_text}}"
+		data-zips="{{formatDataPointer this.location_postal_code_1}}"
+		data-formats="{{formatDataPointerFormats this.formats_expanded}}"
+		data-areas="{{formatDataPointer this.service_body_bigint}}"
+		data-regions="{{formatDataPointer this.parentServiceBodyName}}"
+		data-counties="{{formatDataPointer this.location_sub_province}}"
+		data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
+		data-states="{{formatDataPointer this.location_province}}"
+		data-venues="{{formatDataFromArray this.venue_type_name}}"
+		data-weekdays="{{formatDataPointer this.formatted_day}}">
+		{{> tableDataRow this}}
+	</tr>
+{{/each}}

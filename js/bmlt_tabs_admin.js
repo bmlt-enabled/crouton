@@ -70,7 +70,8 @@ jQuery(document).ready(function($) {
 				} else {
 					fill_extra_meetings([]);
 				}
-				ask_bmlt('switcher?GetFieldKeys', fill_field_keys, handle_error);
+				ask_bmlt('switcher=GetFieldKeys', fill_field_keys, handle_error);
+				fill_language_options();
             },
             (error) => {
                 $('#connected_message').hide();
@@ -138,6 +139,112 @@ jQuery(document).ready(function($) {
 			html += '<tr><td>'+field.key+'</td><td>'+field.description+'</td></tr>';
 		});
 		$('#fields_table').html(html);
+	}
+	fill_language_options = function() {
+		const languages = new CroutonLocalization('en-US');
+		$('.language_select').html(
+			'<option value="">Select Language</option>'+
+			languages.getAllLanguages().map((language) => '<option value="'+language+'">'+language+'</option>').join(''));
+	}
+	enable_download_translation_button = function(language) {
+		if (language) {
+			$('#download_translation_button').prop('disabled', false);
+		} else {
+			$('#download_translation_button').prop('disabled', true);
+		}
+	}
+	download_translation_csv = function(event) {
+		event.preventDefault();
+		language = $('#translation_select').val();
+		if (!language) return;
+		const languages = new CroutonLocalization('en-US');
+		try {
+			if ($('#custom_translations').val()) {
+				languages.customizeTranslations(JSON.parse($('#custom_translations').val() ?? '{}'));
+			}
+		} catch (e) {
+			console.error('Error parsing existing translations:', e);
+		}
+		let ret = 'key;en-US;'+language+'\n';
+		const translations = languages.getTranslations(language);
+		translations.forEach((translation) => {
+			if (Array.isArray(translation.translation)) {
+				for (let i=0; i<translation.translation.length; i++) {
+					ret += translation.key+'['+i+'];'+translation.english[i]+';'+translation.translation[i]+'\n';
+				}
+			} else if (typeof translation.translation === 'object') {
+				for (const subkey in translation.translation) {
+					ret += translation.key+'['+subkey+'];'+translation.english[subkey]+';'+translation.translation[subkey]+'\n';
+				}
+			} else {
+				ret += translation.key+';'+translation.english+';'+translation.translation+'\n';
+			}
+		});
+    	const blob = new Blob([ret], { type: 'text/csv' });
+    	const url = URL.createObjectURL(blob);
+    	const a = document.createElement('a');
+		a.disabled = false;
+    	a.href = url;
+    	a.download = 'crouton-translations-'+language+'.csv';
+		a.click();
+		URL.revokeObjectURL(url);
+		a.remove();
+	}
+	upload_translation_csv = function(event) {
+		const file = event.target.files[0];
+		if (!file) return;
+		event.target.files[0] = null;
+		$('#translation_file_input').val('');
+		const reader = new FileReader();
+		reader.onload = function(e) {
+			const contents = e.target.result;
+			const rows = contents.split('\n');
+			if (rows.length < 2 || !rows[0].startsWith('key;en-US;')) {
+				alert('Invalid CSV file');
+				return;
+			}
+			const lang = rows[0].replace('key;en-US;', '').trim();
+			rows.shift(); // remove header
+        	const data = rows.reduce((carry, row) => {
+				const columns = row.split(';');
+				if (columns.length < 3) return carry;
+				var matches = columns[0].match(/(.+)\[(.*?)\]/);
+				if (matches && matches.length == 3) {
+    				const key = matches[1];
+    				const subkey = matches[2];
+					if (Number.isInteger(parseInt(subkey))) {
+						if (carry[key] === undefined) carry[key] = [];
+						carry[key][parseInt(subkey)] = columns[2].trim();
+					} else {
+						if (carry[key] === undefined) carry[key] = {};
+						carry[key][subkey] = columns[2].trim();
+					}
+				} else {
+					carry[columns[0]] = columns[2].trim();
+				}
+				return carry;
+			}, {});
+			const custom_translations = new CroutonLocalization('en-US').filterCustomTranslations(lang, data);
+			let existing_translations = {};
+			try {
+				if ($('#custom_translations').val()) {
+					existing_translations = JSON.parse($('#custom_translations').val() ?? '{}');
+				}
+			} catch (e) {
+				console.error('Error parsing existing translations:', e);
+			}
+			existing_translations[lang] = custom_translations;
+			$('#custom_translations').val(JSON.stringify(existing_translations));
+			alert('Translations uploaded successfully! Don\'t forget to click "Save Changes" to save your translations.');
+		}
+		reader.readAsText(file);
+	}
+	clear_custom_translations = function(event) {
+		event.preventDefault();
+		if (confirm('Are you sure you want to clear all custom translations?')) {
+			$('#custom_translations').val('');
+			alert('Custom translations cleared.');
+		}
 	}
 	$(window).on("load", function () {
 		if($('#use_aggregator').is(':checked')) {

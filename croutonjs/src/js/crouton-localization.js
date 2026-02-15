@@ -269,6 +269,7 @@ function CroutonLocalization(language) {
 			"sorted by distance": "Sortiert nach Entfernung",
 			"address_lookup_fail": "Die Adresse konnte nicht gefunden werden. Bitte versuchen Sie es erneut.",
 			"contact": "Kontakt",
+			"distance": "Entfernung",
 		},
 		'el-GR': {
 			"days_of_the_week": ["", "Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
@@ -276,11 +277,11 @@ function CroutonLocalization(language) {
 			"city": "Πόλη",
 			"cities": "Πόλεις",
 			"groups": "Ομάδες",
-			"areas": "Περιοχές",
-			"regions": "Διαμερίσματα",
+			"areas": "ΕΥΠ",
+			"regions": "ΔΕΥΔ",
 			"locations": "Τοποθεσίες",
 			"counties": "Νομοί",
-			"states": "Πολιτείες",
+			"states": "Διαμερίσματα",
 			"postal_codes": "Ταχυδρομικοί Κώδικες",
 			"formats": "Θέματα ομάδων",
 			"map": "Χάρτης",
@@ -294,17 +295,18 @@ function CroutonLocalization(language) {
 			"meeting_count": "Σύνολο ομάδων",
 			"google_directions": "Οδηγίες Google",
 			"apple_directions": "Οδηγίες Apple",
+			"venue_types": "Τύποι ομάδων",
 			"venue_type_choices": {
 				IN_PERSON: "Φυσικές",
 				VIRTUAL: "Διαδικτυακές"
 			},
 			"service_body_types": {
-				AS:	"Ευπ",
-				RS:	"Ευδ",
+				AS:	"ΕΥΠ",
+				RS:	"ΕΥΔ",
 				ZF:	"ZF",
 				MA: "MA",
 				LS:	"LS",
-				GS:	"Αντιπρόσωπος",
+				GS:	"Αυτόνομη ομάδα",
 			},
 			"share": "Κοινοποίηση",
 			"no_meetings_for_this_day": "Δεν έχει ομάδες αυτή την ημέρα",
@@ -326,7 +328,7 @@ function CroutonLocalization(language) {
 			"filter by visibility": "Φίλτραρε ανα ορατές ομάδες",
 			"open search dialog": "’νοιξε αναζήτηση",
 			"go": "Έναρξη",
-			"get_directions": "Λάβετε Οδηγιες",
+			"get_directions": "Λάβετε οδηγίες",
 			"select_map_app": "Διαλέξτε εφαρμογή χάρτη",
 			"apple_maps": "Χάρτες Apple",
 			"apple_maps_desc": "Χάρτες Apple σε υπολογιστή",
@@ -337,7 +339,27 @@ function CroutonLocalization(language) {
 			"zoomed-out-message": "Μήνυμα Απομακρυνσης Ζοομ",
 			"sorted by distance": "Κατάταξη βάσει απόστασης",
 			"address_lookup_fail": "Αδυναμία εύρεσης διεύθυνσης",
-
+			"contact": "Επικοινωνία",
+			"distance": "Απόσταση",
+			"join this meeting online": "Διαδικτυακή ομάδα",
+			"this meeting is in": "Αυτή η ομάδα ανήκει στην",
+			"location": "Τοποθεσία",
+			"remember my choice": "Θυμήσου την επιλογή μου",
+			"adjust search": "Προσαρμογή αναζήτησης",
+			"this number represents": "Αυτός ο αριθμός αντιπροσωπ",
+			"radius of search in $$": "Ακτίνα αναζήτησης σε $$",
+			"miles": "miles",
+			"km": "km",
+			"approx. number of meetings in result": "Περίπου αριθμός ομάδων στο αποτέλεσμα",
+			"back": "Πίσω",
+			"meeting info": "Πληροφορίες ομάδας",
+			"more info": "Περισσότερα",
+			"address": "Διεύθυνση",
+			"comments": "Σχόλια",
+			"facility is temporarily closed": "Η εγκατάσταση είναι προσωρινά κλειστή",
+			"meets virtually": "Διαδικτυακή ομάδα",
+			"meets in person": "Φυσική ομάδα",
+			"meets virtually and in person": "Διαδικτυακή και φυσική ομάδα",
 		},
 		"en-AU": {
 			"days_of_the_week": ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -683,6 +705,27 @@ function CroutonLocalization(language) {
 			"zoomed-out-message": "We can't search the entire area for meetings. Please zoom in or do a new search.",
 			"sorted by distance": "Sorted by Distance",
 			"address_lookup_fail": "The address could not be found. Please try again.",
+			"contact": "Contact",
+			"distance": "Distance",
+			"join this meeting online": "Join this meeting online",
+			"this meeting is in": "This meeting is in",
+			"location": "Location",
+			"remember my choice": "Remember my choice",
+			"facility is temporarily closed": "FACILITY IS TEMPORARILY CLOSED",
+			"meets virtually": "MEETS VIRTUALLY",
+			"meets in person": "MEETS IN PERSON",
+			"meets virtually and in person": "MEETS VIRTUALLY AND IN PERSON",
+			"adjust search": "Adjust Search",
+			"this number represents": "This number represents",
+			"radius of search in $$": "Radius of search in $$",
+			"miles": "miles",
+			"km": "km",
+			"approx. number of meetings in result": "Approx. number of meetings in result",
+			"back": "Back",
+			"meeting info": "Meeting Info",
+			"address": "Address",
+			"comments": "Comments",
+			"more info": "More Info",
 		},
 		"es-US": {
 			"days_of_the_week": ["", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -1397,4 +1440,40 @@ CroutonLocalization.prototype.getVenueType = function(type) {
 
 CroutonLocalization.prototype.getServiceBodyType = function(type) {
 	return this.words[this.language]['service_body_types'][type];
+}
+
+CroutonLocalization.prototype.getAllLanguages = function() {
+	return Object.keys(this.words);
+}
+CroutonLocalization.prototype.getTranslations = function(targetLanguage) {
+	return Object.entries(this.words['en-US']).map((entries) => {
+		return {
+			key: entries[0],
+			english: entries[1],
+			translation: this.words[targetLanguage][entries[0]] ?? ''
+		}
+	});
+}
+CroutonLocalization.prototype.filterCustomTranslations = function(language, translations) {
+	if (!this.words[language]) return translations;
+	return Object.fromEntries(Object.entries(translations).reduce((carry, entries) => {
+		let translation = this.words[language][entries[0]];
+		let new_translation = entries[1];
+		if (Array.isArray(translation)
+			|| typeof translation === 'object') {
+			translation = JSON.stringify(translation);
+			new_translation = JSON.stringify(new_translation);
+		}
+		if (translation !== new_translation) carry.push(entries);
+		return carry;
+	}, []));
+}
+CroutonLocalization.prototype.customizeTranslations = function(translations) {
+	Object.entries(translations).forEach((language_entry) => {
+		const language = language_entry[0];
+		if (!this.words[language]) this.words[language] = {};
+		Object.entries(language_entry[1]).forEach((entries) => {
+			this.words[language][entries[0]] = entries[1];
+		});
+	});
 }

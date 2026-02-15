@@ -1,0 +1,19 @@
+        {{#isVirtualOrHybrid this}}
+            <h4>{{getWord "Join this meeting online"}}</h4>
+            {{#if virtual_meeting_link}}
+                <div>{{webLinkify this.virtual_meeting_link}}</div>
+                {{#if show_qrcode}}
+                    <div class="qrcode">{{qrCode virtual_meeting_link}}</div>
+                {{/if}}
+            {{/if}}
+            {{#if this.phone_meeting_number}}
+                <div>{{phoneLinkify this.phone_meeting_number}}</div>
+                {{#if this.show_qrcode}}
+                    <div class="qrcode">{{qrCode this.phone_meeting_number}}</div>
+                {{/if}}
+            {{/if}}
+            {{#if this.virtual_meeting_additional_info}}
+                {{this.virtual_meeting_additional_info}}
+            {{/if}}
+            <br/>
+        {{/isVirtualOrHybrid}}

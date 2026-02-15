@@ -49,7 +49,6 @@ if (!class_exists("Crouton\TableOptions")) {
             "custom_query" => null,
             "show_map" => 'embed',
             "language" => 'en-US',
-            'strict_datafields' => false,
             'meeting_details_href' => '',
             'virtual_meeting_details_href' => '',
             "auto_tz_adjust" => '0',
@@ -60,8 +59,6 @@ if (!class_exists("Crouton\TableOptions")) {
             "custom_css" => "",
             "theme" => '',
             "default_filter_dropdown" => '',
-            "meeting_data_template" => null,
-            "metadata_template" => null,
             "filter_tabs" => '20',
             "show_qrcode" => false,
             "native_lang" => '',
@@ -69,11 +66,17 @@ if (!class_exists("Crouton\TableOptions")) {
             "google_api_key" => "",
             "report_update_url" => "",
             "noMap" => false,
+            'meeting_times_template' => '',
             'meeting_data_template' => '',
             'metadata_template' => '',
             'meetingpage_title_template' => '',
-            'meetingpage_contents_template' => '',
+            'meetingdetails_contents_template' => '',
+            'group_data_template' => '',
+            'group_title_template' => '',
+            'group_details_contents_template' => '',
             'groups' => false,
+            'details_table' => false,
+            'custom_translations' => "",
         );
         public function getOptions(): array
         {
@@ -152,9 +155,13 @@ if (!class_exists("Crouton\TableOptions")) {
                 }
             }
             $this->options['crouton_version'] = "4.0";
-            if (isset($this->options['meetingpage_contents_template'])) {
-                $this->options['meetingpage_contents_template']  = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingpage_contents_template']);
+            if ($this->options['crouton_version'] === "4.0") {
+                $this->options['crouton_version'] = "4.1";
+                if (isset($this->options['meetingdetails_contents_template'])) {
+                    $this->options['meetingdetails_contents_template'] = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingdetails_contents_template']);
+                }
             }
+            $this->options['crouton_version'] = "4.1";
             foreach (TableOptions::$shortCodeOptions as $key => $value) {
                 if (!isset($this->options[$key])) {
                     $this->options[$key] = $value;

@@ -5,7 +5,7 @@
                 <table class='bmlt-table table table-hover table-bordered tablesaw tablesaw-stack {{getWord 'css-direction'}}'>
                     <tbody class="weekdays.hbs">
 						{{#greaterThan this.meetings.length 0}}
-							{{> meetings this.meetings }}
+							{{> tableRows this.meetings }}
 						{{/greaterThan}}
 						{{#lessThan this.meetings.length 1}}
 							<tr>
