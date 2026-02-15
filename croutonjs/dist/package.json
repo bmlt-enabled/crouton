@@ -1,0 +1,22 @@
+{
+  "name": "@bmlt-enabled/croutonjs",
+  "version": "$VERSION",
+  "description": "Shows BMLT information is a customizable tabbed web view.",
+  "main": "crouton.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bmlt-enabled/crouton.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bmlt-enabled/crouton/issues"
+  },
+  "homepage": "https://github.com/bmlt-enabled/crouton#readme"
+}
