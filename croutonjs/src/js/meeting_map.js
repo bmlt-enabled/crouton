@@ -377,7 +377,7 @@ function MeetingMap(inConfig) {
 				if (getLatLngRadius(lat_lngs) > maxRadius)
 					lat_lngs = lat_lngs.slice(1,1);
 			}
-			gDelegate.fitBounds(lat_lngs);
+			if (lat_lngs.length > 0) gDelegate.fitBounds(lat_lngs);
 		}
 		searchResponseCallback();
 		hideThrobber();

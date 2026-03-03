@@ -789,10 +789,10 @@ function Crouton(config) {
 					commonFormats = commonFormats.filter(value => memberFormats.includes(value));
 				});
 				group['formats'] = commonFormats.join(',');
-				group['formats_expanded'] = group['formats_expanded'].filter((format) => commonFormats.includes(format['key']));
+				if (group['formats_expanded']) group['formats_expanded'] = group['formats_expanded'].filter((format) => commonFormats.includes(format['key']));
 				group['membersOfGroup'].forEach(function(member) {
 					member['formats'] = member['formats'].split(',').filter((f) => !commonFormats.includes(f)).join(',');
-					member['formats_expanded'] = member['formats_expanded'].filter((format) => !commonFormats.includes(format['key']));
+					if (member['formats_expanded']) member['formats_expanded'] = member['formats_expanded'].filter((format) => !commonFormats.includes(format['key']));
 				});
 			}
 		});
