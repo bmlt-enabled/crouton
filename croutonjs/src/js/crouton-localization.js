@@ -836,7 +836,7 @@ function CroutonLocalization(language) {
 			"google_directions": "مسیرهای Google به جلسه",
 			"apple_directions": "مسیرهای Apple به جلسه",
 			"no_meetings_for_this_day": "هیچ جلسه ای در این روز وجود ندارد",
-			"css-direction: bmlt-rtl": "",
+			"css-direction": "bmlt-rtl",
 			"bootstrap-popover-placement": "left",
 			"adjust search": "تنظیم جستجو",
 			"this number represents": "این عدد نشان دهنده",

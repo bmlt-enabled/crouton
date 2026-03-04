@@ -388,7 +388,10 @@ function MeetingMap(inConfig) {
 					function (position) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
 						filterVisible(false);
-						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, filterVisible);
+						if (config.zoom) gDelegate.setZoom(false, config.zoom);
+						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
+							filterVisible(config.filter_visible == 1);
+						});
 						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
 						crouton.updateDistances();
 					},

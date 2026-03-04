@@ -410,6 +410,9 @@ if (!class_exists("Crouton\TablePublic")) {
             foreach ($params as $key => $value) {
                 $params[$key] = (isset($_GET[$key]) ? $_GET[$key] : $value);
             }
+            if (!isset($atts['filter_visible']) && !isset($_GET['filter_visible'])) {
+                $params['filter_visible'] = empty($params['center_me']) && empty($params['goto']) ? '0' : '1';
+            }
 
             $legacy_force_recurse = false;
             if ($params['service_body_parent'] == null && $params['service_body'] == null) {
