@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.1',            // CroutonJS version for debugging
+		version: '4.1.2',            // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -789,10 +789,10 @@ function Crouton(config) {
 					commonFormats = commonFormats.filter(value => memberFormats.includes(value));
 				});
 				group['formats'] = commonFormats.join(',');
-				group['formats_expanded'] = group['formats_expanded'].filter((format) => commonFormats.includes(format['key']));
+				if (group['formats_expanded']) group['formats_expanded'] = group['formats_expanded'].filter((format) => commonFormats.includes(format['key']));
 				group['membersOfGroup'].forEach(function(member) {
 					member['formats'] = member['formats'].split(',').filter((f) => !commonFormats.includes(f)).join(',');
-					member['formats_expanded'] = member['formats_expanded'].filter((format) => !commonFormats.includes(format['key']));
+					if (member['formats_expanded']) member['formats_expanded'] = member['formats_expanded'].filter((format) => !commonFormats.includes(format['key']));
 				});
 			}
 		});

@@ -377,7 +377,7 @@ function MeetingMap(inConfig) {
 				if (getLatLngRadius(lat_lngs) > maxRadius)
 					lat_lngs = lat_lngs.slice(1,1);
 			}
-			gDelegate.fitBounds(lat_lngs);
+			if (lat_lngs.length > 0) gDelegate.fitBounds(lat_lngs);
 		}
 		searchResponseCallback();
 		hideThrobber();
@@ -388,7 +388,10 @@ function MeetingMap(inConfig) {
 					function (position) {
 						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
 						filterVisible(false);
-						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, filterVisible);
+						if (config.zoom) gDelegate.setZoom(false, config.zoom);
+						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
+							filterVisible(config.filter_visible == 1);
+						});
 						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
 						crouton.updateDistances();
 					},
@@ -401,7 +404,7 @@ function MeetingMap(inConfig) {
 			if ((!config.centerMe && !config.goto) && !(config.map_search && config.filter_visible)) {
 			  gDelegate.afterInit(()=>filterVisible(config.filter_visible));
 			}
-			if (config.goto) gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
+			if (config.goto) gDelegate.callGeocoder(config.goto, config.filter_visible == 1 ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -498,6 +501,15 @@ function MeetingMap(inConfig) {
 		filterVisible(false);
 		const ret = filterMeetingsAndBounds(bounds);
 		filterVisible(true);
+		if (gSearchPoint.lat != center.lat || gSearchPoint.lng != center.lng) {
+			gSearchPoint = center;
+			crouton.updateDistances();
+		}
+		return ret;
+	}
+	function setVisibleThenFilterMeetingsAndBounds(bounds, center=null) {
+		filterVisible(false);
+		const ret = filterMeetingsAndBounds(bounds);
 		if (gSearchPoint.lat != center.lat || gSearchPoint.lng != center.lng) {
 			gSearchPoint = center;
 			crouton.updateDistances();

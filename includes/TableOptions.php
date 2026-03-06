@@ -42,7 +42,6 @@ if (!class_exists("Crouton\TableOptions")) {
             "dropdown_width" => 'auto',
             "has_zip_codes" => '0',
             "header" => '1',
-            "format_key" => '',
             "time_format" => 'h:mm a',
             "exclude_zip_codes" => null,
             "distance_units" => 'miles',

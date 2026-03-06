@@ -344,7 +344,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                             <ul>
                                 <li>
                                     <label for="language"><?php esc_html_e('Default meeting list language:', 'crouton') ?> </label>
-                                    <input id="language" type="text" size="5" name="language" value="<?php echo esc_html($options['language']); ?>" />
+                                    <select style="display:inline;" id="language" name="language" class="theme_select language_select" data-initial="<?php echo esc_html($options['language']); ?>">
+                                    </select>
                                 </li>
                                 <li>
                                     <label for="native_lang"><?php esc_html_e('Which format code represents the default language: ', 'crouton') ?></label>
