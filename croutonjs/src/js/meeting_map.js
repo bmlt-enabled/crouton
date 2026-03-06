@@ -404,7 +404,7 @@ function MeetingMap(inConfig) {
 			if ((!config.centerMe && !config.goto) && !(config.map_search && config.filter_visible)) {
 			  gDelegate.afterInit(()=>filterVisible(config.filter_visible));
 			}
-			if (config.goto) gDelegate.callGeocoder(config.goto, resetVisibleThenFilterMeetingsAndBounds);
+			if (config.goto) gDelegate.callGeocoder(config.goto, config.filter_visible == 1 ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -501,6 +501,15 @@ function MeetingMap(inConfig) {
 		filterVisible(false);
 		const ret = filterMeetingsAndBounds(bounds);
 		filterVisible(true);
+		if (gSearchPoint.lat != center.lat || gSearchPoint.lng != center.lng) {
+			gSearchPoint = center;
+			crouton.updateDistances();
+		}
+		return ret;
+	}
+	function setVisibleThenFilterMeetingsAndBounds(bounds, center=null) {
+		filterVisible(false);
+		const ret = filterMeetingsAndBounds(bounds);
 		if (gSearchPoint.lat != center.lat || gSearchPoint.lng != center.lng) {
 			gSearchPoint = center;
 			crouton.updateDistances();
