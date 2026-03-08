@@ -131,10 +131,13 @@ function MapDelegate(config) {
 		if (!gMainMap) return null;
 		return gMainMap.getZoom();
 	}
+	function isFilterVisible() {
+		return config.filter_visible && config.filter_visible == 1;
+	}
 	function getZoomAdjust(only_out,filterMeetings) {
 		if (!gMainMap) return 12;
 		var ret = gMainMap.getZoom();
-		if (config.map_search && config.filter_visible) return ret;
+		if (config.map_search && isFilterVisible()) return ret;
 		var center = gMainMap.getCenter();
 		var bounds = gMainMap.getBounds();
 		var zoomedOut = false;
