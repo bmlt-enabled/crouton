@@ -44,7 +44,9 @@ function MeetingMap(inConfig) {
 			}
 		});
 	}
-
+	function isFilterVisible() {
+		return config.filter_visible && config.filter_visible == 1;
+	}
 	/************************************************************************************//**
 	 *	\brief Load the map and set it up.													*
 	 ****************************************************************************************/
@@ -71,7 +73,7 @@ function MeetingMap(inConfig) {
 			if (handlebarMapOptions) loc = {latitude: handlebarMapOptions.lat, longitude: handlebarMapOptions.lng};
 			if (gDelegate.createMap(inDiv, loc, hide)) {
 				// crouton_map and filter_visible triggers a query, Otherwise, redraw markers
-				if (config.map_search && config.filter_visible) {
+				if (config.map_search && isFilterVisible()) {
 					gDelegate.addListener('idle', triggerCroutonMapNewQuery, false);
 				} else {
 					gDelegate.addListener('zoomend', function (ev) {
@@ -369,7 +371,7 @@ function MeetingMap(inConfig) {
 			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			const maxRadius = config.maxTomatoWidth/2.0;
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
-			if (config.map_search && config.filter_visible) {
+			if (config.map_search && isFilterVisible()) {
 				lat_lngs.sort((a,b) =>  getDistance({"lat":a[0],"lng":a[1]},gSearchPoint) - getDistance({"lat":b[0],"lng":b[1]},gSearchPoint));
 				while (getLatLngRadius(lat_lngs) > maxRadius && lat_lngs.length > 3) {
 					lat_lngs = lat_lngs.slice(0, lat_lngs.length/2);
@@ -381,7 +383,7 @@ function MeetingMap(inConfig) {
 		}
 		searchResponseCallback();
 		hideThrobber();
-		if (config.filter_visible || config.centerMe || config.goto) crouton.forceShowMap();
+		if (isFilterVisible() || config.centerMe || config.goto) crouton.forceShowMap();
 		if (config.centerMe) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -390,7 +392,7 @@ function MeetingMap(inConfig) {
 						filterVisible(false);
 						if (config.zoom) gDelegate.setZoom(false, config.zoom);
 						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
-							filterVisible(config.filter_visible == 1);
+							filterVisible(isFilterVisible());
 						});
 						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
 						crouton.updateDistances();
@@ -401,10 +403,10 @@ function MeetingMap(inConfig) {
 				showGeocodingDialog();
 			}
 		} else {
-			if ((!config.centerMe && !config.goto) && !(config.map_search && config.filter_visible)) {
-			  gDelegate.afterInit(()=>filterVisible(config.filter_visible));
+			if ((!config.centerMe && !config.goto) && !(config.map_search && isFilterVisible())) {
+			  gDelegate.afterInit(()=>filterVisible(isFilterVisible()));
 			}
-			if (config.goto) gDelegate.callGeocoder(config.goto, config.filter_visible == 1 ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
+			if (config.goto) gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -713,7 +715,7 @@ function MeetingMap(inConfig) {
 	function onDragEnd() {
 		isMouseDown = false;
 		// if no [crouton_map], then turn filter visible back on.
-		if (config.map_search && config.filter_visible) triggerCroutonMapNewQuery(null);
+		if (config.map_search && isFilterVisible()) triggerCroutonMapNewQuery(null);
 		else filterVisible(true);
 	}
 	function triggerCroutonMapNewQuery(ev) {
