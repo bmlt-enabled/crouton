@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.3',            // CroutonJS version for debugging
+		version: '4.1.4',            // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -832,8 +832,12 @@ function Crouton(config) {
 			});
 		}
 		const sorted = parent.children().sort(function (a, b) {
-			const distanceA =parseFloat( jQuery(a).data('distance'));
-			const distanceB =parseFloat( jQuery(b).data('distance'));
+			const idA =parseFloat( jQuery(a).data('meetingid').replace("meeting-data-row-", ""));
+			const idB =parseFloat( jQuery(b).data('meetingid').replace("meeting-data-row-", ""));
+			const dataA = self.meetingData.find((m) => m.id_bigint==idA);
+			const dataB = self.meetingData.find((m) => m.id_bigint==idB);
+			const distanceA = dataA ? parseFloat(dataA['distance_in_km']) : Number.POSITIVE_INFINITY;
+			const distanceB = dataB ? parseFloat(dataB['distance_in_km']) : Number.POSITIVE_INFINITY;
       		return (distanceA < distanceB) ? -1 : (distanceA > distanceB) ? 1 : 0;
    		});
 		parent.html(sorted);

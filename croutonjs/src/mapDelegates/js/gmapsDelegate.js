@@ -198,10 +198,6 @@ function MapDelegate(in_config) {
         var worldPoint = gMainMap.getProjection().fromLatLngToPoint(latLng);
         return new google.maps.Point(worldPoint.x * scale, worldPoint.y * scale);
     };
-    function setZoom(filterMeetings) {
-        if (!gMainMap) return;
-        gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
-    }
     function createClusterLayer() {
         gIsClustering = true;
     }
