@@ -195,8 +195,10 @@ function MeetingMap(inConfig) {
 			crouton.filterNext24(next24status);
 			fitDuringFilter = true;
 		});
-		document.styleSheets[0].insertRule(rules[0]);
-		document.styleSheets[0].insertRule(rules[1]);
+		const croutonStylesheet = [...document.styleSheets].find((sheet) => sheet.href && sheet.href.includes("crouton-core"));
+		if (!croutonStylesheet) return null;
+		croutonStylesheet.insertRule(rules[0]);
+		croutonStylesheet.insertRule(rules[1]);
 		return controlDiv;
 	}
 	function createMenuButton(menuContext) {

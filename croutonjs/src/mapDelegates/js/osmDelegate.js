@@ -273,6 +273,7 @@ function openMarker(id) {
 	jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 }
 function addControl(div,pos,cb) {
+	if (!div) return;
 	if (!gMainMap) {
         gDiv.appendChild(div);
         return;
