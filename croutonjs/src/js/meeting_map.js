@@ -173,7 +173,7 @@ function MeetingMap(inConfig) {
 			 </label>
 		 </div>
 	</div>`;
-		rules = `.onoffswitch-inner:before {
+		let rules = `.onoffswitch-inner:before {
 		content: "__text1__";
 		padding-left: 10px;
 		background-color: #2d5c88; color: #FFFFFF;
@@ -183,9 +183,9 @@ function MeetingMap(inConfig) {
 		padding-left: 30px;
 		background-color: #EEEEEE; color: #2d5c88;
 		text-align: left;
-		}`;
-		rules = rules.replace("__text1__", crouton.localization.getWord("Upcoming Meetings"));
-		rules = rules.replace("__text2__", crouton.localization.getWord("All Meetings"));
+		}`
+			.replace("__text1__", crouton.localization.getWord("Upcoming Meetings"))
+			.replace("__text2__", crouton.localization.getWord("All Meetings"));
 		var controlDiv = document.createElement('div');
 		controlDiv.innerHTML = toggleSrc;
 		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
