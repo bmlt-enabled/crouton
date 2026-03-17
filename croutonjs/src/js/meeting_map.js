@@ -173,19 +173,19 @@ function MeetingMap(inConfig) {
 			 </label>
 		 </div>
 	</div>`;
-		rules = [`.onoffswitch-inner:before {
-		content: "__text__";
+		let rules = `.onoffswitch-inner:before {
+		content: "__text1__";
 		padding-left: 10px;
 		background-color: #2d5c88; color: #FFFFFF;
-		}`,
-		`.onoffswitch-inner:after {
-		content: "__text__";
+		}
+		.onoffswitch-inner:after {
+		content: "__text2__";
 		padding-left: 30px;
 		background-color: #EEEEEE; color: #2d5c88;
 		text-align: left;
-		}`];
-		rules[0] = rules[0].replace("__text__", crouton.localization.getWord("Upcoming Meetings"));
-		rules[1] = rules[1].replace("__text__", crouton.localization.getWord("All Meetings"));
+		}`
+			.replace("__text1__", crouton.localization.getWord("Upcoming Meetings"))
+			.replace("__text2__", crouton.localization.getWord("All Meetings"));
 		var controlDiv = document.createElement('div');
 		controlDiv.innerHTML = toggleSrc;
 		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
@@ -195,8 +195,9 @@ function MeetingMap(inConfig) {
 			crouton.filterNext24(next24status);
 			fitDuringFilter = true;
 		});
-		document.styleSheets[0].insertRule(rules[0]);
-		document.styleSheets[0].insertRule(rules[1]);
+		let style = document.createElement('style');
+    	style.innerHTML = rules;
+   		document.head.appendChild(style);
 		return controlDiv;
 	}
 	function createMenuButton(menuContext) {

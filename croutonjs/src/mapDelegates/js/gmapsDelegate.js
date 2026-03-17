@@ -332,6 +332,7 @@ function openInfoWindow(marker) {
     });
 }
 function addControl(div,pos,cb) {
+    if (!div) return;
     if (!gMainMap) {
         gDiv.appendChild(div);
         return;
