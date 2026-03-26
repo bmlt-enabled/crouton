@@ -38,7 +38,9 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 4.1.5 =
-* Avoid plugin conflicta when inserting rules into CSS
+* Avoid plugin conflicts when inserting rules into CSS
+* 24-hour meeting filter labels now translatable
+* view_by case insensitive
 
 = 4.1.4 =
 * More stable way to sort distances
