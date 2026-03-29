@@ -396,7 +396,7 @@ function MeetingMap(inConfig) {
 							filterVisible(isFilterVisible());
 						});
 						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
-						crouton.updateDistances();
+						crouton.updateDistances(true);
 					},
 					showGeocodingDialog
 				);

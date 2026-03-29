@@ -270,6 +270,8 @@ function CroutonLocalization(language) {
 			"address_lookup_fail": "Die Adresse konnte nicht gefunden werden. Bitte versuchen Sie es erneut.",
 			"contact": "Kontakt",
 			"distance": "Entfernung",
+			"all meetings": "Alle Meetings",
+			'upcoming meetings': "Nächste 24 Stunden",
 		},
 		'el-GR': {
 			"days_of_the_week": ["", "Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"],
@@ -360,6 +362,8 @@ function CroutonLocalization(language) {
 			"meets virtually": "Διαδικτυακή ομάδα",
 			"meets in person": "Φυσική ομάδα",
 			"meets virtually and in person": "Διαδικτυακή και φυσική ομάδα",
+			"all meetings": "Όλες οι ομάδες",
+			"upcoming meetings": "Προσεχείς ομάδες",
 		},
 		"en-AU": {
 			"days_of_the_week": ["", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -726,6 +730,8 @@ function CroutonLocalization(language) {
 			"address": "Address",
 			"comments": "Comments",
 			"more info": "More Info",
+			"all meetings": "All Meetings",
+			'upcoming meetings': "Upcoming Meetings",
 		},
 		"es-US": {
 			"days_of_the_week": ["", "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],

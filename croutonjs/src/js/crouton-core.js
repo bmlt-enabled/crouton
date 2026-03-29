@@ -263,10 +263,10 @@ function Crouton(config) {
 			}
 		} else if (viewName=='map') {
 			self.mapView();
-		} else if (jQuery('#groupingButton_'+viewName.toUpperCase()).length == 0) {
-			self.groupedView(self.config.grouping_buttons.find((bf) => bf.title.toLowerCase() === viewName).field);
+		} else if (jQuery('#groupingButton_'+viewName).length == 0) {
+			self.groupedView(self.config.grouping_buttons.find((bf) => bf.title.toLowerCase() === viewName.toLowerCase()).field);
 		} else {
-			self.groupedView(viewName.toUpperCase());
+			self.groupedView(viewName);
 		}
 	};
 
@@ -798,7 +798,7 @@ function Crouton(config) {
 		});
 		return groups;
 	}
-	Crouton.prototype.updateDistances = function() {
+	Crouton.prototype.updateDistances = function(initial=false) {
 		const self = this;
 		var knt = 0;
 		jQuery('.meeting-distance').each(function(index) {
@@ -849,6 +849,7 @@ function Crouton(config) {
 		if (knt > 0) {
 			jQuery('#groupingButton_distance_in_km').removeClass('hide');
 			self.distanceTabAllowed = true;
+			if (initial && self.config.view_by === "distance") self.groupedView("distance_in_km");
 		}
 	}
 	self.registerPartial = function(name, template) {
@@ -1456,7 +1457,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					});
 
 					jQuery(".groupingButtonLogic").on('click', function (e) {
-						self.showView(e.target.attributes['data-field'].value.toLowerCase());
+						self.showView(e.target.attributes['data-field'].value);
 					});
 					jQuery('#groupingButton_embeddedMapPage').on('click', function (e) {
 						self.showView('map')
