@@ -462,7 +462,12 @@ if (!class_exists("Crouton\TablePublic")) {
                 }));
             }
             $tmp_formats = [];
+            $formatComparisonOp = 'AND';
             if (strlen($params['formats']) > 0) {
+                if (strpos($params['formats'], '|') !== false) {
+                    $formatComparisonOp = 'OR';
+                    $params['formats'] = str_replace('|', ',', $params['formats']);
+                }
                 foreach (explode(",", $params['formats']) as $item) {
                     if (!is_numeric($item)) {
                         $item = trim($item);
@@ -484,7 +489,8 @@ if (!class_exists("Crouton\TablePublic")) {
                 }
             }
             $params['formats'] = $tmp_formats;
-
+            $params['formatComparisonOp'] = $formatComparisonOp;
+            
             $tmp_venue = [];
             if (strlen($params['venue_types']) > 0) {
                 foreach (explode(",", $params['venue_types']) as $item) {

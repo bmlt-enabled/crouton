@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.5',            // CroutonJS version for debugging
+		version: '4.1.6',            // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -53,7 +53,7 @@ function Crouton(config) {
 		has_meeting_count: false,	  // Shows the meeting count
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
-		formats: '',		  		  // Return only meetings with these formats (format shared-id, not key-string)
+		formats: [],		  		  // Return only meetings with these formats (format shared-id, not key-string)
 		venue_types: [],			  // Return only meetings with this venue type (1, 2 or 3)
 		meeting_details_href: '',	  // Link to the meeting details page
 		virtual_meeting_details_href: '', // Link to the virtual meeting details page
@@ -171,6 +171,7 @@ function Crouton(config) {
 			url += self.config['formats'].reduce(function(prev,id) {
 				return prev +'&formats[]='+id;
 			}, '');
+			if (self.config['formatComparisonOp'] === 'OR') url += '&formats_comparison_operator=OR';
 		}
 		if (self.config.map_search && !Array.isArray(self.config['venue_types'])) {
 			self.config['venue_types'] = [];
