@@ -38,7 +38,8 @@ if (!class_exists("Crouton\MapOptions")) {
             'maxTomatoWidth' => 160,
             'marker_contents_template' => '',
             'caption' => false,
-            'groups' => false
+            'groups' => false,
+            'BMLTPlugin_images' => false,
         );
         private bool $isGoogle;
 
