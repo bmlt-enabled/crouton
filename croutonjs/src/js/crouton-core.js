@@ -245,6 +245,9 @@ function Crouton(config) {
 	};
 
 	self.showView = function (viewName, showingNow=0) {
+		if (viewName === 'distance' && !self.distanceTabAllowed) {
+			viewName = self.config.groups ? 'city' : 'day';
+		}
 		self.currentView = viewName;
 		if (showingNow > 0) {
 			self.showingNow = showingNow;
