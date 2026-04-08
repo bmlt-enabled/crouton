@@ -39,7 +39,6 @@ https://demo.bmlt.app/crouton
 = 4.1.7 =
 * Default icons loaded from memory (not via HTTP)
 * Icon locations can be customized
-* New themes "nikolas" and "berlin".
 
 = 4.1.6 =
 * Add format_comparison_operator to croutonjs

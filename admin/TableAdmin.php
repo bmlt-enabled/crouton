@@ -12,14 +12,12 @@ if (!class_exists("Crouton\TableAdmin")) {
         private string $hook = 'bmlt-enabled-crouton';
         private array $themes = [
             "asheboro",
-            "berlin",
             "florida-nights",
             "frog",
             "gold-coast",
             "jack",
             "kevin",
             "lucy",
-            "nikolas",
             "none",
             "one-nine",
             "orange-monster",
