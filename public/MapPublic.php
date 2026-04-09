@@ -143,7 +143,7 @@ if (!class_exists("Crouton\MapPublic")) {
         private function createJavascriptConfig(array $options, int $encode_flags): string| false
         {
             $ret = [];
-            $ret["BMLTPlugin_images"] = $this->hsc(plugin_dir_url(__DIR__)."croutonjs/mapImages");
+            $ret["BMLTPlugin_images"] = empty($options["BMLTPlugin_images"]) ? false : $options["BMLTPlugin_images"];
             $ret['region'] = $options['region_bias'];
             $ret['bounds'] = [
                 "north" => $options['bounds_north'],

@@ -160,6 +160,7 @@
 		<p>With this parameter you can add restrictions to root server query as an easy alternative to using a custom query.
 		<p><strong>[bmlt_tabs formats="123,-VM"]</strong></p>
 		<p>The formats are given in a comma separated list.  If an individual format is a number, it is interpreted as the ID of the format.
+		<p>The formats may also be separated by the pipe character `|`, in which case the formats the list includes meetings that have at least one of the formats in the list, as opposed to all of the formats in the list.  Example: <code>[bmlt_tabs formats="123|124"]</code> would include meetings that have format 123, format 124, or both, while <code>[bmlt_tabs formats="123,124"]</code> would only include meetings that have both format 123 and format 124.</p>
 		The semantic workshop can be used to look up format ID.  The format's key string (in the default language) can also be used to identify the format.</p>
 		<p>The ID can also be negative, which means that the meetings with that format should be excluded from the results.  Similarly, the key-string can also be prefix with a minus sign to indicate it should be excluded as opposed to being required.</p>
 		<p>Key-strings cannot be used to identify formats if the aggregator is being used as the root server, as the key-strings are not unique in this case.</p>

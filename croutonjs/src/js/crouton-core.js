@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.6',            // CroutonJS version for debugging
+		version: '4.1.7',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -245,6 +245,9 @@ function Crouton(config) {
 	};
 
 	self.showView = function (viewName, showingNow=0) {
+		if (viewName === 'distance' && !self.distanceTabAllowed) {
+			viewName = self.config.groups ? 'city' : 'day';
+		}
 		self.currentView = viewName;
 		if (showingNow > 0) {
 			self.showingNow = showingNow;
