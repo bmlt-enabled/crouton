@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.7',             // CroutonJS version for debugging
+		version: '4.1.8',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -207,7 +207,10 @@ function Crouton(config) {
 			return self.getMeetings(url,cb);
 		} else {
 			return new Promise(function(resolve, reject) {
-				resolve();
+				self.meetingData = [];
+				self.formatsData = [];
+				self.mutex = false;
+				resolve([]);
 			});
 		}
 	};
@@ -1189,7 +1192,9 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 
 		if (self.isEmpty(self.meetingData)) {
+			jQuery('#please-wait').remove();
 			self.showMessage("No meetings found for parameters specified.");
+			alert("No meetings found for parameters specified.");
 			if (self.config['refresh_map']) {
 				croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
 			}

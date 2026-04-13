@@ -305,7 +305,7 @@ function bindPopup(marker, inHtml, inIds, openedMarker) {
             if(marker.old_image){marker.setIcon(g_icon_image_selected)};
             openInfoWindow(marker);
         });
-        if (openMarker &&  inIds.includes(parseInt(openMarker))) {
+        if (gOpenMarker &&  inIds.includes(parseInt(gOpenMarker))) {
             openInfoWindow(marker);
         }
         gInfoWindow.addListener('closeclick', function () {

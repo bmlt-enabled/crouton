@@ -151,9 +151,10 @@ if (!class_exists("Crouton\TableOptions")) {
                 if (isset($this->options['service_body_1'])) {
                     $this->options['service_bodies'] = [$this->options['service_body_1']];
                     unset($this->options['service_body_1']);
+                } else {
+                    $this->options['service_bodies'] = [];
                 }
             }
-            $this->options['crouton_version'] = "4.0";
             if ($this->options['crouton_version'] === "4.0") {
                 $this->options['crouton_version'] = "4.1";
                 if (isset($this->options['meetingdetails_contents_template'])) {
