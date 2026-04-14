@@ -419,6 +419,10 @@ if (!class_exists("Crouton\TablePublic")) {
                 // Pulling from configuration
                 $service_body = [];
                 $parent_body_id = '0';
+                if (!isset($options['service_bodies'])) {
+                    $options['service_bodies'] = [];
+                }
+
                 foreach ($options['service_bodies'] as $single_service_body) {
                     $area_data       = explode(',', $single_service_body);
                     if (sizeof($area_data) < 2) {
@@ -490,7 +494,7 @@ if (!class_exists("Crouton\TablePublic")) {
             }
             $params['formats'] = $tmp_formats;
             $params['formatComparisonOp'] = $formatComparisonOp;
-            
+
             $tmp_venue = [];
             if (strlen($params['venue_types']) > 0) {
                 foreach (explode(",", $params['venue_types']) as $item) {
