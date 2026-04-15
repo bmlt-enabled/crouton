@@ -83,7 +83,7 @@ jobs:
         if: "!contains(github.ref, 'beta')"
         uses: actions/setup-node@v6
         with:
-          node-version: '22.x'
+          node-version: '22.22.2'
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
@@ -92,8 +92,10 @@ jobs:
         run: |
           cp croutonjs/README.md croutonjs/dist
           cd croutonjs/dist
-          npm --no-git-tag-version version $GITHUB_REF_NAME
-          npm publish --provenance --access public
+          npm --version
+          node --version
+          npm --no-git-tag-version version ${GITHUB_REF_NAME#v}
+          npm publish --access public
 
       - uses: act10ns/slack@v2
         with:
