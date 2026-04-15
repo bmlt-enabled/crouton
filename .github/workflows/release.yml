@@ -4,12 +4,13 @@ on:
   push:
     tags: ['*']
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   deploy-crouton-release:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
     env:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       BUILD_DIR: build

@@ -1,8 +1,7 @@
 {
   "name": "@bmlt-enabled/croutonjs",
-  "version": "1.0.0",
-  "description": "=== crouton ===",
-  "main": "gulpfile.js",
+  "version": "4.1.10",
+  "description": "Shows BMLT information is a customizable tabbed web view.",
   "devDependencies": {
     "eslint-plugin-compat": "^7.0.1",
     "gulp": "^5.0.1",
@@ -21,16 +20,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bmlt-enabled/crouton.git"
   },
-  "author": "",
-  "license": "MIT",
+  "homepage": "https://github.com/bmlt-enabled/crouton#readme",
   "bugs": {
     "url": "https://github.com/bmlt-enabled/crouton/issues"
   },
-  "homepage": "https://github.com/bmlt-enabled/crouton#readme",
   "browserslist": [
     "IE 11"
   ],
