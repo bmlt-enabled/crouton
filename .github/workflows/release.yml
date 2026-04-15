@@ -60,24 +60,24 @@ jobs:
           RELEASE_TYPE=$(if [[ "$GITHUB_REF_NAME" =~ "beta" ]]; then echo "true"; else echo "false"; fi)
           echo "RELEASE_TYPE=${RELEASE_TYPE}" >> $GITHUB_ENV
 
-#      - name: Create Release 🎉
-#        uses: ncipollo/release-action@v1
-#        if: github.ref_type == 'tag'
-#        with:
-#          artifacts: ${{ env.GITHUB_RELEASE_PATH }},${{ env.GITHUB_RELEASE_PATH_JS }}
-#          bodyFile: "changelog.txt"
-#          prerelease: ${{ env.RELEASE_TYPE }}
+      - name: Create Release 🎉
+        uses: ncipollo/release-action@v1
+        if: github.ref_type == 'tag'
+        with:
+          artifacts: ${{ env.GITHUB_RELEASE_PATH }},${{ env.GITHUB_RELEASE_PATH_JS }}
+          bodyFile: "changelog.txt"
+          prerelease: ${{ env.RELEASE_TYPE }}
 
-#      - name: Wordpress Release ⛴
-#        if: "!contains(github.ref, 'beta')"
-#        id: wordpress-stable-release
-#        env:
-#          WORDPRESS_USERNAME : ${{ secrets.WORDPRESS_USERNAME }}
-#          WORDPRESS_PASSWORD : ${{ secrets.WORDPRESS_PASSWORD }}
-#        run: |
-#          curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/main/deploy-wordpress.sh
-#          chmod +x deploy-wordpress.sh
-#          ./deploy-wordpress.sh
+      - name: Wordpress Release ⛴
+        if: "!contains(github.ref, 'beta')"
+        id: wordpress-stable-release
+        env:
+          WORDPRESS_USERNAME : ${{ secrets.WORDPRESS_USERNAME }}
+          WORDPRESS_PASSWORD : ${{ secrets.WORDPRESS_PASSWORD }}
+        run: |
+          curl -LO https://raw.githubusercontent.com/bmlt-enabled/bmlt-wordpress-deploy/main/deploy-wordpress.sh
+          chmod +x deploy-wordpress.sh
+          ./deploy-wordpress.sh
 
       - name: Setup Node
         if: "!contains(github.ref, 'beta')"
@@ -91,8 +91,6 @@ jobs:
         run: |
           cp croutonjs/README.md croutonjs/dist
           cd croutonjs/dist
-          npm --version
-          node --version
           npm --no-git-tag-version version ${GITHUB_REF_NAME#v}
           npm publish --access public
 
