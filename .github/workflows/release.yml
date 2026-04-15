@@ -87,11 +87,13 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'npm'
 
+      - name: Upgrade npm
+        if: "!contains(github.ref, 'beta')"
+        run: npm install -g npm@latest
+
       - name: Publish package on NPM 📦
         if: "!contains(github.ref, 'beta')"
         run: |
-          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
-          echo "GITHUB_WORKFLOW=$GITHUB_WORKFLOW"
           cp croutonjs/README.md croutonjs/dist
           cd croutonjs/dist
           npm --version
