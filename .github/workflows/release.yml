@@ -83,13 +83,8 @@ jobs:
         if: "!contains(github.ref, 'beta')"
         uses: actions/setup-node@v6
         with:
-          node-version: '22.22.2'
+          node-version: '24.x'
           registry-url: 'https://registry.npmjs.org'
-          cache: 'npm'
-
-      - name: Upgrade npm
-        if: "!contains(github.ref, 'beta')"
-        run: npm install -g npm@latest
 
       - name: Publish package on NPM 📦
         if: "!contains(github.ref, 'beta')"
