@@ -1,15 +1,15 @@
 <?php
 /*
-Plugin Name: crouton
-Plugin URI: https://wordpress.org/plugins/crouton/
-Description: A tabbed based display for showing meeting information.
-Author: bmlt-enabled
-Author URI: https://bmlt.app
-Version: 4.1.8
-Text Domain: crouton
-Domain Path: /languages
-License:           GPL-2.0+
-License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+Plugin Name:  crouton
+Plugin URI:   https://wordpress.org/plugins/crouton/
+Description:  A tabbed based display for showing meeting information.
+Author:       bmlt-enabled
+Author URI:   https://bmlt.app
+Version:      4.1.9
+Text Domain:  crouton
+Domain Path:  /languages
+License:      GPL-2.0+
+License URI:  http://www.gnu.org/licenses/gpl-2.0.txt
 */
 /* Disallow direct access to the plugin file */
 namespace Crouton;

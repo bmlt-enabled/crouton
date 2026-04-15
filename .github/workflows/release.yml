@@ -91,7 +91,7 @@ jobs:
           cp croutonjs/README.md croutonjs/dist
           cd croutonjs/dist
           npm --no-git-tag-version version $GITHUB_REF_NAME
-          npm publish
+          npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
