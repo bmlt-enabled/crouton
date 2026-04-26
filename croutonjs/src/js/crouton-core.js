@@ -1499,16 +1499,16 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
 						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
 					}
-
+					let fitBounds = !self.config['lat'] && !self.config['lng'];
 					if (self.config['show_map'] && !self.config['refresh_map'] && !doMeetingMap) {
-						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
+						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, null, null, fitBounds);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
 					if (self.config['map_page'] && !doMeetingMap) {
 						if (self.meetingData.filter(m => m.venue_type != 2).length==0) {
 							jQuery('#groupingButton_embeddedMapPage').addClass('hide');
 						}
-						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
+						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBounds);
 					}
 					if (self.config['refresh_map']) {
 						croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
