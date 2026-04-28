@@ -1,6 +1,6 @@
 {
   "name": "@bmlt-enabled/croutonjs",
-  "version": "4.1.10",
+  "version": "4.1.11",
   "description": "Shows BMLT information is a customizable tabbed web view.",
   "devDependencies": {
     "eslint-plugin-compat": "^7.0.1",
