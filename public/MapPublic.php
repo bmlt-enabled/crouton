@@ -112,6 +112,14 @@ if (!class_exists("Crouton\MapPublic")) {
                 $params['lng'] = $params['map_search_longitude'];
                 $params['map_search']['longitude'] = $params['map_search_longitude'];
             }
+            // Get default values from UI
+            if (!empty($params['lat']) && !empty($params['lng'])
+                && $params['lat'] != 0 && $params['lng'] != 0) {
+                $params['map_search_auto'] = 0;
+                $params['map_search_coordinates_search'] = 1;
+                $params['map_search']['longitude'] = $params['lng'];
+                $params['map_search']['latitude'] = $params['lat'];
+            }
             if (!empty($params['map_search']['zoom'])) {
                 $params['zoom'] = $params['map_search']['zoom'];
             }
@@ -128,11 +136,8 @@ if (!class_exists("Crouton\MapPublic")) {
             if (!empty($params['map_search_location'])) {
                 $params['map_search']['location'] = $params['map_search_location'];
             }
-            if (!empty($params['map_search_location'])) {
-                $params['map_search']['location'] = $params['map_search_location'];
-            }
             if (!empty($params['map_search_coordinates_search'])) {
-                $params['map_search']['coordinates_search'] = $params['map_search_ coordinates_search'];
+                $params['map_search']['coordinates_search'] = $params['map_search_coordinates_search'];
             }
         }
         /** Emulates the behavior from PHP 7 */
