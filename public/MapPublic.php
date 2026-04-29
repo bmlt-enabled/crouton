@@ -90,6 +90,14 @@ if (!class_exists("Crouton\MapPublic")) {
         private function addCroutonMapParameters(array &$params): void
         {
             $params['map_search'] = [];
+            // Get default values from UI
+            if (!empty($params['lat']) && !empty($params['lng'])
+                && $params['lat'] != 0 && $params['lng'] != 0) {
+                $params['map_search']['auto'] = 0;
+                $params['map_search']['coordinates_search'] = '1';
+                $params['map_search']['longitude'] = $params['lng'];
+                $params['map_search']['latitude'] = $params['lat'];
+            }
             if (isset($params['map_search_option'])) {
                 foreach (explode(",", $params['map_search_option']) as $item) {
                     $setting = explode(":", $item);
@@ -98,27 +106,17 @@ if (!class_exists("Crouton\MapPublic")) {
                     $params['map_search'][$key] = $value;
                 }
             }
+            if (!empty($params['map_search_latitude'])) {
+                $params['map_search']['latitude'] = $params['map_search_latitude'];
+            }
+            if (!empty($params['map_search_longitude'])) {
+                $params['map_search']['longitude'] = $params['map_search_longitude'];
+            }
             if (!empty($params['map_search']['latitude'])) {
                 $params['lat'] = $params['map_search']['latitude'];
             }
-            if (!empty($params['map_search_latitude'])) {
-                $params['lat'] = $params['map_search_latitude'];
-                $params['map_search']['latitude'] = $params['map_search_latitude'];
-            }
             if (!empty($params['map_search']['longitude'])) {
                 $params['lng'] = $params['map_search']['longitude'];
-            }
-            if (!empty($params['map_search_longitude'])) {
-                $params['lng'] = $params['map_search_longitude'];
-                $params['map_search']['longitude'] = $params['map_search_longitude'];
-            }
-            // Get default values from UI
-            if (!empty($params['lat']) && !empty($params['lng'])
-                && $params['lat'] != 0 && $params['lng'] != 0) {
-                $params['map_search_auto'] = 0;
-                $params['map_search_coordinates_search'] = 1;
-                $params['map_search']['longitude'] = $params['lng'];
-                $params['map_search']['latitude'] = $params['lat'];
             }
             if (!empty($params['map_search']['zoom'])) {
                 $params['zoom'] = $params['map_search']['zoom'];
