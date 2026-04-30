@@ -15,7 +15,7 @@ function Crouton(config) {
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.config = {
-		version: '4.1.10',             // CroutonJS version for debugging
+		version: '4.1.11',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -1499,16 +1499,16 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						var filter = self.config['default_filter_dropdown'].toLowerCase().split("=");
 						jQuery("#filter-dropdown-" + filter[0]).val('a-' + filter[1]).trigger('change').trigger('select2:select');
 					}
-
+					let fitBoundsInitial = !self.config['lat'] && !self.config['lng'];
 					if (self.config['show_map'] && !self.config['refresh_map'] && !doMeetingMap) {
-						croutonMap.initialize(self.createBmltMapElement(), self.meetingData);
+						croutonMap.initialize(self.createBmltMapElement(), self.meetingData, null, null, fitBoundsInitial);
 						jQuery("#bmlt-map").removeClass("hide");
 					}
 					if (self.config['map_page'] && !doMeetingMap) {
 						if (self.meetingData.filter(m => m.venue_type != 2).length==0) {
 							jQuery('#groupingButton_embeddedMapPage').addClass('hide');
 						}
-						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData);
+						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBoundsInitial);
 					}
 					if (self.config['refresh_map']) {
 						croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
