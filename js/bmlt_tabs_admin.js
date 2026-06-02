@@ -48,6 +48,15 @@ jQuery(document).ready(function($) {
 	handle_error = function(error) {
 		console.log(error);
 	}
+	query_extra_meetings = function() {
+		if($('#extra_meetings_enabled').is(':checked')) {
+			$("#extra_meetings_select").hide();
+			$("#fetching_meetings").show();
+			ask_bmlt('switcher=GetSearchResults', fill_extra_meetings, handle_error);
+		} else {
+			fill_extra_meetings([]);
+		}
+	}
 	test_root_server = function() {
 		if(!$('#root_server').val()) {
 			$('#connected_message').hide();
@@ -63,13 +72,7 @@ jQuery(document).ready(function($) {
 				$('#connected_message').show();
 				$('#disconnected_message').hide();
 				ask_bmlt('switcher=GetServiceBodies', fill_service_bodies, handle_error);
-				if($('#extra_meetings_enabled').is(':checked')) {
-					$("#extra_meetings_select").hide();
-					$("#fetching_meetings").show();
-					ask_bmlt('switcher=GetSearchResults', fill_extra_meetings, handle_error);
-				} else {
-					fill_extra_meetings([]);
-				}
+				query_extra_meetings();
 				ask_bmlt('switcher=GetFieldKeys', fill_field_keys, handle_error);
 				fill_language_options();
 			},
@@ -374,4 +377,5 @@ jQuery(document).ready(function($) {
 		});
 	});
 	test_root_server();
+	$('#extra_meetings_enabled').on("change", query_extra_meetings)
 });
