@@ -4,14 +4,15 @@
         <div class="bmlt-button-container"><a id="day" tabindex=0 class="btn btn-primary btn-sm">{{getWord 'weekday'}}</a></div>
     {{/if}}
     {{#each this.config.grouping_buttons}}
-        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}" tabindex=0 data-field="{{this.title}}" class="groupingButton groupingButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}" tabindex=0 data-field="{{this.title}}" class="groupingButton croutonControlButton groupingButtonLogic btn btn-primary btn-sm">{{getWord this.title}}</a></div>
     {{/each}}
     {{#each this.config.formattype_grouping_buttons}}
-        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}"tabindex=0 data-field="{{this.field}}" class="groupingButton groupingButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
+        <div class="bmlt-button-container"><a id="groupingButton_{{this.field}}"tabindex=0 data-field="{{this.field}}" class="groupingButton croutonControlButton groupingButtonLogic btn btn-primary btn-sm">{{this.title}}</a></div>
     {{/each}}
     {{#if this.config.map_page}}
-        <div class="bmlt-button-container"><a id="groupingButton_embeddedMapPage" tabindex=0 data-field="embeddedMapPage" class="groupingButton btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
+        <div class="bmlt-button-container"><a id="groupingButton_embeddedMapPage" tabindex=0 data-field="embeddedMapPage" class="groupingButton croutonControlButton btn btn-primary btn-sm">{{getWord 'map'}}</a></div>
     {{/if}}
+    <div class="bmlt-button-container"><a id="crouton_favorites_button" tabindex=0 class="croutonControlButton btn btn-primary btn-sm">{{getWord 'Favorites'}}</a></div>
 
     {{#each this.dropdownData}}
 	<div class="bmlt-dropdown-container">

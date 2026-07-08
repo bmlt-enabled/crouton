@@ -190,6 +190,18 @@ function CroutonHandlebarsExtensions() {
 			return new crouton_Handlebars.SafeString("<a href='tel:" + text + "' target='_blank'>" + text + "</a>");
 		});
 
+		function isFavorite(meeting) {
+			const  localStorageKey = "crouton-favorites";
+			const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
+			return favorites.includes(meeting.root_server_uri + "_" + meeting.id_bigint);
+		}
+		crouton_Handlebars.registerHelper('favoriteIcon', function(meeting, options) {
+			return new crouton_Handlebars.SafeString("<span id='crouton-favorite-" + meeting.id_bigint + "' class='crouton-favorite glyphicon glyphicon-heart" + (!isFavorite(meeting) ? "-empty" : "") + "'></span>");
+		});
+
+		crouton_Handlebars.registerHelper('isFavorite', function(meeting, options) {
+			return new crouton_Handlebars.SafeString(isFavorite(meeting) ? 1 : 0);
+		});
 		crouton_Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
 			return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
 		});

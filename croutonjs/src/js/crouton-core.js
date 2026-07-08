@@ -14,8 +14,9 @@ function Crouton(config) {
 	self.masterFormatCodes = [];
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
+	self.favoritesOn = false;
 	self.config = {
-		version: '4.1.12',             // CroutonJS version for debugging
+		version: '4.1.13',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -50,6 +51,7 @@ function Crouton(config) {
 		has_languages: false,		  // Shows the language dropdown
 		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
+		has_favorites: true,		  // Shows the favorites button
 		has_meeting_count: false,	  // Shows the meeting count
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
@@ -415,6 +417,11 @@ function Crouton(config) {
 			let showing = self.meetingData.filter((m) => !(hidden.includes(m.id_bigint)));
 			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
 		});
+		if (self.dropdownData.find((d) => d.elementId === "filter-dropdown-favorites").optionsShowing.length < 1) {
+			jQuery("#crouton_favorites_button").addClass("hide");
+		} else {
+			jQuery("#crouton_favorites_button").removeClass("hide");
+		}
 	}
 	self.renderStandaloneMap = function (selector, context, callback=null, fitBounds=true) {
 		hbs_Crouton['localization'] = self.localization;
@@ -934,6 +941,9 @@ function Crouton(config) {
 	self.getUsedNext24 = function(meetings) {
 		return [{name: 'Next24', value: 1}];
 	}
+	self.getUsedFavorites = function(meetings) {
+		return self.shouldOfferFavorites(meetings.map((m) => m.id_bigint)) ? [{name: 'Favorite', value: 1}] : [];
+	}
 	self.isEmpty = function(obj) {
 		for (var key in obj) {
 			if(obj.hasOwnProperty(key))
@@ -1391,6 +1401,10 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					{placeholder: '', pointer: 'next24', elementId: "filter-dropdown-next24",
 						uniqueData: (meetings) => self.getUsedNext24(meetings),
 						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
+				if (self.config.has_favorites)  self.dropdownData.push(
+					{placeholder: '', pointer: 'favorite', elementId: "filter-dropdown-favorites",
+						uniqueData: (meetings) => self.getUsedFavorites(meetings),
+						objectPointer: (s)=>s.value, optionName: (s)=>s.name});
 				let renderer = doMeetingMap ? self.renderStandaloneMap : self.renderView;
 				renderer("#" + self.config['placeholder_id'], {
 					"config": self.config,
@@ -1409,7 +1423,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						jQuery('#groupingButton_distance_in_km').addClass('hide');
 					}
 					self.addStripes();
-					self.calcShowingNow()
+					const showingNow = self.calcShowingNow();
 					self.updateMeetingCount();
 					jQuery('#please-wait').remove();
 					if (self.config['map_search'] != null || self.config['show_map']) {
@@ -1423,6 +1437,12 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery("#filter-dropdown-visibile").removeClass("crouton-select").addClass("hide");
 					jQuery("#filter-dropdown-next24").removeClass("crouton-select").addClass("hide");
+					jQuery("#filter-dropdown-favorites").removeClass("crouton-select").addClass("hide");
+					if (self.shouldOfferFavorites(showingNow)) {
+						jQuery("#crouton_favorites_button").removeClass("hide");
+					} else {
+						jQuery("#crouton_favorites_button").addClass("hide");
+					}
 					jQuery(".crouton-select").select2({
 						dropdownAutoWidth: true,
 						allowClear: false,
@@ -1458,6 +1478,39 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 
 					jQuery('.filter-dropdown').on('select2:select', function (e) {
 						self.filterMeetingsFromView();
+					});
+					jQuery('#crouton_favorites_button').on('click', function (e) {
+						if (self.favoritesOn) {
+							self.favoritesOn = false;
+							jQuery("#filter-dropdown-favorites").val("a-");
+							self.lowlightButton("#crouton_favorites_button");
+						} else {
+							self.favoritesOn = true;
+							jQuery("#filter-dropdown-favorites").val("a-1");
+							self.highlightButton("#crouton_favorites_button");
+						}
+						self.filterMeetingsFromView();
+						return;
+					});
+					jQuery(document).on('click', '.crouton-favorite', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						const meetingId = parseInt(this.id.replace("crouton-favorite-", ""));
+						const  localStorageKey = "crouton-favorites";
+						const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
+						const  index = favorites.indexOf(self.config.root_server + "_" + meetingId);
+						const  row = e.target.closest(".bmlt-data-row");
+						if (index !== -1) {
+							favorites.splice(index, 1);
+							e.target.classList.remove("glyphicon-heart");
+							e.target.classList.add("glyphicon-heart-empty");
+							row.setAttribute("data-favorite", 0);
+						} else {
+							favorites.push(self.config.root_server + "_" + meetingId);
+							e.target.classList.remove("glyphicon-heart-empty");
+							e.target.classList.add("glyphicon-heart");
+						}
+						localStorage.setItem(localStorageKey, JSON.stringify(favorites));
 					});
 
 					jQuery("#day").on('click', function () {
@@ -1526,8 +1579,17 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 			this.mapView();
 		}
 	}
+	self.shouldOfferFavorites = function(showingNow) {
+		if (!self.config['has_favorites']) return false;
+		const  localStorageKey = "crouton-favorites";
+		const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
+		for (let i = 0; i < favorites.length; i++) {
+			const  meetingId = favorites[i].split("_")[1];
+			if (showingNow.includes(meetingId)) return true;
+		}
+		return false;
+	}
 };
-
 // [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
 function getMasterFormatId(code, data) {
 	for (var f = 0; f < crouton.masterFormatCodes.length; f++) {
