@@ -147,6 +147,13 @@
         <p><strong>[bmlt_tabs default_filter_dropdown="formats=closed"]</strong></p>
         <p>Any of the dropdown choices are available for use.  Keep in mind that the dropdown must be visible and that the default selection exists.  Spaces should be separated with a hyphen.  Example [bmlt_tabs default_filter_dropdown="formats=Basic-Text"].</p>
     </div>
+	<h3 class="help-accordian"><strong>Remember your favorite meetings</strong></h3>
+	<div>
+		<p>If the <strong>has_favorites</strong> parameter is set to 1, users can mark meetings as favorites.</p>
+		<p>Favoritted meetings will be stored in the browser's local storage, and will be remembered when the user returns to the page.</p>
+		<p>A button will be added to the header to allow the user to filter the view to only show their favoritted meetings.</p>
+		<p><strong>[bmlt_tabs has_favorites="0|1"]</strong></p>
+	</div>
 	<h3 class="help-accordian"><strong>Custom Query</strong></h3>
 	<div>
 		<p>With this parameter you can use a custom root server query.  This will take precedence over any other kind filtering parameters.</p>

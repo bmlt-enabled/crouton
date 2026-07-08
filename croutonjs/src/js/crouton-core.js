@@ -51,7 +51,7 @@ function Crouton(config) {
 		has_languages: false,		  // Shows the language dropdown
 		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
-		has_favorites: true,		  // Shows the favorites button
+		has_favorites: false,		  // Shows the favorites button
 		has_meeting_count: false,	  // Shows the meeting count
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
@@ -1492,6 +1492,9 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						self.filterMeetingsFromView();
 						return;
 					});
+					if (!self.config['has_favorites']) {
+						jQuery(".favorite-icon").addClass("hide");
+					}
 					jQuery(document).on('click', '.crouton-favorite', function(e) {
 						e.preventDefault();
 						e.stopPropagation();
