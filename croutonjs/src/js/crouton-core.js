@@ -1500,17 +1500,30 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
 						const  index = favorites.indexOf(self.config.root_server + "_" + meetingId);
 						const  row = e.target.closest(".bmlt-data-row");
+						let first = false;
 						if (index !== -1) {
 							favorites.splice(index, 1);
 							e.target.classList.remove("glyphicon-heart");
 							e.target.classList.add("glyphicon-heart-empty");
 							row.setAttribute("data-favorite", 0);
 						} else {
+							first = favorites.length === 0;
 							favorites.push(self.config.root_server + "_" + meetingId);
 							e.target.classList.remove("glyphicon-heart-empty");
 							e.target.classList.add("glyphicon-heart");
+							row.setAttribute("data-favorite", 1);
 						}
 						localStorage.setItem(localStorageKey, JSON.stringify(favorites));
+						if (self.favoritesOn) {
+							if (favorites.length === 0) {
+								self.favoritesOn = false;
+								jQuery("#filter-dropdown-favorites").val("a-");
+								self.lowlightButton("#crouton_favorites_button");
+							}
+							self.filterMeetingsFromView();
+						} else if (first) {
+							self.filterMeetingsFromView();
+						}
 					});
 
 					jQuery("#day").on('click', function () {
