@@ -172,7 +172,7 @@ task('themes', function () {
         .pipe(dest('croutonjs/dist/templates/themes'));
 });
 task('fonts', function () {
-    return src('croutonjs/src/fonts/*')
+    return src('croutonjs/src/fonts/*', { encoding: false })
         .pipe(dest('croutonjs/dist/fonts'));
 });
 task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files', 'themes', 'fonts'));

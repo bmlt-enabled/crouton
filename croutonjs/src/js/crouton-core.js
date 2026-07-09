@@ -16,7 +16,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.1.13',             // CroutonJS version for debugging
+		version: '4.2.0',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -417,7 +417,8 @@ function Crouton(config) {
 			let showing = self.meetingData.filter((m) => !(hidden.includes(m.id_bigint)));
 			dropdown.optionsShowing = dropdown.uniqueData(showing).map((o) => dropdown.optionName(o));
 		});
-		if (self.dropdownData.find((d) => d.elementId === "filter-dropdown-favorites").optionsShowing.length < 1) {
+		const favoritesDropdown = self.dropdownData.find((d) => d.elementId === "filter-dropdown-favorites");
+		if (!favoritesDropdown || favoritesDropdown.optionsShowing.length < 1) {
 			jQuery("#crouton_favorites_button").addClass("hide");
 		} else {
 			jQuery("#crouton_favorites_button").removeClass("hide");
