@@ -1600,7 +1600,8 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 		const  localStorageKey = "crouton-favorites";
 		const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
 		for (let i = 0; i < favorites.length; i++) {
-			const  meetingId = favorites[i].split("_")[1];
+			const split = favorites[i].split("_");
+			const  meetingId = split[split.length-1];
 			if (showingNow.includes(meetingId)) return true;
 		}
 		return false;
