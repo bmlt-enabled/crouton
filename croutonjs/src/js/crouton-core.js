@@ -1493,7 +1493,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						self.filterMeetingsFromView();
 						return;
 					});
-					if (!self.config['has_favorites']) {
+					if (!self.config['has_favorites'] || !self.config['header']) {
 						jQuery(".favorite-icon").addClass("hide");
 					}
 					jQuery(document).on('click', '.crouton-favorite', function(e) {
