@@ -1511,7 +1511,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 							e.target.classList.add("glyphicon-heart-empty");
 							row.setAttribute("data-favorite", 0);
 						} else {
-							shouldFilterMeetings = favorites.length === 0;
+							shouldFilterMeetings = true;
 							favorites.push(self.config.root_server + "_" + meetingId);
 							e.target.classList.remove("glyphicon-heart-empty");
 							e.target.classList.add("glyphicon-heart");
