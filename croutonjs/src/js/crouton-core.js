@@ -1430,8 +1430,9 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					if (self.config['map_search'] != null || self.config['show_map']) {
 						jQuery(".bmlt-data-row").css({cursor: "pointer"});
 						jQuery(".bmlt-data-row").click(function (e) {
-							if (e.target.tagName !== 'A')
+							if (e.target.tagName !== 'A' && !e.target.id.startsWith('crouton-favorite-')) {
 								croutonMap.rowClick(parseInt(this.id.replace("meeting-data-row-", "")));
+							}
 						});
 					}
 
@@ -1504,21 +1505,23 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						const  favorites = JSON.parse(localStorage.getItem(localStorageKey) || "[]");
 						const  index = favorites.indexOf(self.config.root_server + "_" + meetingId);
 						const  row = e.target.closest(".bmlt-data-row");
-						let shouldFilterMeetings = self.favoritesOn;;
+						let shouldFilterMeetings = self.favoritesOn;
+						const showingNow = self.calcShowingNow();
+						const favoritesButtonHidden = jQuery("#crouton_favorites_button").hasClass("hide");
 						if (index !== -1) {
 							favorites.splice(index, 1);
 							e.target.classList.remove("glyphicon-heart");
 							e.target.classList.add("glyphicon-heart-empty");
 							row.setAttribute("data-favorite", 0);
 						} else {
-							shouldFilterMeetings = true;
+							shouldFilterMeetings = favoritesButtonHidden;
 							favorites.push(self.config.root_server + "_" + meetingId);
 							e.target.classList.remove("glyphicon-heart-empty");
 							e.target.classList.add("glyphicon-heart");
 							row.setAttribute("data-favorite", 1);
 						}
 						localStorage.setItem(localStorageKey, JSON.stringify(favorites));
-						if (favorites.length === 0) {
+						if (!self.shouldOfferFavorites(showingNow)) {
 							shouldFilterMeetings = true;
 							self.favoritesOn = false;
 							jQuery("#filter-dropdown-favorites").val("a-");
