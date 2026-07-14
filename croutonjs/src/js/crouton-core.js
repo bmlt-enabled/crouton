@@ -1519,6 +1519,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						}
 						localStorage.setItem(localStorageKey, JSON.stringify(favorites));
 						if (favorites.length === 0) {
+							shouldFilterMeetings = true;
 							self.favoritesOn = false;
 							jQuery("#filter-dropdown-favorites").val("a-");
 							self.lowlightButton("#crouton_favorites_button");
