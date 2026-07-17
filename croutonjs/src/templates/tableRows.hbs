@@ -13,7 +13,8 @@
 		data-neighborhoods="{{formatDataPointer this.location_neighborhood}}"
 		data-states="{{formatDataPointer this.location_province}}"
 		data-venues="{{formatDataFromArray this.venue_type_name}}"
-		data-weekdays="{{formatDataPointer this.formatted_day}}">
+		data-weekdays="{{formatDataPointer this.formatted_day}}"
+		data-favorite={{isFavorite this}}>
 		{{> tableDataRow this}}
 	</tr>
 {{/each}}

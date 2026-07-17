@@ -12,3 +12,4 @@ croutonjs/src/js/templates.js
 tmp
 .vscode/launch.json
 build/
+croutonjs/dist/fonts/

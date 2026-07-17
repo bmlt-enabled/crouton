@@ -74,7 +74,10 @@ var croutonDefaultTemplates = {
 	</div>
 	`,
 	meeting_times_template: `
-		<div class="bmlt-day">{{this.formatted_day}}</div>
+		<div class="bmlt-meeting-day-favorite">
+			<div class="bmlt-day">{{this.formatted_day}}</div>
+			<div class="favorite-icon">{{favoriteIcon this}}</div>
+		</div>
 		{{#ifEquals this.duration_time "24:00:00"}}
 			<div class="bmlt-time-2">{{this.start_time_formatted}}</div>
 		{{else}}

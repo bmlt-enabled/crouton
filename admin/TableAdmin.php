@@ -42,7 +42,8 @@ if (!class_exists("Crouton\TableAdmin")) {
             "has_zip_codes",
             "has_venues",
             "filter_visible",
-            "has_common_needs"
+            "has_common_needs",
+            'has_favorites'
         ];
         private MapAdmin $map_admin;
         public function __construct(TableOptions $crouton)

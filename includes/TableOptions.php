@@ -25,6 +25,7 @@ if (!class_exists("Crouton\TableOptions")) {
             "has_cities" => '1',
             "has_formats" => '1',
             "has_locations" => '1',
+            "has_favorites" => '1',
             "has_sub_province" => '0',
             "has_neighborhoods" => '0',
             "has_states" => '0',
@@ -161,7 +162,7 @@ if (!class_exists("Crouton\TableOptions")) {
                     $this->options['meetingdetails_contents_template'] = str_replace('<td style="width:500px">', '<td id="meetingpage_map_td">', $this->options['meetingdetails_contents_template']);
                 }
             }
-            $this->options['crouton_version'] = "4.1";
+            $this->options['crouton_version'] = "4.2";
             foreach (TableOptions::$shortCodeOptions as $key => $value) {
                 if (!isset($this->options[$key])) {
                     $this->options[$key] = $value;

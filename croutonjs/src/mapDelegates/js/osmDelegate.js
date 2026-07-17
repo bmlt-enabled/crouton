@@ -118,13 +118,13 @@ function MapDelegate(config) {
         gMainMap.once('moveend', function(ev) {
 			newZoom = getZoomAdjust(false, filterMeetings);
 			if (gMainMap.getZoom() != newZoom) {
-				gMainMap.setZoom(newZoom);
 				gMainMap.once('zoomend',function() {
 					gMainMap.invalidateSize();
 					if (extra) {
 						gMainMap.once('load moveend', extra);
 					}
 				});
+				gMainMap.setZoom(newZoom);
 			} else {
 				if (extra) {
 					extra();
