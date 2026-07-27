@@ -9,14 +9,14 @@ crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
 function Crouton(config) {
 	var self = this;
-	self.mutex = false;
+	self.ready = false;
 	self.filtering = false;
 	self.masterFormatCodes = [];
 	self.currentView = "weekday";
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.2.0',             // CroutonJS version for debugging
+		version: '4.2.1',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -107,6 +107,11 @@ function Crouton(config) {
 	};
 
 	self.setConfig(config);
+	const body = jQuery("body");
+	if (self.config['theme'] !== '') {
+		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
+	}
+	body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width, fitBounds=true) {
 		const original_query = self.config['custom_query'];
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
@@ -148,8 +153,8 @@ function Crouton(config) {
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
 					self.meetingData = [];
 					self.formatsData = [];
-					self.mutex = false;
 					cb && cb();
+					self.fireReady();
 					return;
 				}
 				if (self.config['exclude_zip_codes'].length > 0) {
@@ -161,10 +166,9 @@ function Crouton(config) {
 					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
 				}
 				cb && cb();
-				self.mutex = false;
+				self.fireReady();
 			});
 	};
-	self.mutex = true;
 
 	self.meetingSearch = function(cb=null) {
 		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'];
@@ -211,20 +215,22 @@ function Crouton(config) {
 			return new Promise(function(resolve, reject) {
 				self.meetingData = [];
 				self.formatsData = [];
-				self.mutex = false;
 				resolve([]);
+				self.fireReady();
 			});
 		}
 	};
-
-	self.lock = function(callback) {
-		var self = this;
-		var lock_id = setInterval(function() {
-			if (!self.mutex) {
-				clearInterval(lock_id);
-				callback();
-			}
-		}, 100);
+	self.readyListener = [];
+	self.listenForReady = function(callback) {
+		if (self.ready) callback();
+		else self.readyListener.push(callback);
+	};
+	self.fireReady = function() {
+		self.ready = true;
+		self.readyListener.forEach(function(callback) {
+			callback();
+		});
+		self.readyListener = [];
 	};
 
 	self.dayTab = function(day_id) {
@@ -1032,7 +1038,6 @@ Crouton.prototype.setConfig = function(config) {
 
 Crouton.prototype.reset = function() {
 	var self = this;
-	jQuery("#custom-css").remove();
 	jQuery("#" + self.config["placeholder_id"]).html("");
 };
 
@@ -1056,7 +1061,7 @@ Crouton.prototype.doHandlebars = function() {
 		return;
 	};
 	var self = this;
-	self.lock(function() {
+	self.listenForReady(function() {
 		if (self.isEmpty(self.meetingData)) {
 			for (let i = 0; i < elements.length; i++) {
 				var element = elements.item(i);
@@ -1169,12 +1174,6 @@ Crouton.prototype.searchMap = function() {
 	}
 	self.config['map_page'] = false;
 	self.config['show_map'] = false;
-	var body = jQuery("body");
-	if (self.config['theme'] !== '') {
-		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
-	}
-
-	body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
 
 	self.meetingData = null;
 	self.renderStandaloneMap("#" + self.config['placeholder_id'], {
@@ -1194,14 +1193,7 @@ Crouton.prototype.searchMap = function() {
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	var self = this;
 
-	self.lock(function() {
-		var body = jQuery("body");
-		if (self.config['theme'] !== '') {
-			body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
-		}
-
-		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
-
+	self.listenForReady(function() {
 		if (self.isEmpty(self.meetingData)) {
 			jQuery('#please-wait').remove();
 			self.showMessage("No meetings found for parameters specified.");
@@ -1687,7 +1679,7 @@ function getUniqueFormatsOfType(array, type){
 }
 Crouton.prototype.renderMeetingCount = function() {
 	var self = this;
-	self.lock(function() {
+	self.listenForReady(function() {
 		self.updateMeetingCount()
 	});
 }
