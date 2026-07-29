@@ -40,6 +40,7 @@ https://demo.bmlt.app/crouton
 = 4.2.1 =
 * Replace mutex with addEventListener
 * Add theme/ custom CSS during initialization
+* Styled favorite icon
 
 = 4.2.0 =
 * Mark some meetings as favorites
