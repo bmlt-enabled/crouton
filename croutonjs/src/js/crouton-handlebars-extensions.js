@@ -277,6 +277,16 @@ function CroutonHandlebarsExtensions() {
             	<br/>
         	{{/if}}
 		`);
+		crouton_Handlebars.registerPartial('formatName', `
+			{{#if formats_expanded}}
+            	<ul>
+            		{{#each formats_expanded}}
+                		<li>{{name}}</li>
+            		{{/each}}
+            	</ul>
+            	<br/>
+        	{{/if}}
+		`);
 		crouton_Handlebars.registerPartial('formatKeys', `
 				{{#if this.formats}}
 				<a

@@ -112,6 +112,23 @@ function Crouton(config) {
 		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
 	}
 	body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+	self.isIOSDevice = function() {
+    	if (navigator.userAgentData && navigator.userAgentData.platform) {
+        	if (navigator.userAgentData.platform === 'iOS') {
+            	return true;
+        	}
+    	}
+    	const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    	const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    	const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
+    	return isIOS || isIPadOS;
+	}
+
+	self.isAndroidDevice = function() {
+    	return /Android/i.test(navigator.userAgent);
+	}
+	self.deviceType = self.isIOSDevice() ? 'ios' : (self.isAndroidDevice() ? 'android' : 'desktop');
+
 	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width, fitBounds=true) {
 		const original_query = self.config['custom_query'];
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
@@ -1836,19 +1853,11 @@ function swipedetect(el, callback){
     }, false)
 }
 function isIOSDevice() {
-    if (navigator.userAgentData && navigator.userAgentData.platform) {
-        if (navigator.userAgentData.platform === 'iOS') {
-            return true;
-        }
-    }
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-    const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !window.MSStream;
-    return isIOS || isIPadOS;
+    return crouton.deviceType === "ios";
 }
 
 function isAndroidDevice() {
-    return /Android/i.test(navigator.userAgent);
+    return crouton.deviceType === "android";
 }
 
 function isMobileDevice() {
