@@ -17,6 +17,7 @@ function MeetingMap(inConfig) {
 	var loadedCallbackArgs = [];
 	var oldBounds = false;
 	var isMouseDown = false;
+	var listSearchResult = null;
 	function preloadApiLoadedCallback(f,a) {
 		loadedCallbackFunction = f;
 		loadedCallbackArgs = a;
@@ -32,8 +33,8 @@ function MeetingMap(inConfig) {
 			} else if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition((position) => {
 					window.storedGeolocation = {
-						latitude: position.coords.latitude,
-						longitude: position.coords.longitude
+						lat: position.coords.latitude,
+						lng: position.coords.longitude
 					};
 					resolve(window.storedGeolocation);
 				}, (error) => {
@@ -77,7 +78,7 @@ function MeetingMap(inConfig) {
 					gDelegate.addListener('idle', triggerCroutonMapNewQuery, false);
 				} else {
 					gDelegate.addListener('zoomend', function (ev) {
-						if (shouldRedrawMarkers() && gAllMeetings) {
+						if (shouldRedrawMarkers() && gAllMeetings && !listSearchResult) {
 							if (listOnlyVisible) {
 								const oldValue = filterVisible(false);
 								searchResponseCallback();
@@ -241,15 +242,22 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector("#goto-text").addEventListener('keydown', function (event) {
 			if (event && event.key == "Enter") {
 				closeModalWindow(event.target);
-				lookupLocation(g_suspendedFullscreen);
+				lookupLocation(document.getElementById('goto-text').value,g_suspendedFullscreen);
 			}
 		});
 		controlDiv.querySelector("#goto-button").addEventListener('click', function (event) {
 			closeModalWindow(event.target);
-			lookupLocation(g_suspendedFullscreen);
+			lookupLocation(document.getElementById('goto-text').value, g_suspendedFullscreen);
 		});
 
 		return controlDiv;
+	}
+	function lookupLocationAsTable(location, mapHidden=true) {
+		if (mapHidden) {
+			lookupLocation(location, false, listSearchGeocode);
+		} else {
+			lookupLocation(location, g_suspendedFullscreen);
+		}
 	}
 	function hasMapSearch() {
 		return 'map_search' in config;
@@ -356,6 +364,11 @@ function MeetingMap(inConfig) {
 		gSearchPoint = {"lat": latlng.lat, "lng": latlng.lng};
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
+	function listSearchGeocode(resp, immediate=false) {
+		listSearchResult = gDelegate.getZoomAdjustedBounds(resp, filterMeetingsAndBounds, config.zoom);
+		gSearchPoint = {"lat": listSearchResult.center.lat, "lng": listSearchResult.center.lng};
+		filterVisible(true, listSearchResult.bounds);
+	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {
 		if (meetings_responseObject === null && config.map_search) {
 			if (config.map_search.auto) nearMeSearch();
@@ -391,7 +404,7 @@ function MeetingMap(inConfig) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
 					function (position) {
-						coords = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+						coords = {lat: position.coords.latitude, lng: position.coords.longitude};
 						filterVisible(false);
 						if (config.zoom) gDelegate.setZoom(false, config.zoom);
 						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
@@ -521,14 +534,22 @@ function MeetingMap(inConfig) {
 		}
 		return ret;
 	}
-	function lookupLocation(fullscreen) {
-		if (document.getElementById('goto-text').value != '') {
+	function lookupLocation(location,fullscreen, callback=null) {
+		if (location != '') {
 			if (fullscreen) {
 				gDelegate.addListener('idle', function () {
-					gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
+					if (callback) {
+						gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
+					} else {
+						gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds);
+					}
 				}, true);
 			} else {
-				gDelegate.callGeocoder(document.getElementById('goto-text').value, resetVisibleThenFilterMeetingsAndBounds);
+				if (callback) {
+					gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
+				} else {
+					gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds);
+				}
 			}
 		} else {
 			alert("");
@@ -737,9 +758,9 @@ function MeetingMap(inConfig) {
 			crouton.searchByCoordinates(gDelegate.getCenter().lat, gDelegate.getCenter().lng, getScreenRadius(), false);
 		}
 	}
-	function filterVisible(on=true) {
+	function filterVisible(on=true, bounds = gDelegate.getBounds()) {
 		if (on==listOnlyVisible && !config.map_search) return on;
-		let mtgs = on ? filterBounds(gDelegate.getBounds()) : gAllMeetings;
+		let mtgs = on ? filterBounds(bounds) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
 			row.dataset.visible = (visible.includes(row.id.split('-').pop())) ? '1' : '0';
@@ -772,7 +793,7 @@ function MeetingMap(inConfig) {
 		if ((gDelegate.getZoom()>=14) && gDelegate.contains(gDelegate.getBounds(), meeting.latitude, meeting.longitude)) {
 			gDelegate.openMarker(meetingId);
 		} else {
-			gDelegate.setViewToPosition({latitude: meeting.latitude, longitude: meeting.longitude}, filterMeetingsAndBounds, function() {gDelegate.openMarker(meetingId);});
+			gDelegate.setViewToPosition({lat: meeting.latitude, lng: meeting.longitude}, filterMeetingsAndBounds, function() {gDelegate.openMarker(meetingId);});
 		}
 	}
 	function filterMeetingsAndBounds(bounds) {
@@ -845,6 +866,8 @@ function MeetingMap(inConfig) {
 		}
 		gDelegate.invalidateSize();
 		if (!gAllMeetings) return;
+		if (listSearchResult) gDelegate.setViewToPositionAndZoom(listSearchResult.center, listSearchResult.zoom);
+		listSearchResult= null;
 		if (fitBounds) gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])
@@ -895,6 +918,7 @@ function MeetingMap(inConfig) {
 	this.loadPopupMap = loadPopupMap;
 	this.filterVisible = filterVisible;
 	this.hasMapSearch = hasMapSearch;
+	this.lookupLocationAsTable = lookupLocationAsTable;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -909,3 +933,4 @@ MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
 MeetingMap.prototype.filterVisible = null;
 MeetingMap.prototype.hasMapSearch = null;
+MeetingMap.prototype.lookupLocationAsTable = null;

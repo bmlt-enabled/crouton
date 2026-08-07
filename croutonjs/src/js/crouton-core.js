@@ -335,6 +335,18 @@ function Crouton(config) {
 		self.groupedView("embeddedMapPage", false);
 		croutonMap.showMap(false,false);
 	}
+	// If we want to use the map to to geo searches, then the map has to be initialized, so we move it momentatily off screen.
+	Crouton.prototype.initializeInvisibleMapView = function() {
+		const map_page = document.getElementById("byfield_embeddedMapPage");
+		map_page.style.position = "fixed";
+		map_page.style.right = "-10px";
+		jQuery("#byfield_embeddedMapPage").removeClass("hide").addClass("show");
+		croutonMap.showMap(false,false);
+		croutonMap.lookupLocation('Frankfurt', false)
+		jQuery("#byfield_embeddedMapPage").removeClass("show").addClass("hide");
+		map_page.style.position = "relative";
+		map_page.style.right = "0px";
+	}
 	self.lowlightButton = function (id) {
 		jQuery(id).removeClass("buttonHighlight").addClass("buttonLowlight");
 	};

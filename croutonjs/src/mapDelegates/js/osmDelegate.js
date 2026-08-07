@@ -52,10 +52,11 @@ function MapDelegate(config) {
 	var gClusterLayer = null;
 	var gSearchPointMarker = false;
 	var gOpenMarker = false;
+	var gDiv = null;
     function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
-		if ( inHidden ) {
 			gDiv = inDiv;
+		if ( inHidden ) {
 			gDiv.style.height = 'auto';
 			gDiv.style.marginBottom = '10px';
 			gMainMap = null;
@@ -111,9 +112,14 @@ function MapDelegate(config) {
 		if (!gMainMap) return;
 		gMainMap.off(o.event, o.f);
 	}
+	function setViewToPositionAndZoom(position, zoomLevel) {
+		if (!gMainMap) return;
+		var latlng = L.latLng(position.lat, position.lng);
+		gMainMap.setViewToPosition(latlng, zoomLevel);
+	}
     function setViewToPosition(position, filterMeetings, extra=null) {
 		if (!gMainMap) return;
-        var latlng = L.latLng(position.latitude, position.longitude);
+        var latlng = L.latLng(position.lat, position.lng);
 		gMainMap.flyTo(latlng);
         gMainMap.once('moveend', function(ev) {
 			newZoom = getZoomAdjust(false, filterMeetings);
@@ -145,38 +151,37 @@ function MapDelegate(config) {
 	function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-	function getZoomAdjust(only_out,filterMeetings) {
+	function calculateBounds(center, zoomLevel, mapWidth, mapHeight) {
+
+    	var degreesPerPixelX = 360 / Math.pow(2, zoomLevel + 8);
+    	var degreesPerPixelY = 360 / Math.pow(2, zoomLevel + 8) * Math.cos(center.lat * Math.PI / 180);
+
+		const halfWidthInDegrees = (mapWidth / 2) * degreesPerPixelX;
+		const halfHeightInDegrees = (mapHeight / 2) * degreesPerPixelY;
+
+		const southWest = L.latLng(center.lat - halfHeightInDegrees, center.lng - halfWidthInDegrees);
+		const northEast = L.latLng(center.lat + halfHeightInDegrees, center.lng + halfWidthInDegrees);
+
+		return L.latLngBounds(southWest, northEast);
+	}
+	function getZoomAdjust(only_out,filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
-		var ret = gMainMap.getZoom();
+		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		ret = zoomLevel;
 		if (config.map_search && isFilterVisible()) return ret;
-		var center = gMainMap.getCenter();
-		var bounds = gMainMap.getBounds();
+		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
 		var zoomedOut = false;
 		while(filterMeetings(bounds, center).length==0 && ret>6) {
 			zoomedOut = true;
-			// not exact, because earth is curved
 			ret -= 1;
-			var ne = L.latLng(
-				(2*bounds.getNorthEast().lat)-center.lat,
-			    (2*bounds.getNorthEast().lng)-center.lng);
-			var sw = L.latLng(
-				(2*bounds.getSouthWest().lat)-center.lat,
-				(2*bounds.getSouthWest().lng)-center.lng);
-			bounds = L.latLngBounds(sw,ne);
-
+			bounds = calculateBounds(center, ret, mapWidth, mapHeight);
 		}
 		if (!only_out && !zoomedOut && ret<12) {
 			var knt = filterMeetings(bounds).length;
 			while(ret<12 && knt>0) {
-				// no exact, because earth is curved
 				ret += 1;
-				var ne = L.latLng(
-					0.5*(bounds.getNorthEast().lat+center.lat),
-					0.5*(bounds.getNorthEast().lng+center.lng));
-				var sw = L.latLng(
-					 0.5*(bounds.getSouthWest().lat+center.lat),
-					0.5*(bounds.getSouthWest().lng+center.lng));
-				bounds = L.latLngBounds(sw,ne);
+				bounds = calculateBounds(center, ret, mapWidth, mapHeight);
 				knt = filterMeetings(bounds).length;
 			}
 			if (knt == 0) {
@@ -409,6 +414,21 @@ function addControl(div,pos,cb) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
+	function getZoomAdjustedBounds(in_geocode_response, filterMeetings, zoomLevel) {
+		const center = getGeocodeCenter(in_geocode_response);
+		if (!center) return null;
+		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		if (center) {
+			const zoom = getZoomAdjust(false, filterMeetings, zoomLevel, center);
+			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
+			const ret = {"center": center, "bounds": bounds, "zoom": zoom};
+			return ret;
+		} else {
+			alert ( crouton.localization.getWord("address_lookup_fail") );
+			return null;
+		}
+	}
 	function getGeocodeCenter ( in_geocode_response ) {
         if ( in_geocode_response && in_geocode_response[0] ) {
 	        return {lat: in_geocode_response[0].center.lat, lng: in_geocode_response[0].center.lng};
@@ -506,9 +526,11 @@ function addControl(div,pos,cb) {
 	this.removeListener = removeListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
+	this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
     this.fromLatLngToPoint = fromLatLngToPoint;
     this.callGeocoder = callGeocoder;
+	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
 	this.setZoom = setZoom;
 	this.getZoom = getZoom;
 	this.createMarker = createMarker;
@@ -540,11 +562,13 @@ MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
+MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
 MapDelegate.prototype.fromLatLngToPoint = null;
 MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
+MapDelegate.prototype.getZoomAdjustedBounds = null;
 MapDelegate.prototype.createMarker = null;
 MapDelegate.prototype.bindPopup = null;
 MapDelegate.prototype.addMarkerCallback = null;
