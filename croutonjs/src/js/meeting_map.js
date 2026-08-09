@@ -365,8 +365,11 @@ function MeetingMap(inConfig) {
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function listSearchGeocode(resp, immediate=false) {
-		listSearchResult = gDelegate.getZoomAdjustedBounds(resp, filterMeetingsAndBounds, config.zoom);
+		const center = gDelegate.getGeocodeCenter(resp);
+		if (!center) return;
+		listSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, config.zoom);
 		gSearchPoint = {"lat": listSearchResult.center.lat, "lng": listSearchResult.center.lng};
+		crouton.updateDistances();
 		filterVisible(true, listSearchResult.bounds);
 	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true, fitAll=false) {
@@ -399,7 +402,6 @@ function MeetingMap(inConfig) {
 		}
 		searchResponseCallback();
 		hideThrobber();
-		if (isFilterVisible() || config.centerMe || config.goto) crouton.forceShowMap();
 		if (config.centerMe) {
 			if (navigator.geolocation) {
 				navigator.geolocation.getCurrentPosition(
@@ -407,9 +409,14 @@ function MeetingMap(inConfig) {
 						coords = {lat: position.coords.latitude, lng: position.coords.longitude};
 						filterVisible(false);
 						if (config.zoom) gDelegate.setZoom(false, config.zoom);
-						gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
-							filterVisible(isFilterVisible());
-						});
+						if (gDelegate.isMapVisible() || !isFilterVisible()) {
+							gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
+								filterVisible(isFilterVisible());
+							});
+						} else {
+							listSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.zoom);
+							filterVisible(true, listSearchResult.bounds);
+						}
 						gSearchPoint = {"lat": position.coords.latitude, "lng": position.coords.longitude};
 						crouton.updateDistances(true);
 					},
@@ -422,7 +429,13 @@ function MeetingMap(inConfig) {
 			if ((!config.centerMe && !config.goto) && !(config.map_search && isFilterVisible())) {
 			  gDelegate.afterInit(()=>filterVisible(isFilterVisible()));
 			}
-			if (config.goto) gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
+			if (config.goto) {
+				if (gDelegate.isMapVisible()) {
+					gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
+				} else {
+					gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds, listSearchGeocode);
+				}
+			}
 		}
 	}
 	function createCityHash(allMeetings) {
@@ -560,19 +573,9 @@ function MeetingMap(inConfig) {
 		if (!gAllMeetings || !gAllMeetings.length) {
 			return;
 		};
-		try {
-			drawMarkers(expand);
-			if (gSearchPoint) {
-				gDelegate.markSearchPoint([gSearchPoint.lat, gSearchPoint.lng]);
-			}
-		} catch (e) {
-			console.log(e);
-			gDelegate.addListener('projection_changed', function (ev) {
-				drawMarkers(expand);
-				if (gSearchPoint) {
-					gDelegate.markSearchPoint([gSearchPoint.lat, gSearchPoint.lng]);
-				}
-			}, true);
+		drawMarkers(expand);
+		if (gSearchPoint) {
+			gDelegate.markSearchPoint([gSearchPoint.lat, gSearchPoint.lng]);
 		}
 	};
 	/****************************************************************************************
@@ -620,11 +623,20 @@ function MeetingMap(inConfig) {
 			gDelegate.fitBounds(lat_lngs);
 		}
 	};
+	function calcPixelsFromCenter(zoom, centerLat, centerLng, pointLat, pointLng) {
+		const difX = pointLng - centerLng;
+		const difY = pointLat - centerLat;
+		const pixelWidth = Math.pow(2, 8+zoom) / 360.0;
+
+		return {x: Math.round(difX * pixelWidth), y: Math.round(difY * pixelWidth)};
+	}
 	function mapOverlappingMarkersInCity(in_meeting_array)	///< Used to draw the markers when done.
 	{
 		var tolerance = 8;	/* This is how many pixels we allow. */
 
 		var ret = new Array;
+		const center = gDelegate.getCenter();
+		const zoom = gDelegate.getZoom();
 		// We create this hash because we limit looking for "matches" to within one city.
 		for (const [city, meetings] of Object.entries(createCityHash(in_meeting_array))) {
 			// create a tmp object so we can mark which items haven't been matched yet.
@@ -632,7 +644,7 @@ function MeetingMap(inConfig) {
 				item = new Object;
 				item.matched = false;
 				item.meeting = meeting;
-				item.coords = gDelegate.fromLatLngToPoint(meeting.latitude, meeting.longitude);
+				item.coords = calcPixelsFromCenter(zoom, center.lat, center.lng, meeting.latitude, meeting.longitude);
 				return item;
 			});
 			tmp.reduce(function(prev, item, index) {
@@ -866,8 +878,11 @@ function MeetingMap(inConfig) {
 		}
 		gDelegate.invalidateSize();
 		if (!gAllMeetings) return;
-		if (listSearchResult) gDelegate.setViewToPositionAndZoom(listSearchResult.center, listSearchResult.zoom);
-		listSearchResult= null;
+		if (listSearchResult) {
+			searchResponseCallback();
+			gDelegate.setViewToPosition(listSearchResult.center, filterMeetingsAndBounds, filterVisible);
+			listSearchResult = null;
+		}
 		if (fitBounds) gDelegate.fitBounds(
 			((gMeetingIdsFromCrouton) ? gAllMeetings.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint)) : gAllMeetings)
 				.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[])

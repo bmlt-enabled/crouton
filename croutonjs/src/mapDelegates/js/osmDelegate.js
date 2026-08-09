@@ -115,7 +115,7 @@ function MapDelegate(config) {
 	function setViewToPositionAndZoom(position, zoomLevel) {
 		if (!gMainMap) return;
 		var latlng = L.latLng(position.lat, position.lng);
-		gMainMap.setViewToPosition(latlng, zoomLevel);
+		gMainMap.setView(latlng, zoomLevel);
 	}
     function setViewToPosition(position, filterMeetings, extra=null) {
 		if (!gMainMap) return;
@@ -198,10 +198,6 @@ function MapDelegate(config) {
 		if (!gMainMap) return;
         gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
 	}
-	function fromLatLngToPoint(lat, lng) {
-		if (!gMainMap) return null;
-		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
-    }
 	function markSearchPoint(inCoords) {
 		if (!gMainMap) return;
 		if (gSearchPointMarker) gSearchPointMarker.remove();
@@ -414,9 +410,7 @@ function addControl(div,pos,cb) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-	function getZoomAdjustedBounds(in_geocode_response, filterMeetings, zoomLevel) {
-		const center = getGeocodeCenter(in_geocode_response);
-		if (!center) return null;
+	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
@@ -519,7 +513,10 @@ function addControl(div,pos,cb) {
 	}
 	function returnTrue() {return true;}
 	function isMapDefined() {
-		return (gMainMap != null);
+		return (gMainMap !== null);
+	}
+	function isMapVisible() {
+		return (gMainMap !== null) && gMainMap.getSize().x > 0 && gMainMap.getSize().y > 0;
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -528,7 +525,6 @@ function addControl(div,pos,cb) {
     this.setViewToPosition = setViewToPosition;
 	this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
-    this.fromLatLngToPoint = fromLatLngToPoint;
     this.callGeocoder = callGeocoder;
 	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
 	this.setZoom = setZoom;
@@ -552,6 +548,7 @@ function addControl(div,pos,cb) {
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
 	this.isMapDefined = isMapDefined;
+	this.isMapVisible = isMapVisible;
 	this.getCorners = getCorners;
 	this.getCenter = getCenter;
 	this.markSearchPoint = markSearchPoint;
@@ -564,7 +561,6 @@ MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
 MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
-MapDelegate.prototype.fromLatLngToPoint = null;
 MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
@@ -588,6 +584,7 @@ MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype.isMapVisible = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter = null;
 MapDelegate.prototype.markSearchPoint = null;

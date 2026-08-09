@@ -209,13 +209,6 @@ function MapDelegate(in_config) {
         if (!gMainMap) return null;
         return gMainMap.getBounds();
     }
-    function fromLatLngToPoint(lat, lng) {
-        if (!gMainMap) return null;
-        var latLng = new google.maps.LatLng ( lat, lng);
-        var scale = 1 << gMainMap.getZoom();
-        var worldPoint = gMainMap.getProjection().fromLatLngToPoint(latLng);
-        return new google.maps.Point(worldPoint.x * scale, worldPoint.y * scale);
-    };
     function createClusterLayer() {
         gIsClustering = true;
     }
@@ -445,8 +438,7 @@ function geoCallback( in_geocode_response ) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
     }
-	function getZoomAdjustedBounds(in_geocode_response, filterMeetings, zoomLevel) {
-		const center_obj = getGeocodeCenter(in_geocode_response);
+	function getZoomAdjustedBounds(center_obj, filterMeetings, zoomLevel) {
         if (!center_obj) return null;
         const center = new google.maps.LatLng(center_obj.lat, center_obj.lng);
 		const mapWidth = gDiv.parentElement.offsetWidth;
@@ -501,7 +493,10 @@ function geoCallback( in_geocode_response ) {
     function modalOn() {}
     function modalOff() {}
 	function isMapDefined() {
-		return gMainMap != null;
+		return gMainMap !== null && gMainMap !== undefined;
+	}
+    function isMapVisible() {
+		return gMainMap !== null && gMainMap !== undefined && gMainMap.getProjection() !== null && gMainMap.getProjection() !== undefined;
 	}
     this.createMap = createMap;
     this.addListener = addListener;
@@ -509,7 +504,6 @@ function geoCallback( in_geocode_response ) {
     this.setViewToPosition = setViewToPosition;
     this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
-    this.fromLatLngToPoint = fromLatLngToPoint;
     this.callGeocoder = callGeocoder;
 	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
     this.setZoom = setZoom;
@@ -535,6 +529,7 @@ function geoCallback( in_geocode_response ) {
     this.removeListener = removeListener;
     this.afterInit = afterInit;
     this.isMapDefined = isMapDefined;
+    this.isMapVisible = isMapVisible;
     this.getCorners = getCorners;
     this.getCenter = getCenter;
     this.markSearchPoint = markSearchPoint;
@@ -547,7 +542,6 @@ MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
 MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
-MapDelegate.prototype.fromLatLngToPoint = null;
 MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.getZoomAdjustedBounds = null;
 MapDelegate.prototype.setZoom = null;
@@ -572,6 +566,7 @@ MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype,isMapVisible = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter= null;
 MapDelegate.prototype.markSearchPoint = null;
