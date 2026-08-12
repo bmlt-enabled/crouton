@@ -164,6 +164,11 @@ function MapDelegate(config) {
 
 		return L.latLngBounds(southWest, northEast);
 	}
+	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
+        const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
+    }
 	function getZoomAdjust(only_out,filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
 		const mapWidth = gDiv.parentElement.offsetWidth;
@@ -553,6 +558,7 @@ function addControl(div,pos,cb) {
 	this.getCenter = getCenter;
 	this.markSearchPoint = markSearchPoint;
 	this.getOpenMarker = getOpenMarker;
+	this.calculateBoundsFromCenterAndZoom = calculateBoundsFromCenterAndZoom;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -589,3 +595,4 @@ MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter = null;
 MapDelegate.prototype.markSearchPoint = null;
 MapDelegate.prototype.getOpenMarker = null;
+MapDelegate.prototype.calculateBoundsFromCenterAndZoom = null;

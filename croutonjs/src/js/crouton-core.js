@@ -853,8 +853,8 @@ function Crouton(config) {
 			});
 		}
 		const sorted = parent.children().sort(function (a, b) {
-			const idA =parseFloat( jQuery(a).data('meetingid').replace("meeting-data-row-", ""));
-			const idB =parseFloat( jQuery(b).data('meetingid').replace("meeting-data-row-", ""));
+			const idA =parseFloat( (jQuery(a).data('meetingid') ?? jQuery(a).attr('id')).replace("meeting-data-row-", ""));
+			const idB =parseFloat( (jQuery(b).data('meetingid') ?? jQuery(b).attr('id')).replace("meeting-data-row-", ""));
 			const dataA = self.meetingData.find((m) => m.id_bigint==idA);
 			const dataB = self.meetingData.find((m) => m.id_bigint==idB);
 			const distanceA = dataA ? parseFloat(dataA['distance_in_km']) : Number.POSITIVE_INFINITY;
@@ -963,6 +963,12 @@ function Crouton(config) {
 			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bootstrap-bmlt bmlt-map "+self.localization.getWord('css-direction')+" bmlt_map_container_div'></div>");
 		}
 		return 'bmlt-map';
+	}
+	self.createLocationSearchElement = function() {
+		if (!document.getElementById('bmlt-location-search')) {
+			jQuery("#bmlt-tabs-table").before("<div id='bmlt-location-search' class='bootstrap-bmlt bmlt-location-search "+self.localization.getWord('css-direction')+" bmlt_location_search_container_div'></div>");
+		}
+		return 'bmlt-location-search';
 	}
 	if (typeof window.croutonMap === 'undefined') {
 		window.croutonMap = new MeetingMap(self.config);
@@ -1096,6 +1102,13 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	this.openMeetingModal(self.meetingData.find((m) => m.id_bigint == meetingId));
 	return;
 }
+Crouton.prototype.isEmbeddedMapShowing = function() {
+	const embeddedMap = document.getElementById("byfield_embeddedMapPage");
+	if (embeddedMap) {
+		return !embeddedMap.classList.contains('hide');
+	}
+	return true;
+}
 Crouton.prototype.openMeetingModal = function(meeting) {
 	let self = this;
 	crouton_Handlebars.registerHelper('crouton_map', function() {
@@ -1198,7 +1211,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 			jQuery('#please-wait').remove();
 			self.showMessage("No meetings found for parameters specified.");
 			if (self.config['refresh_map']) {
-				croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
+				croutonMap.refreshMeetings(self.meetingData, fitBounds);
 			}
 			return;
 		}
@@ -1572,10 +1585,13 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						if (self.meetingData.filter(m => m.venue_type != 2).length==0) {
 							jQuery('#groupingButton_embeddedMapPage').addClass('hide');
 						}
-						else croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBoundsInitial);
+						else {
+							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBoundsInitial);
+							jQuery('#'+self.createLocationSearchElement()).append(croutonMap.createLocationSearchButton());
+						}
 					}
 					if (self.config['refresh_map']) {
-						croutonMap.refreshMeetings(self.meetingData, fitBounds, true);
+						croutonMap.refreshMeetings(self.meetingData, fitBounds);
 					}
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';

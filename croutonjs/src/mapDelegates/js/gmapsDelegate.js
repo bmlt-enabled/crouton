@@ -452,7 +452,13 @@ function geoCallback( in_geocode_response ) {
 			alert ( crouton.localization.getWord("address_lookup_fail") );
 			return null;
 		}
-	}
+    }
+	function calculateBoundsFromCenterAndZoom(center_obj, zoomLevel) {
+        const center = new google.maps.LatLng(center_obj.lat, center_obj.lng);
+        const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
+    }
     function invalidateSize() {
     }
     function clickSearch(ev, cb) {
@@ -534,6 +540,7 @@ function geoCallback( in_geocode_response ) {
     this.getCenter = getCenter;
     this.markSearchPoint = markSearchPoint;
     this.getOpenMarker = getOpenMarker;
+    this.calculateBoundsFromCenterAndZoom = calculateBoundsFromCenterAndZoom;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
@@ -571,3 +578,4 @@ MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter= null;
 MapDelegate.prototype.markSearchPoint = null;
 MapDelegate.prototype.getOpenMarker = null;
+MapDelegate.prototype.calculateBoundsFromCenterAndZoom = null;

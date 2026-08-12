@@ -1,0 +1,29 @@
+<button id="location-search-button" style="width: auto" class="menu-button" title="{{getWord 'Open Location Search Dialog'}}">
+    <span class="menu-button-label" style="position:initial; padding:8px;">{{getWord 'Search by location'}}</span>
+</button>
+<div id="bmlt_location_search_modal" class="modal" style="display: none;">
+    <div id="bmlt_location_search_content" class="modal-content">
+        <span id="close_location_search" class="modal-close">x</span>
+        <div id="modal-location_search-page">
+            <div class="modal-title">{{getWord 'Search by location'}}</div>
+            <div id="location_zoomed-out-message" class="hide">
+                <p>{{getWord 'zoomed-out-message'}}</p>
+            </div>
+            <div id="modal-location-search-box" class="modal-search">
+                <input id="bmlt-location-search-goto-text" type="text"
+                    placeholder="{{getWord 'Enter a city or zip code'}}" style="margin-bottom:5px;">
+                <button id="bmlt-location-search-text-button" class="filter-button">{{getWord 'text_search'}}</button>
+            </div>
+            <div class="modal-search">
+                <button id="bmlt-location-search-nearbyMeetings" class="filter-button">{{getWord 'near_me'}}</button>
+            </div>
+            <div id="location-search-widen" class="modal-search">
+                <button id="bmlt-location-search-widen" class="filter-button">{{getWord 'Widen Search'}}</button>
+            </div>
+            <div>
+			    <!--<button id="location-search-close" class="advanced-search-button" style="float:left">{{getWord "Close"}}</a>-->
+                <button id="bmlt-location_search-cancel" class="advanced-search-button">{{getWord 'Cancel Search'}}</button>
+		    </div>
+        </div>
+    </div>
+</div>
