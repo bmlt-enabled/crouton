@@ -1103,6 +1103,7 @@ Crouton.prototype.meetingModal = function(meetingId) {
 	return;
 }
 Crouton.prototype.isEmbeddedMapShowing = function() {
+	if (self.config['show_map']) return true;
 	const embeddedMap = document.getElementById("byfield_embeddedMapPage");
 	if (embeddedMap) {
 		return !embeddedMap.classList.contains('hide');

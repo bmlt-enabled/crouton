@@ -564,12 +564,12 @@ function MeetingMap(inConfig) {
 	}
 	function showLocationSearchDialog(e) {
 		if (!document.getElementById('bmlt_location_search_modal')) document.getElementById('bmlt-location-search').appendChild(gLocationSearchModal);
-		if (gLocationSearchResult !== null) {
-			jQuery("#locationSearchWiden").removeClass('hide');
-		} else {
-			jQuery("#locationSearchWiden").addClass('hide');
-		}
 		openModalWindow(gLocationSearchModal);
+		if (gLocationSearchResult !== null) {
+			jQuery("#location-search-widen").removeClass('hide');
+		} else {
+			jQuery("#location-search-widen").addClass('hide');
+		}
 	}
 	function showGeocodingDialog(e=null) {
 		openModalWindow(document.getElementById('geocoding_modal'));

@@ -784,3 +784,13 @@ span.crouton-favorite {
     vertical-align: -0.2em;
     line-height: .1!important;
 }
+#bmlt_location_search_modal .filter-button {
+    margin: 0;
+}
+input#bmlt-location-search-goto-text {
+    width: 100%;
+    box-sizing: border-box;
+}
+div#location-search-widen.hide {
+    display: none;
+}
