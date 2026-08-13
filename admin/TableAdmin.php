@@ -465,7 +465,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <li>attendVirtual (links to the virtal meeting)</li>
                                 <li>directionsButton (a button linking to device specific maps directions)</li>
                                 <li>distanceButton(distance from user location to meeting location)</li>
-                                <li>formatPopup (list of formats with a popup containing format description)</li>
+                                <li>formatKeys (list of formats with a popup containing all format descriptions)</li>
+                                <li>formatNames (Each format name listed with a popup containing the format description)</li>
                                 <li>formatDescriptions (list of format descriptions)</li>
                             </ul>
                             <h2>Including a Map</h2>

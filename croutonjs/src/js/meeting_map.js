@@ -76,7 +76,7 @@ function MeetingMap(inConfig) {
 				} else {
 					gDelegate.addListener('zoomend', function (ev) {
 						if (shouldRedrawMarkers() && gAllMeetings && !gLocationSearchResult) {
-							if (listOnlyVisible) {
+							if (gListOnlyVisible) {
 								const oldValue = filterVisible(false);
 								searchResponseCallback();
 								filterVisible(oldValue);
@@ -189,7 +189,7 @@ function MeetingMap(inConfig) {
 		});
 		controlDiv.querySelector("#bmlt-location-search-widen").addEventListener('click', function () {
 			if (gLocationSearchResult === null) {
-				if (listOnlyVisible && gSearchPoint) {
+				if (gListOnlyVisible && gSearchPoint) {
 					gLocationSearchResult = {center: gSearchPoint, bounds: gDelegate.getBounds(), zoom: gDelegate.getZoom()};
 				} else return;
 			}
@@ -200,7 +200,7 @@ function MeetingMap(inConfig) {
 			} else {
 				gLocationSearchResult.zoom = gLocationSearchResult.zoom - 1;
 				gLocationSearchResult.bounds = gDelegate.calculateBoundsFromCenterAndZoom(gLocationSearchResult.center, gLocationSearchResult.zoom);
-				listOnlyVisible = false; // force new calc.
+				gListOnlyVisible = false; // force new calc.
 				filterVisible(true, gLocationSearchResult.bounds);
 			}
 			closeModalWindow(gLocationSearchModal);
@@ -243,7 +243,7 @@ function MeetingMap(inConfig) {
 		}`
 			.replace("__text1__", crouton.localization.getWord("Upcoming Meetings"))
 			.replace("__text2__", crouton.localization.getWord("All Meetings"));
-		var controlDiv = document.createElement('div');
+		const controlDiv = document.createElement('div');
 		controlDiv.innerHTML = toggleSrc;
 		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
 			if (event.pointerId < 0) return;
@@ -258,8 +258,8 @@ function MeetingMap(inConfig) {
 		return controlDiv;
 	}
 	function createMenuButton(menuContext) {
-		var template = hbs_Crouton.templates['mapMenu'];
-		var controlDiv = document.createElement('div');
+		const template = hbs_Crouton.templates['mapMenu'];
+		const controlDiv = document.createElement('div');
 		controlDiv.innerHTML = template(menuContext);
 		controlDiv.querySelector("#nearbyMeetings").addEventListener('click', function (e) {
 			retrieveGeolocation().then(position => {
@@ -288,7 +288,7 @@ function MeetingMap(inConfig) {
 			if (dropdownContent.style.display == "inline-block") {
 				dropdownContent.style.display = "none";
 			} else {
-				jQuery("#filteringByVisibility").html(listOnlyVisible?'&#10004;':'');
+				jQuery("#filteringByVisibility").html(gListOnlyVisible?'&#10004;':'');
 				dropdownContent.style.display = "inline-block";
 			}
 		});
@@ -341,7 +341,7 @@ function MeetingMap(inConfig) {
 	function filterFromCrouton(filter) {
 		gMeetingIdsFromCrouton = filter;
 		if (gAllMeetings)
-			searchResponseCallback(fitDuringFilter && !listOnlyVisible);
+			searchResponseCallback(fitDuringFilter && !gListOnlyVisible);
 	};
 	function clearMessageAndClose(modal, msg = '#zoomed-out-message') {
 		jQuery(msg).not('.hide').addClass('hide');
@@ -375,7 +375,7 @@ function MeetingMap(inConfig) {
 				inDiv.myThrobber.className = 'bmlt_map_throbber_div';
 				inDiv.myThrobber.style.display = 'none';
 				inDiv.appendChild(inDiv.myThrobber);
-				var img = document.createElement("img");
+				const img = document.createElement("img");
 
 				if (img) {
 					img.src = config.BMLTPlugin_images ? config.BMLTPlugin_images + "/Throbber.gif"
@@ -565,7 +565,7 @@ function MeetingMap(inConfig) {
 	function showLocationSearchDialog(e) {
 		if (!document.getElementById('bmlt_location_search_modal')) document.getElementById('bmlt-location-search').appendChild(gLocationSearchModal);
 		openModalWindow(gLocationSearchModal);
-		if (gLocationSearchResult !== null) {
+		if ((gSearchPoint !== null) && gListOnlyVisible) {
 			jQuery("#location-search-widen").removeClass('hide');
 		} else {
 			jQuery("#location-search-widen").addClass('hide');
@@ -692,15 +692,15 @@ function MeetingMap(inConfig) {
 	}
 	function mapOverlappingMarkersInCity(in_meeting_array)	///< Used to draw the markers when done.
 	{
-		var tolerance = 8;	/* This is how many pixels we allow. */
+		const tolerance = 8;	/* This is how many pixels we allow. */
 
-		var ret = new Array;
+		const ret = new Array;
 		const center = gDelegate.getCenter();
 		const zoom = gDelegate.getZoom();
 		// We create this hash because we limit looking for "matches" to within one city.
 		for (const [city, meetings] of Object.entries(createCityHash(in_meeting_array))) {
 			// create a tmp object so we can mark which items haven't been matched yet.
-			var tmp = meetings.map((meeting) => {
+			const tmp = meetings.map((meeting) => {
 				item = new Object;
 				item.matched = false;
 				item.meeting = meeting;
@@ -710,15 +710,15 @@ function MeetingMap(inConfig) {
 			tmp.reduce(function(prev, item, index) {
 				if (item.matched) return prev;
 				matches = [item.meeting];
-				var outer_coords = item.coords;
+				const outer_coords = item.coords;
 				for (c2 = index+1; c2<meetings.length; c2++) {
 					if (tmp[c2].matched) continue;
-					var inner_coords = tmp[c2].coords;
+					const inner_coords = tmp[c2].coords;
 
-					var xmin = outer_coords.x - tolerance;
-					var xmax = outer_coords.x + tolerance;
-					var ymin = outer_coords.y - tolerance;
-					var ymax = outer_coords.y + tolerance;
+					const xmin = outer_coords.x - tolerance;
+					const xmax = outer_coords.x + tolerance;
+					const ymin = outer_coords.y - tolerance;
+					const ymax = outer_coords.y + tolerance;
 
 					/* We have an overlap. */
 					if ((inner_coords.x >= xmin) && (inner_coords.x <= xmax) && (inner_coords.y >= ymin) && (inner_coords.y <= ymax)) {
@@ -735,8 +735,8 @@ function MeetingMap(inConfig) {
 		return ret;
 	};
 	function sortMeetingSearchResponseCallback(mtg_a, mtg_b) {
-	var weekday_score_a = parseInt(mtg_a.weekday_tinyint, 10);
-	var weekday_score_b = parseInt(mtg_b.weekday_tinyint, 10);
+	const weekday_score_a = parseInt(mtg_a.weekday_tinyint, 10);
+	const weekday_score_b = parseInt(mtg_b.weekday_tinyint, 10);
 
 	if (weekday_score_a < config.start_week) {
 		weekday_score_a += 7;
@@ -752,8 +752,8 @@ function MeetingMap(inConfig) {
 	else if (weekday_score_a > weekday_score_b) {
 		return 1;
 	};
-	var time_a = mtg_a.start_time.toString().split(':');
-	var time_b = mtg_b.start_time.toString().split(':');
+	const time_a = mtg_a.start_time.toString().split(':');
+	const time_b = mtg_b.start_time.toString().split(':');
 	if (parseInt(time_a[0]) < parseInt(time_b[0])) {
 		return -1;
 	}
@@ -785,20 +785,20 @@ function MeetingMap(inConfig) {
 	 *	 \brief	This creates a single meeting's marker on the map.							*
 	 ****************************************************************************************/
 	function createMapMarker(meetings, openMarker) {
-		var main_point = [meetings[0].latitude, meetings[0].longitude];
+		const main_point = [meetings[0].latitude, meetings[0].longitude];
 		const marker_html = markerTemplate(meetings);
 		const marker = gDelegate.createMarker(main_point, (meetings.length > 1), null);
 		gDelegate.bindPopup(marker, marker_html, meetings.map((m)=>parseInt(m.id_bigint)), openMarker);
 	};
 	function createGroupMarker(group, openMarker) {
-		var main_point = [group.latitude, group.longitude];
+		const main_point = [group.latitude, group.longitude];
 		const marker = gDelegate.createMarker(main_point, group['membersOfGroup'].length > 1, null);
 		gDelegate.addMarkerCallback(marker, function() {
 			crouton.openMeetingModal(group);
 		});
 	};
-	var listOnlyVisible = false;
-	var listener = null;
+	var gListOnlyVisible = false;
+	var gDragStartListener = null;
 	function filterBounds(bounds) {
 		return gAllMeetings.filter((meeting) => gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 	}
@@ -831,7 +831,7 @@ function MeetingMap(inConfig) {
 		}
 	}
 	function filterVisible(on=true, bounds = gDelegate.getBounds()) {
-		if (on==listOnlyVisible && !config.map_search) return on;
+		if (on==gListOnlyVisible && !config.map_search) return on;
 		let mtgs = on ? filterBounds(bounds) : gAllMeetings;
 		let visible = mtgs.map((m)=>m.id_bigint);
 		jQuery(".bmlt-data-row").each(function(index,row) {
@@ -843,19 +843,19 @@ function MeetingMap(inConfig) {
 		crouton.simulateFilterDropdown();
 		fitDuringFilter = true;
 		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
-		listOnlyVisible = on;
-		if (on) listener = gDelegate.addListener('dragstart', onDragStart, true);
-		else if (listener) {
-			gDelegate.removeListener(listener);
-			listener = null;
+		gListOnlyVisible = on;
+		if (on) gDragStartListener = gDelegate.addListener('dragstart', onDragStart, true);
+		else if (gDragStartListener) {
+			gDelegate.removeListener(gDragStartListener);
+			gDragStartListener = null;
 		}
 		return !on;
 	}
 	function toggleVisible() {
-		filterVisible(!listOnlyVisible);
+		filterVisible(!gListOnlyVisible);
 	}
 	function filterBounds(bounds) {
-		var ret = gAllMeetings.filter((meeting) =>
+		const ret = gAllMeetings.filter((meeting) =>
 			gDelegate.contains(bounds, meeting.latitude, meeting.longitude));
 		return ret;
 	}
@@ -872,24 +872,24 @@ function MeetingMap(inConfig) {
 		return filterMeetings(filterBounds(bounds));
 	}
 	function filterMeetings(in_meetings_array) {
-		var ret = in_meetings_array.filter(m => m.venue_type != 2);
+		const ret = in_meetings_array.filter(m => m.venue_type != 2);
 		if (gMeetingIdsFromCrouton != null) {
 			return ret.filter((m) => gMeetingIdsFromCrouton.includes(m.id_bigint));
 		}
 		return ret;
 	}
-	var _isPseudoFullscreen = false;
+	var gIsPseudoFullscreen = false;
 	function isFullscreen() {
-		var fullscreenElement =
+		const fullscreenElement =
 			document.fullscreenElement ||
 			document.mozFullScreenElement ||
 			document.webkitFullscreenElement ||
 			document.msFullscreenElement;
 
-		return (fullscreenElement === gInDiv) || _isPseudoFullscreen;
+		return (fullscreenElement === gInDiv) || gIsPseudoFullscreen;
 	}
 	function toggleFullscreen(options) {
-		var container = gInDiv;
+		const container = gInDiv;
 		if (isFullscreen()) {
 			if (options && options.pseudoFullscreen) {
 				_setFullscreen(false);
@@ -920,10 +920,9 @@ function MeetingMap(inConfig) {
 			}
 		}
 	}
-	var _isPseudoFullscreen = false;
 	function _setFullscreen(fullscreen) {
-		_isPseudoFullscreen = fullscreen;
-		var container = gInDiv;
+		gIsPseudoFullscreen = fullscreen;
+		const container = gInDiv;
 		if (fullscreen) {
 			L.DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
 		} else {
@@ -953,14 +952,14 @@ function MeetingMap(inConfig) {
 	}
 
 	function getDistance(p1, p2) {
-		var R = 6378137; // Earth’s mean radius in meter
-		var dLat = rad(p2.lat - p1.lat);
-		var dLong = rad(p2.lng - p1.lng);
-		var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+		const R = 6378137; // Earth’s mean radius in meter
+		const dLat = rad(p2.lat - p1.lat);
+		const dLong = rad(p2.lng - p1.lng);
+		const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     		Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
     		Math.sin(dLong / 2) * Math.sin(dLong / 2);
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		var d = R * c;
+		const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		const d = R * c;
   		return d; // returns the distance in meter
 	}
 	function getDistanceFromSearch(p) {

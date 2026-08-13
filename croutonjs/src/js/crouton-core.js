@@ -8,7 +8,7 @@ crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
 
 function Crouton(config) {
-	var self = this;
+	const self = this;
 	self.ready = false;
 	self.filtering = false;
 	self.masterFormatCodes = [];
@@ -127,13 +127,10 @@ function Crouton(config) {
 	};
 
 	self.getMeetings = function(url,cb=null) {
-		var promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
+		const promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
 		if (self.config['extra_meetings'].length > 0) {
-			var extra_meetings_query = "";
-			for (var i = 0; i < self.config['extra_meetings'].length; i++) {
-				extra_meetings_query += "&meeting_ids[]=" + self.config["extra_meetings"][i];
-			}
+			const extra_meetings_query = self.config['extra_meetings'].reduce((query,item) => query + "&meeting_ids[]=" + item, '');
 			const regex = /&services\[\]=\d+/;
 			url = url.replace(regex, '');
 			promises.push(fetchJsonp(self.config['root_server'] + url + extra_meetings_query).then(function (response) { return response.json(); }));
@@ -141,14 +138,9 @@ function Crouton(config) {
 
 		return Promise.all(promises)
 			.then(function(data) {
-				var mainMeetings = data[0];
-				var extraMeetings;
-				var jsonMeetings = JSON.stringify(mainMeetings['meetings']);
-				if (data.length === 2) {
-					extraMeetings = data[1];
-				}
-				if (jsonMeetings === "{}" || jsonMeetings === "[]") {
-					var fullUrl = self.config['root_server'] + url
+				const mainMeetings = data[0];
+				if (mainMeetings['meetings'].length === 0) {
+					const fullUrl = self.config['root_server'] + url
 					console.log("Could not find any meetings for the criteria specified with the query <a href=\"" + fullUrl + "\" target=_blank>" + fullUrl + "</a>");
 					jQuery('#' + self.config['placeholder_id']).html("No meetings found.");
 					self.meetingData = [];
@@ -157,13 +149,15 @@ function Crouton(config) {
 					self.fireReady();
 					return;
 				}
+				// TODO: is this necessary? why not just add this to the query?
 				if (self.config['exclude_zip_codes'].length > 0) {
-					mainMeetings['meetings'] = mainMeetings['meetings'].filter(function(m) { return !inArray(m['location_postal_code_1'], self.config['exclude_zip_codes']); } );
+					mainMeetings['meetings'] = mainMeetings['meetings'].filter(function(m) { return !self.config['exclude_zip_codes'].includes(m['location_postal_code_1']); } );
 				}
 				self.meetingData = mainMeetings['meetings'];
 				self.formatsData = mainMeetings['formats'];
-				if (extraMeetings) {
-					self.meetingData = self.meetingData.concat(extraMeetings['meetings']);
+				// extra meetings
+				if (data.length === 2) {
+					self.meetingData = self.meetingData.concat(data[1]['meetings']);
 				}
 				cb && cb();
 				self.fireReady();
@@ -171,7 +165,7 @@ function Crouton(config) {
 	};
 
 	self.meetingSearch = function(cb=null) {
-		var url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'];
+		let url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'];
 
 		if (self.config['formats']) {
 			url += self.config['formats'].reduce(function(prev,id) {
@@ -200,9 +194,7 @@ function Crouton(config) {
 			url += self.config['custom_query'] + '&sort_keys='  + self.config['sort_keys'];
 			return self.getMeetings(url,cb);
 		} else if (self.config['service_body'].length > 0) {
-			for (var i = 0; i < self.config['service_body'].length; i++) {
-				url += '&services[]=' + self.config['service_body'][i];
-			}
+			url = self.config['service_body'].reduce((curr,item)=>curr+'&services[]='+item, url);
 
 			if (self.config['recurse_service_bodies']) {
 				url += '&recursive=1';
@@ -358,7 +350,7 @@ function Crouton(config) {
 		});
 	}
 	self.calcShowingNow = function() {
-		var showingNow = [];
+		let showingNow = [];
 		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
 			const rowId = value.id.split("-");
 			showingNow.push(rowId[rowId.length-1]);
@@ -381,7 +373,7 @@ function Crouton(config) {
 			}
 		});
 		this.addStripes();
-		var showingNow = this.calcShowingNow();
+		const showingNow = this.calcShowingNow();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters(showingNow);
 		if (croutonMap) croutonMap.fillMap(showingNow);
@@ -464,12 +456,12 @@ function Crouton(config) {
 	};
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
-		var template = hbs_Crouton.templates['main'];
+		const template = hbs_Crouton.templates['main'];
 		jQuery(selector).html(template(context));
 		callback();
 	};
 	self.updateMeetingCount = function(showingNow=null) {
-		var self = this;
+		const self = this;
 		let meetingCount = self.meetingData.length;
 		if (self.meetingCountCallback) self.meetingCountCallback(meetingCount);
 		if (self.groupCountCallback) self.groupCountCallback(
@@ -482,8 +474,8 @@ function Crouton(config) {
 		}
 		self.showingNowCount = meetingCount;
 		jQuery(".crouton_root_service_body").each(function() {
-			var text = "";
-			var field = 'name';
+			let text = "";
+			let field = 'name';
 			if (this.dataset.field) field = this.dataset.field;
 			if (self.config['service_body'].length > 0) {
 				const sb = self.getServiceBodyDetails(self.config['service_body'][0]);
@@ -493,19 +485,17 @@ function Crouton(config) {
 		});
 		jQuery(addLive('#bmlt_tabs_meeting_count')).text(meetingCount);
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
-			var filteredMeetings = self.meetingData;
-			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
+			const filteredMeetings = (showingNow!==null) ? self.meetingData.filter((m) => showingNow.includes(m.id_bigint)) : self.meetingData;
 			const groups = self.config.groups ? filteredMeetings : self.convertToGroups([...filteredMeetings]);
 			jQuery(this).text(arrayUnique(groups).length);
 		});
 		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
-			var filteredMeetings = self.meetingData;
-			if (showingNow!==null) filteredMeetings = self.meetingData.filter((m) => showingNow.includes(m.id_bigint));
-			var ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');
-			var me = this;
+			const filteredMeetings = (showingNow!==null) ? self.meetingData.filter((m) => showingNow.includes(m.id_bigint)) : self.meetingData;
+			const ids = getUniqueValuesOfKey(filteredMeetings, 'service_body_bigint');
+			const me = this;
 			self.getServiceBodies(ids, false).then(function (service_bodies) {
-				var n = service_bodies.length;
-				var names = service_bodies.map((m)=>m['name']);
+				const n = service_bodies.length;
+				const names = service_bodies.map((m)=>m['name']);
 				names.sort();
 				var ret = "";
 				if (n===1) {
@@ -524,7 +514,7 @@ function Crouton(config) {
 		});
 	}
 	self.getServiceBodies = function(service_bodies_id, requires_parents=true) {
-		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
+		const url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
 			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
 			.then(function(response) {
@@ -533,7 +523,7 @@ function Crouton(config) {
 	};
 
 	self.getMasterFormats = function() {
-		var url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&key_strings[]=TC&key_strings[]=VM&key_strings[]=HY';
+		const url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&key_strings[]=TC&key_strings[]=VM&key_strings[]=HY';
 		return fetchJsonp(url)
 			.then(function(response) {
 				return response.json();
@@ -555,16 +545,16 @@ function Crouton(config) {
 			self.handlebarMapOptions.lng = parseFloat(meetingDetailsData.longitude);
 			return "<div id='bmlt-handlebars-map' class='bmlt-map'></div>"
 		});
-		var parser = new DOMParser();
+		const parser = new DOMParser();
 
 		while (elements.length > 0) {
-			var element = elements.item(0);
+			const element = elements.item(0);
 			if (!element.firstChild) {
 				console.log('<bmlt-handlebar> tag must have at least one child');
 				element.remove();
 				continue;
 			}
-			var templateString = '';
+			const templateString = '';
 			if (element.firstChild.nodeType === 1) {
 				if (!element.firstChild.firstChild || element.firstChild.firstChild.nodeType !== 3) {
 					console.log('<bmlt-handlebar> tag: cannot find textnode');
@@ -577,13 +567,13 @@ function Crouton(config) {
 			}
 			var handlebarResult;
 			try {
-				var template = crouton_Handlebars.compile(templateString);
+				const template = crouton_Handlebars.compile(templateString);
 				handlebarResult = template(meetingDetailsData);
 			} catch (e) {
 				console.log(e);
 				handlebarResult = e.message;
 			}
-			var htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
+			const htmlDecode = parser.parseFromString('<body>'+handlebarResult+'</body>', "text/html");
 			if (!htmlDecode.body || !htmlDecode.body.firstChild) {
 				console.log('<bmlt-handlebar> tag: could not parse the Handlebars result');
 				element.replaceWith('<bmlt-handlebar> tag: could not parse the Handlebars result');
@@ -886,8 +876,6 @@ function Crouton(config) {
 				? "<td>{{> meetingStackedRow}}</td>"
 				: hbs_Crouton.templates['meeting3ColumnRow'])
 			);
-
-
 			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 			self.registerPartial("meetingDataTemplate", self.config['meeting_data_template']);
 			self.registerPartial("metaDataTemplate", self.config['metadata_template']);
@@ -951,13 +939,6 @@ function Crouton(config) {
 	self.getUsedFavorites = function(meetings) {
 		return [{name: 'Favorite', value: 1}]
 	}
-	self.isEmpty = function(obj) {
-		for (var key in obj) {
-			if(obj.hasOwnProperty(key))
-				return false;
-		}
-		return true;
-	};
 	self.createBmltMapElement = function() {
 		if (!document.getElementById('bmlt-map')) {
 			jQuery("#bmlt-tabs").before("<div id='bmlt-map' class='bootstrap-bmlt bmlt-map "+self.localization.getWord('css-direction')+" bmlt_map_container_div'></div>");
@@ -966,7 +947,7 @@ function Crouton(config) {
 	}
 	self.createLocationSearchElement = function() {
 		if (!document.getElementById('bmlt-location-search')) {
-			jQuery("#bmlt-tabs-table").before("<div id='bmlt-location-search' class='bootstrap-bmlt bmlt-location-search "+self.localization.getWord('css-direction')+" bmlt_location_search_container_div'></div>");
+			jQuery("#bmlt-header").append("<div id='bmlt-location-search' class='bootstrap-bmlt bmlt-location-search "+self.localization.getWord('css-direction')+" bmlt_location_search_container_div'></div>");
 		}
 		return 'bmlt-location-search';
 	}
@@ -979,7 +960,7 @@ function Crouton(config) {
 }
 
 Crouton.prototype.setConfig = function(config) {
-	var self = this;
+	const self = this;
 	const deprecatedNames = {
 		button_filters: 'grouping_buttons',
 		button_format_filters: 'formattype_grouping_buttons',
@@ -1043,7 +1024,7 @@ Crouton.prototype.setConfig = function(config) {
 };
 
 Crouton.prototype.reset = function() {
-	var self = this;
+	const self = this;
 	jQuery("#" + self.config["placeholder_id"]).html("");
 };
 
@@ -1051,7 +1032,7 @@ Crouton.prototype.doFilters = function() {
 	return this.filterMeetingsFromView();
 }
 Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
-	var self = this;
+	const self = this;
 	for (var s = 0; s < self.all_service_bodies.length; s++) {
 		var service_body = self.all_service_bodies[s];
 		if (service_body['id'] === serviceBodyId) {
@@ -1066,16 +1047,16 @@ Crouton.prototype.doHandlebars = function() {
 		console.log('No <bmlt-handlebar> tags found');
 		return;
 	};
-	var self = this;
+	const self = this;
 	self.listenForReady(function() {
-		if (self.isEmpty(self.meetingData)) {
+		if (!self.meetingData || self.meetingData.length === 0) {
 			for (let i = 0; i < elements.length; i++) {
 				var element = elements.item(i);
 				element.innerHTML = "Meeting not found!";
 			}
 			return;
 		}
-		var promises = [self.getServiceBodies([self.meetingData[0]['service_body_bigint']])];
+		const promises = [self.getServiceBodies([self.meetingData[0]['service_body_bigint']])];
 		Promise.all(promises)
 			.then(function(data) {
 				hbs_Crouton['localization'] = self.localization;
@@ -1170,7 +1151,7 @@ Crouton.prototype.openMeetingModal = function(meeting) {
 	}
 }
 Crouton.prototype.searchMap = function() {
-	var self = this;
+	const self = this;
 	self.distanceTabAllowed = true;
 	if (!self.config.map_search || typeof self.config.map_search !== 'object') {
 		self.config.map_search = {
@@ -1205,10 +1186,10 @@ Crouton.prototype.searchMap = function() {
 	});
 }
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
-	var self = this;
+	const self = this;
 
 	self.listenForReady(function() {
-		if (self.isEmpty(self.meetingData)) {
+		if (!self.meetingData || self.meetingData.length === 0) {
 			jQuery('#please-wait').remove();
 			self.showMessage("No meetings found for parameters specified.");
 			if (self.config['refresh_map']) {
@@ -1218,7 +1199,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 		}
 
 		self.unique_service_bodies_ids = getUniqueValuesOfKey(self.meetingData, 'service_body_bigint').sort();
-		var promises = [self.getMasterFormats(), self.getServiceBodies(self.unique_service_bodies_ids)];
+		const promises = [self.getMasterFormats(), self.getServiceBodies(self.unique_service_bodies_ids)];
 		Promise.all(promises)
 			.then(function(data) {
 				self.all_service_bodies = [];
@@ -1563,8 +1544,8 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 							jQuery(this).tab('show');
 						});
 
-						var d = new Date();
-						var n = d.getDay();
+						const d = new Date();
+						let n = d.getDay();
 						n++;
 						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
 						jQuery('#tab' + n).show();
@@ -1638,9 +1619,9 @@ var venueType = {
 }
 
 function getVenueTypeName(data) {
-	if (data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data))) {
+	if (data['venue_type'] === venueType.HYBRID || getFormats(data).includes(getMasterFormatId('HY', data))) {
 		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL), crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
-	} else if (data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data))) {
+	} else if (data['venue_type'] === venueType.VIRTUAL || getFormats(data).includes(getMasterFormatId('VM', data))) {
 		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL)];
 	} else {
 		return [crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
@@ -1662,17 +1643,6 @@ function getUniqueValuesOfKey(array, key){
 		return carry;
 	}, []);
 }
-
-function getValuesFromObject(o) {
-	var arr = [];
-	for (key in o) {
-		if (o.hasOwnProperty(key)) {
-			arr.push(o[key]);
-		}
-	}
-
-	return arr;
-}
 function getUniqueFormats(array){
 	return array.reduce(function(carry, val){
 		if (!(val.formats_expanded)) return carry;
@@ -1690,13 +1660,13 @@ function getUniqueFormatsOfType(array, type){
 	},[]).sortByKey('name');
 }
 Crouton.prototype.renderMeetingCount = function() {
-	var self = this;
+	const self = this;
 	self.listenForReady(function() {
 		self.updateMeetingCount()
 	});
 }
 Crouton.prototype.simulateFilterDropdown = function() {
-	self = this;
+	const self = this;
 	jQuery('.bmlt-page:not(#byfield_embeddedMapPage)').each(function () {
 		self.hidePage(this);
 	});
@@ -1754,10 +1724,6 @@ function sortListByList(source, truth) {
 	}
 
 	return goal;
-}
-
-function inArray(needle, haystack) {
-	return haystack.indexOf(needle) !== -1;
 }
 
 function isFunction(functionToCheck) {

@@ -315,7 +315,8 @@ div.bmlt_map_container_div  button {
   padding-bottom: 10px;
 }
 .modal-search .filter-button {
-  width: 100%
+  width: 100%;
+  margin: 0;
 }
 #goto-button {
   margin-top: 10px;
@@ -550,3 +551,10 @@ div.bmlt_map_container_div  button {
     float: right;
     margin-top: 20px;
   }
+.crouton-goto-text {
+    width: 100%;
+    box-sizing: border-box;
+}
+div#location-search-widen.hide {
+    display: none;
+}

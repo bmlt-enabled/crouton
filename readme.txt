@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 
 = 4.3.0 =
 * Location lookup now also from table display.
+* New Handlebars partial: formatNames.
 
 = 4.2.1 =
 * Replace mutex with addEventListener
