@@ -121,24 +121,27 @@ function CroutonHandlebarsExtensions() {
 			return getTrueResult(options, this);
 		});
 		crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('TC', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("FACILITY IS TEMPORARILY CLOSED");
 			}
 		});
 
 		crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('VM', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("MEETS VIRTUALLY");
 			}
 		});
 
 		crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('HY', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("MEETS VIRTUALLY AND IN PERSON");
 			}

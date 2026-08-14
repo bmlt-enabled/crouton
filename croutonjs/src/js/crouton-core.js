@@ -6,7 +6,10 @@ crouton_Handlebars.registerHelper("log", (x) => console.log(x));
 crouton_Handlebars.registerHelper('selectFormatPopup', () => "formatPopup");
 crouton_Handlebars.registerHelper('selectObserver', () => "observerTemplate");
 
-
+/**
+ * There must be exactly one crouton instance per page.
+ * @param {*} config
+ */
 function Crouton(config) {
 	const self = this;
 	self.ready = false;
@@ -112,6 +115,14 @@ function Crouton(config) {
 		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
 	}
 	body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+
+	/**
+	 * Do the lookups for the [crouton_map] shortcode
+	 * @param float latitude
+	 * @param float longitude
+	 * @param float width search width that will be sent to the server
+	 * @param boolean fitBounds
+	 */
 	Crouton.prototype.searchByCoordinates = function(latitude, longitude, width, fitBounds=true) {
 		const original_query = self.config['custom_query'];
 		self.config['custom_query'] = (self.config['custom_query'] !== null ? self.config['custom_query'] : "")
@@ -120,12 +131,18 @@ function Crouton(config) {
 		self.meetingSearch(function() {
 				self.config.refresh_map=1;
 				self.config.show_map = 1;
-				self.reset();
+				jQuery("#" + self.config["placeholder_id"]).html("");
 				self.render(false, fitBounds);
 		});
 		self.config['custom_query'] = original_query;
 	};
 
+	/**
+	 * Get the meeting list for the [bmlt_tab] shortcode.
+	 * @param string url
+	 * @param function cb
+	 * @returns Promise that returns when the server query finishes.
+	 */
 	self.getMeetings = function(url,cb=null) {
 		const promises = [fetchJsonp(this.config['root_server'] + url).then(function(response) { return response.json(); })];
 
@@ -211,12 +228,21 @@ function Crouton(config) {
 				self.fireReady();
 			});
 		}
-	};
+	}
 	self.readyListener = [];
+	/**
+	 * Add a listener for the event that the crouton instance has loaded its data and we can now go ahead and execute the shortcodes.
+	 * Generally, each listener corresponds to different shortcode.  The main ones go over the render method, but there are also listeners
+	 * for [meeting_count] etc.
+	 * @param function callback
+	 */
 	self.listenForReady = function(callback) {
 		if (self.ready) callback();
 		else self.readyListener.push(callback);
 	};
+	/**
+	 * FIres the event that crouton is loaded and ready.
+	 */
 	self.fireReady = function() {
 		self.ready = true;
 		self.readyListener.forEach(function(callback) {
@@ -224,16 +250,21 @@ function Crouton(config) {
 		});
 		self.readyListener = [];
 	};
-
-	self.dayTab = function(day_id) {
+	/**
+	 * Bring up the appropriate tab based on the meeting id.
+	 * This is only used when a meeting is selected in the msp.  I consider this bloat, it is superceded by the meeting details popup available in the marker text.
+	 * @param string id meeting id.
+	 */
+	self.dayTabFromId = function(id) {
+		const day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
 		self.hideAllPages();
 		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
 		jQuery("#" + day_id).removeClass("hide").addClass("show");
 	};
-	self.dayTabFromId = function(id) {
-		day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
-		self.dayTab(day_id);
-	};
+	/**
+	 * Show a page from the table (weekday, distance, city...)
+	 * @param string id selector, id attribute of the HtML
+	 */
 	self.showPage = function (id) {
 		jQuery(id+" .bmlt-data-row-placeholder").each(function() {
 			const meetingId = this.dataset.meetingid;
@@ -246,7 +277,11 @@ function Crouton(config) {
 		self.addStripes();
 		jQuery(id).removeClass("hide").addClass("show");
 	};
-
+	/**
+	 * Bring up a view.
+	 * @param string viewName abstract viewname (weekday, distance, city...)
+	 * @param int showingNow number of items currently being displayed on the page
+	 */
 	self.showView = function (viewName, showingNow=0) {
 		if (viewName === 'distance' && !self.distanceTabAllowed) {
 			viewName = self.config.groups ? 'city' : 'day';
@@ -349,6 +384,10 @@ function Crouton(config) {
 			jQuery(value).addClass((index % 2) ? 'oddRow' : 'evenRow');
 		});
 	}
+	/**
+	 *
+	 * @returns a list of the IDs of meetings matching the current filters.
+	 */
 	self.calcShowingNow = function() {
 		let showingNow = [];
 		jQuery(".bmlt-data-row:not(.hide)").each(function (index, value) {
@@ -378,19 +417,6 @@ function Crouton(config) {
 		self.updateFilters(showingNow);
 		if (croutonMap) croutonMap.fillMap(showingNow);
 		self.showView(self.currentView, showingNow.length);
-	};
-	self.resetFilter = function () {
-		croutonMap.filterVisible(false);
-		if ((self.config.map_page && self.filtering) || self.config.show_map) croutonMap.fillMap();
-		self.filtering = false;
-		self.updateFilters(self.calcShowingNow());
-		self.updateMeetingCount();
-		jQuery(".filter-dropdown").val(null).trigger("change");
-		jQuery(".group-header").removeClass("hide");
-		jQuery(".meeting-group").removeClass("hide");
-		jQuery(".bmlt-data-row").removeClass("hide");
-		jQuery(".evenRow").removeClass("evenRow");
-		jQuery(".oddRow").removeClass("oddRow");
 	};
 	self.updateFilters = function(showingNow) {
 		if (!self.dropdownData) return;
@@ -428,32 +454,6 @@ function Crouton(config) {
 		self.setUpPartials();
 		croutonMap.initialize(self.createBmltMapElement(),self.meetingData,context,null,fitBounds,callback,self.config['noMap']);
 	}
-	self.retrieveGeolocation = function() {
-		return new Promise((resolve, reject) => {
-			if (window.storedGeolocation) {
-				resolve(window.storedGeolocation);
-			} else if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition((position) => {
-					window.storedGeolocation = {
-						latitude: position.coords.latitude,
-						longitude: position.coords.longitude
-					};
-					resolve(window.storedGeolocation);
-				}, (error) => {
-					reject(new Error('Error getting geolocation: ' + error.message));
-				});
-			} else {
-				reject(new Error('Geolocation is not supported by this browser.'));
-			}
-		});
-	};
-	self.getCurrentLocation = function(callback) {
-		self.gretrieveGeolocation().then(position => {
-			callback(position);
-		}).catch(error => {
-			jQuery('.geo').removeClass("hide").addClass("show").html(`<p>${error.message}</p>`);
-		});
-	};
 	self.renderView = function (selector, context, callback, fitBounds) {
 		hbs_Crouton['localization'] = self.localization;
 		const template = hbs_Crouton.templates['main'];
@@ -487,7 +487,7 @@ function Crouton(config) {
 		jQuery(addLive('#bmlt_tabs_group_count')).each(function(){
 			const filteredMeetings = (showingNow!==null) ? self.meetingData.filter((m) => showingNow.includes(m.id_bigint)) : self.meetingData;
 			const groups = self.config.groups ? filteredMeetings : self.convertToGroups([...filteredMeetings]);
-			jQuery(this).text(arrayUnique(groups).length);
+			jQuery(this).text([...new Set(groups)].length);
 		});
 		jQuery(addLive('#bmlt_tabs_service_body_names')).each(function() {
 			const filteredMeetings = (showingNow!==null) ? self.meetingData.filter((m) => showingNow.includes(m.id_bigint)) : self.meetingData;
@@ -515,13 +515,20 @@ function Crouton(config) {
 	}
 	self.getServiceBodies = function(service_bodies_id, requires_parents=true) {
 		const url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetServiceBodies'
-			+ (requires_parents ? '&parents=1' : '') + getServiceBodiesQueryString(service_bodies_id);
+			+ (requires_parents ? '&parents=1' : '') + self.getServiceBodiesQueryString(service_bodies_id);
 		return fetchJsonp(url)
 			.then(function(response) {
 				return response.json();
 			});
 	};
 
+	self.getServiceBodiesQueryString = function(service_bodies_id) {
+		let service_bodies_query = "";
+		for (var x = 0; x < service_bodies_id.length; x++) {
+			service_bodies_query += "&services[]=" + service_bodies_id[x];
+		}
+		return service_bodies_query;
+	}
 	self.getMasterFormats = function() {
 		const url = this.config['root_server'] + '/client_interface/jsonp/?switcher=GetFormats&lang_enum=en&key_strings[]=TC&key_strings[]=VM&key_strings[]=HY';
 		return fetchJsonp(url)
@@ -645,7 +652,12 @@ function Crouton(config) {
 		n = n.replace(/PM|pm/g, x => ampm['PM']);
 		return n;
 	}
-	self.enrichMeetings = function (meetingData) {
+	/**
+	 * Take raw meeting data as returned from server adding values that should be conveniently displayed.
+	 * @param array meetingData
+	 * @returns the array with enriched data
+	 */
+	self.enrichMeetings = function(meetingData) {
 		var meetings = [];
 
 		let queryStringChar = '?';
@@ -700,13 +712,12 @@ function Crouton(config) {
 			meetingData[m]['venue_type'] = parseInt(meetingData[m]['venue_type']);
 			meetingData[m]['venue_type_name'] = getVenueTypeName(meetingData[m]);
 			meetingData[m]['formats_expanded'] = formats_expanded;
-			var addressParts = [
+			const addressParts = [
 				meetingData[m]['location_street'],
 				meetingData[m]['location_municipality'].trim(),
 				meetingData[m]['location_province'].trim(),
 				meetingData[m]['location_postal_code_1'].trim()
-			];
-			addressParts.clean();
+			].filter((value)=>value!=="");
 			meetingData[m]['formatted_address'] = addressParts.join(", ");
 			meetingData[m]['formatted_location_info'] =
 				meetingData[m]['location_info'] != null
@@ -725,7 +736,7 @@ function Crouton(config) {
 				}
 			}
 
-			var serviceBodyInfo = self.getServiceBodyDetails(meetingData[m]['service_body_bigint'])
+			const serviceBodyInfo = self.getServiceBodyDetails(meetingData[m]['service_body_bigint'])
 			meetingData[m]['serviceBodyUrl'] = serviceBodyInfo["url"];
 			meetingData[m]['serviceBodyPhone'] = serviceBodyInfo["helpline"];
 			meetingData[m]['serviceBodyName'] = serviceBodyInfo["name"];
@@ -733,7 +744,7 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyContactEmail'] = serviceBodyInfo["contact_email"];
 			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
 
-			var parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
+			const parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
 			if (parentBodyInfo !== undefined) {
 				meetingData[m]['parentServiceBodyId'] = serviceBodyInfo["parent_id"];
 				meetingData[m]['parentServiceBodyUrl'] = parentBodyInfo["url"];
@@ -762,7 +773,27 @@ function Crouton(config) {
 			return self.convertToGroups(meetings);
 		}
 		return meetings;
-	};
+	}
+	// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
+	const masterFormatVenueType = {
+		IN_PERSON: "IN_PERSON",
+		VIRTUAL: "VIRTUAL",
+	}
+
+	function getVenueTypeName(data) {
+		if (data['venue_type'] === venueType.HYBRID || getFormats(data).includes(getMasterFormatId('HY', data))) {
+			return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL), crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
+		} else if (data['venue_type'] === venueType.VIRTUAL || getFormats(data).includes(getMasterFormatId('VM', data))) {
+			return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL)];
+		} else {
+			return [crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
+		}
+	}
+	/**
+	 * Convert from individual meetings to groups.
+	 * @param array meetings
+	 * @returns
+	 */
 	self.convertToGroups = function(meetings) {
 		if (!meetings || !meetings.length) return [];
 		if (meetings[0].hasOwnProperty('membersOfGroup')) return meetings;
@@ -809,6 +840,11 @@ function Crouton(config) {
 		});
 		return groups;
 	}
+	/**
+	 * Update the distances displyed after geocoding or geolocation.
+	 * @param boolean initial
+	 * @returns
+	 */
 	Crouton.prototype.updateDistances = function(initial=false) {
 		const self = this;
 		var knt = 0;
@@ -893,6 +929,14 @@ function Crouton(config) {
 			handlebarsExtensions.registerHelpers();
 			handlebarsExtensions.registerPartials(self.config.groups);
 	}
+	self.getServiceBodyDetails = function(serviceBodyId) {
+		return this.all_service_bodies.find((s)=>s['id'] === serviceBodyId)
+	}
+	/**
+	 * Calculate the distances sfter geocoding or geolocation, adding them to the meeting data.
+	 * @param boolean initial
+	 * @returns
+	 */
 	self.calculateDistance = function(meetingData) {
 		meetingData['distance'] = '';
 		if (meetingData['venue_type'] != 2) {
@@ -1021,26 +1065,10 @@ Crouton.prototype.setConfig = function(config) {
 			console.log("Error parsing custom translations: " + e.message);
 		}
 	}
-};
-
-Crouton.prototype.reset = function() {
-	const self = this;
-	jQuery("#" + self.config["placeholder_id"]).html("");
-};
-
-Crouton.prototype.doFilters = function() {
-	return this.filterMeetingsFromView();
 }
-Crouton.prototype.getServiceBodyDetails = function(serviceBodyId) {
-	const self = this;
-	for (var s = 0; s < self.all_service_bodies.length; s++) {
-		var service_body = self.all_service_bodies[s];
-		if (service_body['id'] === serviceBodyId) {
-			return service_body;
-		}
-	}
-}
-
+/**
+ * This supports the [bmlt_handlebars] shortcode, which allows a meeting's details to be inserted into a page.
+ */
 Crouton.prototype.doHandlebars = function() {
 	var elements = document.getElementsByTagName('bmlt-handlebar');
 	if (elements.length === 0) {
@@ -1077,19 +1105,22 @@ Crouton.prototype.doHandlebars = function() {
 			});
 	});
 };
-
-Crouton.prototype.meetingModal = function(meetingId) {
-	let self = this;
-	this.openMeetingModal(self.meetingData.find((m) => m.id_bigint == meetingId));
-	return;
-}
+/**
+ * Sometimes the logic in the map has to decide whether to let the map implementation (google or leaflet) do something, or just do the calculation
+ * itself.  So we have to ask crouton if the map is showing or not.
+ * @returns boolean
+ */
 Crouton.prototype.isEmbeddedMapShowing = function() {
-	if (self.config['show_map']) return true;
+	if (this.config['show_map']) return true;
 	const embeddedMap = document.getElementById("byfield_embeddedMapPage");
 	if (embeddedMap) {
 		return !embeddedMap.classList.contains('hide');
 	}
 	return true;
+}
+Crouton.prototype.meetingModal = function(meetingId) {
+	this.openMeetingModal(this.meetingData.find((m) => m.id_bigint == meetingId));
+	return;
 }
 Crouton.prototype.openMeetingModal = function(meeting) {
 	let self = this;
@@ -1236,7 +1267,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				var weekdaysData = [];
 				while (day_counter < 7) {
 					var day = self.config.day_sequence[day_counter];
-					var daysOfTheWeekMeetings = enrichedMeetingData.filterByObjectKeyValue('day_of_the_week', day);
+					var daysOfTheWeekMeetings = enrichedMeetingData.filter((meeting)=>meeting['day_of_the_week'] == day);
 					weekdaysData.push({
 						"day": day,
 						"meetings": daysOfTheWeekMeetings
@@ -1252,7 +1283,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						if (groupByName.startsWith('distance')) continue;
 						var groupByData = getUniqueValuesOfKey(daysOfTheWeekMeetings, groupByName).sort();
 						for (var i = 0; i < groupByData.length; i++) {
-							var groupByMeetings = daysOfTheWeekMeetings.filterByObjectKeyValue(groupByName, groupByData[i]);
+							var groupByMeetings = daysOfTheWeekMeetings.filter((meeting)=>meeting[groupByName] == groupByData[i]);
 							if (groupingButtonsData.hasOwnProperty(groupByName) && groupingButtonsData[groupByName].hasOwnProperty(groupByData[i])) {
 								groupingButtonsData[groupByName][groupByData[i]] = groupingButtonsData[groupByName][groupByData[i]].concat(groupByMeetings);
 							} else if (groupingButtonsData.hasOwnProperty(groupByName)) {
@@ -1327,7 +1358,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 				self.dropdownData = [];
 				if (self.config.has_days) self.dropdownData.push(
 					{placeholder: self.localization.getWord('weekday'), pointer: 'weekdays', elementId: "filter-dropdown-weekdays",
-					 uniqueData: (meetings) => sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced),
+					 uniqueData: (meetings) => self.sortListByList(getUniqueValuesOfKey(meetings, "formatted_day"), self.dayNamesSequenced),
 					 objectPointer: convertToPunyCode, optionName: (s)=>s});
 				if (self.config.has_states) self.dropdownData.push(
 					{placeholder: self.localization.getWord('states'), pointer: 'States', elementId: "filter-dropdown-states",
@@ -1578,7 +1609,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 					if (self.config['view_by'] == 'map' && !self.config['map_page'])
 						self.config['view_by'] = 'day';
 						self.showView(self.config['view_by'], self.meetingData.length);
-					if (self.config['on_complete'] != null && isFunction(self.config['on_complete'])) {
+					if (self.config['on_complete'] != null && {}.toString.call(self.config['on_complete']) === '[object Function]') {
 						self.config['on_complete']();
 					}
 				}, !doMeetingMap || (!self.config['lat'] && !self.config['lng']));
@@ -1595,6 +1626,17 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 		}
 		return false;
 	}
+	self.sortListByList = function(source, truth) {
+		var goal = [];
+		for (var x = 0; x < truth.length; x++) {
+			for (var y = 0; y < source.length; y++) {
+				if (truth[x] === source[y]) {
+					goal.push(source[y])
+				}
+			}
+		}
+		return goal;
+	}
 };
 // [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
 function getMasterFormatId(code, data) {
@@ -1603,28 +1645,6 @@ function getMasterFormatId(code, data) {
 		if (format['key_string'] === code && format['root_server_uri'] === data['root_server_uri']) {
 			return format['id'];
 		}
-	}
-}
-
-// [deprecated] Retire after root server 2.16.4 is rolled out everywhere.
-var masterFormatVenueType = {
-	IN_PERSON: "IN_PERSON",
-	VIRTUAL: "VIRTUAL",
-}
-
-var venueType = {
-	IN_PERSON: 1,
-	VIRTUAL: 2,
-	HYBRID: 3,
-}
-
-function getVenueTypeName(data) {
-	if (data['venue_type'] === venueType.HYBRID || getFormats(data).includes(getMasterFormatId('HY', data))) {
-		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL), crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
-	} else if (data['venue_type'] === venueType.VIRTUAL || getFormats(data).includes(getMasterFormatId('VM', data))) {
-		return [crouton.localization.getVenueType(masterFormatVenueType.VIRTUAL)];
-	} else {
-		return [crouton.localization.getVenueType(masterFormatVenueType.IN_PERSON)];
 	}
 }
 
@@ -1705,72 +1725,12 @@ Crouton.prototype.getAdjustedDateTime = function(meeting_day, meeting_time, meet
 
 	return meeting_date_time_obj;
 };
-
-function arrayUnique(a, b, c) {
-	b = a.length;
-	while (c = --b)
-		while (c--) a[b] !== a[c] || a.splice(c, 1);
-	return a
+// TODO: why can't this be a const?  If I set it to const, then I get an error from bootstrap???!!!!
+var venueType = {
+	IN_PERSON: 1,
+	VIRTUAL: 2,
+	HYBRID: 3,
 }
-
-function sortListByList(source, truth) {
-	var goal = [];
-	for (var x = 0; x < truth.length; x++) {
-		for (var y = 0; y < source.length; y++) {
-			if (truth[x] === source[y]) {
-				goal.push(source[y])
-			}
-		}
-	}
-
-	return goal;
-}
-
-function isFunction(functionToCheck) {
-	return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-}
-
-function getServiceBodiesQueryString(service_bodies_id) {
-	var service_bodies_query = "";
-	for (var x = 0; x < service_bodies_id.length; x++) {
-		service_bodies_query += "&services[]=" + service_bodies_id[x];
-	}
-	return service_bodies_query;
-}
-
-Array.prototype.clone = function() {
-	return this.slice();
-}
-
-Array.prototype.filterByObjectKeyValue = function(key, value) {
-	var ret = [];
-	for (var i = 0; i < this.length; i++) {
-		if (this[i][key] === value) {
-			ret.push(this[i])
-		}
-	}
-
-	return ret;
-};
-
-Array.prototype.getArrayItemByObjectKeyValue = function(key, value) {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i][key] === value) {
-			return this[i];
-		}
-	}
-};
-
-Array.prototype.clean = function() {
-	for (var i = 0; i < this.length; i++) {
-		if (this[i] === "") {
-			this.splice(i, 1);
-			i--;
-		}
-	}
-	return this;
-};
-
 Array.prototype.sortByKey = function (key) {
 	this.sort(function (a, b) {
 		if (a[key] < b[key])
