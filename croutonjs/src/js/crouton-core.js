@@ -704,8 +704,8 @@ function Crouton(config) {
 			meetingData[m]['day_of_the_week'] = meetingData[m]['start_time_raw'].isoWeekday() === 7 ? 1 : meetingData[m]['start_time_raw'].isoWeekday() + 1;
 			meetingData[m]['formatted_day'] = self.localization.getDayOfTheWeekWord(meetingData[m]['day_of_the_week']);
 
-			var formats = meetingData[m]['formats'].split(",");
-			var formats_expanded = [];
+			const formats = meetingData[m]['formats'].split(",");
+			const formats_expanded = [];
 			let formatRootServer = self.formatsData.filter((f)=>f['root_server_uri'] == meetingData[m]['root_server_uri']);
 			meetingData[m]['wheelchair'] = false;
 			for (var f = 0; f < formats.length; f++) {
@@ -727,7 +727,7 @@ function Crouton(config) {
 
 			meetingData[m]['venue_type'] = parseInt(meetingData[m]['venue_type']);
 			meetingData[m]['venue_type_name'] = getVenueTypeName(meetingData[m]);
-			meetingData[m]['formats_expanded'] = formats_expanded;
+			meetingData[m]['formats_expanded'] = formats_expanded.sortByKey('name');
 			const addressParts = [
 				meetingData[m]['location_street'],
 				meetingData[m]['location_municipality'].trim(),
@@ -1472,8 +1472,11 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 
 					jQuery("#" + self.config['placeholder_id']).addClass("bootstrap-bmlt");
 					jQuery("#filter-dropdown-visibile").removeClass("crouton-select").addClass("hide");
+					jQuery("#filter-dropdown-visibile").parent().addClass("hide");
 					jQuery("#filter-dropdown-next24").removeClass("crouton-select").addClass("hide");
+					jQuery("#filter-dropdown-next24").parent().addClass("hide");
 					jQuery("#filter-dropdown-favorites").removeClass("crouton-select").addClass("hide");
+					jQuery("#filter-dropdown-favorites").parent().addClass("hide");
 					if (self.shouldOfferFavorites(showingNow)) {
 						jQuery("#crouton_favorites_button").removeClass("hide");
 					} else {

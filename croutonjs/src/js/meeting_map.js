@@ -468,9 +468,8 @@ function MeetingMap(inConfig) {
 	}
 	function doGeolocation(makeFilterVisible=true) {
 		return new Promise((resolve, reject) =>
-			retrieveGeolocation().then(function(position) {
+			retrieveGeolocation().then(function(coords) {
 				filterVisible(false);
-				const coords = {lat: position.coords.latitude, lng: position.coords.longitude};
 				if (config.zoom) gDelegate.setZoom(false, config.zoom);
 				if (isMapVisible() || !makeFilterVisible) {
 					gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
