@@ -43,7 +43,8 @@ if (!class_exists("Crouton\TableAdmin")) {
             "has_venues",
             "filter_visible",
             "has_common_needs",
-            'has_favorites'
+            'has_favorites',
+            'has_geolocation',
         ];
         private MapAdmin $map_admin;
         public function __construct(TableOptions $crouton)

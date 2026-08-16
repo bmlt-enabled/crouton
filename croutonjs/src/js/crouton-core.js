@@ -55,6 +55,7 @@ function Crouton(config) {
 		has_common_needs: false, 	  // Shows the Common Needs dropdown
 		has_venues: true,		      // Shows the venue types dropdown
 		has_favorites: false,		  // Shows the favorites button
+		has_geolocation: false,		  // Shows the geolocation button in the table header
 		has_meeting_count: false,	  // Shows the meeting count
 		recurse_service_bodies: false,// Recurses service bodies when making service bodies request
 		service_body: [],             // Array of service bodies to return data for.
@@ -1619,7 +1620,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						}
 						else {
 							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBoundsInitial);
-							jQuery('#'+self.createLocationSearchElement()).append(croutonMap.createLocationSearchButton());
+							if (self.config['has_geolocation']) jQuery('#'+self.createLocationSearchElement()).append(croutonMap.createLocationSearchButton());
 						}
 					}
 					if (self.config['refresh_map']) {
