@@ -151,18 +151,15 @@ function MapDelegate(config) {
 	function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-	function calculateBounds(center, zoomLevel, mapWidth, mapHeight) {
-
-    	var degreesPerPixelX = 360 / Math.pow(2, zoomLevel + 8);
-    	var degreesPerPixelY = 360 / Math.pow(2, zoomLevel + 8) * Math.cos(center.lat * Math.PI / 180);
-
-		const halfWidthInDegrees = (mapWidth / 2) * degreesPerPixelX;
-		const halfHeightInDegrees = (mapHeight / 2) * degreesPerPixelY;
-
-		const southWest = L.latLng(center.lat - halfHeightInDegrees, center.lng - halfWidthInDegrees);
-		const northEast = L.latLng(center.lat + halfHeightInDegrees, center.lng + halfWidthInDegrees);
-
-		return L.latLngBounds(southWest, northEast);
+	function webMercatorToLatLng(point, zoom) {
+		const latLng = croutonMap.webMercatorToLatLng(point, zoom);
+    	return L.latLng(latLng.lat, latLng.lng);
+	}
+	function calculateBounds(center, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const northeastWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y-height/2};
+		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
+		return L.latLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
 	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
         const mapWidth = gDiv.parentElement.offsetWidth;
@@ -415,11 +412,11 @@ function addControl(div,pos,cb) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
+	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel, onlyOut=false) {
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
-			const zoom = getZoomAdjust(false, filterMeetings, zoomLevel, center);
+			const zoom = getZoomAdjust(onlyOut, filterMeetings, zoomLevel, center);
 			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
 			const ret = {"center": center, "bounds": bounds, "zoom": zoom};
 			return ret;
@@ -428,9 +425,13 @@ function addControl(div,pos,cb) {
 			return null;
 		}
 	}
-	function getGeocodeCenter ( in_geocode_response ) {
-        if ( in_geocode_response && in_geocode_response[0] ) {
-	        return {lat: in_geocode_response[0].center.lat, lng: in_geocode_response[0].center.lng};
+	function getGeocodeCenterAndBounds (in_geocode_response, i=0) {
+        if ( in_geocode_response && in_geocode_response[i] ) {
+	        return {
+				center: {lat: in_geocode_response[i].center.lat, lng: in_geocode_response[i].center.lng},
+				southWest: {lat: in_geocode_response[i].bbox.getSouthWest().lat, lng: in_geocode_response[i].bbox.getSouthWest().lng},
+				northEast: {lat: in_geocode_response[i].bbox.getNorthEast().lat, lng: in_geocode_response[i].bbox.getNorthEast().lng},
+					};
         } else {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
@@ -548,7 +549,7 @@ function addControl(div,pos,cb) {
 	this.addClusterLayer = addClusterLayer;
 	this.removeClusterLayer = removeClusterLayer;
 	this.clickSearch = clickSearch;
-	this.getGeocodeCenter = getGeocodeCenter;
+	this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
@@ -585,7 +586,7 @@ MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
-MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.getGeocodeCenterAndBounds = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;

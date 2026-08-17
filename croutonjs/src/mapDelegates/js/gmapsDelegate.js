@@ -149,18 +149,15 @@ function MapDelegate(in_config) {
     function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-	function calculateBounds(center, zoomLevel, mapWidth, mapHeight) {
-
-    	var degreesPerPixelX = 360 / Math.pow(2, zoomLevel + 8);
-    	var degreesPerPixelY = 360 / Math.pow(2, zoomLevel + 8) * Math.cos(center.lat() * Math.PI / 180);
-
-		const halfWidthInDegrees = (mapWidth / 2) * degreesPerPixelX;
-		const halfHeightInDegrees = (mapHeight / 2) * degreesPerPixelY;
-
-		const southWest = new google.maps.LatLng({'lat': center.lat() - halfHeightInDegrees, 'lng': center.lng() - halfWidthInDegrees});
-		const northEast = new google.maps.LatLng({'lat': center.lat() + halfHeightInDegrees, 'lng': center.lng() + halfWidthInDegrees});
-
-		return new google.maps.LatLngBounds(southWest, northEast);
+	function webMercatorToLatLng(point, zoom) {
+	    const latLng = croutonMap.webMercatorToLatLng(point, zoom);
+    	return new google.maps.LatLng(latLng.lat, latLng.lng);
+	}
+	function calculateBounds(center, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const northeastWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y-height/2};
+		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
+		return new google.maps.LatLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
 	function getZoomAdjust(only_out,filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
@@ -395,9 +392,15 @@ function openMarker(id) {
         openInfoWindow(marker.marker)
     }
 }
-function getGeocodeCenter(in_geocode_response) {
-    if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].geometry && in_geocode_response[0].geometry.location )
-        return {lat: in_geocode_response[0].geometry.location.lat(), lng: in_geocode_response[0].geometry.location.lng()};
+function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
+    if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].geometry && in_geocode_response[i].geometry.location )
+        return {
+            center: {lat: in_geocode_response[i].geometry.location.lat(), lng: in_geocode_response[i].geometry.location.lng()},
+            southWest: {lat: in_geocode_response[i].geometry.viewport.southwest.lat(),
+                        lnt: in_geocode_response[i].geometry.viewport.southwest.lng()},
+            northEast: {lat: in_geocode_response[i].geometry.viewport.northeast.lat(),
+                        lnt: in_geocode_response[i].geometry.viewport.northeast.lng()},
+        };
     alert ( crouton.localization.getWord("address_lookup_fail") );
     return null;
 }
@@ -438,13 +441,13 @@ function geoCallback( in_geocode_response ) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
     }
-	function getZoomAdjustedBounds(center_obj, filterMeetings, zoomLevel) {
+	function getZoomAdjustedBounds(center_obj, filterMeetings, zoomLevel, onlyOut=false) {
         if (!center_obj) return null;
         const center = new google.maps.LatLng(center_obj.lat, center_obj.lng);
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
-			const zoom = getZoomAdjust(false, filterMeetings, zoomLevel, center);
+			const zoom = getZoomAdjust(onlyOut, filterMeetings, zoomLevel, center);
 			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
             const ret = {"center": center_obj, "bounds": bounds, "zoom": zoom};
 			return ret;
@@ -529,7 +532,7 @@ function geoCallback( in_geocode_response ) {
     this.addClusterLayer = addClusterLayer;
     this.removeClusterLayer = removeClusterLayer;
     this.clickSearch = clickSearch;
-    this.getGeocodeCenter = getGeocodeCenter;
+    this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
     this.modalOn = modalOn;
     this.modalOff = modalOff;
     this.removeListener = removeListener;
@@ -568,7 +571,7 @@ MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
-MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.getGeocodeCenterAndBounds = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;

@@ -404,7 +404,7 @@ function MeetingMap(inConfig) {
 		showThrobber();
 		if (document.getElementById("bmltsearch-goto-text"))
 			document.getElementById("bmltsearch-goto-text").value = "";
-		let latlng = gDelegate.getGeocodeCenter(resp);
+		let latlng = gDelegate.getGeocodeCenterAndBounds(resp).center;
 		if (!latlng) {
 			hideThrobber();
 			return;
@@ -413,10 +413,18 @@ function MeetingMap(inConfig) {
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
 	function locationSearchGeocode(resp) {
-		const center = gDelegate.getGeocodeCenter(resp);
-		if (!center) return;
+		const centerAndBounds = gDelegate.getGeocodeCenterAndBounds(resp);
+		if (!centerAndBounds) return;
+		const center = {lat: (centerAndBounds.southWest.lat + centerAndBounds.northEast.lat)/2,
+						lng: (centerAndBounds.southWest.lng + centerAndBounds.northEast.lng)/2,};
+		let zoom = config.zoom + 1;
+		do {
+			if (zoom <= config.minZoom) break;
+			zoom = zoom - 1;
+			var bounds = gDelegate.calculateBoundsFromCenterAndZoom(center, zoom);
+		} while (!gDelegate.contains(bounds, centerAndBounds.southWest.lat, centerAndBounds.southWest.lng))
 		filterVisible(false);
-		gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, config.zoom);
+		gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, true);
 		gSearchPoint = {"lat": gLocationSearchResult.center.lat, "lng": gLocationSearchResult.center.lng};
 		crouton.updateDistances();
 		filterVisible(true, gLocationSearchResult.bounds);
@@ -682,20 +690,33 @@ function MeetingMap(inConfig) {
 			gDelegate.fitBounds(lat_lngs);
 		}
 	};
-	function calcPixelsFromCenter(zoom, centerLat, centerLng, pointLat, pointLng) {
-		const difX = pointLng - centerLng;
-		const difY = pointLat - centerLat;
-		const pixelWidth = Math.pow(2, 8+zoom) / 360.0;
+	function latLngToWebMercator(latlng, zoom) {
+    	const lat = Math.max(-85.05112878, Math.min(85.05112878, latlng.lat));
+    	const phi = lat * Math.PI / 180;
+    	const lambda = latlng.lng * Math.PI / 180;
+    	const scale = 256 * Math.pow(2, zoom);
 
-		return {x: Math.round(difX * pixelWidth), y: Math.round(difY * pixelWidth)};
+    	const x = scale * (lambda + Math.PI) / (2 * Math.PI);
+    	const y =
+      		scale * (Math.PI - Math.log(Math.tan(Math.PI / 4 + phi / 2))) / (2 * Math.PI);
+    	return { x: x, y: y };
+	}
+	function webMercatorToLatLng(point, zoom) {
+   		const scale = 256 * Math.pow(2, zoom);
+
+    	const lambda = (2 * Math.PI) * (point.x / scale - 0.5); // radians
+    	const t = Math.exp(Math.PI - (2 * Math.PI) * (point.y / scale));
+    	const phi = 2 * Math.atan(t) - Math.PI / 2; // radians
+
+    	return { lat: phi * 180 / Math.PI, lng: lambda * 180 / Math.PI };
 	}
 	function mapOverlappingMarkersInCity(in_meeting_array)	///< Used to draw the markers when done.
 	{
 		const tolerance = 8;	/* This is how many pixels we allow. */
 
 		const ret = new Array;
-		const center = gDelegate.getCenter();
 		const zoom = gDelegate.getZoom();
+		const center = latLngToWebMercator(gDelegate.getCenter(), zoom)
 		// We create this hash because we limit looking for "matches" to within one city.
 		for (const [city, meetings] of Object.entries(createCityHash(in_meeting_array))) {
 			// create a tmp object so we can mark which items haven't been matched yet.
@@ -703,7 +724,8 @@ function MeetingMap(inConfig) {
 				item = new Object;
 				item.matched = false;
 				item.meeting = meeting;
-				item.coords = calcPixelsFromCenter(zoom, center.lat, center.lng, meeting.latitude, meeting.longitude);
+				const point = latLngToWebMercator({lat: meeting.latitude, lng: meeting.longitude}, zoom);
+				item.coords = {x: point.x-center.x, y: point.y-center.y};
 				return item;
 			});
 			tmp.reduce(function(prev, item, index) {
@@ -992,6 +1014,8 @@ function MeetingMap(inConfig) {
 	this.filterVisible = filterVisible;
 	this.hasMapSearch = hasMapSearch;
 	this.createLocationSearchButton = createLocationSearchButton;
+	this.latLngToWebMercator = latLngToWebMercator;
+	this.webMercatorToLatLng = webMercatorToLatLng;
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
@@ -1000,7 +1024,8 @@ MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
 MeetingMap.prototype.refreshMeetings = null;
 MeetingMap.prototype.getDistanceFromSearch = null;
-
+MeetingMap.prototype.latLngToWebMercator = null;  // called from delegates - yuck!
+MeetingMap.prototype.webMercatorToLatLng = null;  // called from delegates - yuck!
 MeetingMap.prototype.openModalWindow = null;
 MeetingMap.prototype.closeModalWindow = null;
 MeetingMap.prototype.loadPopupMap = null;
