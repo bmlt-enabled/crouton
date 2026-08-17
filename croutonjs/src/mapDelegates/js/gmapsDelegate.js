@@ -155,28 +155,29 @@ function MapDelegate(in_config) {
 	}
 	function calculateBounds(center, zoom, width, height) {
 		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
-		const northeastWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y-height/2};
-		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
+		const southwestWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y+height/2};
+		const northeastWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y-height/2};
 		return new google.maps.LatLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
-	function getZoomAdjust(only_out,filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
+	function getZoomAdjust(only_out, filterMeetings, zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        const center_latlng = {"lat":center.lat(), "lng":center.lng()};
 		ret = zoomLevel;
 		if (config.map_search && isFilterVisible()) return ret;
-		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+		var bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
 		var zoomedOut = false;
-		while(filterMeetings(bounds, {"lat":center.lat(), "lng":center.lng()}).length==0 && ret>6) {
+		while(filterMeetings(bounds, center_latlng).length==0 && ret>6) {
 			zoomedOut = true;
 			ret -= 1;
-			bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+			bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
 		}
 		if (!only_out && !zoomedOut && ret<12) {
 			var knt = filterMeetings(bounds).length;
 			while(ret<12 && knt>0) {
 				ret += 1;
-				bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+				bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
 				knt = filterMeetings(bounds).length;
 			}
 			if (knt == 0) {
@@ -396,10 +397,10 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
     if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].geometry && in_geocode_response[i].geometry.location )
         return {
             center: {lat: in_geocode_response[i].geometry.location.lat(), lng: in_geocode_response[i].geometry.location.lng()},
-            southWest: {lat: in_geocode_response[i].geometry.viewport.southwest.lat(),
-                        lnt: in_geocode_response[i].geometry.viewport.southwest.lng()},
-            northEast: {lat: in_geocode_response[i].geometry.viewport.northeast.lat(),
-                        lnt: in_geocode_response[i].geometry.viewport.northeast.lng()},
+            southWest: {lat: in_geocode_response[i].geometry.viewport.getSouthWest().lat(),
+                        lng: in_geocode_response[i].geometry.viewport.getSouthWest().lng()},
+            northEast: {lat: in_geocode_response[i].geometry.viewport.getNorthEast().lat(),
+                        lng: in_geocode_response[i].geometry.viewport.getNorthEast().lng()},
         };
     alert ( crouton.localization.getWord("address_lookup_fail") );
     return null;
@@ -441,23 +442,22 @@ function geoCallback( in_geocode_response ) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
     }
-	function getZoomAdjustedBounds(center_obj, filterMeetings, zoomLevel, onlyOut=false) {
-        if (!center_obj) return null;
-        const center = new google.maps.LatLng(center_obj.lat, center_obj.lng);
+	function getZoomAdjustedBounds(center_latlng, filterMeetings, zoomLevel, onlyOut=false) {
+        if (!center_latlng) return null;
+        const center = new google.maps.LatLng(center_latlng.lat, center_latlng.lng);
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
 			const zoom = getZoomAdjust(onlyOut, filterMeetings, zoomLevel, center);
-			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
-            const ret = {"center": center_obj, "bounds": bounds, "zoom": zoom};
+			const bounds = calculateBounds(center_latlng, zoom, mapWidth, mapHeight);
+            const ret = {"center": center_latlng, "bounds": bounds, "zoom": zoom};
 			return ret;
 		} else {
 			alert ( crouton.localization.getWord("address_lookup_fail") );
 			return null;
 		}
     }
-	function calculateBoundsFromCenterAndZoom(center_obj, zoomLevel) {
-        const center = new google.maps.LatLng(center_obj.lat, center_obj.lng);
+	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
         const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
         return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
