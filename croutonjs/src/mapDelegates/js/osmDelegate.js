@@ -398,9 +398,13 @@ function addControl(div,pos,cb) {
 		}, this)
 		);
     };
- 	function geoCallback ( in_geocode_response,	filterMeetings) {
-        if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].bbox ) {
-	        gMainMap.flyToBounds ( in_geocode_response[0].bbox );
+	function getGeocodingChoices(in_geocode_response) {
+    	if (!Array.isArray(in_geocode_response)) return [];
+    	return in_geocode_response.map((r) => r.name);
+	}
+ 	function geoCallback ( in_geocode_response,	filterMeetings, i=0) {
+        if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].bbox ) {
+	        gMainMap.flyToBounds ( in_geocode_response[i].bbox );
             gMainMap.on('moveend', function(ev) {
 				gMainMap.off('moveend');
 				gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
@@ -550,6 +554,7 @@ function addControl(div,pos,cb) {
 	this.removeClusterLayer = removeClusterLayer;
 	this.clickSearch = clickSearch;
 	this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
+	this.getGeocodingChoices = getGeocodingChoices;
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
@@ -587,6 +592,7 @@ MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenterAndBounds = null;
+MapDelegate.prototype.getGeocodingChoices = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;

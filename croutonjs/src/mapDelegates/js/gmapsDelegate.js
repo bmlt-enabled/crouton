@@ -393,6 +393,10 @@ function openMarker(id) {
         openInfoWindow(marker.marker)
     }
 }
+function getGeocodingChoices(in_geocode_response) {
+    if (!Array.isArray(in_geocode_response)) return [];
+    return in_geocode_response.map((r) => r.formatted_address);
+}
 function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
     if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].geometry && in_geocode_response[i].geometry.location )
         return {
@@ -533,6 +537,7 @@ function geoCallback( in_geocode_response ) {
     this.removeClusterLayer = removeClusterLayer;
     this.clickSearch = clickSearch;
     this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
+    this.getGeocodingChoices = getGeocodingChoices;
     this.modalOn = modalOn;
     this.modalOff = modalOff;
     this.removeListener = removeListener;
@@ -572,6 +577,7 @@ MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
 MapDelegate.prototype.getGeocodeCenterAndBounds = null;
+MapDelegate.prototype.getGeocodingChoices = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;

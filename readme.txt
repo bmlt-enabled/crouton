@@ -39,6 +39,7 @@ https://demo.bmlt.app/crouton
 
 = 4.3.0 =
 * Location lookup now also from table display.
+* Handle ambiguous geocoding queries.
 * New Handlebars partial: formatNames.
 
 = 4.2.1 =

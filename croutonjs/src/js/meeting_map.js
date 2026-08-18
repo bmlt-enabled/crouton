@@ -25,7 +25,6 @@ function MeetingMap(inConfig) {
 	function apiLoadedCallback() {
 		gLoadedCallbackFunction(...gLoadedCallbackArgs);
 	}
-
 	function retrieveGeolocation() {
 		return new Promise((resolve, reject) => {
 			if (navigator.geolocation) {
@@ -45,10 +44,14 @@ function MeetingMap(inConfig) {
 	function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-	/************************************************************************************//**
-	 *	\brief Load the map and set it up.													*
-	 ****************************************************************************************/
-
+	/**
+	 * Creates the map and adds the various ornaments like search buttons and menus.
+	 * @param HTMLElement inDiv Element that contains the map.
+	 * @param Object menuContext Contains info for the map menu.  For instance, for [bmlt_map], the dropdown filters.
+	 * @param {*} handlebarMapOptions
+	 * @param Function cb
+	 * @param boolean hide
+	 */
 	function loadMap(inDiv, menuContext, handlebarMapOptions=null,cb=null,hide=false) {
 		if (inDiv) {
 			crouton_Handlebars.registerPartial("markerContentsTemplate", crouton_Handlebars.compile(config['marker_contents_template']));
@@ -185,7 +188,6 @@ function MeetingMap(inConfig) {
 			} else {
 				gDelegate.callGeocoder(text, resetVisibleThenFilterMeetingsAndBounds, locationSearchGeocode);
 			}
-			closeModalWindow(gLocationSearchModal);
 		});
 		controlDiv.querySelector("#bmlt-location-search-widen").addEventListener('click', function () {
 			if (gLocationSearchResult === null) {
@@ -248,9 +250,9 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector(".onoffswitch").addEventListener('click', function (event) {
 			if (event.pointerId < 0) return;
 			next24status = !next24status;
-			fitDuringFilter = false;
+			gAllowExpandViewport = false;
 			crouton.filterNext24(next24status);
-			fitDuringFilter = true;
+			gAllowExpandViewport = true;
 		});
 		let style = document.createElement('style');
     	style.innerHTML = rules;
@@ -337,11 +339,11 @@ function MeetingMap(inConfig) {
 			gModalDelegate = delegate;
 		}
 	};
-	var fitDuringFilter = true;
-	function filterFromCrouton(filter) {
-		gMeetingIdsFromCrouton = filter;
+	var gAllowExpandViewport = true;
+	function setFilteredIds(ids) {
+		gMeetingIdsFromCrouton = ids;
 		if (gAllMeetings)
-			searchResponseCallback(fitDuringFilter && !gListOnlyVisible);
+			searchResponseCallback(gAllowExpandViewport && !gListOnlyVisible);
 	};
 	function clearMessageAndClose(modal, msg = '#zoomed-out-message') {
 		jQuery(msg).not('.hide').addClass('hide');
@@ -412,22 +414,46 @@ function MeetingMap(inConfig) {
 		gSearchPoint = {"lat": latlng.lat, "lng": latlng.lng};
 		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
 	}
+	function chooseResponse(resp, callback) {
+		if (jQuery('#bmlt_location_search_modal').is(":hidden")) {
+			callback(resp, 0);
+			return;
+		}
+		const choices = gDelegate.getGeocodingChoices(resp);
+		if (choices.length < 2) {
+			callback(resp, 0);
+			return;
+		}
+		const html = choices.map((choice, index) =>
+			'<button class="location-choice" data-choice="'+index+'">'+choice+'</button>'
+		);
+		jQuery('#modal-location_search-page').addClass('hide');
+		jQuery('#modal-location-search-choice').removeClass('hide')
+			.html(html.join(''))
+		jQuery('.location-choice').on('click', function() {
+			const index = parseInt(jQuery(this).data("choice"))
+			callback(resp, index);
+		})
+	}
 	function locationSearchGeocode(resp) {
-		const centerAndBounds = gDelegate.getGeocodeCenterAndBounds(resp);
-		if (!centerAndBounds) return;
-		const center = {lat: (centerAndBounds.southWest.lat + centerAndBounds.northEast.lat)/2,
-						lng: (centerAndBounds.southWest.lng + centerAndBounds.northEast.lng)/2,};
-		let zoom = config.zoom + 1;
-		do {
-			if (zoom <= config.minZoom) break;
-			zoom = zoom - 1;
-			var bounds = gDelegate.calculateBoundsFromCenterAndZoom(center, zoom);
-		} while (!gDelegate.contains(bounds, centerAndBounds.southWest.lat, centerAndBounds.southWest.lng))
-		filterVisible(false);
-		gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, true);
-		gSearchPoint = {"lat": gLocationSearchResult.center.lat, "lng": gLocationSearchResult.center.lng};
-		crouton.updateDistances();
-		filterVisible(true, gLocationSearchResult.bounds);
+		const i = chooseResponse(resp, function(resp, i) {
+			closeModalWindow(gLocationSearchModal);
+			const centerAndBounds = gDelegate.getGeocodeCenterAndBounds(resp, i);
+			if (!centerAndBounds) return;
+			const center = {lat: (centerAndBounds.southWest.lat + centerAndBounds.northEast.lat)/2,
+							lng: (centerAndBounds.southWest.lng + centerAndBounds.northEast.lng)/2,};
+			let zoom = config.zoom + 1;
+			do {
+				if (zoom <= config.minZoom) break;
+				zoom = zoom - 1;
+				var bounds = gDelegate.calculateBoundsFromCenterAndZoom(center, zoom);
+			} while (!gDelegate.contains(bounds, centerAndBounds.southWest.lat, centerAndBounds.southWest.lng))
+			filterVisible(false);
+			gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, true);
+			gSearchPoint = {"lat": gLocationSearchResult.center.lat, "lng": gLocationSearchResult.center.lng};
+			crouton.updateDistances();
+			filterVisible(true, gLocationSearchResult.bounds);
+		});
 	}
 	function loadAllMeetings(meetings_responseObject, fitBounds=true) {
 		if (meetings_responseObject === null && config.map_search) {
@@ -577,6 +603,9 @@ function MeetingMap(inConfig) {
 		} else {
 			jQuery("#location-search-widen").addClass('hide');
 		}
+		jQuery('#modal-location_search-page').removeClass('hide');
+		jQuery('#modal-location-search-choice').addClass('hide')
+		jQuery('bmlt-location-search-goto-text').val('');
 	}
 	function showGeocodingDialog(e=null) {
 		openModalWindow(document.getElementById('geocoding_modal'));
@@ -860,9 +889,9 @@ function MeetingMap(inConfig) {
 		});
 		jQuery("#byday").removeClass('hide');
 		jQuery("#filter-dropdown-visibile").val(on?'a-1':'');
-		fitDuringFilter = false;
-		crouton.simulateFilterDropdown();
-		fitDuringFilter = true;
+		gAllowExpandViewport = false; // calling simulateFilterDropdown will callback croutonMap to set the filtered Ids.
+		crouton.simulateFilterDropdown();  // but we don't want to expand the viewport.
+		gAllowExpandViewport = true;
 		jQuery("#filteringByVisibility").html(on?'&#10004;':'');
 		gListOnlyVisible = on;
 		if (on) gDragStartListener = gDelegate.addListener('dragstart', onDragStart, true);
@@ -1003,7 +1032,7 @@ function MeetingMap(inConfig) {
 	 ****************************************************************************************/
 	this.initialize = loadFromCrouton;
 	this.showMap = showMap;
-	this.fillMap = filterFromCrouton;
+	this.setFilteredIds = setFilteredIds;
 	this.rowClick = focusOnMeeting;
 	this.apiLoadedCallback = apiLoadedCallback;
 	this.refreshMeetings = loadAllMeetings;
@@ -1019,7 +1048,7 @@ function MeetingMap(inConfig) {
 };
 MeetingMap.prototype.initialize = null;
 MeetingMap.prototype.showMap = null;
-MeetingMap.prototype.fillMap = null;
+MeetingMap.prototype.setFilteredIds = null;
 MeetingMap.prototype.rowClick = null;
 MeetingMap.prototype.apiLoadedCallback = null;
 MeetingMap.prototype.refreshMeetings = null;

@@ -558,3 +558,6 @@ div.bmlt_map_container_div  button {
 div#location-search-widen.hide {
     display: none;
 }
+.modal .hide {
+  display: none;
+}

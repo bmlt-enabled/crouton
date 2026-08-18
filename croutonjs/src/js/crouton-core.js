@@ -431,7 +431,7 @@ function Crouton(config) {
 		const showingNow = this.calcShowingNow();
 		self.updateMeetingCount(showingNow);
 		self.updateFilters(showingNow);
-		if (croutonMap) croutonMap.fillMap(showingNow);
+		if (croutonMap) croutonMap.setFilteredIds(showingNow);
 		self.showView(self.currentView, showingNow.length);
 	};
 	self.updateFilters = function(showingNow) {
