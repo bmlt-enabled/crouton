@@ -22,7 +22,7 @@ function MapDelegate(in_config) {
         var tag = document.createElement('script');
         gIsLoaded = true;
         if (typeof config['api_key'] === 'undefined') config['api_key'] = "";
-        tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&callback=croutonMap.apiLoadedCallback";
+        tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&loading=async&callback=croutonMap.apiLoadedCallback";
         tag.defer = true;
         tag.async = true;
         var firstScriptTag = document.getElementsByTagName('script')[0];
