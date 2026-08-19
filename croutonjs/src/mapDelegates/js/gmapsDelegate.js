@@ -377,14 +377,6 @@ function addControl(div,pos,cb) {
     }
     gMainMap.controls[p].push(div);
 }
-    /************************************************************************************//**
- *	\brief This catches the AJAX response, and fills in the response form.				*
- ****************************************************************************************/
-function fitAndZoom(ev) {
-    if (!gMainMap) return;
-    gMainMap.fitBounds(this.response[0].geometry.viewport);
-    gMainMap.setZoom(getZoomAdjust(true,this.filterMeetings));
-}
 function openMarker(id) {
     if (!gMainMap) return;
     const marker = gAllMarkers.find((m) => m.ids.includes(id));
@@ -409,15 +401,14 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
     alert ( crouton.localization.getWord("address_lookup_fail") );
     return null;
 }
-function geoCallback( in_geocode_response ) {
-    var callback = fitAndZoom.bind({filterMeetings:this.filterMeetings,
-            response: in_geocode_response});
-    if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].geometry && in_geocode_response[0].geometry.location ) {
-            gMainMap.panTo ( in_geocode_response[0].geometry.location );
-            google.maps.event.addListenerOnce( gMainMap, 'idle', callback);
-    } else {
-        alert ( crouton.localization.getWord("address_lookup_fail") );
-    };
+function flyTo( resp ) {
+    gMainMap.panToBounds ( resp.geometry.viewport );
+    google.maps.event.addListenerOnce( gMainMap, 'idle', function (ev) {
+        if (gMainMap) {
+            gMainMap.fitBounds(bounds);
+            gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
+        }
+    });
 };
     function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
         var	geocoder = new google.maps.Geocoder;
@@ -515,6 +506,7 @@ function geoCallback( in_geocode_response ) {
     this.addListener = addListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
+    this.flyTo = flyTo;
     this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
     this.callGeocoder = callGeocoder;
@@ -555,6 +547,7 @@ MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
+MapDelegate.prototype.flyTo = null;
 MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
 MapDelegate.prototype.callGeocoder = null;

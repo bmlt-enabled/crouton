@@ -4,7 +4,7 @@
 <div id="bmltsearch_modal" class="modal" style="display: none;">
     <div id="bmltsearch_content" class="modal-content">
         <span id="close_search" class="modal-close">x</span>
-        <div id="modal-search-page">
+        <div class="crouton-modal-search-page">
             <div class="modal-title">{{getWord 'Search for meetings'}}</div>
             <div id="zoomed-out-message" class="hide">
                 <p>{{getWord 'zoomed-out-message'}}</p>
@@ -22,6 +22,7 @@
             </div>
             <button id="show-search-parameters" class="advanced-search-button">{{getWord 'Adjust Search'}}</button>
         </div>
+        <div class="crouton-modal-search-choice"></div>
         <div id="modal-seach-parameters">
             <div class="modal-title">{{getWord 'Adjust Search'}}</div>
             <input type="number" id="search_parameter" name="search_parameter" maxlength="3" size="3">

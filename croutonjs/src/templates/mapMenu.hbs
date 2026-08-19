@@ -43,11 +43,14 @@
 	<div id="search_content" class="modal-content">
 		<span class="modal-title">{{getWord 'Show meetings near...'}}</span><span id="close_search" class="modal-close">x</span>
         <p></p>
-        <div class="modal-search">
-            {{getWord 'Enter a city or zip code'}}
-            <input id="goto-text" class="crouton-goto-text" type="text">
-            <button id="goto-button" class="filter-button">{{getWord "go"}}</button>
+        <div class="crouton-modal-search-page">
+            <div class="modal-search">
+                {{getWord 'Enter a city or zip code'}}
+                <input id="goto-text" class="crouton-goto-text" type="text">
+                <button id="goto-button" class="filter-button">{{getWord "text_search"}}</button>
+            </div>
         </div>
+        <div class="crouton-modal-search-choice"></div>
   	</div>
 </div>
 

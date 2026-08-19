@@ -561,3 +561,13 @@ div#location-search-widen.hide {
 .modal .hide {
   display: none;
 }
+button.location-choice {
+    width: 100%;
+}
+.choose-location h4 {
+    margin-bottom: 5px;
+}
+button.location-choice {
+    padding: 10px 5px;
+    margin-bottom: 5px;
+}

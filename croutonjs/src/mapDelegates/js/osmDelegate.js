@@ -402,19 +402,15 @@ function addControl(div,pos,cb) {
     	if (!Array.isArray(in_geocode_response)) return [];
     	return in_geocode_response.map((r) => r.name);
 	}
- 	function geoCallback ( in_geocode_response,	filterMeetings, i=0) {
-        if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].bbox ) {
-	        gMainMap.flyToBounds ( in_geocode_response[i].bbox );
-            gMainMap.on('moveend', function(ev) {
-				gMainMap.off('moveend');
-				gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
-				gMainMap.once('moveend',function() {
-					gTileLayer.redraw();
-				});
+ 	function flyTo(resp) {
+	    gMainMap.flyToBounds ( resp.bbox );
+        gMainMap.on('moveend', function(ev) {
+			gMainMap.off('moveend');
+			gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
+			gMainMap.once('moveend',function() {
+				gTileLayer.redraw();
 			});
-        } else {
-            alert ( crouton.localization.getWord("address_lookup_fail") );
-        };
+		});
 	};
 	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel, onlyOut=false) {
 		const mapWidth = gDiv.parentElement.offsetWidth;
@@ -440,7 +436,7 @@ function addControl(div,pos,cb) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-    function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
+    function callGeocoder(in_loc, filterMeetings, callback) {
 		geoCodeParams = {};
 		if (config.region && config.region.trim() !== '') {
 			geoCodeParams.countrycodes = config.region;
@@ -533,6 +529,7 @@ function addControl(div,pos,cb) {
 	this.removeListener = removeListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
+	this.flyTo = flyTo;
 	this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
     this.callGeocoder = callGeocoder;
@@ -571,6 +568,7 @@ MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
+MapDelegate.prototype.flyTo = null;
 MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
 MapDelegate.prototype.callGeocoder = null;

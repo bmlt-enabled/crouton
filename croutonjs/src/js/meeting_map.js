@@ -125,9 +125,7 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector("#bmltsearch-text-button").addEventListener('click', function () {
 			let text = document.getElementById("bmltsearch-goto-text").value.trim();
 			if (text === "") return;
-			showThrobber();
 			gDelegate.callGeocoder(text, null, mapSearchGeocode);
-			clearMessageAndClose(gSearchModal);
 		});
 		controlDiv.querySelector("#modal-seach-parameters").style.display = 'none';
 		controlDiv.querySelector("#show-search-parameters").addEventListener('click', function (e) {
@@ -157,7 +155,7 @@ function MeetingMap(inConfig) {
 		});
 
 		controlDiv.querySelector("#bmltsearch-clicksearch").addEventListener('click', clickSearch);
-		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>clearMessageAndClose(e.target)));
+		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		gSearchModal = controlDiv.querySelector("#bmltsearch_modal");
 		gSearchModal.parentElement.removeChild(gSearchModal);
 
@@ -184,7 +182,7 @@ function MeetingMap(inConfig) {
 			let text = document.getElementById("bmlt-location-search-goto-text").value.trim();
 			if (text === "") return;
 			if (isMapVisible()) {
-				gDelegate.callGeocoder(text, resetVisibleThenFilterMeetingsAndBounds);
+				gDelegate.callGeocoder(text, resetVisibleThenFilterMeetingsAndBounds, mapMenuGeocode);
 			} else {
 				gDelegate.callGeocoder(text, resetVisibleThenFilterMeetingsAndBounds, locationSearchGeocode);
 			}
@@ -211,7 +209,7 @@ function MeetingMap(inConfig) {
 			filterVisible(false);
 			closeModalWindow(gLocationSearchModal);
 		});
-		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>clearMessageAndClose(e.target)));
+		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		gLocationSearchModal = controlDiv.querySelector("#bmlt_location_search_modal");
 		gLocationSearchModal.parentElement.removeChild(gLocationSearchModal);
 
@@ -298,13 +296,11 @@ function MeetingMap(inConfig) {
 		controlDiv.querySelector("#close_table").addEventListener('click', hideListView);
 		controlDiv.querySelector("#goto-text").addEventListener('keydown', function (event) {
 			if (event && event.key == "Enter") {
-				closeModalWindow(event.target);
-				lookupLocation(document.getElementById('goto-text').value,g_suspendedFullscreen);
+				lookupLocation(document.getElementById('goto-text').value,g_suspendedFullscreen, mapMenuGeocode);
 			}
 		});
 		controlDiv.querySelector("#goto-button").addEventListener('click', function (event) {
-			closeModalWindow(event.target);
-			lookupLocation(document.getElementById('goto-text').value, g_suspendedFullscreen);
+			lookupLocation(document.getElementById('goto-text').value, g_suspendedFullscreen, mapMenuGeocode);
 		});
 
 		return controlDiv;
@@ -312,6 +308,17 @@ function MeetingMap(inConfig) {
 	function hasMapSearch() {
 		return 'map_search' in config;
 	}
+	/**
+	 * Load the meetings for [bmlt_tabs] and [bmlt_map]: all the meetings, during map initialization.
+	 * @param string inDiv_id selector for the div that will contain the map.
+	 * @param Array meetings_responseObject the meetings returned from the server and enhanced by the crouton core.
+	 * @param {*} menuContext information about the dropdown filters.
+	 * @param {*} handlebarMapOptions
+	 * @param boolean fitBounds should we expand our map so that all the meetings are visible?
+	 * @param function callback called after map has been initialized
+	 * @param boolean hide make the map invisisble
+	 * @returns
+	 */
 	function loadFromCrouton(inDiv_id, meetings_responseObject, menuContext = null, handlebarMapOptions = null, fitBounds = true, callback, hide) {
 		if (!gDelegate.isApiLoaded()) {
 			preloadApiLoadedCallback(loadFromCrouton, [inDiv_id, meetings_responseObject, menuContext, handlebarMapOptions, fitBounds, callback, hide]);
@@ -322,6 +329,13 @@ function MeetingMap(inConfig) {
 		loadMap(inDiv, menuContext, handlebarMapOptions, callback, hide);
 		loadAllMeetings(meetings_responseObject, fitBounds);
 	};
+	/**
+	 * The map on the meeting details popup modal.
+	 * @param string inDiv_id selector for the div that will contain the map.
+	 * @param Object meeting
+	 * @param {*} handlebarMapOptions
+	 * @returns
+	 */
 	function loadPopupMap(inDiv_id, meeting, handlebarMapOptions = null) {
 		if (!gDelegate.isApiLoaded()) {
 			preloadApiLoadedCallback(loadPopupMap, [inDiv_id, meeting, handlebarMapOptions]);
@@ -345,19 +359,15 @@ function MeetingMap(inConfig) {
 		if (gAllMeetings)
 			searchResponseCallback(gAllowExpandViewport && !gListOnlyVisible);
 	};
-	function clearMessageAndClose(modal, msg = '#zoomed-out-message') {
-		jQuery(msg).not('.hide').addClass('hide');
-		closeModalWindow(modal);
-	}
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
 			showThrobber();
 			gSearchPoint = {"lat": position.latitude, "lng": position.longitude};
 			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
-			if (activeModal == gSearchModal) clearMessageAndClose(gSearchModal);
+			if (gActiveModal == gSearchModal) closeModalWindow(gSearchModal);
 		}).catch(error => {
 			console.log(error.message);
-			if (activeModal != gSearchModal) showBmltSearchDialog();
+			if (gActiveModal != gSearchModal) showBmltSearchDialog();
 		});
 	};
 	function clickSearch(e) {
@@ -367,7 +377,7 @@ function MeetingMap(inConfig) {
 			gSearchPoint = {"lat": lat, "lng": lng};
 			crouton.searchByCoordinates(lat, lng, config.map_search.width);
 		});
-		clearMessageAndClose(gSearchModal);
+		closeModalWindow(gSearchModal);
 	}
 	function createThrobber(inDiv) {
 		if (!inDiv.myThrobber) {
@@ -402,20 +412,27 @@ function MeetingMap(inConfig) {
 			gInDiv.myThrobber.style.display = 'none';
 		};
 	};
-	function mapSearchGeocode(resp) {
-		showThrobber();
-		if (document.getElementById("bmltsearch-goto-text"))
-			document.getElementById("bmltsearch-goto-text").value = "";
-		let latlng = gDelegate.getGeocodeCenterAndBounds(resp).center;
-		if (!latlng) {
-			hideThrobber();
-			return;
-		}
-		gSearchPoint = {"lat": latlng.lat, "lng": latlng.lng};
-		crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
+	function mapMenuGeocode(resp) {
+		chooseResponse("geocoding_modal", resp, function(resp, i) {
+			const modal = document.getElementById('geocoding_modal');
+			closeModalWindow(modal);
+			gDelegate.flyTo(resp[i]);
+		})
 	}
-	function chooseResponse(resp, callback) {
-		if (jQuery('#bmlt_location_search_modal').is(":hidden")) {
+	function mapSearchGeocode(resp) {
+		chooseResponse('bmltsearch_modal', resp, function(resp, i) {
+			closeModalWindow(gSearchModal);
+			if (document.getElementById("bmltsearch-goto-text"))
+				document.getElementById("bmltsearch-goto-text").value = "";
+			let latlng = gDelegate.getGeocodeCenterAndBounds(resp,i).center;
+			if (!latlng) return;
+			showThrobber();
+			gSearchPoint = {"lat": latlng.lat, "lng": latlng.lng};
+			crouton.searchByCoordinates(latlng.lat, latlng.lng, config.map_search.width);
+		});
+	}
+	function chooseResponse(modalName, resp, callback) {
+		if (jQuery('#'+modalName).is(":hidden")) {
 			callback(resp, 0);
 			return;
 		}
@@ -427,16 +444,16 @@ function MeetingMap(inConfig) {
 		const html = choices.map((choice, index) =>
 			'<button class="location-choice" data-choice="'+index+'">'+choice+'</button>'
 		);
-		jQuery('#modal-location_search-page').addClass('hide');
-		jQuery('#modal-location-search-choice').removeClass('hide')
-			.html(html.join(''))
-		jQuery('.location-choice').on('click', function() {
+		jQuery('#'+modalName+' .crouton-modal-search-page').addClass('hide');
+		jQuery('#'+modalName+' .crouton-modal-search-choice').removeClass('hide')
+			.html('<div class="choose-location"><h4>'+crouton.localization.getWord('Choose one')+'</h4>'+html.join('')+'</div>')
+		jQuery('#'+modalName+' .location-choice').on('click', function() {
 			const index = parseInt(jQuery(this).data("choice"))
 			callback(resp, index);
 		})
 	}
 	function locationSearchGeocode(resp) {
-		const i = chooseResponse(resp, function(resp, i) {
+		chooseResponse('bmlt_location_search_modal', resp, function(resp, i) {
 			closeModalWindow(gLocationSearchModal);
 			const centerAndBounds = gDelegate.getGeocodeCenterAndBounds(resp, i);
 			if (!centerAndBounds) return;
@@ -493,7 +510,7 @@ function MeetingMap(inConfig) {
 			}
 			if (config.goto) {
 				if (isMapVisible()) {
-					gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds);
+					gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds, mapMenuGeocode);
 				} else {
 					gDelegate.callGeocoder(config.goto, isFilterVisible() ? resetVisibleThenFilterMeetingsAndBounds : setVisibleThenFilterMeetingsAndBounds, locationSearchGeocode);
 				}
@@ -532,11 +549,11 @@ function MeetingMap(inConfig) {
 	}
 	var g_suspendedFullscreen = false;
 	var g_overflowX;
-	var activeModal = null;
+	var gActiveModal = null;
 	var swipableModal = false;
 	function closeModalWindow(modal) {
 		gDelegate.modalOff();
-		activeModal = null;
+		gActiveModal = null;
 		if (!modal.classList.contains("modal"))
 			return closeModalWindow(modal.parentNode);
 		modal.style.display = "none";
@@ -556,8 +573,8 @@ function MeetingMap(inConfig) {
 		}
 	}
 	document.addEventListener("keydown", function(event) {
-		if (activeModal && event.key == "Escape") {
-			closeModalWindow(activeModal);
+		if (gActiveModal && event.key == "Escape") {
+			closeModalWindow(gActiveModal);
 		}
 	}, true);
 	function openModalWindow(modal,swipe=false) {
@@ -570,7 +587,7 @@ function MeetingMap(inConfig) {
 		document.body.appendChild(modal);
 		swipableModal = swipe;
 		modal.focus();
-		activeModal = modal;
+		gActiveModal = modal;
 		dd = document.getElementById("map-menu-dropdown");
 		if (dd) dd.style.display = "none";
 		gDelegate.modalOn();
@@ -588,27 +605,30 @@ function MeetingMap(inConfig) {
 		openModalWindow(document.getElementById('filter_modal'));
 	}
 	function showBmltSearchDialog(e) {
-		if (!document.getElementById('bmltsearch_modal')) gInDiv.appendChild(gSearchModal);
+		openModalWindow(gSearchModal);
 		if (gDelegate.isMapDefined())
 			jQuery('#bmltsearch-clicksearch').parent().show();
 		else
 			jQuery('#bmltsearch-clicksearch').parent().hide();
-		openModalWindow(gSearchModal);
+		jQuery('#zoomed-out-message').addClass('hide');
+		jQuery('#bmltsearch_modal .crouton-modal-search-page').removeClass('hide');
+		jQuery('#bmltsearch_modal .crouton-modal-search-choice').addClass('hide');
 	}
 	function showLocationSearchDialog(e) {
-		if (!document.getElementById('bmlt_location_search_modal')) document.getElementById('bmlt-location-search').appendChild(gLocationSearchModal);
 		openModalWindow(gLocationSearchModal);
 		if ((gSearchPoint !== null) && gListOnlyVisible) {
 			jQuery("#location-search-widen").removeClass('hide');
 		} else {
 			jQuery("#location-search-widen").addClass('hide');
 		}
-		jQuery('#modal-location_search-page').removeClass('hide');
-		jQuery('#modal-location-search-choice').addClass('hide')
+		jQuery('#bmlt_location_search_modal .crouton-modal-search-page').removeClass('hide');
+		jQuery('#bmlt_location_search_modal .crouton-modal-search-choice').addClass('hide');
 		jQuery('bmlt-location-search-goto-text').val('');
 	}
 	function showGeocodingDialog(e=null) {
 		openModalWindow(document.getElementById('geocoding_modal'));
+		jQuery('#geocoding_modal .crouton-modal-search-page').removeClass('hide');
+		jQuery('#geocoding_modal .crouton-modal-search-choice').addClass('hide');
 	}
 	function showListView(e=null) {
 		filterVisible();
@@ -643,22 +663,14 @@ function MeetingMap(inConfig) {
 		}
 		return ret;
 	}
-	function lookupLocation(location,fullscreen, callback=null) {
+	function lookupLocation(location,fullscreen, callback) {
 		if (location != '') {
 			if (fullscreen) {
 				gDelegate.addListener('idle', function () {
-					if (callback) {
-						gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
-					} else {
-						gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds);
-					}
+					gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
 				}, true);
 			} else {
-				if (callback) {
-					gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
-				} else {
-					gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds);
-				}
+				gDelegate.callGeocoder(location, resetVisibleThenFilterMeetingsAndBounds, callback);
 			}
 		} else {
 			alert("Location not found");
