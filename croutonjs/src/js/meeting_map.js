@@ -9,6 +9,7 @@ function MeetingMap(inConfig) {
 	const config = inConfig;
 	if (!config.maxZoom) config.maxZoom = 17;
 	if (!config.minZoom) config.minZoom = 6;
+	if (!config.locationSearchZoom) config.locationSearchZoom = 12; // TODO: for now, not in interface.  Experience will show if it is worth adding to UI.
 	if (!config.marker_contents_template) config.marker_contents_template = croutonDefaultTemplates.marker_contents_template;
 	var gAllMeetings = [];
 	var gMeetingIdsFromCrouton = null;
@@ -459,7 +460,7 @@ function MeetingMap(inConfig) {
 			if (!centerAndBounds) return;
 			const center = {lat: (centerAndBounds.southWest.lat + centerAndBounds.northEast.lat)/2,
 							lng: (centerAndBounds.southWest.lng + centerAndBounds.northEast.lng)/2,};
-			let zoom = config.zoom + 1;
+			let zoom = config.locationSearchZoom + 1;
 			do {
 				if (zoom <= config.minZoom) break;
 				zoom = zoom - 1;
@@ -521,13 +522,13 @@ function MeetingMap(inConfig) {
 		return new Promise((resolve, reject) =>
 			retrieveGeolocation().then(function(coords) {
 				filterVisible(false);
-				if (config.zoom) gDelegate.setZoom(false, config.zoom);
+				if (config.locationSearchZoom) gDelegate.setZoom(false, config.locationSearchZoom);
 				if (isMapVisible() || !makeFilterVisible) {
 					gDelegate.setViewToPosition(coords, filterMeetingsAndBounds, () => {
 						filterVisible(makeFilterVisible);
 					});
 				} else {
-					gLocationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.zoom);
+					gLocationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.locationSearchZoom);
 					filterVisible(true, gLocationSearchResult.bounds);
 				}
 				gSearchPoint = coords;

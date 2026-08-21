@@ -43,6 +43,9 @@ function CroutonHandlebarsExtensions() {
 				? options.fn(this)
 				: options.inverse(this);
 		});
+		crouton_Handlebars.registerHelper('format_list_style', function(data, options) {
+			return crouton.config.format_list_style === 'formatNames' ? 'formatNames' : 'formatKeys'
+		});
 		crouton_Handlebars.registerHelper('groupsConfigured', function(data, options) {
 			if (crouton.config.groups) {
 				return getTrueResult(options, this);

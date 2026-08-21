@@ -146,6 +146,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['service_bodies'] = isset($_POST['service_bodies']) ? array_map('sanitize_text_field', $_POST['service_bodies']) : array();
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
                 $options['distance_units'] = isset($_POST['distance_units']) ? sanitize_text_field(wp_unslash($_POST['distance_units'])) : 'miles';
+                $options['format_list_style'] = isset($_POST['format_list_style']) ? sanitize_text_field(wp_unslash($_POST['format_list_style'])) : 'formatKeys';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
                 $options['native_lang'] = trim(sanitize_text_field(wp_unslash($_POST['native_lang'])));
@@ -356,6 +357,13 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <li>
                                     <label for="time_format"><?php esc_html_e('Default time format: ', 'crouton') ?></label>
                                     <input id="time_format" type="text" size="10" name="time_format" value="<?php echo esc_html($options['time_format']); ?>" />
+                                </li>
+                                <li>
+                                    <label for="format_list_style"><?php esc_html_e('How to display formats in meeting list: ', 'crouton') ?></label>
+                                    <select id="format_list_style" name="format_list_style" style="display:inline;">
+                                        <option <?php echo ($options['format_list_style'] == 'formatKeys') ? 'selected' : ''; ?> value="formatKeys"><?php esc_html_e('List of keys, with single popup describing all', 'crouton') ?></option>
+                                        <option <?php echo ($options['format_list_style'] == 'formatNames') ? 'selected' : ''; ?> value="formatNames"><?php esc_html_e('List of names, each with separate popup description', 'crouton') ?></option>
+                                    </select>
                                 </li>
                                 <li>
                                     <label for="distance_units"><?php esc_html_e('Distance Units: ', 'crouton') ?></label>

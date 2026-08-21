@@ -417,6 +417,20 @@ div.bmlt_map_container_div  button {
 /* border-top: 0; */
 	padding: .8em;
 }
+.location-search-button {
+	    outline: none;
+    	border-radius: 4px;
+      background: #fff;
+	    cursor: pointer;
+      height: 28px;
+}
+.location-search-button:hover, .location-search-button:focus {
+	background-color: #EEEEEE !important;
+}
+.location-search-button-label {
+    font-size: 14px;
+
+}
 .menu-button {
         background-color: #EEEEEE !important;
         color: #2d5c88 !important;

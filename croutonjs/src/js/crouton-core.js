@@ -114,7 +114,9 @@ function Crouton(config) {
 	if (self.config['theme'] !== '') {
 		body.append("<div id='custom-css'><link rel='stylesheet' type='text/css' href='" + self.config['template_path'] + '/themes/' + self.config['theme'] + ".css'>");
 	}
-	body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+	if (self.config['custom_css'] !== '') {
+		body.append("<div id='custom-css'><style type='text/css'>" + self.config['custom_css'] + "</style></div>");
+	}
 	self.isIOSDevice = function() {
     	if (navigator.userAgentData && navigator.userAgentData.platform) {
         	if (navigator.userAgentData.platform === 'iOS') {
@@ -1081,6 +1083,7 @@ Crouton.prototype.setConfig = function(config) {
 			console.log("Error parsing custom translations: " + e.message);
 		}
 	}
+	if (self.config.format_list_style !== 'formatNames') self.config.format_list_style = 'formatKeys';
 }
 /**
  * This supports the [bmlt_handlebars] shortcode, which allows a meeting's details to be inserted into a page.
@@ -1619,7 +1622,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						}
 						else {
 							croutonMap.initialize('byfield_embeddedMapPage', self.meetingData, null, null, fitBoundsInitial);
-							if (self.config['has_geolocation']) jQuery('#'+self.createLocationSearchElement()).append(croutonMap.createLocationSearchButton());
+							if (self.config['has_geolocation'] && self.config['header']) jQuery('#'+self.createLocationSearchElement()).append(croutonMap.createLocationSearchButton());
 						}
 					}
 					if (self.config['refresh_map']) {
@@ -1900,8 +1903,10 @@ function openDirectionsModal(e) {
 
 function closeDirectionsModal() {
 		const modal = document.getElementById('directionsMapModal');
-		modal.style.display = 'none';
-		if (modal.className.includes('remove-after-use')) modal.remove();
+		if (modal) {
+			modal.style.display = 'none';
+			if (modal.className.includes('remove-after-use')) modal.remove();
+		}
 }
 
 function openDirections(url, latitude, longitude, fromModal = true) {
