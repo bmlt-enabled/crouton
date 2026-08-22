@@ -185,7 +185,7 @@ function MeetingMap(inConfig) {
 			let text = document.getElementById("bmlt-location-search-goto-text").value.trim();
 			if (text === "") return;
 			if (isMapVisible()) {
-				gDelegate.callGeocoder(text, mapMenuGeocode);
+				gDelegate.callGeocoder(text, locationSearchOpenMapGeocode);
 			} else {
 				gDelegate.callGeocoder(text, locationSearchGeocode);
 			}
@@ -426,16 +426,19 @@ function MeetingMap(inConfig) {
 			jQuery("#location-search-button :first-child").html(html);
 		}
 	}
-	function mapMenuGeocode(resp) {
-		chooseResponse("geocoding_modal", resp, function(resp, i) {
+	function openMapGeocode(resp, modalName) {
+		chooseResponse(modalName, resp, function(resp, i) {
 			let center = gDelegate.getGeocodeCenterAndBounds(resp,i).center;
 			gSearchPoint = {"lat": center.lat, "lng": center.lng};
 			crouton.updateDistances();
-			const modal = document.getElementById('geocoding_modal');
+			const modal = document.getElementById(modalName);
 			closeModalWindow(modal);
 			filterVisible(false);
 			gDelegate.setViewToPosition(resp[i], filterMeetingsAndBounds, filterVisible);
 		})
+	}
+	function mapMenuGeocode(resp) {
+		openMapGeocode(resp, "geocoding_modal");
 	}
 	function mapSearchGeocode(resp) {
 		chooseResponse('bmltsearch_modal', resp, function(resp, i) {
@@ -471,6 +474,9 @@ function MeetingMap(inConfig) {
 			setLocationSearchButtonLabel(choices[index]);
 			callback(resp, index);
 		})
+	}
+	function locationSearchOpenMapGeocode(resp) {
+		openMapGeocode(resp, 'bmlt_location_search_modal');
 	}
 	function locationSearchGeocode(resp) {
 		chooseResponse('bmlt_location_search_modal', resp, function(resp, i) {

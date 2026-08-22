@@ -424,11 +424,12 @@ div.bmlt_map_container_div  button {
     top: 1px;
     margin-left: 4px;
     margin-top: 0;
+    height: 30px;
 }
 button#location-search-button {
     border: none;
     padding-left: 8px;
-    line-height: 28px;
+    line-height: 26px;
     background: #fff;
     color: #000;
     border-radius: 4px;
