@@ -119,8 +119,12 @@ function MapDelegate(config) {
 	}
     function setViewToPosition(position, filterMeetings, extra=null) {
 		if (!gMainMap) return;
-        var latlng = L.latLng(position.lat, position.lng);
-		gMainMap.flyTo(latlng);
+		if (position.hasOwnProperty('bbox')) {
+			gMainMap.flyToBounds(position.bbox);
+		} else {
+        	var latlng = L.latLng(position.lat, position.lng);
+			gMainMap.flyTo(latlng);
+		}
         gMainMap.once('moveend', function(ev) {
 			newZoom = getZoomAdjust(false, filterMeetings);
 			if (gMainMap.getZoom() != newZoom) {
@@ -362,7 +366,7 @@ function addControl(div,pos,cb) {
 		}
 		return (!existingUrl || existingUrl.indexOf('?') === -1 ? '?' : '&') + params.join('&');
 	}
-	function geocode(query, params, cb, filterMeetings) {
+	function geocode(query, params, cb) {
 		var serviceUrl = config.nominatimUrl;
 		if (!serviceUrl) serviceUrl = 'https://nominatim.openstreetmap.org/';
 		getJSON(
@@ -390,8 +394,7 @@ function addControl(div,pos,cb) {
 						properties: data[i]
 					};
 				}
-				if (filterMeetings) cb(results,filterMeetings);
-				else cb(results);
+				cb(results);
 			} else {
 				alert ( crouton.localization.getWord("address_lookup_fail") );
 			}
@@ -402,16 +405,6 @@ function addControl(div,pos,cb) {
     	if (!Array.isArray(in_geocode_response)) return [];
     	return in_geocode_response.map((r) => r.name);
 	}
- 	function flyTo(resp) {
-	    gMainMap.flyToBounds ( resp.bbox );
-        gMainMap.on('moveend', function(ev) {
-			gMainMap.off('moveend');
-			gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
-			gMainMap.once('moveend',function() {
-				gTileLayer.redraw();
-			});
-		});
-	};
 	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel, onlyOut=false) {
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
@@ -436,7 +429,7 @@ function addControl(div,pos,cb) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-    function callGeocoder(in_loc, filterMeetings, callback) {
+    function callGeocoder(in_loc, callback) {
 		geoCodeParams = {};
 		if (config.region && config.region.trim() !== '') {
 			geoCodeParams.countrycodes = config.region;
@@ -449,7 +442,7 @@ function addControl(div,pos,cb) {
 				geoCodeParams.viewbox = config.bounds.west+","+config.bounds.south+","+
 					                    config.bounds.east+","+config.bounds.north;
 		}
-        geocode(in_loc, geoCodeParams, callback, filterMeetings);
+        geocode(in_loc, geoCodeParams, callback);
     }
 	function isNumber(x) {
 		if (typeof x === 'number') return true;
@@ -529,7 +522,6 @@ function addControl(div,pos,cb) {
 	this.removeListener = removeListener;
     this.addControl = addControl;
     this.setViewToPosition = setViewToPosition;
-	this.flyTo = flyTo;
 	this.setViewToPositionAndZoom = setViewToPositionAndZoom;
     this.clearAllMarkers = clearAllMarkers;
     this.callGeocoder = callGeocoder;
@@ -568,7 +560,6 @@ MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
 MapDelegate.prototype.setViewToPosition = null;
-MapDelegate.prototype.flyTo = null;
 MapDelegate.prototype.setViewToPositionAndZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
 MapDelegate.prototype.callGeocoder = null;

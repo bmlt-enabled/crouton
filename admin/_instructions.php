@@ -149,7 +149,7 @@
     </div>
 	<h3 class="help-accordian"><strong>Filter Meetings by Location</strong></h3>
 	<div>
-		<p>If the <strong>has_geolocation</strong> parameter is set to 1, users can also enter a location (city name, zip code, etc.) to display the nearby meetings.</p>
+		<p>If the <strong>has_geolocation</strong> parameter is set to 1, users can also enter a location (city name, zip code, etc.) to display the closest meetings.</p>
 		<p>Unlike the dropdown filter, this search is meaningful even if there are no meetings at all in the entered location: the system will "zoom out" to return the nearest meetings.<p>
 		<p>Such geographic searches are usually available only through the map menu, but when this option is selected, the capabilty is there in the table header.  This makes it
 		useful when an embedded map is being used.<p>
