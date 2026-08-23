@@ -381,8 +381,8 @@ function MeetingMap(inConfig) {
 	function nearMeSearch() {
 		retrieveGeolocation().then(position => {
 			showThrobber();
-			gSearchPoint = {"lat": position.latitude, "lng": position.longitude};
-			crouton.searchByCoordinates(position.latitude, position.longitude, config.map_search.width);
+			gSearchPoint = {"lat": position.lat, "lng": position.lng};
+			crouton.searchByCoordinates(position.lat, position.lng, config.map_search.width);
 			if (gActiveModal == gSearchModal) closeModalWindow(gSearchModal);
 		}).catch(error => {
 			console.log(error.message);
