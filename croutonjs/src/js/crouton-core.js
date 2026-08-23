@@ -107,6 +107,7 @@ function Crouton(config) {
 		caption: false,
 		groups: false,
 		details_table: false,
+		focusedMeetingPopupZoomLevel: 14,
 	};
 
 	self.setConfig(config);
@@ -434,7 +435,7 @@ function Crouton(config) {
 		self.updateMeetingCount(showingNow);
 		self.updateFilters(showingNow);
 		if (croutonMap) croutonMap.setFilteredIds(showingNow);
-		self.showView(self.currentView, showingNow.length);
+		if (self.currentView !== 'map') self.showView(self.currentView, showingNow.length);
 	};
 	self.updateFilters = function(showingNow) {
 		if (!self.dropdownData) return;
@@ -1159,7 +1160,7 @@ Crouton.prototype.openMeetingModal = function(meeting) {
 	croutonMap.loadPopupMap("bmlt-handlebars-map", meeting, {
 		lat: parseFloat(meeting.latitude),
 		lng: parseFloat(meeting.longitude),
-		zoom: 14
+		zoom: config.focusedMeetingPopupZoomLevel ?? 14
 	});
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
 	let index = -1;

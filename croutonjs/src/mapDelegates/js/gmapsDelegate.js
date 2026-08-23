@@ -120,24 +120,14 @@ function MapDelegate(in_config) {
             }, start);
         gMainMap.fitBounds(bounds);
     }
-    function setViewToPosition(position, filterMeetings, f) {
+    function flyToFixedZoom(position, zoom, extra) {
         if (!gMainMap) return;
-        let outOnly = false;
-        if (position.hasOwnProperty("geometry")) {
-            gMainMap.panToBounds ( position.geometry.viewport );
-            outOnly = true;
-        } else {
-            var latlng = new google.maps.LatLng(position.lat, position.lng);
-            gMainMap.setCenter(latlng);
-        }
-        gMainMap.setZoom(getZoomAdjust(false, filterMeetings));
-        f && f();
-    }
-    function setViewToPositionAndZoom(position, zoomLevel) {
-        if (!gMainMap) return;
-        var latlng = new google.maps.LatLng(position.lat, position.lng);
+        google.maps.event.addListenerOnce(gMainMap, 'idle', function() {
+            if (extra) extra();
+        });
+        const latlng = new google.maps.LatLng(position.center.lat, position.center.lng);
         gMainMap.setCenter(latlng);
-        gMainMap.setZoom(zoomLevel);
+        gMainMap.setZoom(zoom);
     }
     function getOpenMarker() {
 	    return gOpenMarker;
@@ -165,7 +155,7 @@ function MapDelegate(in_config) {
 		const northeastWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y-height/2};
 		return new google.maps.LatLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
-	function getZoomAdjust(only_out, filterMeetings, zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
+	function getZoomAdjust(filterMeetings, zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
@@ -173,37 +163,15 @@ function MapDelegate(in_config) {
 		ret = zoomLevel;
 		if (config.map_search && isFilterVisible()) return ret;
 		var bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
-		var zoomedOut = false;
 		while(filterMeetings(bounds, center_latlng).length==0 && ret>6) {
-			zoomedOut = true;
 			ret -= 1;
 			bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
 		}
-		if (!only_out && !zoomedOut && ret<12) {
-			var knt = filterMeetings(bounds).length;
-			while(ret<12 && knt>0) {
-				ret += 1;
-				bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
-				knt = filterMeetings(bounds).length;
-			}
-			if (knt == 0) {
-				ret -= 1;
-			}
-		}
 		return ret;
 	}
-    function setZoom(filterMeetings, force=0) {
-        if (!gMainMap) return;
-        (force > 0) ? gMainMap.setZoom(force) :
-        gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
-    }
     function getZoom() {
         if (!gMainMap) return 12;
         return gMainMap.getZoom();
-    }
-    function zoomOut(filterMeetings) {
-        if (!gMainMap) return;
-        gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
     }
     function contains(bounds, lat, lng) {
         if (!gMainMap) return true;
@@ -432,13 +400,13 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
     }
-	function getZoomAdjustedBounds(center_latlng, filterMeetings, zoomLevel, onlyOut=false) {
+	function getZoomAdjustedBounds(center_latlng, filterMeetings, zoomLevel) {
         if (!center_latlng) return null;
         const center = new google.maps.LatLng(center_latlng.lat, center_latlng.lng);
 		const mapWidth = gDiv.parentElement.offsetWidth;
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
-			const zoom = getZoomAdjust(onlyOut, filterMeetings, zoomLevel, center);
+			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
 			const bounds = calculateBounds(center_latlng, zoom, mapWidth, mapHeight);
             const ret = {"center": center_latlng, "bounds": bounds, "zoom": zoom};
 			return ret;
@@ -500,12 +468,10 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
     this.createMap = createMap;
     this.addListener = addListener;
     this.addControl = addControl;
-    this.setViewToPosition = setViewToPosition;
-    this.setViewToPositionAndZoom = setViewToPositionAndZoom;
+    this.flyToFixedZoom = flyToFixedZoom;
     this.clearAllMarkers = clearAllMarkers;
     this.callGeocoder = callGeocoder;
 	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
-    this.setZoom = setZoom;
     this.getZoom = getZoom;
     this.createMarker = createMarker;
 	this.bindPopup = bindPopup;
@@ -513,7 +479,6 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
     this.contains = contains;
     this.getBounds = getBounds;
     this.invalidateSize = invalidateSize;
-    this.zoomOut = zoomOut;
     this.fitBounds = fitBounds;
     this.openMarker = openMarker;
     this.isApiLoaded = isApiLoaded;
@@ -540,12 +505,10 @@ MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
-MapDelegate.prototype.setViewToPosition = null;
-MapDelegate.prototype.setViewToPositionAndZoom = null;
+MapDelegate.prototype.flyToFixedZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
 MapDelegate.prototype.callGeocoder = null;
 MapDelegate.prototype.getZoomAdjustedBounds = null;
-MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
 MapDelegate.prototype.createMarker = null;
 MapDelegate.prototype.bindPopup = null;
@@ -553,7 +516,6 @@ MapDelegate.prototype.addMarkerCallback = null;
 MapDelegate.prototype.contains = null;
 MapDelegate.prototype.getBounds = null;
 MapDelegate.prototype.invalidateSize = null;
-MapDelegate.prototype.zoomOut = null;
 MapDelegate.prototype.fitBounds = null;
 MapDelegate.prototype.isApiLoaded = null;
 MapDelegate.prototype.loadApi = null;
