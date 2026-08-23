@@ -125,7 +125,7 @@ function MapDelegate(in_config) {
         google.maps.event.addListenerOnce(gMainMap, 'idle', function() {
             if (extra) extra();
         });
-        const latlng = new google.maps.LatLng(position.center.lat, position.center.lng);
+        const latlng = new google.maps.LatLng(position.lat, position.lng);
         gMainMap.setCenter(latlng);
         gMainMap.setZoom(zoom);
     }
