@@ -1160,7 +1160,7 @@ Crouton.prototype.openMeetingModal = function(meeting) {
 	croutonMap.loadPopupMap("bmlt-handlebars-map", meeting, {
 		lat: parseFloat(meeting.latitude),
 		lng: parseFloat(meeting.longitude),
-		zoom: config.focusedMeetingPopupZoomLevel ?? 14
+		zoom: self.config.focusedMeetingPopupZoomLevel ?? 14
 	});
 	let visibleMeetings = jQuery('.bmlt-data-row:visible');
 	let index = -1;
