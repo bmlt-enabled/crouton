@@ -201,10 +201,8 @@ function MeetingMap(inConfig) {
 			let bounds = gDelegate.calculateBoundsFromCenterAndZoom(gLocationSearchResult.center, gLocationSearchResult.zoom);
 			let knt = filterMeetingsAndBounds(bounds).length;
 			for (let zoom = gLocationSearchResult.zoom-1; zoom >= config.minZoom; zoom = zoom-1) {
-							console.log('zoom = '+zoom);;
 				bounds = gDelegate.calculateBoundsFromCenterAndZoom(gLocationSearchResult.center, zoom);
 				if (filterMeetingsAndBounds(bounds).length > knt) {
-					console.log("final zoom="+zoom);
 					if (isMapVisible()) {
 						gDelegate.flyToFixedZoom(gLocationSearchResult.center, zoom, filterVisible);
 						gLocationSearchResult = null;
@@ -218,6 +216,8 @@ function MeetingMap(inConfig) {
 					return;
 				}
 			}
+			bounds = gDelegate.calculateBoundsFromCenterAndZoom(gLocationSearchResult.center, gLocationSearchResult.zoom);
+			filterVisible(true, bounds);
 			alert("No further matches");
 		});
 		controlDiv.querySelector("#bmlt-location_search-cancel").addEventListener('click', function () {
