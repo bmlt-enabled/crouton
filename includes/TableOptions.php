@@ -26,7 +26,7 @@ if (!class_exists("Crouton\TableOptions")) {
             "has_formats" => '1',
             "has_locations" => '1',
             "has_favorites" => '1',
-            "has_geolocation" => '1',
+            "has_geolocation" => '0',
             "has_sub_province" => '0',
             "has_neighborhoods" => '0',
             "has_states" => '0',

@@ -38,9 +38,11 @@ https://demo.bmlt.app/crouton
 == Changelog ==
 
 = 4.3.0 =
-* Location lookup now also from table display.
+* Location lookup now also from table header; UI emulates dropdown-filter.
 * Handle ambiguous geocoding queries.
+* Improved centering of map after geocoding.
 * New Handlebars partial: formatNames.
+* Admin UI option to choose formatNames or formatKeys.
 
 = 4.2.1 =
 * Replace mutex with addEventListener
