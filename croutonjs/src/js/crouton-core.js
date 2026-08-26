@@ -1201,6 +1201,9 @@ Crouton.prototype.openMeetingModal = function(meeting) {
 		mm.getElementsByClassName('modal-right').item(0).addEventListener("click", ev=>doSwipe("left"));
 	}
 }
+/**
+ * Execute the [crouton_map] shortcode.
+ */
 Crouton.prototype.searchMap = function() {
 	const self = this;
 	self.distanceTabAllowed = true;
@@ -1236,6 +1239,11 @@ Crouton.prototype.searchMap = function() {
 		"location": {'latitude':0,'longitude':0,'zoom':10}  // TODO: Where is this used?
 	});
 }
+/**
+ * This methods does the main work of creating the crouton table.
+ * @param boolean doMeetingMap MeetingMap is the old name for the [bmlt_map] shortcode.
+ * @param boolean fitBounds Expand the scaale and center of the map to contain all meetings.
+ */
 Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 	const self = this;
 

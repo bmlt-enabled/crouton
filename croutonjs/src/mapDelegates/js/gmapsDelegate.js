@@ -452,10 +452,12 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
         var center = gMainMap.getCenter();
         return { "lat": center.lat(), "lng": center.lng()}
     }
-    function afterInit(f) {
+    function afterInit(doNotWait, f) {
         if (!gMainMap) return;
-        if (typeof gMainMap.getBounds()  !== 'undefined') f();
-        else addListener('idle', f, true);
+        if (doNotWait || (typeof gMainMap.getBounds()  !== 'undefined')) f();
+        else addListener('idle', function() {
+            f();
+        }, true);
     }
     function modalOn() {}
     function modalOff() {}

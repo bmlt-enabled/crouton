@@ -406,7 +406,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                                         <option value="distance" <?php echo ($options["view_by"] == "distance") ? 'selected' : ''; ?>><?php esc_html_e('View by Distance', 'crouton') ?></option>
                                     </select></li>
                             </ul>
-                            <h4><?php esc_html_e('Select Dropdown Filters', 'crouton') ?></h4>
+                            <h4><?php esc_html_e('Select Filters', 'crouton') ?></h4>
                             <div class="inside">
 
                                 <select class="crouton-admin-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php

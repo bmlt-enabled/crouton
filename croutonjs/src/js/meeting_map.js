@@ -452,6 +452,7 @@ function MeetingMap(inConfig) {
 			const zoom = calcZoomThatContainsBoundingBox(centerAndBounds);
 			const locationSearchResult = gDelegate.getZoomAdjustedBounds(gSearchPoint, filterMeetingsAndBounds, zoom);
 			gDelegate.flyToFixedZoom(gSearchPoint, locationSearchResult.zoom, filterVisible);
+			searchResponseCallback();
 		})
 	}
 	function mapMenuGeocode(resp) {
@@ -535,7 +536,7 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		if (fitBounds) {
+		if (fitBounds && !config.centerMe && !config.goto) {
 			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			const maxRadius = config.maxTomatoWidth/2.0;
 			if (gSearchPoint) lat_lngs.push([gSearchPoint.lat, gSearchPoint.lng]);
@@ -551,20 +552,22 @@ function MeetingMap(inConfig) {
 		}
 		searchResponseCallback();
 		hideThrobber();
-		if (config.centerMe) {
-			doGeolocation(isFilterVisible()).catch(error => showGeocodingDialog());
-		} else {
-			if ((!config.centerMe && !config.goto) && !(config.map_search && isFilterVisible())) {
-			  gDelegate.afterInit(()=>filterVisible(isFilterVisible()));
-			}
-			if (config.goto) {
-				if (isMapVisible()) {
-					gDelegate.callGeocoder(config.goto, mapMenuGeocode);
-				} else {
-					gDelegate.callGeocoder(config.goto, locationSearchGeocode);
+		gDelegate.afterInit(!crouton.isEmbeddedMapShowing(), () => {
+			if (config.centerMe) {
+				doGeolocation(isFilterVisible()).catch(error => showGeocodingDialog());
+			} else {
+				if ((!config.centerMe && !config.goto) && !(config.map_search && isFilterVisible())) {
+			  		filterVisible(isFilterVisible());
+				}
+				if (config.goto) {
+					if (isMapVisible()) {
+						gDelegate.callGeocoder(config.goto, mapMenuGeocode);
+					} else {
+						gDelegate.callGeocoder(config.goto, locationSearchGeocode);
+					}
 				}
 			}
-		}
+		});
 	}
 	function doGeolocation(makeFilterVisible=true) {
 		return new Promise((resolve, reject) =>
@@ -605,6 +608,7 @@ function MeetingMap(inConfig) {
 	function closeModalWindow(modal) {
 		gDelegate.modalOff();
 		gActiveModal = null;
+		if (!modal) return;
 		if (!modal.classList.contains("modal"))
 			return closeModalWindow(modal.parentNode);
 		modal.style.display = "none";

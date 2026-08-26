@@ -475,7 +475,7 @@ function addControl(div,pos,cb) {
 	function modalOff() {
 		if (gMainMap) gMainMap.dragging.enable()
 	}
-	function afterInit(f) {
+	function afterInit(doNotWait, f) {
 		f();
 	}
 	function returnTrue() {return true;}
