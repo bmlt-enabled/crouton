@@ -770,10 +770,9 @@ function MeetingMap(inConfig) {
 	function latLngToWebMercator(latlng, zoom) {
     	const lat = Math.max(-85.05112878, Math.min(85.05112878, latlng.lat));
     	const phi = lat * Math.PI / 180;
-    	const lambda = latlng.lng * Math.PI / 180;
     	const scale = 256 * Math.pow(2, zoom);
 
-    	const x = scale * (lambda + Math.PI) / (2 * Math.PI);
+    	const x = scale * ((latlng.lng/360.) + .5);
     	const y =
       		scale * (Math.PI - Math.log(Math.tan(Math.PI / 4 + phi / 2))) / (2 * Math.PI);
     	return { x: x, y: y };
@@ -781,11 +780,11 @@ function MeetingMap(inConfig) {
 	function webMercatorToLatLng(point, zoom) {
    		const scale = 256 * Math.pow(2, zoom);
 
-    	const lambda = (2 * Math.PI) * (point.x / scale - 0.5); // radians
+    	const lng = 360 * (point.x / scale - .5);
     	const t = Math.exp(Math.PI - (2 * Math.PI) * (point.y / scale));
     	const phi = 2 * Math.atan(t) - Math.PI / 2; // radians
 
-    	return { lat: phi * 180 / Math.PI, lng: lambda * 180 / Math.PI };
+    	return { lat: phi * 180 / Math.PI, lng: lng };
 	}
 	function mapOverlappingMarkersInCity(in_meeting_array)	///< Used to draw the markers when done.
 	{

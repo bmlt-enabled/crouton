@@ -154,14 +154,19 @@ function MapDelegate(config) {
 		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
 		return L.latLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
+    function calcOffsetWidth(gDiv) {
+        let ret = gDiv.offsetWidth;
+        if (ret === 0) ret = gDiv.parentElement.offsetWidth;
+        return ret;
+    }
 	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
-        const mapWidth = gDiv.parentElement.offsetWidth;
+        const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
         return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
     }
 	function getZoomAdjust(filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
-		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		ret = zoomLevel;
 		if (config.map_search && isFilterVisible()) return ret;
@@ -374,7 +379,7 @@ function addControl(div,pos,cb) {
     	return in_geocode_response.map((r) => r.name);
 	}
 	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
-		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
 			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);

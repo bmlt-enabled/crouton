@@ -155,9 +155,14 @@ function MapDelegate(in_config) {
 		const northeastWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y-height/2};
 		return new google.maps.LatLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
+    function calcOffsetWidth(gDiv) {
+        let ret = gDiv.offsetWidth;
+        if (ret === 0) ret = gDiv.parentElement.offsetWidth;
+        return ret;
+    }
 	function getZoomAdjust(filterMeetings, zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
-		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
         const center_latlng = {"lat":center.lat(), "lng":center.lng()};
 		ret = zoomLevel;
@@ -403,7 +408,7 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
 	function getZoomAdjustedBounds(center_latlng, filterMeetings, zoomLevel) {
         if (!center_latlng) return null;
         const center = new google.maps.LatLng(center_latlng.lat, center_latlng.lng);
-		const mapWidth = gDiv.parentElement.offsetWidth;
+		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
 			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
@@ -416,7 +421,7 @@ function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
 		}
     }
 	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
-        const mapWidth = gDiv.parentElement.offsetWidth;
+        const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
         return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
     }
