@@ -361,6 +361,7 @@ function Crouton(config) {
 			self.dayView();
 			return;
 		}
+		self.currentView = field;
 		self.lowlightButton("#day");
 		self.lowlightButton(".groupingButton");
 		self.highlightButton("#groupingButton_" + field);
@@ -580,7 +581,7 @@ function Crouton(config) {
 				element.remove();
 				continue;
 			}
-			const templateString = '';
+			let templateString = '';
 			if (element.firstChild.nodeType === 1) {
 				if (!element.firstChild.firstChild || element.firstChild.firstChild.nodeType !== 3) {
 					console.log('<bmlt-handlebar> tag: cannot find textnode');
