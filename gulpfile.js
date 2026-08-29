@@ -175,7 +175,11 @@ task('fonts', function () {
     return src('croutonjs/src/fonts/*', { encoding: false })
         .pipe(dest('croutonjs/dist/fonts'));
 });
-task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files', 'themes', 'fonts'));
+task('npm-meta', function () {
+    return src(['croutonjs/package.json', 'croutonjs/README.md'])
+        .pipe(dest(distDir));
+});
+task('default', series('templates', 'js-files', 'js-gmaps-files', 'js-files-nojquery', 'jsFilesLeafletMap', 'css-files', 'css-core-files', 'css-leaflet-files', 'themes', 'fonts', 'npm-meta'));
 task('watch', () => {
 	watch([
 		'croutonjs/src/templates/*.hbs'

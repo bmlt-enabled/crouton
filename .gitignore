@@ -13,3 +13,5 @@ tmp
 .vscode/launch.json
 build/
 croutonjs/dist/fonts/
+croutonjs/dist/package.json
+croutonjs/dist/README.md
