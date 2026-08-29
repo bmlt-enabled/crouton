@@ -19,7 +19,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.3.0',             // CroutonJS version for debugging
+		version: '4.3.1',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
