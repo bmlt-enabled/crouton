@@ -43,6 +43,9 @@ function CroutonHandlebarsExtensions() {
 				? options.fn(this)
 				: options.inverse(this);
 		});
+		crouton_Handlebars.registerHelper('format_list_style', function(data, options) {
+			return crouton.config.format_list_style === 'formatNames' ? 'formatNames' : 'formatKeys'
+		});
 		crouton_Handlebars.registerHelper('groupsConfigured', function(data, options) {
 			if (crouton.config.groups) {
 				return getTrueResult(options, this);
@@ -54,8 +57,8 @@ function CroutonHandlebarsExtensions() {
 		 * @deprecated Since version 3.12.2, will be removed in a future version.
 		 */
 		crouton_Handlebars.registerHelper('isVirtual', function(data, options) {
-			return ((data['venue_type'] === venueType.HYBRID || data['venue_type'] === venueType.VIRTUAL) || ((inArray(getMasterFormatId('HY', data), getFormats(data)) && !inArray(getMasterFormatId('TC', data), getFormats(data)))
-				|| inArray(getMasterFormatId('VM', data), getFormats(data))))
+			return ((data['venue_type'] === venueType.HYBRID || data['venue_type'] === venueType.VIRTUAL) || ((getFormats(data).includes(getMasterFormatId('HY', data)) && !getFormats(data).includes(getMasterFormatId('TC', data)))
+				|| getFormats(data).includes(getMasterFormatId('VM', data))))
 				&& (data['virtual_meeting_link'] || data['phone_meeting_number'] || data['virtual_meeting_additional_info']) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
@@ -63,83 +66,85 @@ function CroutonHandlebarsExtensions() {
 		 * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
 		 */
 		crouton_Handlebars.registerHelper('isVirtualOnly', function(data, options) {
-			return data['venue_type'] === venueType.VIRTUAL || inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return data['venue_type'] === venueType.VIRTUAL || getFormats(data).includes(getMasterFormatId('VM', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		/**
 		 * @deprecated Since version 3.12.2 will be removed in a future version.
 		 */
 		crouton_Handlebars.registerHelper('isHybrid', function(data, options) {
-			return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return data['venue_type'] === venueType.HYBRID || getFormats(data).includes(getMasterFormatId('HY', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		/**
 		 * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
 		 */
 		crouton_Handlebars.registerHelper('isHybridOnly', function(data, options) {
-			return data['venue_type'] === venueType.HYBRID || inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return data['venue_type'] === venueType.HYBRID || getFormats(data).includes(getMasterFormatId('HY', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		crouton_Handlebars.registerHelper('isTemporarilyClosed', function(data, options) {
-			return inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return getFormats(data).includes(getMasterFormatId('TC', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		crouton_Handlebars.registerHelper('isNotTemporarilyClosed', function(data, options) {
-			return !inArray(getMasterFormatId('TC', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return !getFormats(data).includes(getMasterFormatId('TC', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		/**
 		 * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
 		 */
 		crouton_Handlebars.registerHelper('isInPersonOrHybrid', function(data, options) {
-			return data['venue_type'] !== venueType.VIRTUAL && !inArray(getMasterFormatId('VM', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return data['venue_type'] !== venueType.VIRTUAL && !getFormats(data).includes(getMasterFormatId('VM', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		/**
 		 * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
 		 */
 		crouton_Handlebars.registerHelper('isInPersonOnly', function(data, options) {
-			return data['venue_type'] === venueType.IN_PERSON || (!inArray(getMasterFormatId('VM', data), getFormats(data))
-				&& !inArray(getMasterFormatId('HY', data), getFormats(data))) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return data['venue_type'] === venueType.IN_PERSON || (!getFormats(data).includes(getMasterFormatId('VM', data))
+				&& !getFormats(data).includes(getMasterFormatId('HY', data))) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		/**
 		 * Assumes consistent set of venue type formats (enforced for newly edited meetings in root server 2.16.0 or greater)
 		 */
 		crouton_Handlebars.registerHelper('isVirtualOrHybrid', function(data, options) {
-			return (data['venue_type'] === venueType.VIRTUAL || data['venue_type'] === venueType.HYBRID) || inArray(getMasterFormatId('VM', data), getFormats(data))
-				|| inArray(getMasterFormatId('HY', data), getFormats(data)) ? getTrueResult(options, this) : getFalseResult(options, this);
+			return (data['venue_type'] === venueType.VIRTUAL || data['venue_type'] === venueType.HYBRID) || getFormats(data).includes(getMasterFormatId('VM', data))
+				|| getFormats(data).includes(getMasterFormatId('HY', data)) ? getTrueResult(options, this) : getFalseResult(options, this);
 		});
 
 		crouton_Handlebars.registerHelper('hasFormats', function(formats, data, options) {
-			var allFound = false;
-			var formatsResponse = data['formats'].split(",")
-			var formatsParam = formats.split(",");
+			const formatsResponse = data['formats'].split(",")
+			const formatsParam = formats.split(",");
 			for(var i = 0;i < formatsParam.length;i++) {
-				allFound = inArray(formatsParam[i], formatsResponse);
+				if (!formatsResponse.includes(formatsParam[i]))
+					return getFalseResult(options, this);
 			}
-
-			return allFound ? getTrueResult(options, this) : getFalseResult(options, this);
+			return getTrueResult(options, this);
 		});
 		crouton_Handlebars.registerHelper('temporarilyClosed', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('TC', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('TC', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("FACILITY IS TEMPORARILY CLOSED");
 			}
 		});
 
 		crouton_Handlebars.registerHelper('meetsVirtually', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('VM', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('VM', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("MEETS VIRTUALLY");
 			}
 		});
 
 		crouton_Handlebars.registerHelper('meetsHybrid', function(data, options) {
-			if(data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data)) !== undefined) {
-				return data['formats_expanded'].getArrayItemByObjectKeyValue('id', getMasterFormatId('HY', data))['description'];
+			const found = data['formats_expanded'].find((format)=>format['id'] === getMasterFormatId('HY', data));
+			if (found !== undefined) {
+				return found['description'];
 			} else {
 				return crouton.localization.getWord("MEETS VIRTUALLY AND IN PERSON");
 			}
@@ -277,8 +282,31 @@ function CroutonHandlebarsExtensions() {
             	<br/>
         	{{/if}}
 		`);
+		crouton_Handlebars.registerPartial('formatNames', `
+        	{{#each formats_expanded}}
+				<a
+				   class="bmlt-formats btn btn-primary btn-xs"
+				   title=""
+				   data-html="true"
+				   tabindex="0"
+				   data-trigger="focus"
+				   role="button"
+				   data-toggle="popover"
+				   data-original-title=""
+				   data-placement="{{{getWord 'bootstrap-popover-placement'}}}"
+				   data-content="{{description}}">
+                    <span class="glyphicon glyphicon-search"
+						  aria-hidden="true"
+						  data-toggle="popover"
+						  data-trigger="focus"
+						  data-html="true"
+						  role="button"></span>{{ name }}
+				</a>
+			{{/each}}
+			`
+		)
 		crouton_Handlebars.registerPartial('formatKeys', `
-				{{#if this.formats}}
+			{{#if this.formats}}
 				<a
 				   class="bmlt-formats btn btn-primary btn-xs"
 				   title=""
@@ -300,7 +328,6 @@ function CroutonHandlebarsExtensions() {
 			{{/if}}
 			`
 		)
-
 		crouton_Handlebars.registerPartial('observerLine', `
 {{#if (hasObserverLine name phone email) }}
 <div class='observerLine'>{{getWord "Contact"}}: {{name}} <a href='tel:{{phone}}'>{{phone}}</a> <a href='mailto:{{email}}'>{{email}}</a></div>

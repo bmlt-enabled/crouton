@@ -315,7 +315,8 @@ div.bmlt_map_container_div  button {
   padding-bottom: 10px;
 }
 .modal-search .filter-button {
-  width: 100%
+  width: 100%;
+  margin: 0;
 }
 #goto-button {
   margin-top: 10px;
@@ -415,6 +416,29 @@ div.bmlt_map_container_div  button {
 #bmlt-tabs td {
 /* border-top: 0; */
 	padding: .8em;
+}
+#bmlt-location-search {
+    display: inline-block;
+    margin-inline-end: 3px;
+    position: relative;
+    top: 1px;
+    margin-left: 4px;
+    margin-top: 0;
+    height: 30px;
+}
+button#location-search-button {
+    border: none;
+    padding-left: 8px;
+    line-height: 26px;
+    background: #fff;
+    color: #000;
+    border-radius: 4px;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+.location-search-button-label {
+    font-size: 14px;
+
 }
 .menu-button {
         background-color: #EEEEEE !important;
@@ -550,3 +574,23 @@ div.bmlt_map_container_div  button {
     float: right;
     margin-top: 20px;
   }
+.crouton-goto-text {
+    width: 100%;
+    box-sizing: border-box;
+}
+div#location-search-widen.hide {
+    display: none;
+}
+.modal .hide {
+  display: none;
+}
+button.location-choice {
+    width: 100%;
+}
+.choose-location h4 {
+    margin-bottom: 5px;
+}
+button.location-choice {
+    padding: 10px 5px;
+    margin-bottom: 5px;
+}

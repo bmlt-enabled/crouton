@@ -147,6 +147,14 @@
         <p><strong>[bmlt_tabs default_filter_dropdown="formats=closed"]</strong></p>
         <p>Any of the dropdown choices are available for use.  Keep in mind that the dropdown must be visible and that the default selection exists.  Spaces should be separated with a hyphen.  Example [bmlt_tabs default_filter_dropdown="formats=Basic-Text"].</p>
     </div>
+	<h3 class="help-accordian"><strong>Filter Meetings by Location</strong></h3>
+	<div>
+		<p>If the <strong>has_geolocation</strong> parameter is set to 1, users can also enter a location (city name, zip code, etc.) to display the closest meetings.</p>
+		<p>Unlike the dropdown filter, this search is meaningful even if there are no meetings at all in the entered location: the system will "zoom out" to return the nearest meetings.<p>
+		<p>Such geographic searches are usually available only through the map menu, but when this option is selected, the capabilty is there in the table header.  This makes it
+		useful when an embedded map is being used.<p>
+		<p><strong>[bmlt_tabs has_geolocation="0|1"]</strong></p>
+	</div>
 	<h3 class="help-accordian"><strong>Remember your favorite meetings</strong></h3>
 	<div>
 		<p>If the <strong>has_favorites</strong> parameter is set to 1, users can mark meetings as favorites.</p>

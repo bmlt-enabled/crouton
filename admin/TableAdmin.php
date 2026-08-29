@@ -43,7 +43,8 @@ if (!class_exists("Crouton\TableAdmin")) {
             "has_venues",
             "filter_visible",
             "has_common_needs",
-            'has_favorites'
+            'has_favorites',
+            'has_geolocation',
         ];
         private MapAdmin $map_admin;
         public function __construct(TableOptions $crouton)
@@ -145,6 +146,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                 $options['service_bodies'] = isset($_POST['service_bodies']) ? array_map('sanitize_text_field', $_POST['service_bodies']) : array();
                 $options['time_format'] = isset($_POST['time_format']) ? sanitize_text_field(wp_unslash($_POST['time_format'])) : '';
                 $options['distance_units'] = isset($_POST['distance_units']) ? sanitize_text_field(wp_unslash($_POST['distance_units'])) : 'miles';
+                $options['format_list_style'] = isset($_POST['format_list_style']) ? sanitize_text_field(wp_unslash($_POST['format_list_style'])) : 'formatKeys';
                 $options['language'] = isset($_POST['language']) ? sanitize_text_field(wp_unslash($_POST['language'])) : '';
                 $options["int_start_day_id"] = intval($_POST["int_start_day_id"]);
                 $options['native_lang'] = trim(sanitize_text_field(wp_unslash($_POST['native_lang'])));
@@ -357,6 +359,13 @@ if (!class_exists("Crouton\TableAdmin")) {
                                     <input id="time_format" type="text" size="10" name="time_format" value="<?php echo esc_html($options['time_format']); ?>" />
                                 </li>
                                 <li>
+                                    <label for="format_list_style"><?php esc_html_e('How to display formats in meeting list: ', 'crouton') ?></label>
+                                    <select id="format_list_style" name="format_list_style" style="display:inline;">
+                                        <option <?php echo ($options['format_list_style'] == 'formatKeys') ? 'selected' : ''; ?> value="formatKeys"><?php esc_html_e('List of keys, with single popup describing all', 'crouton') ?></option>
+                                        <option <?php echo ($options['format_list_style'] == 'formatNames') ? 'selected' : ''; ?> value="formatNames"><?php esc_html_e('List of names, each with separate popup description', 'crouton') ?></option>
+                                    </select>
+                                </li>
+                                <li>
                                     <label for="distance_units"><?php esc_html_e('Distance Units: ', 'crouton') ?></label>
                                     <select id="distance_units" name="distance_units" style="display:inline;">
                                         <option <?php echo ($options['distance_units'] == 'miles') ? 'selected' : ''; ?> value="miles"><?php esc_html_e('Miles', 'crouton') ?></option>
@@ -397,7 +406,7 @@ if (!class_exists("Crouton\TableAdmin")) {
                                         <option value="distance" <?php echo ($options["view_by"] == "distance") ? 'selected' : ''; ?>><?php esc_html_e('View by Distance', 'crouton') ?></option>
                                     </select></li>
                             </ul>
-                            <h4><?php esc_html_e('Select Dropdown Filters', 'crouton') ?></h4>
+                            <h4><?php esc_html_e('Select Filters', 'crouton') ?></h4>
                             <div class="inside">
 
                                 <select class="crouton-admin-select" style="width: 100%;" data-placeholder="select filters" id="select_filters" name="select_filters[]" multiple="multiple"><?php
@@ -465,7 +474,8 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <li>attendVirtual (links to the virtal meeting)</li>
                                 <li>directionsButton (a button linking to device specific maps directions)</li>
                                 <li>distanceButton(distance from user location to meeting location)</li>
-                                <li>formatPopup (list of formats with a popup containing format description)</li>
+                                <li>formatKeys (list of formats with a popup containing all format descriptions)</li>
+                                <li>formatNames (Each format name listed with a popup containing the format description)</li>
                                 <li>formatDescriptions (list of format descriptions)</li>
                             </ul>
                             <h2>Including a Map</h2>

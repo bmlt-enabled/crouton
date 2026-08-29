@@ -83,7 +83,7 @@ var croutonDefaultTemplates = {
 		{{else}}
 			<div class="bmlt-time-2">{{this.start_time_formatted}} - {{this.end_time_formatted}}</div>
 		{{/ifEquals}}
-		{{> formatKeys }}
+		{{> (format_list_style) }}
 		<div class="bmlt-comments">{{formatLink this.formatted_comments}}</div>
 		<div class="bmlt-observer">{{> (selectObserver) }}</div>
 	`,

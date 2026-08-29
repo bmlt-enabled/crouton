@@ -5,6 +5,7 @@ function MapDelegate(in_config) {
     var g_icon_image_selected = null;
     var g_icon_shadow = null;
     var g_icon_shape = null;
+    var gDiv = null;
     var gMainMap;
     var gOms = null;
     var gMarkerClusterer = null;
@@ -21,15 +22,15 @@ function MapDelegate(in_config) {
         var tag = document.createElement('script');
         gIsLoaded = true;
         if (typeof config['api_key'] === 'undefined') config['api_key'] = "";
-        tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&callback=croutonMap.apiLoadedCallback";
+        tag.src = "https://maps.googleapis.com/maps/api/js?key=" + config['api_key'] + "&loading=async&callback=croutonMap.apiLoadedCallback";
         tag.defer = true;
         tag.async = true;
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     };
     function createMap(inDiv, inCenter, inHidden = false) {
+        gDiv = inDiv;
         if ( inHidden ) {
-			gDiv = inDiv;
 			gDiv.style.height = 'auto';
 			gDiv.style.marginBottom = '10px';
 			gMainMap = null;
@@ -119,12 +120,14 @@ function MapDelegate(in_config) {
             }, start);
         gMainMap.fitBounds(bounds);
     }
-    function setViewToPosition(position, filterMeetings, f) {
+    function flyToFixedZoom(position, zoom, extra) {
         if (!gMainMap) return;
-        var latlng = new google.maps.LatLng(position.latitude, position.longitude);
+        google.maps.event.addListenerOnce(gMainMap, 'idle', function() {
+            if (extra) extra();
+        });
+        const latlng = new google.maps.LatLng(position.lat, position.lng);
         gMainMap.setCenter(latlng);
-        gMainMap.setZoom(getZoomAdjust(false, filterMeetings));
-        f && f();
+        gMainMap.setZoom(zoom);
     }
     function getOpenMarker() {
 	    return gOpenMarker;
@@ -142,57 +145,38 @@ function MapDelegate(in_config) {
     function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-    function getZoomAdjust(only_out,filterMeetings) {
-        if (!gMainMap) return 12;
-        var ret = gMainMap.getZoom();
-        if (config.map_search && isFilterVisible()) return ret;
-        var center = gMainMap.getCenter();
-        var bounds = gMainMap.getBounds();
-        var zoomedOut = false;
-        while(filterMeetings(bounds, {"lat":center.lat(), "lng":center.lng()}).length==0 && ret>6) {
-            zoomedOut = true;
-            // no exact, because earth is curved
-            ret -= 1;
-            var ne = new google.maps.LatLng({
-                lat: (2*bounds.getNorthEast().lat())-center.lat(),
-                lng: (2*bounds.getNorthEast().lng())-center.lng()});
-            var sw = new google.maps.LatLng({
-                lat: (2*bounds.getSouthWest().lat())-center.lat(),
-                lng: (2*bounds.getSouthWest().lng())-center.lng()});
-            bounds = new google.maps.LatLngBounds(sw,ne);
-        }
-        if (!only_out && !zoomedOut && ret<12) {
-            var knt = filterMeetings(bounds).length;
-            while(ret<12 && knt>0) {
-                // no exact, because earth is curved
-                ret += 1;
-                var ne = new google.maps.LatLng({
-                    lat: 0.5*(bounds.getNorthEast().lat()+center.lat()),
-                    lng: 0.5*(bounds.getNorthEast().lng()+center.lng())});
-                var sw = new google.maps.LatLng({
-                    lat: 0.5*(bounds.getSouthWest().lat()+center.lat()),
-                    lng: 0.5*(bounds.getSouthWest().lng()+center.lng())});
-                bounds = new google.maps.LatLngBounds(sw,ne);
-                knt = filterMeetings(bounds).length;
-            }
-            if (knt == 0) {
-                ret -= 1;
-            }
-        }
+	function webMercatorToLatLng(point, zoom) {
+	    const latLng = croutonMap.webMercatorToLatLng(point, zoom);
+    	return new google.maps.LatLng(latLng.lat, latLng.lng);
+	}
+	function calculateBounds(center, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const southwestWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y+height/2};
+		const northeastWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y-height/2};
+		return new google.maps.LatLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
+	}
+    function calcOffsetWidth(gDiv) {
+        let ret = gDiv.offsetWidth;
+        if (ret === 0) ret = gDiv.parentElement.offsetWidth;
         return ret;
     }
-    function setZoom(filterMeetings, force=0) {
-        if (!gMainMap) return;
-        (force > 0) ? gMainMap.setZoom(force) :
-        gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
-    }
+	function getZoomAdjust(filterMeetings, zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
+		if (!gMainMap) return 12;
+		const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        const center_latlng = {"lat":center.lat(), "lng":center.lng()};
+		ret = zoomLevel;
+		if (config.map_search && isFilterVisible()) return ret;
+		var bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
+		while(filterMeetings(bounds, center_latlng).length==0 && ret>6) {
+			ret -= 1;
+			bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
+		}
+		return ret;
+	}
     function getZoom() {
         if (!gMainMap) return 12;
         return gMainMap.getZoom();
-    }
-    function zoomOut(filterMeetings) {
-        if (!gMainMap) return;
-        gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
     }
     function contains(bounds, lat, lng) {
         if (!gMainMap) return true;
@@ -202,13 +186,6 @@ function MapDelegate(in_config) {
         if (!gMainMap) return null;
         return gMainMap.getBounds();
     }
-    function fromLatLngToPoint(lat, lng) {
-        if (!gMainMap) return null;
-        var latLng = new google.maps.LatLng ( lat, lng);
-        var scale = 1 << gMainMap.getZoom();
-        var worldPoint = gMainMap.getProjection().fromLatLngToPoint(latLng);
-        return new google.maps.Point(worldPoint.x * scale, worldPoint.y * scale);
-    };
     function createClusterLayer() {
         gIsClustering = true;
     }
@@ -379,14 +356,6 @@ function addControl(div,pos,cb) {
     }
     gMainMap.controls[p].push(div);
 }
-    /************************************************************************************//**
- *	\brief This catches the AJAX response, and fills in the response form.				*
- ****************************************************************************************/
-function fitAndZoom(ev) {
-    if (!gMainMap) return;
-    gMainMap.fitBounds(this.response[0].geometry.viewport);
-    gMainMap.setZoom(getZoomAdjust(true,this.filterMeetings));
-}
 function openMarker(id) {
     if (!gMainMap) return;
     const marker = gAllMarkers.find((m) => m.ids.includes(id));
@@ -395,22 +364,23 @@ function openMarker(id) {
         openInfoWindow(marker.marker)
     }
 }
-function getGeocodeCenter(in_geocode_response) {
-    if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].geometry && in_geocode_response[0].geometry.location )
-        return {lat: in_geocode_response[0].geometry.location.lat(), lng: in_geocode_response[0].geometry.location.lng()};
-    else alert ( crouton.localization.getWord("address_lookup_fail") );
+function getGeocodingChoices(in_geocode_response) {
+    if (!Array.isArray(in_geocode_response)) return [];
+    return in_geocode_response.map((r) => r.formatted_address);
 }
-function geoCallback( in_geocode_response ) {
-    var callback = fitAndZoom.bind({filterMeetings:this.filterMeetings,
-            response: in_geocode_response});
-    if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].geometry && in_geocode_response[0].geometry.location ) {
-            gMainMap.panTo ( in_geocode_response[0].geometry.location );
-            google.maps.event.addListenerOnce( gMainMap, 'idle', callback);
-    } else {
-        alert ( crouton.localization.getWord("address_lookup_fail") );
-    };
-};
-    function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
+function getGeocodeCenterAndBounds(in_geocode_response, i=0) {
+    if ( in_geocode_response && in_geocode_response[i] && in_geocode_response[i].geometry && in_geocode_response[i].geometry.location )
+        return {
+            center: {lat: in_geocode_response[i].geometry.location.lat(), lng: in_geocode_response[i].geometry.location.lng()},
+            southWest: {lat: in_geocode_response[i].geometry.viewport.getSouthWest().lat(),
+                        lng: in_geocode_response[i].geometry.viewport.getSouthWest().lng()},
+            northEast: {lat: in_geocode_response[i].geometry.viewport.getNorthEast().lat(),
+                        lng: in_geocode_response[i].geometry.viewport.getNorthEast().lng()},
+        };
+    alert ( crouton.localization.getWord("address_lookup_fail") );
+    return null;
+}
+    function callGeocoder(in_loc, callback) {
         var	geocoder = new google.maps.Geocoder;
 
         if ( geocoder )
@@ -428,14 +398,32 @@ function geoCallback( in_geocode_response ) {
                     new google.maps.LatLng(config.bounds.south, config.bounds.west),
                     new google.maps.LatLng(config.bounds.north, config.bounds.east));
             }
-            if (filterMeetings)
-                callback = callback.bind({filterMeetings: filterMeetings});
             geocoder.geocode ( geoCodeParams, callback );
         }
         else	// None of that stuff is defined if we couldn't create the geocoder.
         {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
+    }
+	function getZoomAdjustedBounds(center_latlng, filterMeetings, zoomLevel) {
+        if (!center_latlng) return null;
+        const center = new google.maps.LatLng(center_latlng.lat, center_latlng.lng);
+		const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		if (center) {
+			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
+			const bounds = calculateBounds(center_latlng, zoom, mapWidth, mapHeight);
+            const ret = {"center": center_latlng, "bounds": bounds, "zoom": zoom};
+			return ret;
+		} else {
+			alert ( crouton.localization.getWord("address_lookup_fail") );
+			return null;
+		}
+    }
+	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
+        const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
     }
     function invalidateSize() {
     }
@@ -469,24 +457,28 @@ function geoCallback( in_geocode_response ) {
         var center = gMainMap.getCenter();
         return { "lat": center.lat(), "lng": center.lng()}
     }
-    function afterInit(f) {
+    function afterInit(doNotWait, f) {
         if (!gMainMap) return;
-        if (typeof gMainMap.getBounds()  !== 'undefined') f();
-        else addListener('idle', f, true);
+        if (doNotWait || (typeof gMainMap.getBounds()  !== 'undefined')) f();
+        else addListener('idle', function() {
+            f();
+        }, true);
     }
     function modalOn() {}
     function modalOff() {}
 	function isMapDefined() {
-		return gMainMap != null;
+		return gMainMap !== null && gMainMap !== undefined;
+	}
+    function isMapVisible() {
+		return gMainMap !== null && gMainMap !== undefined && gMainMap.getProjection() !== null && gMainMap.getProjection() !== undefined;
 	}
     this.createMap = createMap;
     this.addListener = addListener;
     this.addControl = addControl;
-    this.setViewToPosition = setViewToPosition;
+    this.flyToFixedZoom = flyToFixedZoom;
     this.clearAllMarkers = clearAllMarkers;
-    this.fromLatLngToPoint = fromLatLngToPoint;
     this.callGeocoder = callGeocoder;
-    this.setZoom = setZoom;
+	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
     this.getZoom = getZoom;
     this.createMarker = createMarker;
 	this.bindPopup = bindPopup;
@@ -494,7 +486,6 @@ function geoCallback( in_geocode_response ) {
     this.contains = contains;
     this.getBounds = getBounds;
     this.invalidateSize = invalidateSize;
-    this.zoomOut = zoomOut;
     this.fitBounds = fitBounds;
     this.openMarker = openMarker;
     this.isApiLoaded = isApiLoaded;
@@ -503,26 +494,28 @@ function geoCallback( in_geocode_response ) {
     this.addClusterLayer = addClusterLayer;
     this.removeClusterLayer = removeClusterLayer;
     this.clickSearch = clickSearch;
-    this.getGeocodeCenter = getGeocodeCenter;
+    this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
+    this.getGeocodingChoices = getGeocodingChoices;
     this.modalOn = modalOn;
     this.modalOff = modalOff;
     this.removeListener = removeListener;
     this.afterInit = afterInit;
     this.isMapDefined = isMapDefined;
+    this.isMapVisible = isMapVisible;
     this.getCorners = getCorners;
     this.getCenter = getCenter;
     this.markSearchPoint = markSearchPoint;
     this.getOpenMarker = getOpenMarker;
+    this.calculateBoundsFromCenterAndZoom = calculateBoundsFromCenterAndZoom;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
-MapDelegate.prototype.setViewToPosition = null;
+MapDelegate.prototype.flyToFixedZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
-MapDelegate.prototype.fromLatLngToPoint = null;
 MapDelegate.prototype.callGeocoder = null;
-MapDelegate.prototype.setZoom = null;
+MapDelegate.prototype.getZoomAdjustedBounds = null;
 MapDelegate.prototype.getZoom = null;
 MapDelegate.prototype.createMarker = null;
 MapDelegate.prototype.bindPopup = null;
@@ -530,7 +523,6 @@ MapDelegate.prototype.addMarkerCallback = null;
 MapDelegate.prototype.contains = null;
 MapDelegate.prototype.getBounds = null;
 MapDelegate.prototype.invalidateSize = null;
-MapDelegate.prototype.zoomOut = null;
 MapDelegate.prototype.fitBounds = null;
 MapDelegate.prototype.isApiLoaded = null;
 MapDelegate.prototype.loadApi = null;
@@ -539,12 +531,15 @@ MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
-MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.getGeocodeCenterAndBounds = null;
+MapDelegate.prototype.getGeocodingChoices = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype,isMapVisible = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter= null;
 MapDelegate.prototype.markSearchPoint = null;
 MapDelegate.prototype.getOpenMarker = null;
+MapDelegate.prototype.calculateBoundsFromCenterAndZoom = null;

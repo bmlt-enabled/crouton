@@ -52,10 +52,11 @@ function MapDelegate(config) {
 	var gClusterLayer = null;
 	var gSearchPointMarker = false;
 	var gOpenMarker = false;
+	var gDiv = null;
     function createMap(inDiv, inCenter, inHidden = false) {
 		if (! inCenter ) return null;
-		if ( inHidden ) {
 			gDiv = inDiv;
+		if ( inHidden ) {
 			gDiv.style.height = 'auto';
 			gDiv.style.marginBottom = '10px';
 			gMainMap = null;
@@ -111,26 +112,24 @@ function MapDelegate(config) {
 		if (!gMainMap) return;
 		gMainMap.off(o.event, o.f);
 	}
-    function setViewToPosition(position, filterMeetings, extra=null) {
+	function flyToFixedZoom(position, zoomLevel, extra=null) {
 		if (!gMainMap) return;
-        var latlng = L.latLng(position.latitude, position.longitude);
-		gMainMap.flyTo(latlng);
+
+		const latlng = L.latLng(position.lat, position.lng);
         gMainMap.once('moveend', function(ev) {
-			newZoom = getZoomAdjust(false, filterMeetings);
-			if (gMainMap.getZoom() != newZoom) {
+			if (gMainMap.getZoom() != zoomLevel) {
 				gMainMap.once('zoomend',function() {
 					gMainMap.invalidateSize();
 					if (extra) {
 						gMainMap.once('load moveend', extra);
 					}
 				});
-				gMainMap.setZoom(newZoom);
+				gMainMap.setZoom(zoomLevel);
 			} else {
-				if (extra) {
-					extra();
-				}
+				if (extra) extra();
 			}
 		});
+		gMainMap.flyTo(latlng, zoomLevel);
 	}
 	function clearAllMarkers ( )
 	{
@@ -145,58 +144,39 @@ function MapDelegate(config) {
 	function isFilterVisible() {
 		return config.filter_visible && config.filter_visible == 1;
 	}
-	function getZoomAdjust(only_out,filterMeetings) {
+	function webMercatorToLatLng(point, zoom) {
+		const latLng = croutonMap.webMercatorToLatLng(point, zoom);
+    	return L.latLng(latLng.lat, latLng.lng);
+	}
+	function calculateBounds(center, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const northeastWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y-height/2};
+		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
+		return L.latLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
+	}
+    function calcOffsetWidth(gDiv) {
+        let ret = gDiv.offsetWidth;
+        if (ret === 0) ret = gDiv.parentElement.offsetWidth;
+        return ret;
+    }
+	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
+        const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+        return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
+    }
+	function getZoomAdjust(filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
 		if (!gMainMap) return 12;
-		var ret = gMainMap.getZoom();
+		const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		ret = zoomLevel;
 		if (config.map_search && isFilterVisible()) return ret;
-		var center = gMainMap.getCenter();
-		var bounds = gMainMap.getBounds();
-		var zoomedOut = false;
-		while(filterMeetings(bounds, center).length==0 && ret>6) {
-			zoomedOut = true;
-			// not exact, because earth is curved
+		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+		while(filterMeetings(bounds, center).length==0 && ret>config.minZoom) {
 			ret -= 1;
-			var ne = L.latLng(
-				(2*bounds.getNorthEast().lat)-center.lat,
-			    (2*bounds.getNorthEast().lng)-center.lng);
-			var sw = L.latLng(
-				(2*bounds.getSouthWest().lat)-center.lat,
-				(2*bounds.getSouthWest().lng)-center.lng);
-			bounds = L.latLngBounds(sw,ne);
-
-		}
-		if (!only_out && !zoomedOut && ret<12) {
-			var knt = filterMeetings(bounds).length;
-			while(ret<12 && knt>0) {
-				// no exact, because earth is curved
-				ret += 1;
-				var ne = L.latLng(
-					0.5*(bounds.getNorthEast().lat+center.lat),
-					0.5*(bounds.getNorthEast().lng+center.lng));
-				var sw = L.latLng(
-					 0.5*(bounds.getSouthWest().lat+center.lat),
-					0.5*(bounds.getSouthWest().lng+center.lng));
-				bounds = L.latLngBounds(sw,ne);
-				knt = filterMeetings(bounds).length;
-			}
-			if (knt == 0) {
-				ret -= 1;
-			}
+			bounds = calculateBounds(center, ret, mapWidth, mapHeight);
 		}
 		return ret;
 	}
-    function setZoom(filterMeetings, force=0) {
-		if (!gMainMap) return;
-		(force > 0) ? gMainMap.setZoom(force) : gMainMap.setZoom(getZoomAdjust(false,filterMeetings));
-	}
-	function zoomOut(filterMeetings) {
-		if (!gMainMap) return;
-        gMainMap.setZoom(getZoomAdjust(true,filterMeetings));
-	}
-	function fromLatLngToPoint(lat, lng) {
-		if (!gMainMap) return null;
-		return gMainMap.latLngToLayerPoint(L.latLng(lat,lng));
-    }
 	function markSearchPoint(inCoords) {
 		if (!gMainMap) return;
 		if (gSearchPointMarker) gSearchPointMarker.remove();
@@ -359,7 +339,7 @@ function addControl(div,pos,cb) {
 		}
 		return (!existingUrl || existingUrl.indexOf('?') === -1 ? '?' : '&') + params.join('&');
 	}
-	function geocode(query, params, cb, filterMeetings) {
+	function geocode(query, params, cb) {
 		var serviceUrl = config.nominatimUrl;
 		if (!serviceUrl) serviceUrl = 'https://nominatim.openstreetmap.org/';
 		getJSON(
@@ -387,36 +367,42 @@ function addControl(div,pos,cb) {
 						properties: data[i]
 					};
 				}
-				if (filterMeetings) cb(results,filterMeetings);
-				else cb(results);
+				cb(results);
 			} else {
 				alert ( crouton.localization.getWord("address_lookup_fail") );
 			}
 		}, this)
 		);
     };
- 	function geoCallback ( in_geocode_response,	filterMeetings) {
-        if ( in_geocode_response && in_geocode_response[0] && in_geocode_response[0].bbox ) {
-	        gMainMap.flyToBounds ( in_geocode_response[0].bbox );
-            gMainMap.on('moveend', function(ev) {
-				gMainMap.off('moveend');
-				gMainMap.setZoom(getZoomAdjust(true, filterMeetings));
-				gMainMap.once('moveend',function() {
-					gTileLayer.redraw();
-				});
-			});
+	function getGeocodingChoices(in_geocode_response) {
+    	if (!Array.isArray(in_geocode_response)) return [];
+    	return in_geocode_response.map((r) => r.name);
+	}
+	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
+		const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		if (center) {
+			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
+			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
+			const ret = {"center": center, "bounds": bounds, "zoom": zoom};
+			return ret;
+		} else {
+			alert ( crouton.localization.getWord("address_lookup_fail") );
+			return null;
+		}
+	}
+	function getGeocodeCenterAndBounds (in_geocode_response, i=0) {
+        if ( in_geocode_response && in_geocode_response[i] ) {
+	        return {
+				center: {lat: in_geocode_response[i].center.lat, lng: in_geocode_response[i].center.lng},
+				southWest: {lat: in_geocode_response[i].bbox.getSouthWest().lat, lng: in_geocode_response[i].bbox.getSouthWest().lng},
+				northEast: {lat: in_geocode_response[i].bbox.getNorthEast().lat, lng: in_geocode_response[i].bbox.getNorthEast().lng},
+					};
         } else {
             alert ( crouton.localization.getWord("address_lookup_fail") );
         };
 	};
-	function getGeocodeCenter ( in_geocode_response ) {
-        if ( in_geocode_response && in_geocode_response[0] ) {
-	        return {lat: in_geocode_response[0].center.lat, lng: in_geocode_response[0].center.lng};
-        } else {
-            alert ( crouton.localization.getWord("address_lookup_fail") );
-        };
-	};
-    function callGeocoder(in_loc, filterMeetings, callback=geoCallback) {
+    function callGeocoder(in_loc, callback) {
 		geoCodeParams = {};
 		if (config.region && config.region.trim() !== '') {
 			geoCodeParams.countrycodes = config.region;
@@ -429,7 +415,7 @@ function addControl(div,pos,cb) {
 				geoCodeParams.viewbox = config.bounds.west+","+config.bounds.south+","+
 					                    config.bounds.east+","+config.bounds.north;
 		}
-        geocode(in_loc, geoCodeParams, callback, filterMeetings);
+        geocode(in_loc, geoCodeParams, callback);
     }
 	function isNumber(x) {
 		if (typeof x === 'number') return true;
@@ -494,22 +480,24 @@ function addControl(div,pos,cb) {
 	function modalOff() {
 		if (gMainMap) gMainMap.dragging.enable()
 	}
-	function afterInit(f) {
+	function afterInit(doNotWait, f) {
 		f();
 	}
 	function returnTrue() {return true;}
 	function isMapDefined() {
-		return (gMainMap != null);
+		return (gMainMap !== null);
+	}
+	function isMapVisible() {
+		return (gMainMap !== null) && gMainMap.getSize().x > 0 && gMainMap.getSize().y > 0;
 	}
     this.createMap = createMap;
     this.addListener = addListener;
 	this.removeListener = removeListener;
     this.addControl = addControl;
-    this.setViewToPosition = setViewToPosition;
+	this.flyToFixedZoom = flyToFixedZoom;
     this.clearAllMarkers = clearAllMarkers;
-    this.fromLatLngToPoint = fromLatLngToPoint;
     this.callGeocoder = callGeocoder;
-	this.setZoom = setZoom;
+	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
 	this.getZoom = getZoom;
 	this.createMarker = createMarker;
 	this.bindPopup = bindPopup;
@@ -517,7 +505,6 @@ function addControl(div,pos,cb) {
 	this.contains = contains;
 	this.getBounds = getBounds;
 	this.invalidateSize = invalidateSize;
-	this.zoomOut = zoomOut;
 	this.fitBounds = fitBounds;
 	this.openMarker = openMarker;
 	this.isApiLoaded = returnTrue;
@@ -525,33 +512,34 @@ function addControl(div,pos,cb) {
 	this.addClusterLayer = addClusterLayer;
 	this.removeClusterLayer = removeClusterLayer;
 	this.clickSearch = clickSearch;
-	this.getGeocodeCenter = getGeocodeCenter;
+	this.getGeocodeCenterAndBounds = getGeocodeCenterAndBounds;
+	this.getGeocodingChoices = getGeocodingChoices;
 	this.modalOn = modalOn;
 	this.modalOff = modalOff;
 	this.afterInit = afterInit;
 	this.isMapDefined = isMapDefined;
+	this.isMapVisible = isMapVisible;
 	this.getCorners = getCorners;
 	this.getCenter = getCenter;
 	this.markSearchPoint = markSearchPoint;
 	this.getOpenMarker = getOpenMarker;
+	this.calculateBoundsFromCenterAndZoom = calculateBoundsFromCenterAndZoom;
 }
 MapDelegate.prototype.createMap = null;
 MapDelegate.prototype.addListener = null;
 MapDelegate.prototype.removeListener = null;
 MapDelegate.prototype.addControl = null;
-MapDelegate.prototype.setViewToPosition = null;
+MapDelegate.prototype.flyToFixedZoom = null;
 MapDelegate.prototype.clearAllMarkers = null;
-MapDelegate.prototype.fromLatLngToPoint = null;
 MapDelegate.prototype.callGeocoder = null;
-MapDelegate.prototype.setZoom = null;
 MapDelegate.prototype.getZoom = null;
+MapDelegate.prototype.getZoomAdjustedBounds = null;
 MapDelegate.prototype.createMarker = null;
 MapDelegate.prototype.bindPopup = null;
 MapDelegate.prototype.addMarkerCallback = null;
 MapDelegate.prototype.contains = null;
 MapDelegate.prototype.getBounds = null;
 MapDelegate.prototype.invalidateSize = null;
-MapDelegate.prototype.zoomOut = null;
 MapDelegate.prototype.fitBounds = null;
 MapDelegate.prototype.openMarker = null;
 MapDelegate.prototype.isApiLoaded = null;
@@ -559,12 +547,15 @@ MapDelegate.prototype.createClusterLayer = null;
 MapDelegate.prototype.addClusterLayer = null;
 MapDelegate.prototype.removeClusterLayer = null;
 MapDelegate.prototype.clickSearch = null;
-MapDelegate.prototype.getGeocodeCenter = null;
+MapDelegate.prototype.getGeocodeCenterAndBounds = null;
+MapDelegate.prototype.getGeocodingChoices = null;
 MapDelegate.prototype.modalOn = null;
 MapDelegate.prototype.modalOff = null;
 MapDelegate.prototype.afterInit = null;
 MapDelegate.prototype.isMapDefined = null;
+MapDelegate.prototype.isMapVisible = null;
 MapDelegate.prototype.getCorners = null;
 MapDelegate.prototype.getCenter = null;
 MapDelegate.prototype.markSearchPoint = null;
 MapDelegate.prototype.getOpenMarker = null;
+MapDelegate.prototype.calculateBoundsFromCenterAndZoom = null;
