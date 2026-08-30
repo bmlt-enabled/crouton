@@ -217,7 +217,6 @@ function MeetingMap(inConfig) {
   		/*execute a function presses a key on the keyboard:*/
   		controlDiv.querySelector("#bmlt-location-search-goto-text").addEventListener("keydown", function(e) {
       		var x = document.getElementById(this.id + "autocomplete-list");
-			console.log(x);
       		if (x) x = x.getElementsByTagName("div");
       		if (e.keyCode == 40) {
         		/*If the arrow DOWN key is pressed,
@@ -249,7 +248,6 @@ function MeetingMap(inConfig) {
     		if (currentFocus < 0) currentFocus = (x.length - 1);
     		/*add class "autocomplete-active":*/
     		x[currentFocus].classList.add("autocomplete-active");
-			console.log(x[currentFocus]);
   		}
   		function removeActive(x) {
     		/*a function to remove the "active" class from all autocomplete items:*/
@@ -630,7 +628,13 @@ function MeetingMap(inConfig) {
 			return;
 		}
 		gAllMeetings = meetings_responseObject.filter(m => m.venue_type != 2);
-		gAllCities = [...new Set(meetings_responseObject.map(m => m['location_municipality']))].sort();
+		gAllCities = meetings_responseObject.reduce(function (carry, m) {
+			const fields = ['location_municipality', 'location_city_subsection', 'location_province', 'location_neighborhood'];
+			fields.forEach(function (f) {
+				if (m[f].length > 1 && !carry.includes(m[f])) carry.push(m[f]);
+			});
+			return carry;
+		}, []);
 		if (fitBounds && !config.centerMe && !config.goto) {
 			let lat_lngs = gAllMeetings.reduce(function(a,m) {a.push([m.latitude, m.longitude]); return a;},[]);
 			const maxRadius = config.maxTomatoWidth/2.0;
