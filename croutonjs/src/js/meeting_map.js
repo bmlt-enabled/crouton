@@ -168,16 +168,9 @@ function MeetingMap(inConfig) {
 	function doGeolocationThenClose() {
 		doGeolocation().then(closeModalWindow(gLocationSearchModal));
 	}
-	function createLocationSearchButton() {
-		const template = hbs_Crouton.templates['locationSearch'];
-		const controlDiv = document.createElement('div');
-		const params = {};
-		controlDiv.innerHTML = template(params);
-		controlDiv.querySelector("#location-search-button").addEventListener('click', showLocationSearchDialog);
-		gDefaultLocationSearchButtonLabel = controlDiv.querySelector("#location-search-button :first-child").innerHTML;
-		controlDiv.querySelector("#bmlt-location-search-nearbyMeetings").addEventListener('click', doGeolocationThenClose);
+	function addAutocompleteEvents(inp, button) {
 		var currentFocus;
-  		controlDiv.querySelector("#bmlt-location-search-goto-text").addEventListener("input", function(e) {
+		inp.addEventListener("input",function(e) {
       		var a, b, i, val = this.value;
 			const inp = this;
       		/*close any already open lists of autocompleted values*/
@@ -208,14 +201,13 @@ function MeetingMap(inConfig) {
               			/*close the list of autocompleted values,
               			(or any other open lists of autocompleted values:*/
               			closeAllLists();
-						document.getElementById("bmlt-location-search-text-button").click();
+						button.click();
           			});
           			a.appendChild(b);
         		}
 			}
   		});
-  		/*execute a function presses a key on the keyboard:*/
-  		controlDiv.querySelector("#bmlt-location-search-goto-text").addEventListener("keydown", function(e) {
+		inp.addEventListener("keydown", function(e) {
       		var x = document.getElementById(this.id + "autocomplete-list");
       		if (x) x = x.getElementsByTagName("div");
       		if (e.keyCode == 40) {
@@ -239,7 +231,7 @@ function MeetingMap(inConfig) {
         		}
       		}
   		});
-  		function addActive(x) {
+		function addActive(x) {
     		/*a function to classify an item as "active":*/
     		if (!x) return false;
     		/*start by removing the "active" class on all items:*/
@@ -265,8 +257,16 @@ function MeetingMap(inConfig) {
 			document.addEventListener("click", function (e) {
       		closeAllLists(e.target);
   		});
-
-
+	}
+	function createLocationSearchButton() {
+		const template = hbs_Crouton.templates['locationSearch'];
+		const controlDiv = document.createElement('div');
+		const params = {};
+		controlDiv.innerHTML = template(params);
+		controlDiv.querySelector("#location-search-button").addEventListener('click', showLocationSearchDialog);
+		gDefaultLocationSearchButtonLabel = controlDiv.querySelector("#location-search-button :first-child").innerHTML;
+		controlDiv.querySelector("#bmlt-location-search-nearbyMeetings").addEventListener('click', doGeolocationThenClose);
+  		addAutocompleteEvents(controlDiv.querySelector("#bmlt-location-search-goto-text"), controlDiv.querySelector("#bmlt-location-search-text-button"));
 		controlDiv.querySelector("#bmlt-location-search-text-button").addEventListener('click', function () {
 			let text = document.getElementById("bmlt-location-search-goto-text").value.trim();
 			if (text === "") return;
@@ -399,11 +399,7 @@ function MeetingMap(inConfig) {
 		});
 		[...controlDiv.getElementsByClassName('modal-close')].forEach((elem)=>elem.addEventListener('click', (e)=>closeModalWindow(e.target)));
 		controlDiv.querySelector("#close_table").addEventListener('click', hideListView);
-		controlDiv.querySelector("#goto-text").addEventListener('keydown', function (event) {
-			if (event && event.key == "Enter") {
-				lookupLocation(document.getElementById('goto-text').value,g_suspendedFullscreen, mapMenuGeocode);
-			}
-		});
+		addAutocompleteEvents(controlDiv.querySelector("#goto-text"), controlDiv.querySelector("#goto-button"));
 		controlDiv.querySelector("#goto-button").addEventListener('click', function (event) {
 			lookupLocation(document.getElementById('goto-text').value, g_suspendedFullscreen, mapMenuGeocode);
 		});

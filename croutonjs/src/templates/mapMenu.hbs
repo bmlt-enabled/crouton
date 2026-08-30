@@ -46,7 +46,9 @@
         <div class="crouton-modal-search-page">
             <div class="modal-search">
                 {{getWord 'Enter a city or zip code'}}
-                <input id="goto-text" class="crouton-goto-text" type="text">
+                <div>
+                <input id="goto-text" class="crouton-goto-text" type="text" autocomplete="off">
+                </div>
                 <button id="goto-button" class="filter-button">{{getWord "text_search"}}</button>
             </div>
         </div>
