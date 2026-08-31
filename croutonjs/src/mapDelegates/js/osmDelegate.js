@@ -349,7 +349,8 @@ function addControl(div,pos,cb) {
 			  q: query,
 			  limit: 5,
 			  format: 'json',
-			  addressdetails: 1
+			  addressdetails: 1,
+			  layer: "address"
 			},
 			params
 		  ),
