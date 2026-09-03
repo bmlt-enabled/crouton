@@ -571,7 +571,7 @@ function MeetingMap(inConfig) {
 		);
 		jQuery('#'+modalName+' .crouton-modal-search-page').addClass('hide');
 		jQuery('#'+modalName+' .crouton-modal-search-choice').removeClass('hide')
-			.html('<div class="choose-location"><h4>'+crouton.localization.getWord('Choose one')+'</h4>'+html.join('')+'</div>')
+			.html('<div class="choose-location"><h4>'+crouton.localization.getWord('Select one')+'</h4>'+html.join('')+'</div>')
 		jQuery('#'+modalName+' .location-choice').on('click', function() {
 			const index = parseInt(jQuery(this).data("choice"))
 			setLocationSearchButtonLabel(choices[index]);
@@ -780,6 +780,8 @@ function MeetingMap(inConfig) {
 		openModalWindow(document.getElementById('geocoding_modal'));
 		jQuery('#geocoding_modal .crouton-modal-search-page').removeClass('hide');
 		jQuery('#geocoding_modal .crouton-modal-search-choice').addClass('hide');
+		jQuery('#goto-text').val('');
+		jQuery('#goto-textautocomplete-list').remove();
 	}
 	function showListView(e=null) {
 		filterVisible();

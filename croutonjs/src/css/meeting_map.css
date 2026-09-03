@@ -330,6 +330,7 @@ div.bmlt_map_container_div  button {
 .modal-title {
 	font-size: 18px;
 	text-align: left;
+  padding-top: 10px;
 }
 #filter_modal p {
 	margin-top: .5em;
@@ -340,7 +341,7 @@ div.bmlt_map_container_div  button {
   color: #fff;
   margin: 10px;
   border-radius: 3px;
-  padding: .3em .5em;
+  padding: 10px .5em;
 }
 
 /* Style the buttons inside the tab */
@@ -566,9 +567,6 @@ button#location-search-button {
       border-width: 1px;
       border-color: black;
     margin-top: 10px;
-  }
-  #bmltsearch_modal .modal-title {
-    margin: 20px 0 10px 0;
   }
   button.advanced-search-button {
     float: right;
