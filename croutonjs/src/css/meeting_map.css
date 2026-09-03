@@ -330,6 +330,7 @@ div.bmlt_map_container_div  button {
 .modal-title {
 	font-size: 18px;
 	text-align: left;
+  padding-top: 10px;
 }
 #filter_modal p {
 	margin-top: .5em;
@@ -340,7 +341,7 @@ div.bmlt_map_container_div  button {
   color: #fff;
   margin: 10px;
   border-radius: 3px;
-  padding: .3em .5em;
+  padding: 10px .5em;
 }
 
 /* Style the buttons inside the tab */
@@ -567,15 +568,15 @@ button#location-search-button {
       border-color: black;
     margin-top: 10px;
   }
-  #bmltsearch_modal .modal-title {
-    margin: 20px 0 10px 0;
-  }
   button.advanced-search-button {
     float: right;
     margin-top: 20px;
   }
 .crouton-goto-text {
     width: 100%;
+    font-size: 14px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     box-sizing: border-box;
 }
 div#location-search-widen.hide {
@@ -593,4 +594,26 @@ button.location-choice {
 button.location-choice {
     padding: 10px 5px;
     margin-bottom: 5px;
+}
+.autocomplete-items {
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+/*when hovering an item:*/
+.autocomplete-items div:hover, .autocomplete-items .autocomplete-active  {
+  background-color: #bcf5d3;
 }

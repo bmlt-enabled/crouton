@@ -12,8 +12,10 @@
         <div class="modal-title">{{getWord 'Search by location'}}</div>
         <div class="crouton-modal-search-page">
             <div id="modal-location-search-box" class="modal-search">
-                <input id="bmlt-location-search-goto-text" type="text" class="crouton-goto-text"
+                <div>
+                <input id="bmlt-location-search-goto-text" type="text" class="crouton-goto-text" autocomplete="off"
                     placeholder="{{getWord 'Enter a city or zip code'}}">
+                </div>
                 <button id="bmlt-location-search-text-button" class="filter-button">{{getWord 'text_search'}}</button>
             </div>
             <div class="modal-search">

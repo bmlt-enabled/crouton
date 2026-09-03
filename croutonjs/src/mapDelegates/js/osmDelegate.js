@@ -349,24 +349,25 @@ function addControl(div,pos,cb) {
 			  q: query,
 			  limit: 5,
 			  format: 'json',
-			  addressdetails: 1
+			  addressdetails: 1,
+			  layer: "address"
 			},
 			params
 		  ),
 		  L.bind(function(data) {
-			var results = [];
 			if (data && data.length) {
-				for (var i = data.length - 1; i >= 0; i--) {
-					var bbox = data[i].boundingbox;
-					for (var j = 0; j < 4; j++) bbox[j] = parseFloat(bbox[j]);
-					results[i] = {
-						icon: data[i].icon,
-						name: data[i].display_name,
-						bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
-						center: L.latLng(data[i].lat, data[i].lon),
-						properties: data[i]
-					};
-				}
+				results = data.reduce(function(carry, d) {
+					if (!carry.find((item) => item.name === d.display_name)) {
+						var bbox = d.boundingbox.map((c) => parseFloat(c));
+						carry.push({
+							name: d.display_name,
+							bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
+							center: L.latLng(d.lat, d.lon),
+							properties: d
+						});
+					}
+					return carry;
+				}, []);
 				cb(results);
 			} else {
 				alert ( crouton.localization.getWord("address_lookup_fail") );
