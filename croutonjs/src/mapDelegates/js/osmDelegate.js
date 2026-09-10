@@ -75,12 +75,12 @@ function MapDelegate(config) {
 		if (pixel_width == 0) {
 			pixel_width = inDiv.parentNode.offsetWidth;
 		}
-		var	pixel_height = inDiv.offsetHeight;
+		var	pixel_height = parseInt(jQuery(inDiv).css("height").replace("px",""));
 		if (pixel_height == 0) {
 			pixel_height = pixel_width;
 		}
-		if (pixel_height > pixel_width*1.4) {
-			inDiv.style.height = (pixel_width*1.6)+'px';
+		if (pixel_height > pixel_width) {
+			jQuery(inDiv).css("height", pixel_width+"px");
 		}
         gMainMap = new L.Map ( inDiv, myOptions );
         gTileLayer = L.tileLayer(config.tileUrl,config.tileOptions).addTo(gMainMap);
@@ -154,6 +154,13 @@ function MapDelegate(config) {
 		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
 		return L.latLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
 	}
+	function withinConscribedCircle(center, point, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const meetingPoint = croutonMap.latLngToWebMercator(point, zoom);
+		const radius = Math.min(width, height)/2;
+		const distance = Math.sqrt(Math.pow(centerPoint.x-meetingPoint.x,2)+Math.pow(centerPoint.y-meetingPoint.y,2));
+		return distance <= radius;
+	}
     function calcOffsetWidth(gDiv) {
         let ret = gDiv.offsetWidth;
         if (ret === 0) ret = gDiv.parentElement.offsetWidth;
@@ -164,16 +171,34 @@ function MapDelegate(config) {
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
         return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
     }
-	function getZoomAdjust(filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
+	function getZoomAdjust(filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter(), closestMeeting=null) {
 		if (!gMainMap) return 12;
+		if (config.map_search && isFilterVisible()) return zoomLevel;
 		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		ret = zoomLevel;
-		if (config.map_search && isFilterVisible()) return ret;
 		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
-		while(filterMeetings(bounds, center).length==0 && ret>config.minZoom) {
-			ret -= 1;
-			bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+		if (closestMeeting) {
+			while(!withinConscribedCircle(center, closestMeeting, ret, mapWidth, mapHeight) && ret>config.minZoom) {
+				ret -= 1;
+			}
+		} else {
+			while(filterMeetings(bounds, center).length==0 && ret>config.minZoom) {
+				ret -= 1;
+				bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+			}
+		}
+		// If we didn't zoom out, zoom in if it doesn't lose meetings
+		if (ret == zoomLevel) {
+			let meetingsInBounds = filterMeetings(bounds, center).length;
+			if (meetingsInBounds > 0) {
+				do {
+					ret = ret + 1;
+					if (ret > config.maxZoom) break;
+					var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+				} while (filterMeetings(bounds, center).length === meetingsInBounds)
+				ret = ret - 1;
+			}
 		}
 		return ret;
 	}
@@ -379,11 +404,11 @@ function addControl(div,pos,cb) {
     	if (!Array.isArray(in_geocode_response)) return [];
     	return in_geocode_response.map((r) => r.name);
 	}
-	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
+	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel, closestMeeting=null) {
 		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
 		if (center) {
-			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
+			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center, closestMeeting);
 			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
 			const ret = {"center": center, "bounds": bounds, "zoom": zoom};
 			return ret;

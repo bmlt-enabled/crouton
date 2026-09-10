@@ -604,7 +604,15 @@ function MeetingMap(inConfig) {
 			let center = centerAndBounds.center;
 			filterVisible(false);
 			let zoom = calcZoomThatContainsBoundingBox(centerAndBounds);
-			gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom);
+			const closestMeeting = filterMeetings(gAllMeetings).reduce((closest, meeting) => {
+				const meetingLocation = {lat: meeting.latitude, lng: meeting.longitude};
+				const distance = getDistance(center, meetingLocation);
+				if (distance < closest.distance) {
+					return {meetingLocation: meetingLocation, distance: distance};
+				}
+				return closest;
+			}, {meetingLocation: null, distance: Infinity});
+			gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, closestMeeting ? closestMeeting.meetingLocation : null);
 			gSearchPoint = {"lat": gLocationSearchResult.center.lat, "lng": gLocationSearchResult.center.lng};
 			filterVisible(true, gLocationSearchResult.bounds);
 			crouton.updateDistances(initial);
