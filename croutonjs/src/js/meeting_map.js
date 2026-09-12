@@ -368,7 +368,7 @@ function MeetingMap(inConfig) {
 				filterVisible(false);
 				gSearchPoint = {"lat": position.lat, "lng": position.lng};
 				crouton.updateDistances();
-				const locationSearchResult = gDelegate.getZoomAdjustedBounds(gSearchPoint, filterMeetingsAndBounds, config.locationSearchZoom ?? 12);
+				const locationSearchResult = gDelegate.getZoomAdjustedBounds(gSearchPoint, filterMeetingsAndBounds, config.locationSearchZoom ?? 12, findClosestMeetingLatLng(gSearchPoint));
 				gDelegate.flyToFixedZoom(position, locationSearchResult.zoom, filterVisible);
 				filterVisible(true);
 				setLocationSearchButtonLabel(crouton.localization.getWord('closest meetings'));
@@ -532,7 +532,7 @@ function MeetingMap(inConfig) {
 			const centerAndBounds = gDelegate.getGeocodeCenterAndBounds(resp, i);
 			if (!centerAndBounds) return;
 			const zoom = calcZoomThatContainsBoundingBox(centerAndBounds);
-			const locationSearchResult = gDelegate.getZoomAdjustedBounds(gSearchPoint, filterMeetingsAndBounds, zoom);
+			const locationSearchResult = gDelegate.getZoomAdjustedBounds(gSearchPoint, filterMeetingsAndBounds, zoom, findClosestMeetingLatLng(gSearchPoint));
 			gDelegate.flyToFixedZoom(gSearchPoint, locationSearchResult.zoom, filterVisible);
 			searchResponseCallback();
 		})
@@ -596,6 +596,17 @@ function MeetingMap(inConfig) {
 	function locationSearchGeocodeInitial(resp) {
 		locationSearchGeocode(resp, true);
 	}
+	function findClosestMeetingLatLng(center) {
+		const closestMeeting = filterMeetings(gAllMeetings).reduce((closest, meeting) => {
+			const meetingLocation = {lat: meeting.latitude, lng: meeting.longitude};
+			const distance = getDistance(center, meetingLocation);
+			if (distance < closest.distance) {
+				return {meetingLocation: meetingLocation, distance: distance};
+			}
+			return closest;
+		}, {meetingLocation: null, distance: Infinity});
+		return closestMeeting ? closestMeeting.meetingLocation : null;
+	}
 	function locationSearchGeocode(resp, initial=false) {
 		chooseResponse('bmlt_location_search_modal', resp, function(resp, i) {
 			closeModalWindow(gLocationSearchModal);
@@ -604,15 +615,8 @@ function MeetingMap(inConfig) {
 			let center = centerAndBounds.center;
 			filterVisible(false);
 			let zoom = calcZoomThatContainsBoundingBox(centerAndBounds);
-			const closestMeeting = filterMeetings(gAllMeetings).reduce((closest, meeting) => {
-				const meetingLocation = {lat: meeting.latitude, lng: meeting.longitude};
-				const distance = getDistance(center, meetingLocation);
-				if (distance < closest.distance) {
-					return {meetingLocation: meetingLocation, distance: distance};
-				}
-				return closest;
-			}, {meetingLocation: null, distance: Infinity});
-			gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, closestMeeting ? closestMeeting.meetingLocation : null);
+
+			gLocationSearchResult = gDelegate.getZoomAdjustedBounds(center, filterMeetingsAndBounds, zoom, findClosestMeetingLatLng(center));
 			gSearchPoint = {"lat": gLocationSearchResult.center.lat, "lng": gLocationSearchResult.center.lng};
 			filterVisible(true, gLocationSearchResult.bounds);
 			crouton.updateDistances(initial);
@@ -677,13 +681,13 @@ function MeetingMap(inConfig) {
 			retrieveGeolocation().then(function(coords) {
 				filterVisible(false);
 				if (isMapVisible() || !makeFilterVisible) {
-					const locationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.locationSearchZoom ?? 12);
+					const locationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.locationSearchZoom ?? 12, findClosestMeetingLatLng(coords));
 					gDelegate.flyToFixedZoom(coords, locationSearchResult.zoom, () => {
 						filterVisible(makeFilterVisible);
 						if (makeFilterVisible) setLocationSearchButtonLabel(crouton.localization.getWord('closest meetings'));
 					});
 				} else {
-					gLocationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.locationSearchZoom ?? 12);
+					gLocationSearchResult = gDelegate.getZoomAdjustedBounds(coords, filterMeetingsAndBounds, config.locationSearchZoom ?? 12, findClosestMeetingLatLng(coords));
 					filterVisible(true, gLocationSearchResult.bounds);
 					setLocationSearchButtonLabel(crouton.localization.getWord('closest meetings'));
 				}
