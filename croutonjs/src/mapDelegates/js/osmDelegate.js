@@ -176,7 +176,7 @@ function MapDelegate(config) {
 			webMercatorToLatLng(northeastWebMercator, zoom),
 		);
 	}
-	function withinConscribedCircle(center, point, zoom, width, height) {
+	function withinInscribedCircle(center, point, zoom, width, height) {
 		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
 		const meetingPoint = croutonMap.latLngToWebMercator(point, zoom);
 		const radius = Math.min(width, height) / 2;
@@ -214,7 +214,7 @@ function MapDelegate(config) {
 		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
 		if (closestMeeting) {
 			while (
-				!withinConscribedCircle(
+				!withinInscribedCircle(
 					center,
 					closestMeeting,
 					ret,

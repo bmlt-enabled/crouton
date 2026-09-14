@@ -232,7 +232,7 @@ function MapDelegate(in_config) {
 			webMercatorToLatLng(northeastWebMercator, zoom),
 		);
 	}
-	function withinConscribedCircle(center, point, zoom, width, height) {
+	function withinInscribedCircle(center, point, zoom, width, height) {
 		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
 		const meetingPoint = croutonMap.latLngToWebMercator(point, zoom);
 		const radius = Math.min(width, height) / 2;
@@ -254,7 +254,7 @@ function MapDelegate(in_config) {
 		closestMeeting = null,
 	) {
 		if (!gMainMap) return 12;
-		if (config.map_search && isFilterVisible()) return ret;
+		if (config.map_search && isFilterVisible()) return zoomLevel;
 		const mapWidth = calcOffsetWidth(gDiv);
 		const mapHeight = parseInt(
 			jQuery(gDiv).css("height").replace("px", ""),
@@ -264,7 +264,7 @@ function MapDelegate(in_config) {
 		var bounds = calculateBounds(center_latlng, ret, mapWidth, mapHeight);
 		if (closestMeeting) {
 			while (
-				!withinConscribedCircle(
+				!withinInscribedCircle(
 					center_latlng,
 					closestMeeting,
 					ret,
@@ -278,7 +278,7 @@ function MapDelegate(in_config) {
 		} else {
 			while (
 				filterMeetings(bounds, center_latlng).length == 0 &&
-				ret > 6
+				ret > config.minZoom
 			) {
 				ret -= 1;
 				bounds = calculateBounds(

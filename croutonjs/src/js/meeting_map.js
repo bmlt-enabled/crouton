@@ -597,15 +597,14 @@ function MeetingMap(inConfig) {
 		locationSearchGeocode(resp, true);
 	}
 	function findClosestMeetingLatLng(center) {
-		const closestMeeting = filterMeetings(gAllMeetings).reduce((closest, meeting) => {
+		return filterMeetings(gAllMeetings).reduce((closest, meeting) => {
 			const meetingLocation = {lat: meeting.latitude, lng: meeting.longitude};
 			const distance = getDistance(center, meetingLocation);
 			if (distance < closest.distance) {
 				return {meetingLocation: meetingLocation, distance: distance};
 			}
 			return closest;
-		}, {meetingLocation: null, distance: Infinity});
-		return closestMeeting ? closestMeeting.meetingLocation : null;
+		}, {meetingLocation: null, distance: Infinity}).meetingLocation;
 	}
 	function locationSearchGeocode(resp, initial=false) {
 		chooseResponse('bmlt_location_search_modal', resp, function(resp, i) {
