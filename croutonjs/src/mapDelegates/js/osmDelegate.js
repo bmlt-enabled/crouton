@@ -1,127 +1,137 @@
 function MapDelegate(config) {
-	const shadowUrl = config.BMLTPlugin_images ? config.BMLTPlugin_images+"/NAMarkerS.png"
+	const shadowUrl = config.BMLTPlugin_images
+		? config.BMLTPlugin_images + "/NAMarkerS.png"
 		: "data:image/png;base64,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";
-	let iconUrl = config.BMLTPlugin_images ? config.BMLTPlugin_images+"/NAMarker.png"
+	let iconUrl = config.BMLTPlugin_images
+		? config.BMLTPlugin_images + "/NAMarker.png"
 		: "data:image/png;base64,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";
 
-    var g_icon_image_single = L.icon({
+	var g_icon_image_single = L.icon({
 		iconUrl: iconUrl,
 		shadowUrl: shadowUrl,
-		iconSize:     [23, 32], // size of the icon
-		shadowSize:   [43, 32], // size of the shadow
-		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
-		shadowAnchor: [12, 32],  // the same for the shadow
-		popupAnchor:  [0, -32] // point from which the popup should open relative to the iconAnchor
+		iconSize: [23, 32], // size of the icon
+		shadowSize: [43, 32], // size of the shadow
+		iconAnchor: [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32], // the same for the shadow
+		popupAnchor: [0, -32], // point from which the popup should open relative to the iconAnchor
 	});
-	iconUrl = config.BMLTPlugin_images ? config.BMLTPlugin_images+"/NAMarkerG.png"
+	iconUrl = config.BMLTPlugin_images
+		? config.BMLTPlugin_images + "/NAMarkerG.png"
 		: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAhCAYAAAAyCTAQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAADTRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDQuMi4yLWMwNjMgNTMuMzUyNjI0LCAyMDA4LzA3LzMwLTE4OjA1OjQxICAgICAgICAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICAgeG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOklwdGM0eG1wQ29yZT0iaHR0cDovL2lwdGMub3JnL3N0ZC9JcHRjNHhtcENvcmUvMS4wL3htbG5zLyIKICAgeG1wUmlnaHRzOldlYlN0YXRlbWVudD0iIgogICBwaG90b3Nob3A6QXV0aG9yc1Bvc2l0aW9uPSIiPgogICA8ZGM6cmlnaHRzPgogICAgPHJkZjpBbHQ+CiAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ii8+CiAgICA8L3JkZjpBbHQ+CiAgIDwvZGM6cmlnaHRzPgogICA8ZGM6Y3JlYXRvcj4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkvPgogICAgPC9yZGY6U2VxPgogICA8L2RjOmNyZWF0b3I+CiAgIDxkYzp0aXRsZT4KICAgIDxyZGY6QWx0PgogICAgIDxyZGY6bGkgeG1sOmxhbmc9IngtZGVmYXVsdCI+TkFNYXJrZXI8L3JkZjpsaT4KICAgIDwvcmRmOkFsdD4KICAgPC9kYzp0aXRsZT4KICAgPHhtcFJpZ2h0czpVc2FnZVRlcm1zPgogICAgPHJkZjpBbHQ+CiAgICAgPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ii8+CiAgICA8L3JkZjpBbHQ+CiAgIDwveG1wUmlnaHRzOlVzYWdlVGVybXM+CiAgIDxJcHRjNHhtcENvcmU6Q3JlYXRvckNvbnRhY3RJbmZvCiAgICBJcHRjNHhtcENvcmU6Q2lBZHJFeHRhZHI9IiIKICAgIElwdGM0eG1wQ29yZTpDaUFkckNpdHk9IiIKICAgIElwdGM0eG1wQ29yZTpDaUFkclJlZ2lvbj0iIgogICAgSXB0YzR4bXBDb3JlOkNpQWRyUGNvZGU9IiIKICAgIElwdGM0eG1wQ29yZTpDaUFkckN0cnk9IiIKICAgIElwdGM0eG1wQ29yZTpDaVRlbFdvcms9IiIKICAgIElwdGM0eG1wQ29yZTpDaUVtYWlsV29yaz0iIgogICAgSXB0YzR4bXBDb3JlOkNpVXJsV29yaz0iIi8+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9InciPz7HRMckAAAG20lEQVR42qyWeXBV9RXHP/fet+QlL+QlPAgkeZIFxAWxqWBVagVKYtQUUTvtSIeKLYNY24pY/MPptA50nI4OnXbGzojVoSLNdFGJ6ci0MRSo1BZcILgQgglGSdJsL9vL2+679/bcBasVpON4Zn7v3d/2Pef3Pcvvp/DpskjaLQFYmq9QLf++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";
 	var g_icon_image_multi = L.icon({
 		iconUrl: iconUrl,
 		shadowUrl: shadowUrl,
-		iconSize:     [23, 32], // size of the icon
-		shadowSize:   [43, 32], // size of the shadow
-		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
-		shadowAnchor: [12, 32],  // the same for the shadow
-		popupAnchor:  [0, -32] // point from which the popup should open relative to the iconAnchor
+		iconSize: [23, 32], // size of the icon
+		shadowSize: [43, 32], // size of the shadow
+		iconAnchor: [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32], // the same for the shadow
+		popupAnchor: [0, -32], // point from which the popup should open relative to the iconAnchor
 	});
-	iconUrl = config.BMLTPlugin_images ? config.BMLTPlugin_images+"/NAMarkerSel.png"
+	iconUrl = config.BMLTPlugin_images
+		? config.BMLTPlugin_images + "/NAMarkerSel.png"
 		: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAhCAYAAAAyCTAQAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA/JpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wUmlnaHRzOk1hcmtlZD0iRmFsc2UiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OEFFRUI5RkFCQkM0MTFFMEFEOEJGMzBCOTRGRDNBMTMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OEFFRUI5RjlCQkM0MTFFMEFEOEJGMzBCOTRGRDNBMTMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTMyBNYWNpbnRvc2giPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0idXVpZDo5NkJFNTVGQjQ5MDhEQzExQUFBN0ZDRDFGNTZEMTYyMiIgc3RSZWY6ZG9jdW1lbnRJRD0idXVpZDpE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";
 	var g_icon_image_selected = L.icon({
 		iconUrl: iconUrl,
 		shadowUrl: shadowUrl,
-		iconSize:     [23, 32], // size of the icon
-		shadowSize:   [43, 32], // size of the shadow
-		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
-		shadowAnchor: [12, 32],  // the same for the shadow
-		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
-    });
-	iconUrl = config.BMLTPlugin_images ? config.BMLTPlugin_images+"/SearchPoint.png"
+		iconSize: [23, 32], // size of the icon
+		shadowSize: [43, 32], // size of the shadow
+		iconAnchor: [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32], // the same for the shadow
+		popupAnchor: [12, -32], // point from which the popup should open relative to the iconAnchor
+	});
+	iconUrl = config.BMLTPlugin_images
+		? config.BMLTPlugin_images + "/SearchPoint.png"
 		: "data:image/png;base64,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";
 	var g_icon_image_searchpoimt = L.icon({
 		iconUrl: iconUrl,
 		shadowUrl: shadowUrl,
-		iconSize:     [23, 32], // size of the icon
-		shadowSize:   [43, 32], // size of the shadow
-		iconAnchor:   [12, 32], // point of the icon which will correspond to marker's location
-		shadowAnchor: [12, 32],  // the same for the shadow
-		popupAnchor:  [12, -32] // point from which the popup should open relative to the iconAnchor
-    });
-    var	gAllMarkers = [];				///< Holds all the markers.
+		iconSize: [23, 32], // size of the icon
+		shadowSize: [43, 32], // size of the shadow
+		iconAnchor: [12, 32], // point of the icon which will correspond to marker's location
+		shadowAnchor: [12, 32], // the same for the shadow
+		popupAnchor: [12, -32], // point from which the popup should open relative to the iconAnchor
+	});
+	var gAllMarkers = []; ///< Holds all the markers.
 	var gMainMap;
 	var gTileLayer;
 	var gClusterLayer = null;
 	var gSearchPointMarker = false;
 	var gOpenMarker = false;
 	var gDiv = null;
-    function createMap(inDiv, inCenter, inHidden = false) {
-		if (! inCenter ) return null;
-			gDiv = inDiv;
-		if ( inHidden ) {
-			gDiv.style.height = 'auto';
-			gDiv.style.marginBottom = '10px';
+	function createMap(inDiv, inCenter, inHidden = false) {
+		if (!inCenter) return null;
+		gDiv = inDiv;
+		if (inHidden) {
+			gDiv.style.height = "auto";
+			gDiv.style.marginBottom = "10px";
 			gMainMap = null;
 			return gDiv;
 		}
 		myOptions = {
-                'minZoom': config.minZoom,
-                'maxZoom': config.maxZoom,
-				'doubleClickZoom' : false,
-				'scrollWheelZoom' : false
+			minZoom: config.minZoom,
+			maxZoom: config.maxZoom,
+			doubleClickZoom: false,
+			scrollWheelZoom: false,
 		};
 		myOptions = Object.assign(myOptions, {
-				'center': new L.latLng ( inCenter.latitude, inCenter.longitude ),
-				'zoom': inCenter.zoom});
-		var	pixel_width = inDiv.offsetWidth;
+			center: new L.latLng(inCenter.latitude, inCenter.longitude),
+			zoom: inCenter.zoom,
+		});
+		var pixel_width = inDiv.offsetWidth;
 		if (pixel_width == 0) {
 			pixel_width = inDiv.parentNode.offsetWidth;
 		}
-		var	pixel_height = inDiv.offsetHeight;
+		var pixel_height = parseInt(
+			jQuery(inDiv).css("height").replace("px", ""),
+		);
 		if (pixel_height == 0) {
 			pixel_height = pixel_width;
 		}
-		if (pixel_height > pixel_width*1.4) {
-			inDiv.style.height = (pixel_width*1.6)+'px';
+		if (pixel_height > pixel_width) {
+			jQuery(inDiv).css("height", pixel_width + "px");
 		}
-        gMainMap = new L.Map ( inDiv, myOptions );
-        gTileLayer = L.tileLayer(config.tileUrl,config.tileOptions).addTo(gMainMap);
-		gMainMap.zoomControl.setPosition('bottomright');
-		gMainMap.on('moveend',function() {
+		gMainMap = new L.Map(inDiv, myOptions);
+		gTileLayer = L.tileLayer(config.tileUrl, config.tileOptions).addTo(
+			gMainMap,
+		);
+		gMainMap.zoomControl.setPosition("bottomright");
+		gMainMap.on("moveend", function () {
 			gTileLayer.redraw();
 		});
-        return gMainMap;
-    }
-    function addListener(ev,f,once) {
+		return gMainMap;
+	}
+	function addListener(ev, f, once) {
 		if (!gMainMap) return;
-		if (ev=='idle') {
-			ev = 'moveend';
+		if (ev == "idle") {
+			ev = "moveend";
 		}
-		if (ev=='dragstart') {
-			ev = 'movestart';
+		if (ev == "dragstart") {
+			ev = "movestart";
 		}
-		if (ev=='dragend') {
-			ev = 'moveend';
+		if (ev == "dragend") {
+			ev = "moveend";
 		}
-        if (once) {
+		if (once) {
 			gMainMap.once(ev, f);
 		} else {
 			gMainMap.on(ev, f);
 		}
-		return {'event': ev, 'f': f};
-    }
+		return { event: ev, f: f };
+	}
 	function removeListener(o) {
 		if (!gMainMap) return;
 		gMainMap.off(o.event, o.f);
 	}
-	function flyToFixedZoom(position, zoomLevel, extra=null) {
+	function flyToFixedZoom(position, zoomLevel, extra = null) {
 		if (!gMainMap) return;
 
 		const latlng = L.latLng(position.lat, position.lng);
-        gMainMap.once('moveend', function(ev) {
+		gMainMap.once("moveend", function (ev) {
 			if (gMainMap.getZoom() != zoomLevel) {
-				gMainMap.once('zoomend',function() {
+				gMainMap.once("zoomend", function () {
 					gMainMap.invalidateSize();
 					if (extra) {
-						gMainMap.once('load moveend', extra);
+						gMainMap.once("load moveend", extra);
 					}
 				});
 				gMainMap.setZoom(zoomLevel);
@@ -131,12 +141,15 @@ function MapDelegate(config) {
 		});
 		gMainMap.flyTo(latlng, zoomLevel);
 	}
-	function clearAllMarkers ( )
-	{
+	function clearAllMarkers() {
 		if (!gMainMap) return;
-		gAllMarkers && gAllMarkers.forEach((m) => {m.marker.closePopup(); gMainMap.removeLayer(m.marker)});
+		gAllMarkers &&
+			gAllMarkers.forEach((m) => {
+				m.marker.closePopup();
+				gMainMap.removeLayer(m.marker);
+			});
 		gAllMarkers = [];
-	};
+	}
 	function getZoom() {
 		if (!gMainMap) return null;
 		return gMainMap.getZoom();
@@ -146,286 +159,410 @@ function MapDelegate(config) {
 	}
 	function webMercatorToLatLng(point, zoom) {
 		const latLng = croutonMap.webMercatorToLatLng(point, zoom);
-    	return L.latLng(latLng.lat, latLng.lng);
+		return L.latLng(latLng.lat, latLng.lng);
 	}
 	function calculateBounds(center, zoom, width, height) {
 		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
-		const northeastWebMercator = {x: centerPoint.x-width/2, y: centerPoint.y-height/2};
-		const southwestWebMercator = {x: centerPoint.x+width/2, y: centerPoint.y+height/2};
-		return L.latLngBounds(webMercatorToLatLng(southwestWebMercator, zoom), webMercatorToLatLng(northeastWebMercator, zoom));
+		const northeastWebMercator = {
+			x: centerPoint.x - width / 2,
+			y: centerPoint.y - height / 2,
+		};
+		const southwestWebMercator = {
+			x: centerPoint.x + width / 2,
+			y: centerPoint.y + height / 2,
+		};
+		return L.latLngBounds(
+			webMercatorToLatLng(southwestWebMercator, zoom),
+			webMercatorToLatLng(northeastWebMercator, zoom),
+		);
 	}
-    function calcOffsetWidth(gDiv) {
-        let ret = gDiv.offsetWidth;
-        if (ret === 0) ret = gDiv.parentElement.offsetWidth;
-        return ret;
-    }
+	function withinInscribedCircle(center, point, zoom, width, height) {
+		const centerPoint = croutonMap.latLngToWebMercator(center, zoom);
+		const meetingPoint = croutonMap.latLngToWebMercator(point, zoom);
+		const radius = Math.min(width, height) / 2;
+		const distance = Math.sqrt(
+			Math.pow(centerPoint.x - meetingPoint.x, 2) +
+				Math.pow(centerPoint.y - meetingPoint.y, 2),
+		);
+		return distance <= radius;
+	}
+	function calcOffsetWidth(gDiv) {
+		let ret = gDiv.offsetWidth;
+		if (ret === 0) ret = gDiv.parentElement.offsetWidth;
+		return ret;
+	}
 	function calculateBoundsFromCenterAndZoom(center, zoomLevel) {
-        const mapWidth = calcOffsetWidth(gDiv);
-		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
-        return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
-    }
-	function getZoomAdjust(filterMeetings,zoomLevel=gMainMap.getZoom(), center=gMainMap.getCenter()) {
-		if (!gMainMap) return 12;
 		const mapWidth = calcOffsetWidth(gDiv);
-		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
-		ret = zoomLevel;
-		if (config.map_search && isFilterVisible()) return ret;
+		const mapHeight = parseInt(
+			jQuery(gDiv).css("height").replace("px", ""),
+		);
+		return calculateBounds(center, zoomLevel, mapWidth, mapHeight);
+	}
+	function getZoomAdjust(
+		filterMeetings,
+		zoomLevel = gMainMap.getZoom(),
+		center = gMainMap.getCenter(),
+		closestMeeting = null,
+	) {
+		if (!gMainMap) return 12;
+		if (config.map_search && isFilterVisible()) return zoomLevel;
+		const mapWidth = calcOffsetWidth(gDiv);
+		const mapHeight = parseInt(
+			jQuery(gDiv).css("height").replace("px", ""),
+		);
+		let ret = zoomLevel;
 		var bounds = calculateBounds(center, ret, mapWidth, mapHeight);
-		while(filterMeetings(bounds, center).length==0 && ret>config.minZoom) {
-			ret -= 1;
-			bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+		if (closestMeeting) {
+			while (
+				!withinInscribedCircle(
+					center,
+					closestMeeting,
+					ret,
+					mapWidth,
+					mapHeight,
+				) &&
+				ret > config.minZoom
+			) {
+				ret -= 1;
+			}
+		} else {
+			while (
+				filterMeetings(bounds, center).length == 0 &&
+				ret > config.minZoom
+			) {
+				ret -= 1;
+				bounds = calculateBounds(center, ret, mapWidth, mapHeight);
+			}
+		}
+		// If we didn't zoom out, zoom in if it doesn't lose meetings
+		if (ret == zoomLevel) {
+			let meetingsInBounds = filterMeetings(bounds, center).length;
+			if (meetingsInBounds > 0) {
+				do {
+					ret = ret + 1;
+					if (ret > config.maxZoom) break;
+					var bounds = calculateBounds(
+						center,
+						ret,
+						mapWidth,
+						mapHeight,
+					);
+				} while (
+					filterMeetings(bounds, center).length === meetingsInBounds
+				);
+				ret = ret - 1;
+			}
 		}
 		return ret;
 	}
 	function markSearchPoint(inCoords) {
 		if (!gMainMap) return;
 		if (gSearchPointMarker) gSearchPointMarker.remove();
-		gSearchPointMarker = L.marker(inCoords, {icon: g_icon_image_searchpoimt});
+		gSearchPointMarker = L.marker(inCoords, {
+			icon: g_icon_image_searchpoimt,
+		});
 		gSearchPointMarker.addTo(gMainMap);
 	}
-	function createMarker (	inCoords,		///< The long/lat for the marker.
-        multi,	///< Flag if marker has multiple meetings
-        in_title,        ///< The tooltip
-)
-{
-	if (!gMainMap) return;
-    var in_main_icon = (multi ? g_icon_image_multi : g_icon_image_single);
+	function createMarker(
+		inCoords, ///< The long/lat for the marker.
+		multi, ///< Flag if marker has multiple meetings
+		in_title, ///< The tooltip
+	) {
+		if (!gMainMap) return;
+		var in_main_icon = multi ? g_icon_image_multi : g_icon_image_single;
 
-    var marker = L.marker(inCoords, {icon: in_main_icon, title: in_title})
-	marker.isMulti = multi;
-	if (gClusterLayer) gClusterLayer.addLayer(marker);
-	else marker.addTo(gMainMap);
+		var marker = L.marker(inCoords, {
+			icon: in_main_icon,
+			title: in_title,
+		});
+		marker.isMulti = multi;
+		if (gClusterLayer) gClusterLayer.addLayer(marker);
+		else marker.addTo(gMainMap);
 
-	return marker;
-}
-function bindPopup(marker, in_html, in_ids, openedMarker) {
-	if (!in_html) return;
-	let highlightRow = function(target) {
-		const id = target.id.split('-')[1];
-		gOpenMarker = id;
-		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
-		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
+		return marker;
 	}
-	marker.bindPopup(in_html);
-	marker.on('popupopen', function(e) {
-		if (openedMarker && marker.getPopup().getContent().includes("panel-"+openedMarker)) {
-			// I want to just do this:
-			//jQuery("#panel-"+openedMarker).prop("checked", true);
-			// But for some reason, leaflet makes a copy of the popup, so the ID is not unique....
-			jQuery("input[type=radio][name=panel]").filter(function() {
-				return jQuery(this).attr('id')=="panel-"+openedMarker})
-				.each(function(index,value) {
-				jQuery(this).prop("checked", true);
+	function bindPopup(marker, in_html, in_ids, openedMarker) {
+		if (!in_html) return;
+		let highlightRow = function (target) {
+			const id = target.id.split("-")[1];
+			gOpenMarker = id;
+			jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+			jQuery("#meeting-data-row-" + id + " > td").addClass(
+				"rowHighlight",
+			);
+			if (typeof crouton != "undefined") crouton.dayTabFromId(id);
+		};
+		marker.bindPopup(in_html);
+		marker.on("popupopen", function (e) {
+			if (
+				openedMarker &&
+				marker
+					.getPopup()
+					.getContent()
+					.includes("panel-" + openedMarker)
+			) {
+				// I want to just do this:
+				//jQuery("#panel-"+openedMarker).prop("checked", true);
+				// But for some reason, leaflet makes a copy of the popup, so the ID is not unique....
+				jQuery("input[type=radio][name=panel]")
+					.filter(function () {
+						return (
+							jQuery(this).attr("id") == "panel-" + openedMarker
+						);
+					})
+					.each(function (index, value) {
+						jQuery(this).prop("checked", true);
+					});
+			}
+			marker.setIcon(g_icon_image_selected);
+			gMainMap.on("zoomstart", function () {
+				marker.closePopup();
+			});
+			jQuery("input[type=radio][name=panel]:checked").each(
+				function (index, target) {
+					highlightRow(target);
+				},
+			);
+			jQuery("input[type=radio][name=panel]").change(function () {
+				highlightRow(this);
+			});
+		});
+		marker.on("popupclose", function (e) {
+			gOpenMarker = false;
+			marker.setIcon(
+				marker.isMulti ? g_icon_image_multi : g_icon_image_single,
+			);
+			jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
+		});
+		if (openedMarker && in_ids.includes(parseInt(openedMarker))) {
+			marker.openPopup();
+			marker.once("add", function () {
+				if (!marker.isPopupOpen()) marker.openPopup();
 			});
 		}
-		marker.setIcon(g_icon_image_selected);
-		gMainMap.on('zoomstart',function(){
-			marker.closePopup();
-		});
-		jQuery("input[type=radio][name=panel]:checked").each(function(index, target) {
-			highlightRow(target);
-    	});
-		jQuery('input[type=radio][name=panel]').change(function() {
-			highlightRow(this);
-        });
-	});
-    marker.on('popupclose', function(e) {
-		gOpenMarker = false;
-        marker.setIcon(marker.isMulti ? g_icon_image_multi : g_icon_image_single);
+		gAllMarkers.push({ ids: in_ids, marker: marker });
+	}
+	function addMarkerCallback(marker, cb, in_ids) {
+		if (cb)
+			marker.on("click", function () {
+				cb(in_ids);
+			});
+		gAllMarkers.push({ ids: in_ids, marker: marker });
+	}
+	function getOpenMarker() {
+		return gOpenMarker;
+	}
+	function openMarker(id) {
+		if (!gMainMap) return;
+		marker = gAllMarkers.find((m) => m.ids.includes(id));
+		if (marker) {
+			marker.marker.openPopup();
+			jQuery("#panel-" + id).prop("checked", true);
+			if (typeof crouton != "undefined") crouton.dayTabFromId(id);
+		}
 		jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-    });
-	if (openedMarker &&  in_ids.includes(parseInt(openedMarker))) {
-		marker.openPopup();
-		marker.once('add', function() {
-			if (!marker.isPopupOpen()) marker.openPopup();
-		});
+		jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
 	}
-	gAllMarkers.push( {ids: in_ids, marker: marker} );
-}
-function addMarkerCallback(marker, cb, in_ids) {
-	if (cb) marker.on('click', function() {
-		cb(in_ids);
-	});
-	gAllMarkers.push( {ids: in_ids, marker: marker} );
-}
-function getOpenMarker() {
-	return gOpenMarker;
-}
-function openMarker(id) {
-	if (!gMainMap) return;
-	marker = gAllMarkers.find((m) => m.ids.includes(id));
-	if (marker) {
-		marker.marker.openPopup();
-		jQuery("#panel-"+id).prop('checked', true);
-		if (typeof crouton != 'undefined') crouton.dayTabFromId(id);
-	}
-	jQuery(".bmlt-data-row > td").removeClass("rowHighlight");
-	jQuery("#meeting-data-row-" + id + " > td").addClass("rowHighlight");
-}
-function addControl(div,pos,cb) {
-	if (!div) return;
-	if (!gMainMap) {
-        gDiv.appendChild(div);
-        return;
-    }
-		var ControlClass =  L.Control.extend({
-	  		onAdd: function (map) {
+	function addControl(div, pos, cb) {
+		if (!div) return;
+		if (!gMainMap) {
+			gDiv.appendChild(div);
+			return;
+		}
+		var ControlClass = L.Control.extend({
+			onAdd: function (map) {
 				return div;
 			},
-			onRemove: function(map) {
+			onRemove: function (map) {
 				// Nothing to do here
-			}
+			},
 		});
-		var controlConstructor = function(opts) {
+		var controlConstructor = function (opts) {
 			return new ControlClass(opts);
-		}
+		};
 		if (cb) {
 			const observer = new MutationObserver(function (records) {
-				records.forEach(record => {
-					record.addedNodes.forEach(n => {
+				records.forEach((record) => {
+					record.addedNodes.forEach((n) => {
 						if (n === div) {
 							observer.disconnect();
 							cb();
 						}
 					});
-				})
+				});
 			});
-			observer.observe(document, {childList: true, subtree: true});
+			observer.observe(document, { childList: true, subtree: true });
 		}
 		controlConstructor({ position: pos }).addTo(gMainMap);
-    }
-    	// Low level GeoCoding
+	}
+	// Low level GeoCoding
 	function getJSON(url, params, callback) {
 		var xmlHttp = new XMLHttpRequest();
-		xmlHttp.onreadystatechange = function() {
-		if (xmlHttp.readyState !== 4) {
-		  return;
-		}
-		var message;
-		if (xmlHttp.status !== 200 && xmlHttp.status !== 304) {
-		  message = '';
-		} else if (typeof xmlHttp.response === 'string') {
-		  // IE doesn't parse JSON responses even with responseType: 'json'.
-		  try {
-			message = JSON.parse(xmlHttp.response);
-		  } catch (e) {
-			// Not a JSON response
-			message = xmlHttp.response;
-		  }
-		} else {
-		  message = xmlHttp.response;
-		}
-		callback(message);
-	  };
-	  xmlHttp.open('GET', url + getParamString(params), true);
-	  xmlHttp.responseType = 'json';
-	  xmlHttp.setRequestHeader('Accept', 'application/json');
-	  xmlHttp.setRequestHeader('Accept', '*/*');
-	  xmlHttp.send(null);
-	};
+		xmlHttp.onreadystatechange = function () {
+			if (xmlHttp.readyState !== 4) {
+				return;
+			}
+			var message;
+			if (xmlHttp.status !== 200 && xmlHttp.status !== 304) {
+				message = "";
+			} else if (typeof xmlHttp.response === "string") {
+				// IE doesn't parse JSON responses even with responseType: 'json'.
+				try {
+					message = JSON.parse(xmlHttp.response);
+				} catch (e) {
+					// Not a JSON response
+					message = xmlHttp.response;
+				}
+			} else {
+				message = xmlHttp.response;
+			}
+			callback(message);
+		};
+		xmlHttp.open("GET", url + getParamString(params), true);
+		xmlHttp.responseType = "json";
+		xmlHttp.setRequestHeader("Accept", "application/json");
+		xmlHttp.setRequestHeader("Accept", "*/*");
+		xmlHttp.send(null);
+	}
 	function getParamString(obj, existingUrl, uppercase) {
 		var params = [];
 		for (var i in obj) {
-		  var key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
-		  var value = obj[i];
-		  if (!L.Util.isArray(value)) {
-			params.push(key + '=' + encodeURIComponent(value));
-		  } else {
-			for (var j = 0; j < value.length; j++) {
-			  params.push(key + '=' + encodeURIComponent(value[j]));
+			var key = encodeURIComponent(uppercase ? i.toUpperCase() : i);
+			var value = obj[i];
+			if (!L.Util.isArray(value)) {
+				params.push(key + "=" + encodeURIComponent(value));
+			} else {
+				for (var j = 0; j < value.length; j++) {
+					params.push(key + "=" + encodeURIComponent(value[j]));
+				}
 			}
-		  }
 		}
-		return (!existingUrl || existingUrl.indexOf('?') === -1 ? '?' : '&') + params.join('&');
+		return (
+			(!existingUrl || existingUrl.indexOf("?") === -1 ? "?" : "&") +
+			params.join("&")
+		);
 	}
 	function geocode(query, params, cb) {
 		var serviceUrl = config.nominatimUrl;
-		if (!serviceUrl) serviceUrl = 'https://nominatim.openstreetmap.org/';
+		if (!serviceUrl) serviceUrl = "https://nominatim.openstreetmap.org/";
 		getJSON(
-		  serviceUrl + 'search',
-		  L.extend(
-			{
-			  q: query,
-			  limit: 5,
-			  format: 'json',
-			  addressdetails: 1,
-			  layer: "address"
-			},
-			params
-		  ),
-		  L.bind(function(data) {
-			if (data && data.length) {
-				results = data.reduce(function(carry, d) {
-					if (!carry.find((item) => item.name === d.display_name)) {
-						var bbox = d.boundingbox.map((c) => parseFloat(c));
-						carry.push({
-							name: d.display_name,
-							bbox: L.latLngBounds([bbox[0], bbox[2]], [bbox[1], bbox[3]]),
-							center: L.latLng(d.lat, d.lon),
-							properties: d
-						});
-					}
-					return carry;
-				}, []);
-				cb(results);
-			} else {
-				alert ( crouton.localization.getWord("address_lookup_fail") );
-			}
-		}, this)
+			serviceUrl + "search",
+			L.extend(
+				{
+					q: query,
+					limit: 5,
+					format: "json",
+					addressdetails: 1,
+					layer: "address",
+				},
+				params,
+			),
+			L.bind(function (data) {
+				if (data && data.length) {
+					results = data.reduce(function (carry, d) {
+						if (
+							!carry.find((item) => item.name === d.display_name)
+						) {
+							var bbox = d.boundingbox.map((c) => parseFloat(c));
+							carry.push({
+								name: d.display_name,
+								bbox: L.latLngBounds(
+									[bbox[0], bbox[2]],
+									[bbox[1], bbox[3]],
+								),
+								center: L.latLng(d.lat, d.lon),
+								properties: d,
+							});
+						}
+						return carry;
+					}, []);
+					cb(results);
+				} else {
+					alert(crouton.localization.getWord("address_lookup_fail"));
+				}
+			}, this),
 		);
-    };
-	function getGeocodingChoices(in_geocode_response) {
-    	if (!Array.isArray(in_geocode_response)) return [];
-    	return in_geocode_response.map((r) => r.name);
 	}
-	function getZoomAdjustedBounds(center, filterMeetings, zoomLevel) {
+	function getGeocodingChoices(in_geocode_response) {
+		if (!Array.isArray(in_geocode_response)) return [];
+		return in_geocode_response.map((r) => r.name);
+	}
+	function getZoomAdjustedBounds(
+		center,
+		filterMeetings,
+		zoomLevel,
+		closestMeeting = null,
+	) {
 		const mapWidth = calcOffsetWidth(gDiv);
-		const mapHeight = parseInt(jQuery(gDiv).css("height").replace("px",""));
+		const mapHeight = parseInt(
+			jQuery(gDiv).css("height").replace("px", ""),
+		);
 		if (center) {
-			const zoom = getZoomAdjust(filterMeetings, zoomLevel, center);
+			const zoom = getZoomAdjust(
+				filterMeetings,
+				zoomLevel,
+				center,
+				closestMeeting,
+			);
 			const bounds = calculateBounds(center, zoom, mapWidth, mapHeight);
-			const ret = {"center": center, "bounds": bounds, "zoom": zoom};
+			const ret = { center: center, bounds: bounds, zoom: zoom };
 			return ret;
 		} else {
-			alert ( crouton.localization.getWord("address_lookup_fail") );
+			alert(crouton.localization.getWord("address_lookup_fail"));
 			return null;
 		}
 	}
-	function getGeocodeCenterAndBounds (in_geocode_response, i=0) {
-        if ( in_geocode_response && in_geocode_response[i] ) {
-	        return {
-				center: {lat: in_geocode_response[i].center.lat, lng: in_geocode_response[i].center.lng},
-				southWest: {lat: in_geocode_response[i].bbox.getSouthWest().lat, lng: in_geocode_response[i].bbox.getSouthWest().lng},
-				northEast: {lat: in_geocode_response[i].bbox.getNorthEast().lat, lng: in_geocode_response[i].bbox.getNorthEast().lng},
-					};
-        } else {
-            alert ( crouton.localization.getWord("address_lookup_fail") );
-        };
-	};
-    function callGeocoder(in_loc, callback) {
+	function getGeocodeCenterAndBounds(in_geocode_response, i = 0) {
+		if (in_geocode_response && in_geocode_response[i]) {
+			return {
+				center: {
+					lat: in_geocode_response[i].center.lat,
+					lng: in_geocode_response[i].center.lng,
+				},
+				southWest: {
+					lat: in_geocode_response[i].bbox.getSouthWest().lat,
+					lng: in_geocode_response[i].bbox.getSouthWest().lng,
+				},
+				northEast: {
+					lat: in_geocode_response[i].bbox.getNorthEast().lat,
+					lng: in_geocode_response[i].bbox.getNorthEast().lng,
+				},
+			};
+		} else {
+			alert(crouton.localization.getWord("address_lookup_fail"));
+		}
+	}
+	function callGeocoder(in_loc, callback) {
 		geoCodeParams = {};
-		if (config.region && config.region.trim() !== '') {
+		if (config.region && config.region.trim() !== "") {
 			geoCodeParams.countrycodes = config.region;
 		}
-		if (config.bounds
-			&&  isNumber(config.bounds.north)
-			&&  isNumber(config.bounds.east)
-			&&  isNumber(config.bounds.south)
-			&&  isNumber(config.bounds.west)) {
-				geoCodeParams.viewbox = config.bounds.west+","+config.bounds.south+","+
-					                    config.bounds.east+","+config.bounds.north;
+		if (
+			config.bounds &&
+			isNumber(config.bounds.north) &&
+			isNumber(config.bounds.east) &&
+			isNumber(config.bounds.south) &&
+			isNumber(config.bounds.west)
+		) {
+			geoCodeParams.viewbox =
+				config.bounds.west +
+				"," +
+				config.bounds.south +
+				"," +
+				config.bounds.east +
+				"," +
+				config.bounds.north;
 		}
-        geocode(in_loc, geoCodeParams, callback);
-    }
+		geocode(in_loc, geoCodeParams, callback);
+	}
 	function isNumber(x) {
-		if (typeof x === 'number') return true;
-		if (typeof x === 'string' && x.trim() !== '' && !isNaN(x)) return true;
+		if (typeof x === "number") return true;
+		if (typeof x === "string" && x.trim() !== "" && !isNaN(x)) return true;
 		return false;
 	}
 	function contains(bounds, lat, lng) {
 		if (!gMainMap) return true;
-		return bounds.contains(L.latLng ( lat, lng ));
+		return bounds.contains(L.latLng(lat, lng));
 	}
 	function getBounds() {
 		if (!gMainMap) return null;
@@ -437,7 +574,10 @@ function addControl(div,pos,cb) {
 	}
 	function fitBounds(locations) {
 		if (!gMainMap) return;
-		const bounds = locations.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds());
+		const bounds = locations.reduce(function (b, lat_lng) {
+			b.extend(lat_lng);
+			return b;
+		}, L.latLngBounds());
 		gMainMap.fitBounds(bounds);
 	}
 	function createClusterLayer() {
@@ -454,50 +594,68 @@ function addControl(div,pos,cb) {
 		gClusterLayer = null;
 	}
 	function clickSearch(ev, cb) {
-		L.DomUtil.addClass(gMainMap._container,'crosshair-cursor-enabled');
-		gMainMap.once('click',function(e) {
-			gMainMap.once('click',function(e) {
-				L.DomUtil.removeClass(gMainMap._container,'crosshair-cursor-enabled');
-				cb(e.latlng.lat,e.latlng.lng);
-			})
+		L.DomUtil.addClass(gMainMap._container, "crosshair-cursor-enabled");
+		gMainMap.once("click", function (e) {
+			gMainMap.once("click", function (e) {
+				L.DomUtil.removeClass(
+					gMainMap._container,
+					"crosshair-cursor-enabled",
+				);
+				cb(e.latlng.lat, e.latlng.lng);
+			});
 		});
 	}
 	function getCorners(lat_lngs = false) {
-        var bounds = lat_lngs
-		? lat_lngs.reduce(function(b,lat_lng) {b.extend(lat_lng); return b;}, L.latLngBounds())
-		: gMainMap.getBounds();
+		var bounds = lat_lngs
+			? lat_lngs.reduce(function (b, lat_lng) {
+					b.extend(lat_lng);
+					return b;
+				}, L.latLngBounds())
+			: gMainMap.getBounds();
 
-        return {
-            "ne" : {"lat": bounds.getNorthEast().lat, "lng": bounds.getNorthEast().lng},
-            "sw" : {"lat": bounds.getSouthWest().lat, "lng": bounds.getSouthWest().lng}
-        }
-    }
+		return {
+			ne: {
+				lat: bounds.getNorthEast().lat,
+				lng: bounds.getNorthEast().lng,
+			},
+			sw: {
+				lat: bounds.getSouthWest().lat,
+				lng: bounds.getSouthWest().lng,
+			},
+		};
+	}
 	function getCenter() {
-		return {"lat": gMainMap.getCenter().lat, "lng": gMainMap.getCenter().lng};
+		return { lat: gMainMap.getCenter().lat, lng: gMainMap.getCenter().lng };
 	}
 	function modalOn() {
-		if (gMainMap) gMainMap.dragging.disable()
+		if (gMainMap) gMainMap.dragging.disable();
 	}
 	function modalOff() {
-		if (gMainMap) gMainMap.dragging.enable()
+		if (gMainMap) gMainMap.dragging.enable();
 	}
 	function afterInit(doNotWait, f) {
 		f();
 	}
-	function returnTrue() {return true;}
+	function returnTrue() {
+		return true;
+	}
 	function isMapDefined() {
-		return (gMainMap !== null);
+		return gMainMap !== null;
 	}
 	function isMapVisible() {
-		return (gMainMap !== null) && gMainMap.getSize().x > 0 && gMainMap.getSize().y > 0;
+		return (
+			gMainMap !== null &&
+			gMainMap.getSize().x > 0 &&
+			gMainMap.getSize().y > 0
+		);
 	}
-    this.createMap = createMap;
-    this.addListener = addListener;
+	this.createMap = createMap;
+	this.addListener = addListener;
 	this.removeListener = removeListener;
-    this.addControl = addControl;
+	this.addControl = addControl;
 	this.flyToFixedZoom = flyToFixedZoom;
-    this.clearAllMarkers = clearAllMarkers;
-    this.callGeocoder = callGeocoder;
+	this.clearAllMarkers = clearAllMarkers;
+	this.callGeocoder = callGeocoder;
 	this.getZoomAdjustedBounds = getZoomAdjustedBounds;
 	this.getZoom = getZoom;
 	this.createMarker = createMarker;
