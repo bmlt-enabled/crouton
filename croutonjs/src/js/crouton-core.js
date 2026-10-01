@@ -1610,7 +1610,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						const d = new Date();
 						let n = d.getDay();
 						n++;
-						jQuery('.nav-tabs a[href="/#tab' + n + '"]').tab('show');
+						jQuery('.nav-tabs a[href="./#tab' + n + '"]').tab('show');
 						jQuery('#tab' + n).show();
 					}
 
