@@ -277,7 +277,7 @@ function Crouton(config) {
 	self.dayTabFromId = function(id) {
 		const day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
 		self.hideAllPages();
-		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		jQuery('.nav-tabs a[href="./#tab' + day_id + '"]').tab('show');
 		jQuery("#" + day_id).removeClass("hide").addClass("show");
 	};
 	/**
