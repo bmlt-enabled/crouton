@@ -253,7 +253,7 @@ function CroutonHandlebarsExtensions() {
 		crouton_Handlebars.registerPartial('header', hbs_Crouton.templates['header']);
 		crouton_Handlebars.registerPartial('byfields', hbs_Crouton.templates['byfield']);
 		crouton_Handlebars.registerPartial('formatPopup', hbs_Crouton.templates['formatPopup']);
-		crouton_Handlebars.registerPartial('meetingModal', "<a tabindex='0' href='#' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>");
+		crouton_Handlebars.registerPartial('meetingModal', "<a tabindex='0' onclick='crouton.meetingModal({{this.id_bigint}})'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>");
 		crouton_Handlebars.registerPartial('meetingLink', `
 			{{#if this.meeting_details_url}}
 				<a href='{{{this.meeting_details_url}}}'><span class='glyphicon glyphicon-search' aria-hidden='true'></span>{{this.meeting_name}}</a>
