@@ -19,7 +19,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.3.3',             // CroutonJS version for debugging
+		version: '4.3.4',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -277,7 +277,7 @@ function Crouton(config) {
 	self.dayTabFromId = function(id) {
 		const day_id = self.meetingData.find((m)=>m.id_bigint == id).weekday_tinyint;
 		self.hideAllPages();
-		jQuery('.nav-tabs a[href="#tab' + day_id + '"]').tab('show');
+		jQuery('.nav-tabs a[href="./#tab' + day_id + '"]').tab('show');
 		jQuery("#" + day_id).removeClass("hide").addClass("show");
 	};
 	/**
@@ -1610,7 +1610,7 @@ Crouton.prototype.render = function(doMeetingMap = false, fitBounds=true) {
 						const d = new Date();
 						let n = d.getDay();
 						n++;
-						jQuery('.nav-tabs a[href="#tab' + n + '"]').tab('show');
+						jQuery('.nav-tabs a[href="./#tab' + n + '"]').tab('show');
 						jQuery('#tab' + n).show();
 					}
 
