@@ -33,12 +33,9 @@
 .bmlt-data-row.oddRow {
 	background-color: #444;
 }
-#bmlt-tabs .nav-tabs>li.active>a {
+#bmlt-tabs .nav-tabs>li.active>a, #bmlt-tabs .nav-tabs>li>a.active {
     background-color: #444;
     color: #EEE;
-}
-
-#bmlt-tabs .nav-tabs>li.active>a {
     border-color: #555;
 }
 
@@ -81,7 +78,8 @@
     background-color: #555;
 }
 
-#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus,
+#bmlt-tabs .nav-tabs > li > a.active,#bmlt-tabs .nav-tabs > li > a.active:hover,#bmlt-tabs .nav-tabs > li > a.active:focus {
     background-color: #DB4865;
 }
 

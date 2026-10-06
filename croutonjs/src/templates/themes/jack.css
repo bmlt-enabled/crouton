@@ -1,4 +1,5 @@
-#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus,
+#bmlt-tabs .nav-tabs > li > a.active,#bmlt-tabs .nav-tabs > li > a.active:hover,#bmlt-tabs .nav-tabs > li > a.active:focus {
     background-color: #DB4865;
 }
 
