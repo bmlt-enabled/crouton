@@ -149,7 +149,8 @@ span.bmlt_tabs_group_count {
 	vertical-align: top;
 }
 
-#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus,
+#bmlt-tabs .nav-tabs > li > a.active,#bmlt-tabs .nav-tabs > li > a.active :hover,#bmlt-tabs .nav-tabs > li > a.active:focus {
 	color: #fff;
 	background-color: #DB4865;
 	border: 1px solid #DDD;
@@ -381,11 +382,12 @@ span.bmlt_tabs_group_count {
 		border: 1px solid #ddd;
 	}
 
-	#bmlt-tabs .nav-tabs > li.active > a {
+	#bmlt-tabs .nav-tabs > li.active > a, #bmlt-tabs .nav-tabs > li > a.active {
 		border: none;
 	}
 
-	#bmlt-tabs .nav > li > a:hover,#bmlt-tabs .nav > li > a:focus,#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus {
+	#bmlt-tabs .nav > li > a:hover,#bmlt-tabs .nav > li > a:focus,#bmlt-tabs .nav-tabs > li.active > a,#bmlt-tabs .nav-tabs > li.active > a:hover,#bmlt-tabs .nav-tabs > li.active > a:focus,
+	#bmlt-tabs .nav-tabs > li >a.active,#bmlt-tabs .nav-tabs  > li > a.active:hover,#bmlt-tabs .nav-tabs > li > a.active:focus {
 		background: none;
 		border: none;
 	}

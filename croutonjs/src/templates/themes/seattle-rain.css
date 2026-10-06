@@ -33,12 +33,12 @@
 .bmlt-data-row.oddRow {
 	background-color: #F5F5F5;
 }
-#bmlt-tabs .nav-tabs>li.active>a {
+#bmlt-tabs .nav-tabs>li.active>a,#bmlt-tabs .nav-tabs>li>a.active {
     background-color: #444;
     color: #F5F5F5;
 }
 
-#bmlt-tabs .nav-tabs>li.active>a {
+#bmlt-tabs .nav-tabs>li.active>a,#bmlt-tabs .nav-tabs>li>a.active {
     border-color: #777;
 }
 
