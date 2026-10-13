@@ -32,11 +32,12 @@ function CroutonHandlebarsExtensions() {
 			}
 		});
 		crouton_Handlebars.registerHelper('reportUpdateEnabled', function(data, options) {
-			return crouton.config.report_update_url !== "" ? getTrueResult(options, this) : getFalseResult(options, this)
+			return data.serviceBodyMeetingUpdateUrl ? getTrueResult(options, this) : getFalseResult(options, this)
 		});
 
-		crouton_Handlebars.registerHelper('reportUpdateUrl', function() {
-			return crouton.config.report_update_url;
+		crouton_Handlebars.registerHelper('reportUpdateUrl', function(data, options) {
+			console.log("reportUpdateUrl: " + data.serviceBodyMeetingUpdateUrl);
+			return data.serviceBodyMeetingUpdateUrl;
 		});
 		crouton_Handlebars.registerHelper('ifGroup', function(data, options) {
 			return (data.hasOwnProperty('membersOfGroup') && data.membersOfGroup.length > 1)

@@ -458,12 +458,14 @@ if (!class_exists("Crouton\TableAdmin")) {
                                 <li>serviceBodyName</li>
                                 <li>serviceBodyDescription</li>
                                 <li>serviceBodyContactEmail (must be comfigured in root server)</li>
+                                <li>serviceBodyMeetingUpdateUrl</li>
                                 <li>serviceBodyType</li>
                                 <li>parentServiceBodyUrl</li>
                                 <li>parentServiceBodyPhone</li>
                                 <li>parentServiceBodyName</li>
                                 <li>parentServiceBodyDescription</li>
                                 <li>parentServiceBodyType</li>
+                                <li>parentServiceBodyMeetingUpdateUrl</li>
                             </ul>
                             </p>
                             <h2>Partial Templates</h2>

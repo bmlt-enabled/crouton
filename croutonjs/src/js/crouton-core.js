@@ -19,7 +19,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.3.5',             // CroutonJS version for debugging
+		version: '4.4.0',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -763,6 +763,7 @@ function Crouton(config) {
 			meetingData[m]['serviceBodyDescription'] = serviceBodyInfo["description"];
 			meetingData[m]['serviceBodyContactEmail'] = serviceBodyInfo["contact_email"];
 			meetingData[m]['serviceBodyType'] = self.localization.getServiceBodyType(serviceBodyInfo["type"]);
+			meetingData[m]['serviceBodyMeetingUpdateUrl'] = config.report_update_url || serviceBodyInfo["meeting_update_url"];
 
 			const parentBodyInfo = self.getServiceBodyDetails(serviceBodyInfo["parent_id"]);
 			if (parentBodyInfo !== undefined) {
@@ -772,8 +773,10 @@ function Crouton(config) {
 				meetingData[m]['parentServiceBodyName'] = parentBodyInfo["name"];
 				meetingData[m]['parentServiceBodyDescription'] = parentBodyInfo["description"];
 				meetingData[m]['parentServiceBodyType'] = self.localization.getServiceBodyType(parentBodyInfo["type"]);
+				meetingData[m]['parentServiceBodyMeetingUpdateUrl'] = config.report_update_url || parentBodyInfo["meeting_update_url"];
+				meetingData[m]['serviceBodyMeetingUpdateUrl'] = meetingData[m]['serviceBodyMeetingUpdateUrl'] || meetingData[m]['parentServiceBodyMeetingUpdateUrl'];
 			}
-
+			meetingData[m]['source_id'] = meetingData[m]['source_id'] || meetingData[m]['id_bigint'];
 			meetingData[m]['meeting_details_url'] = '';
 			if (self.config.meeting_details_href) {
 				meetingData[m]['meeting_details_url'] = self.config.meeting_details_href;
