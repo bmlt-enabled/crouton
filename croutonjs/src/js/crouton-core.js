@@ -19,7 +19,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.3.5',             // CroutonJS version for debugging
+		version: '4.3.6',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -1074,9 +1074,7 @@ Crouton.prototype.setConfig = function(config) {
 	}
 	self.currentView = self.config["view_by"];
 
-	// https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
-	// We hardcode override Dansk because of a legacy issue in the root server that doesn't follow ISO 639 standards.
-	self.config['short_language'] = self.config['language'] === "da-DK" ? "dk" : self.config['language'].substring(0, 2);
+	self.config['short_language'] = self.config['language'].substring(0, 2);
 	self.localization = new CroutonLocalization(self.config['language']);
 	if (config.custom_translations && config.custom_translations.trim() !== "") {
 		try {
