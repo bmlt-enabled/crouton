@@ -91,6 +91,7 @@ span.bmlt_tabs_group_count {
 .bmlt-data-row.oddRow {
 	background: #FFF;
 }
+.bmlt-data-row { content-visibility: auto; contain-intrinsic-size: auto; }
 #bmlt-tabs td {
 /* border-top: 0; */
 	padding: .8em;
