@@ -19,7 +19,7 @@ function Crouton(config) {
 	self.distanceTabAllowed = false;
 	self.favoritesOn = false;
 	self.config = {
-		version: '4.3.6',             // CroutonJS version for debugging
+		version: '4.3.7',             // CroutonJS version for debugging
 		on_complete: null,            // Javascript function to callback when data querying is completed.
 		root_server: null,			  // The root server to use.
 		placeholder_id: "bmlt-tabs",  // The DOM id that will be used for rendering
@@ -195,11 +195,35 @@ function Crouton(config) {
 				if (data.length === 2) {
 					self.meetingData = self.meetingData.concat(data[1]['meetings']);
 				}
+				self.meetingData = self.translateMeetings(self.meetingData, self.config['short_language'], self.config['native_lang'], self.config['translate_fields']);
 				cb && cb();
 				self.fireReady();
 			});
 	};
-
+	self.translateMeetings = function(meetings, short_language, native_lang, translate_fields) {
+		if (short_language === native_lang) return meetings;
+		if (!translate_fields || translate_fields.length === 0) return meetings;
+		translationPromises = translate_fields.map(function(field) {
+			const values = getUniqueValuesOfKey(meetings, field);
+			return new Promise(function(resolve, reject) {
+				const url = self.config['root_server'] + '/client_interface/jsonp/?switcher=GetTranslation&lang_enum=' + short_language + '&key_string=' + values.join(',');
+				fetchJsonp(url).then(function(response) {
+					resolve(response.json());
+				});
+			});
+		});
+		Promise.all(translationPromises).then(function(translations) {
+			meetings.forEach(function(meeting) {
+				for (i=0; i<translations.length; i++) {
+					const field = translate_fields[i];
+					if (meeting[field] && meeting[field] !== '' && meeting[field] in translations[i] && translations[i][meeting[field]] !== '') {
+						meeting[field] = translations[i][meeting[field]];
+					}
+				}
+			})
+		});
+		return meetings;
+	}
 	self.meetingSearch = function(cb=null) {
 		let url = '/client_interface/jsonp/?switcher=GetSearchResults&get_used_formats&lang_enum=' + self.config['short_language'];
 
@@ -367,12 +391,12 @@ function Crouton(config) {
 		self.highlightButton("#groupingButton_" + field);
 		jQuery('.bmlt-page').each(function (index) {
 			self.hidePage("#" + this.id);
-			self.showPage("#byfield_" + field);
-			jQuery("#byfield_" + field).find('.meeting-group').each(function(index) {
-				if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
-					jQuery(this).addClass("hide");
-				else jQuery(this).removeClass('hide');
-			});
+		});
+		self.showPage("#byfield_" + field);
+		jQuery("#byfield_" + field).find('.meeting-group').each(function(index) {
+			if (jQuery(this).find(".bmlt-data-row.hide").length === jQuery(this).find(".bmlt-data-row").length)
+				jQuery(this).addClass("hide");
+			else jQuery(this).removeClass('hide');
 		});
 	}
 	self.mapView = function() {
